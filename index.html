@@ -4,95 +4,44 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>SUDHIR | PRO PORTAL</title>
+
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
 <style>
 :root {
-    --primary: #0f172a;
-    --accent: #f37021;
-    --accent-light: #ff8c4a;
-    --accent-glow: rgba(243, 112, 33, 0.25);
+    --primary: #0f172a; --accent: #f37021; --accent-glow: rgba(243, 112, 33, 0.25);
     --accent-gradient: linear-gradient(135deg, #f37021 0%, #ff6b35 50%, #f97316 100%);
-    --bg: #f1f5f9;
     --bg-gradient: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --card-border: rgba(255, 255, 255, 0.6);
-    --text: #0f172a;
-    --text-secondary: #475569;
-    --muted: #64748b;
-    --border: rgba(226, 232, 240, 0.8);
-    --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.06);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
-    --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.12);
+    --card-bg: rgba(255, 255, 255, 0.85); --card-border: rgba(255, 255, 255, 0.6);
+    --text: #0f172a; --muted: #64748b; --border: rgba(226, 232, 240, 0.8);
 }
 
 body.dark {
-    --primary: #f8fafc;
-    --accent: #f97316;
-    --accent-light: #fb923c;
-    --accent-glow: rgba(249, 115, 22, 0.3);
-    --accent-gradient: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fdba74 100%);
-    --bg: #0a0f1a;
     --bg-gradient: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-    --card-bg: rgba(30, 41, 59, 0.75);
-    --card-border: rgba(51, 65, 85, 0.5);
-    --text: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --muted: #94a3b8;
-    --border: rgba(51, 65, 85, 0.6);
-    --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.3);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.5);
+    --card-bg: rgba(30, 41, 59, 0.75); --text: #f8fafc; --border: rgba(51, 65, 85, 0.6);
 }
 
-/* Auth Overlay Styles */
-#auth-overlay {
-    position: fixed; inset: 0; z-index: 9999; background: var(--bg-gradient);
-    display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px);
-}
-.auth-card {
-    background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--card-border);
-    box-shadow: var(--shadow-elevated); text-align: center; max-width: 320px; width: 90%;
-}
-#pass-input {
-    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border);
-    background: rgba(0,0,0,0.05); color: var(--text); font-size: 18px; text-align: center;
-    letter-spacing: 4px; margin-bottom: 16px; outline: none;
-}
-body.dark #pass-input { background: rgba(255,255,255,0.05); }
-.btn-login {
-    width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent-gradient);
-    color: white; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow);
-}
-
-/* UI Layout */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-body { background: var(--bg-gradient); margin: 0; padding-bottom: 100px; color: var(--text); min-height: 100vh; }
+body { background: var(--bg-gradient); margin: 0; padding-bottom: 100px; color: var(--text); min-height: 100vh; transition: 0.4s; }
 .hidden { display: none !important; }
-nav {
-    display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;
-    background: var(--card-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000;
-}
+
+/* Auth Overlay */
+#auth-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg-gradient); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
+.auth-card { background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--card-border); text-align: center; max-width: 320px; width: 90%; }
+#pass-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.05); color: var(--text); font-size: 18px; text-align: center; letter-spacing: 4px; margin-bottom: 16px; outline: none; }
+.btn-login { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent-gradient); color: white; font-weight: 700; cursor: pointer; }
+
+/* Navigation */
+nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--card-bg); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--card-border); }
 nav .logo { font-weight: 800; font-size: 1.15em; cursor: pointer; }
 nav .logo span { color: var(--accent); margin-left: 6px; }
-#themeToggle { width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--border); }
-
-/* Bottom Nav */
-.bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg);
-    display: flex; justify-content: space-around; padding: 12px 16px 24px; border-top: 1px solid var(--card-border); z-index: 2000;
-}
-.nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; gap: 4px; }
-.nav-item.active { color: var(--accent); }
 
 /* Grid & Cards */
 .container { padding: 20px 16px; max-width: 480px; margin: 0 auto; }
 .grid-view { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.card {
-    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px;
-    padding: 24px 16px; text-align: center; transition: 0.3s; cursor: pointer;
-}
+.card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px 16px; text-align: center; cursor: pointer; transition: 0.3s; }
 .card:hover { transform: translateY(-5px); border-color: var(--accent); }
 .card .icon-wrapper { width: 50px; height: 50px; border-radius: 12px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
 .card i { color: var(--accent); width: 24px; height: 24px; }
@@ -100,24 +49,28 @@ nav .logo span { color: var(--accent); margin-left: 6px; }
 /* Tables */
 .table-wrapper { overflow-x: auto; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--card-border); margin-top: 12px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th { background: var(--accent-glow); padding: 12px; color: var(--accent); text-align: left; }
+th { background: var(--accent-glow); padding: 12px; color: var(--accent); text-align: left; font-size: 11px; text-transform: uppercase; }
 td { padding: 12px; border-bottom: 1px solid var(--border); }
 
-/* Buttons */
-.btn-back { display: flex; align-items: center; gap: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--accent); padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; cursor: pointer; font-weight: 600; }
+/* Bottom Nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); display: flex; justify-content: space-around; padding: 12px 16px 24px; border-top: 1px solid var(--card-border); z-index: 2000; }
+.nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; gap: 4px; }
+.nav-item.active { color: var(--accent); }
 
 /* PDF Viewer */
 #pdf-modal { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; }
-.pdf-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #1e293b; color: #fff; }
+.pdf-header { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #1e293b; color: #fff; }
 #pdf-title { font-size: 12px; color: #94a3b8; max-width: 40%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pdf-actions { display: flex; gap: 8px; }
+.pdf-actions { display: flex; gap: 6px; }
 .pdf-btn { border: none; padding: 8px 12px; border-radius: 10px; font-weight: 600; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-.pdf-btn.share { background: var(--accent-gradient); color: #fff; }
-.pdf-btn.download { background: #475569; color: #fff; }
-.pdf-btn.close { background: #ef4444; color: #fff; }
-#pdf-render-area { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; align-items: center; background: #0f172a; }
-#pdf-render-area canvas { width: 100%; max-width: 800px; margin-bottom: 10px; }
+.share { background: var(--accent-gradient); color: #fff; }
+.whatsapp { background: #25D366; color: #fff; }
+.download { background: #475569; color: #fff; }
+.close { background: #ef4444; color: #fff; }
+#pdf-render-area { flex: 1; overflow-y: auto; padding: 12px; background: #0f172a; text-align: center; }
+canvas { max-width: 100%; margin-bottom: 10px; border-radius: 4px; }
 #loader { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--accent-gradient); color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 4000; font-weight: 700; }
+.btn-back { display: flex; align-items: center; gap: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--accent); padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; cursor: pointer; font-weight: 600; }
 </style>
 </head>
 <body class="dark">
@@ -125,33 +78,32 @@ td { padding: 12px; border-bottom: 1px solid var(--border); }
 <div id="auth-overlay">
     <div class="auth-card">
         <div class="logo" style="margin-bottom: 20px;">SUDHIR <span>PORTAL</span></div>
-        <p>Enter Access PIN</p>
         <input type="password" id="pass-input" placeholder="••••" maxlength="4">
         <button class="btn-login" onclick="checkPass()">ACCESS</button>
     </div>
 </div>
 
 <div id="main-content" class="hidden">
-    <div id="loader" class="hidden">Loading...</div>
-    <nav>
-        <div onclick="showView('home')" class="logo">SUDHIR <span>RENTALS</span></div>
-        <div id="themeToggle"><i data-lucide="moon"></i></div>
-    </nav>
+    <div id="loader" class="hidden">Syncing...</div>
+    <nav><div onclick="showView('home')" class="logo">SUDHIR <span>RENTALS</span></div></nav>
+    
     <div class="container">
         <div id="view-home" class="grid-view">
-            <div class="card" onclick="showView('inventory')"><div class="icon-wrapper"><i data-lucide="calculator"></i></div><h3>Pricing</h3><p>Rental Rates</p></div>
-            <div class="card" onclick="showView('datasheets')"><div class="icon-wrapper"><i data-lucide="scroll-text"></i></div><h3>Specs</h3><p>Datasheets</p></div>
+            <div class="card" onclick="showView('inventory')"><div class="icon-wrapper"><i data-lucide="calculator"></i></div><h3>Pricing</h3><p>Rates</p></div>
+            <div class="card" onclick="showView('datasheets')"><div class="icon-wrapper"><i data-lucide="scroll-text"></i></div><h3>Specs</h3><p>PDFs</p></div>
         </div>
+
         <div id="view-inventory" class="hidden">
-            <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Home</button>
+            <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Back</button>
             <div id="inv-cats" class="grid-view"></div>
             <div id="inv-table-view" class="hidden">
-                <button class="btn-back" onclick="showView('inventory')"><i data-lucide="chevron-left"></i> Back</button>
+                <button class="btn-back" onclick="showView('inventory')"><i data-lucide="chevron-left"></i> Categories</button>
                 <div class="table-wrapper" id="inv-table-area"></div>
             </div>
         </div>
+
         <div id="view-datasheets" class="hidden">
-            <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Home</button>
+            <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Back</button>
             <div id="ds-cats" class="grid-view"></div>
             <div id="ds-items-screen" class="hidden">
                 <button class="btn-back" onclick="showDatasheetCats()"><i data-lucide="chevron-left"></i> Folders</button>
@@ -159,10 +111,11 @@ td { padding: 12px; border-bottom: 1px solid var(--border); }
             </div>
         </div>
     </div>
+
     <div class="bottom-nav">
-        <div class="nav-item" onclick="showView('home')"><i data-lucide="home"></i>HOME</div>
-        <div class="nav-item" onclick="showView('inventory')"><i data-lucide="dollar-sign"></i>PRICES</div>
-        <div class="nav-item" onclick="showView('datasheets')"><i data-lucide="file-text"></i>DOCS</div>
+        <div class="nav-item" id="nav-home" onclick="showView('home')"><i data-lucide="home"></i>HOME</div>
+        <div class="nav-item" id="nav-inventory" onclick="showView('inventory')"><i data-lucide="dollar-sign"></i>PRICES</div>
+        <div class="nav-item" id="nav-datasheets" onclick="showView('datasheets')"><i data-lucide="file-text"></i>DOCS</div>
     </div>
 </div>
 
@@ -170,20 +123,24 @@ td { padding: 12px; border-bottom: 1px solid var(--border); }
     <div class="pdf-header">
         <span id="pdf-title">Viewer</span>
         <div class="pdf-actions">
-            <button class="pdf-btn share" onclick="sharePdf()"><i data-lucide="share-2" style="width:14px;"></i> Share</button>
-            <button class="pdf-btn download" onclick="downloadPdf()"><i data-lucide="download" style="width:14px;"></i> Save</button>
-            <button class="pdf-btn close" onclick="closePdf()"><i data-lucide="x" style="width:14px;"></i></button>
+            <button class="pdf-btn share" onclick="sharePdf()">Share</button>
+            <button class="pdf-btn whatsapp" onclick="shareWhatsApp()">WA</button>
+            <button class="pdf-btn download" onclick="downloadPdf()">Save</button>
+            <button class="pdf-btn close" onclick="closePdf()">X</button>
         </div>
     </div>
     <div id="pdf-render-area"></div>
 </div>
 
 <script>
+// CONFIG
 const G_SHEET_ID = '1yn96hq69kWn_MdrFwY_OgUBfhqu-NtJz_LADBxjVrZQ';
 const G_API_KEY = 'AIzaSyDUGiUA64AawBtYD-v1Op4lXtW7mX8F4J0';
 const GH_CONFIG = { OWNER: "nasirsudhir320-source", REPO: "Datasheets", BRANCH: "main" };
-let inventoryData = {}, datasheetData = {}, currentPdfBlob = null;
 
+let inventoryData = {}, datasheetData = {}, currentPdfBlob = null, currentPdfUrl = "";
+
+// PIN CHECK
 function checkPass() {
     if(document.getElementById('pass-input').value === '5511') {
         document.getElementById('auth-overlay').style.display = 'none';
@@ -194,13 +151,13 @@ function checkPass() {
 
 async function init() {
     lucide.createIcons();
-    document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark'); lucide.createIcons(); };
     document.getElementById('loader').classList.remove('hidden');
     await Promise.all([fetchInventory(), fetchDatasheets()]);
     document.getElementById('loader').classList.add('hidden');
     showView('home');
 }
 
+// DATA FETCHING
 async function fetchInventory() {
     try {
         const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${G_SHEET_ID}?key=${G_API_KEY}`);
@@ -232,20 +189,20 @@ async function fetchDatasheets() {
     } catch(e) { console.error(e); }
 }
 
+// NAVIGATION
 function showView(view) {
     document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
     document.getElementById('view-' + view).classList.remove('hidden');
     if(view === 'inventory') { renderInventoryCats(); document.getElementById('inv-table-view').classList.add('hidden'); }
     if(view === 'datasheets') showDatasheetCats();
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('nav-' + view)?.classList.add('active');
     lucide.createIcons();
 }
 
 function renderInventoryCats() {
     document.getElementById('inv-cats').innerHTML = Object.keys(inventoryData).map(cat => `
-        <div class="card" onclick="renderTable('${cat}')">
-            <div class="icon-wrapper"><i data-lucide="layers"></i></div>
-            <h3>${cat}</h3>
-        </div>`).join('');
+        <div class="card" onclick="renderTable('${cat}')"><div class="icon-wrapper"><i data-lucide="layers"></i></div><h3>${cat}</h3></div>`).join('');
     lucide.createIcons();
 }
 
@@ -263,10 +220,7 @@ function showDatasheetCats() {
     document.getElementById('ds-items-screen').classList.add('hidden');
     document.getElementById('ds-cats').classList.remove('hidden');
     document.getElementById('ds-cats').innerHTML = Object.keys(datasheetData).map(c => `
-        <div class="card" onclick="showItems('${c}')">
-            <div class="icon-wrapper"><i data-lucide="folder"></i></div>
-            <h3>${c}</h3>
-        </div>`).join('');
+        <div class="card" onclick="showItems('${c}')"><div class="icon-wrapper"><i data-lucide="folder"></i></div><h3>${c}</h3></div>`).join('');
     lucide.createIcons();
 }
 
@@ -274,14 +228,13 @@ function showItems(cat) {
     document.getElementById('ds-cats').classList.add('hidden');
     document.getElementById('ds-items-screen').classList.remove('hidden');
     document.getElementById('ds-items-grid').innerHTML = datasheetData[cat].map(i => `
-        <div class="card" onclick="openPdf('${i.url}', '${i.name}')">
-            <div class="icon-wrapper"><i data-lucide="file-text"></i></div>
-            <h3>${i.name}</h3>
-        </div>`).join('');
+        <div class="card" onclick="openPdf('${i.url}', '${i.name}')"><div class="icon-wrapper"><i data-lucide="file-text"></i></div><h3>${i.name}</h3></div>`).join('');
     lucide.createIcons();
 }
 
+// PDF CORE
 async function openPdf(url, name) {
+    currentPdfUrl = url;
     document.getElementById('pdf-modal').style.display = 'flex';
     document.getElementById('pdf-title').innerText = name;
     const area = document.getElementById('pdf-render-area');
@@ -289,41 +242,47 @@ async function openPdf(url, name) {
     try {
         const res = await fetch(url);
         currentPdfBlob = await res.blob();
-        const arrayBuffer = await currentPdfBlob.arrayBuffer();
+        const buffer = await currentPdfBlob.arrayBuffer();
         area.innerHTML = '';
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
         for (let n = 1; n <= pdf.numPages; n++) {
             const page = await pdf.getPage(n);
             const vp = page.getViewport({ scale: 1.2 });
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
             canvas.height = vp.height; canvas.width = vp.width;
-            await page.render({ canvasContext: ctx, viewport: vp }).promise;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
             area.appendChild(canvas);
         }
     } catch(e) { area.innerHTML = '<div style="color:red;">Error loading document.</div>'; }
 }
 
-function closePdf() { document.getElementById('pdf-modal').style.display = 'none'; currentPdfBlob = null; }
-
+// ✅ FIXED SHARE: DOWNLOADS IN BG THEN OPENS SHARE
 async function sharePdf() {
-    if (!currentPdfBlob) return;
     const name = document.getElementById('pdf-title').innerText;
-    const file = new File([currentPdfBlob], `${name}.pdf`, { type: 'application/pdf' });
-    
-    // Background preparation and direct share
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-            await navigator.share({ files: [file], title: name });
-        } catch (err) {
-            // If user cancels share, don't download, just stop. 
-            // If it's a technical error, download as backup.
-            if(err.name !== 'AbortError') downloadPdf();
+    try {
+        if (!currentPdfBlob && currentPdfUrl) {
+            const res = await fetch(currentPdfUrl);
+            currentPdfBlob = await res.blob();
         }
-    } else {
-        // Fallback: If Share API is not supported (like on desktop), download it
+        if (currentPdfBlob) {
+            const file = new File([currentPdfBlob], `${name}.pdf`, { type: 'application/pdf' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: name });
+                return;
+            }
+        }
+        if (navigator.share && currentPdfUrl) {
+            await navigator.share({ title: name, url: currentPdfUrl });
+            return;
+        }
         downloadPdf();
-    }
+    } catch (err) { if(err.name !== 'AbortError') downloadPdf(); }
+}
+
+function shareWhatsApp() {
+    if(!currentPdfUrl) return;
+    const name = document.getElementById('pdf-title').innerText;
+    window.open(`https://wa.me/?text=${encodeURIComponent(name + '\n' + currentPdfUrl)}`,'_blank');
 }
 
 function downloadPdf() {
@@ -335,6 +294,8 @@ function downloadPdf() {
     document.body.appendChild(a); a.click();
     document.body.removeChild(a); URL.revokeObjectURL(url);
 }
+
+function closePdf() { document.getElementById('pdf-modal').style.display = 'none'; currentPdfBlob = null; }
 </script>
 </body>
 </html>
