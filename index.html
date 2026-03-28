@@ -71,6 +71,15 @@ body {
 
 .hidden { display: none !important; }
 
+/* Simple Lock Screen Styles */
+#lock-screen {
+    position: fixed; inset: 0; z-index: 9999; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+}
+.lock-box { text-align: center; background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
+.lock-box input { padding: 10px; border-radius: 8px; border: 1px solid var(--border); width: 100px; text-align: center; font-size: 18px; display: block; margin: 10px auto; }
+.lock-box button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
 /* Premium Navigation */
 nav {
     display: flex;
@@ -549,6 +558,15 @@ tr:hover td {
 </head>
 <body class="dark">
 
+<div id="lock-screen">
+    <div class="lock-box">
+        <h3>Enter Access Code</h3>
+        <input type="password" id="passInput" maxlength="4">
+        <button onclick="checkPass()">Unlock</button>
+    </div>
+</div>
+
+<div id="main-content" class="hidden">
 <div id="loader" class="hidden">Syncing...</div>
 
 <nav>
@@ -611,8 +629,17 @@ tr:hover td {
     </div>
     <div id="pdf-render-area"></div>
 </div>
+</div>
 
 <script>
+function checkPass() {
+    if(document.getElementById('passInput').value === '5511') {
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('main-content').classList.remove('hidden');
+        init();
+    } else { alert('Incorrect Code'); }
+}
+
 const G_SHEET_ID = '1yn96hq69kWn_MdrFwY_OgUBfhqu-NtJz_LADBxjVrZQ';
 const G_API_KEY = 'AIzaSyDUGiUA64AawBtYD-v1Op4lXtW7mX8F4J0';
 const GH_CONFIG = { OWNER: "nasirsudhir320-source", REPO: "Datasheets", BRANCH: "main" };
@@ -763,8 +790,6 @@ async function sharePdf() {
         await navigator.share({ files: [file] });
     }
 }
-
-init();
 </script>
 </body>
 </html>
