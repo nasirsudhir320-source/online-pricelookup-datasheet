@@ -71,14 +71,23 @@ body {
 
 .hidden { display: none !important; }
 
-/* Simple Lock Screen Styles */
+/* Password Protection UI */
 #lock-screen {
-    position: fixed; inset: 0; z-index: 9999; background: var(--bg);
+    position: fixed; inset: 0; z-index: 9999; background: var(--bg-gradient);
     display: flex; align-items: center; justify-content: center;
 }
-.lock-box { text-align: center; background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
-.lock-box input { padding: 10px; border-radius: 8px; border: 1px solid var(--border); width: 100px; text-align: center; font-size: 18px; display: block; margin: 10px auto; }
-.lock-box button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.lock-box { 
+    background: var(--card-bg); padding: 40px; border-radius: 24px; 
+    border: 1px solid var(--card-border); text-align: center; box-shadow: var(--shadow-card);
+}
+.lock-box input { 
+    display: block; width: 100%; padding: 12px; margin: 20px 0; 
+    border-radius: 12px; border: 1px solid var(--border); text-align: center; font-size: 20px;
+}
+.lock-box button { 
+    background: var(--accent-gradient); color: white; border: none; 
+    padding: 12px 30px; border-radius: 12px; font-weight: 700; cursor: pointer;
+}
 
 /* Premium Navigation */
 nav {
@@ -560,84 +569,88 @@ tr:hover td {
 
 <div id="lock-screen">
     <div class="lock-box">
-        <h3>Enter Access Code</h3>
-        <input type="password" id="passInput" maxlength="4">
-        <button onclick="checkPass()">Unlock</button>
+        <h2 style="margin:0">PRO PORTAL</h2>
+        <input type="password" id="pin" placeholder="ENTER PIN" maxlength="4">
+        <button onclick="unlock()">UNLOCK</button>
     </div>
 </div>
 
 <div id="main-content" class="hidden">
-<div id="loader" class="hidden">Syncing...</div>
+    <div id="loader" class="hidden">Syncing...</div>
 
-<nav>
-    <div onclick="showView('home')" class="logo">SUDHIR <span>RENTALS</span></div>
-    <div id="themeToggle">
-        <i data-lucide="moon"></i>
-    </div>
-</nav>
+    <nav>
+        <div onclick="showView('home')" class="logo">SUDHIR <span>RENTALS</span></div>
+        <div id="themeToggle">
+            <i data-lucide="moon"></i>
+        </div>
+    </nav>
 
-<div class="container">
-    <div id="view-home" class="grid-view">
-        <div class="card" onclick="showView('inventory')">
-            <div class="icon-wrapper">
-                <i data-lucide="calculator"></i>
+    <div class="container">
+        <div id="view-home" class="grid-view">
+            <div class="card" onclick="showView('inventory')">
+                <div class="icon-wrapper">
+                    <i data-lucide="calculator"></i>
+                </div>
+                <h3>Pricing Tool</h3>
+                <p>Rental Rates</p>
             </div>
-            <h3>Pricing Tool</h3>
-            <p>Rental Rates</p>
-        </div>
-        <div class="card" onclick="showView('datasheets')">
-            <div class="icon-wrapper">
-                <i data-lucide="scroll-text"></i>
+            <div class="card" onclick="showView('datasheets')">
+                <div class="icon-wrapper">
+                    <i data-lucide="scroll-text"></i>
+                </div>
+                <h3>Datasheets</h3>
+                <p>Technical Specs</p>
             </div>
-            <h3>Datasheets</h3>
-            <p>Technical Specs</p>
+        </div>
+
+        <div id="view-inventory" class="hidden">
+            <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Home</button>
+            <div id="inv-cats" class="grid-view"></div>
+            <div id="inv-table-view" class="hidden">
+                <button class="btn-back" onclick="showView('inventory')"><i data-lucide="chevron-left"></i> Categories</button>
+                <div class="table-wrapper" id="inv-table-area"></div>
+            </div>
+        </div>
+
+        <div id="view-datasheets" class="hidden">
+            <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Home</button>
+            <div id="ds-cats" class="grid-view"></div>
+            <div id="ds-items-screen" class="hidden">
+                <button class="btn-back" onclick="showDatasheetCats()"><i data-lucide="chevron-left"></i> Folders</button>
+                <div id="ds-items-grid" class="grid-view"></div>
+            </div>
         </div>
     </div>
 
-    <div id="view-inventory" class="hidden">
-        <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Home</button>
-        <div id="inv-cats" class="grid-view"></div>
-        <div id="inv-table-view" class="hidden">
-            <button class="btn-back" onclick="showView('inventory')"><i data-lucide="chevron-left"></i> Categories</button>
-            <div class="table-wrapper" id="inv-table-area"></div>
-        </div>
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="showView('home')"><i data-lucide="home"></i>HOME</div>
+        <div class="nav-item" onclick="showView('inventory')"><i data-lucide="dollar-sign"></i>PRICES</div>
+        <div class="nav-item" onclick="showView('datasheets')"><i data-lucide="file-text"></i>DOCS</div>
     </div>
 
-    <div id="view-datasheets" class="hidden">
-        <button class="btn-back" onclick="showView('home')"><i data-lucide="chevron-left"></i> Home</button>
-        <div id="ds-cats" class="grid-view"></div>
-        <div id="ds-items-screen" class="hidden">
-            <button class="btn-back" onclick="showDatasheetCats()"><i data-lucide="chevron-left"></i> Folders</button>
-            <div id="ds-items-grid" class="grid-view"></div>
+    <div id="pdf-modal">
+        <div class="pdf-header">
+            <span id="pdf-title">Viewer</span>
+            <div class="pdf-actions">
+                <button class="pdf-btn share" onclick="sharePdf()"><i data-lucide="share-2" style="width:16px;height:16px;"></i> Share</button>
+                <button class="pdf-btn close" onclick="closePdf()"><i data-lucide="x" style="width:16px;height:16px;"></i> Close</button>
+            </div>
         </div>
+        <div id="pdf-render-area"></div>
     </div>
-</div>
-
-<div class="bottom-nav">
-    <div class="nav-item" onclick="showView('home')"><i data-lucide="home"></i>HOME</div>
-    <div class="nav-item" onclick="showView('inventory')"><i data-lucide="dollar-sign"></i>PRICES</div>
-    <div class="nav-item" onclick="showView('datasheets')"><i data-lucide="file-text"></i>DOCS</div>
-</div>
-
-<div id="pdf-modal">
-    <div class="pdf-header">
-        <span id="pdf-title">Viewer</span>
-        <div class="pdf-actions">
-            <button class="pdf-btn share" onclick="sharePdf()"><i data-lucide="share-2" style="width:16px;height:16px;"></i> Share</button>
-            <button class="pdf-btn close" onclick="closePdf()"><i data-lucide="x" style="width:16px;height:16px;"></i> Close</button>
-        </div>
-    </div>
-    <div id="pdf-render-area"></div>
-</div>
 </div>
 
 <script>
-function checkPass() {
-    if(document.getElementById('passInput').value === '5511') {
+// Password protection logic
+function unlock() {
+    const pin = document.getElementById('pin').value;
+    if(pin === '5511') {
         document.getElementById('lock-screen').style.display = 'none';
         document.getElementById('main-content').classList.remove('hidden');
-        init();
-    } else { alert('Incorrect Code'); }
+        init(); // Run original initialization
+    } else {
+        alert("Incorrect PIN");
+    }
 }
 
 const G_SHEET_ID = '1yn96hq69kWn_MdrFwY_OgUBfhqu-NtJz_LADBxjVrZQ';
