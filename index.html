@@ -80,12 +80,9 @@
             transition: transform 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        /* Class to show it */
         #broadcast-bar.active {
             transform: translateY(0);
         }
-
-        /* Add padding to top elements when bar is active */
         body.has-notification #main-content nav { padding-top: 60px; }
         body.has-notification #auth-overlay .auth-card { margin-top: 40px; }
 
@@ -174,7 +171,6 @@
         .bento-item:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .bento-item:active { transform: scale(0.98); }
 
-        /* Bento Layout Specifics */
         .bento-wide { grid-column: span 2; flex-direction: row; align-items: center; justify-content: space-between; min-height: 120px; }
         
         .card-icon-box { 
@@ -231,11 +227,47 @@
         .nav-item.active { color: var(--accent); transform: scale(1.05); }
         .nav-item i { width: 20px; height: 20px; }
 
-        /* --- Tables --- */
-        .table-wrapper { background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--card-border); overflow: hidden; margin-top: 16px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: rgba(255,255,255,0.02); padding: 16px; text-align: left; color: var(--text-sub); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-        td { padding: 16px; border-top: 1px solid var(--card-border); color: var(--text-main); }
+        /* --- Tables (FIXED SCROLL) --- */
+        .table-wrapper { 
+            background: var(--card-bg); 
+            border-radius: var(--radius-lg); 
+            border: 1px solid var(--card-border); 
+            overflow: hidden; 
+            margin-top: 16px;
+            /* Enable horizontal scroll */
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+        
+        table { 
+            /* Prevent table from collapsing */
+            width: 100%; 
+            min-width: 600px; /* Ensures scroll on mobile */
+            border-collapse: collapse; 
+            font-size: 13px; 
+        }
+        
+        th { 
+            background: rgba(255,255,255,0.02); 
+            padding: 16px; 
+            text-align: left; 
+            color: var(--text-sub); 
+            font-weight: 600; 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            /* Prevent wrapping to keep columns wide */
+            white-space: nowrap; 
+        }
+        
+        td { 
+            padding: 16px; 
+            border-top: 1px solid var(--card-border); 
+            color: var(--text-main);
+            /* Prevent wrapping to keep columns wide */
+            white-space: nowrap; 
+        }
 
         /* --- PDF Modal --- */
         #pdf-modal { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; flex-direction: column; }
@@ -303,7 +335,7 @@
                     </div>
                 </div>
 
-                <!-- Standard Card: Support (Updated Number) -->
+                <!-- Standard Card: Support -->
                 <div class="bento-item" onclick="openSupport()">
                     <div class="card-icon-box" style="background: rgba(37, 211, 102, 0.1); color: #25D363;"><i data-lucide="message-circle"></i></div>
                     <div class="card-content">
@@ -385,7 +417,6 @@ function unlock() {
 
 // --- ACTIONS ---
 function openSupport() {
-    // Updated WhatsApp Number to +966508886316
     window.open('https://wa.me/966508886316?text=Hi%20Sudhir%20Rentals,%20I%20need%20support.', '_blank');
 }
 
@@ -408,7 +439,7 @@ async function fetchNotification() {
             document.getElementById('broadcast-text').innerText = text;
             document.getElementById('broadcast-bar').classList.add('active');
             document.body.classList.add('has-notification');
-            lucide.createIcons(); // Refresh icons for the bar
+            lucide.createIcons(); 
         }
     } catch(e) { console.log("Notification fetch error", e); }
 }
@@ -416,7 +447,7 @@ async function fetchNotification() {
 // --- DATA LOGIC ---
 async function init() { 
     lucide.createIcons(); 
-    fetchNotification(); // Fetch notification on start
+    fetchNotification(); 
     await Promise.all([fetchInventory(), fetchDatasheets()]); 
 }
 
@@ -453,7 +484,6 @@ function showView(view) {
     document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
     document.getElementById('view-' + view).classList.remove('hidden');
     
-    // Update Nav
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     let activeNav = Array.from(document.querySelectorAll('.nav-item')).find(n => n.innerText.toLowerCase().includes(view === 'home' ? 'home' : view.slice(0,4)));
     if(activeNav) activeNav.classList.add('active');
