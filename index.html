@@ -38,7 +38,8 @@
         .logo { font-weight: 800; font-size: 18px; }
         .logo span { color: var(--accent); }
 
-        main { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+        /* FIXED: Increased padding to prevent bottom tab overlap */
+        main { flex: 1; overflow-y: auto; padding-bottom: 120px; }
         .view-section { padding: 15px; animation: fadeIn 0.15s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -67,7 +68,10 @@
         /* Detail/PDF Overlay */
         .overlay-view { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; }
         .overlay-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; background: var(--card); }
-        .scroll-area { flex: 1; overflow: auto; padding: 10px; }
+        
+        /* FIXED: Ensuring overlays also respect the bottom navigation area */
+        .scroll-area { flex: 1; overflow: auto; padding: 10px 10px 100px 10px; }
+        
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
         th { background: #1e293b; padding: 10px; text-align: left; color: var(--text-dim); }
         td { padding: 10px; border-bottom: 1px solid var(--border); }
@@ -76,7 +80,7 @@
 
         /* Bottom Nav */
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--border); display: flex; padding: 10px 0 calc(env(safe-area-inset-bottom) + 5px); z-index: 1000; }
-        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); border: none; background: none; }
+        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); border: none; background: none; outline: none; }
         .nav-tab.active { color: var(--accent); }
         .nav-tab span { font-size: 9px; font-weight: 700; }
 
@@ -101,7 +105,7 @@
     <div class="auth-card">
         <h2 style="margin-bottom:10px">SUDHIR PRO</h2>
         <input type="password" id="pin" class="pin-box" maxlength="4" inputmode="numeric" placeholder="••••" />
-        <button style="width:100%; padding:15px; border-radius:12px; background:var(--accent); font-weight:800; border:none;" onclick="doAuth()">LOGIN</button>
+        <button style="width:100%; padding:15px; border-radius:12px; background:var(--accent); font-weight:800; border:none; color: #000" onclick="doAuth()">LOGIN</button>
     </div>
 </div>
 
@@ -111,7 +115,7 @@
         <div style="font-size: 10px; color: var(--text-dim); font-weight: 600;">PORTAL</div>
     </header>
 
-    <main>
+    <main id="main-content">
         <div id="tab-home" class="view-section">
             <div id="top-notification" class="top-notif hidden">
                 <i data-lucide="bell-ring" size="18"></i>
@@ -134,9 +138,9 @@
 
     <nav>
         <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>BACK</span></button>
-        <button class="nav-tab active" onclick="switchTab('home')"><i data-lucide="home"></i><span>HOME</span></button>
-        <button class="nav-tab" onclick="switchTab('rates')"><i data-lucide="calculator"></i><span>RATES</span></button>
-        <button class="nav-tab" onclick="switchTab('team')"><i data-lucide="users"></i><span>TEAM</span></button>
+        <button class="nav-tab active" id="btn-home" onclick="switchTab('home')"><i data-lucide="home"></i><span>HOME</span></button>
+        <button class="nav-tab" id="btn-rates" onclick="switchTab('rates')"><i data-lucide="calculator"></i><span>RATES</span></button>
+        <button class="nav-tab" id="btn-team" onclick="switchTab('team')"><i data-lucide="users"></i><span>TEAM</span></button>
     </nav>
 </div>
 
@@ -159,7 +163,6 @@
 </div>
 
 <script>
-// Workers and Global Setup
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
 const CONFIG = {
@@ -169,11 +172,11 @@ const CONFIG = {
 };
 
 const YARD_DATA = [
-    { n: "Tabuk Yard", u: "https://maps.app.goo.gl/YfWJp" },
-    { n: "Jeddah Yard", u: "https://maps.app.goo.gl/ZgXKq" },
-    { n: "Riyadh AWP Yard", u: "https://maps.app.goo.gl/AhYLr" },
-    { n: "Riyadh Genset Yard", u: "https://maps.app.goo.gl/BiZMs" },
-    { n: "Dammam Yard", u: "https://maps.app.goo.gl/CjANt" }
+    { n: "Tabuk Yard", u: "https://maps.app.goo.gl/Tabuk" },
+    { n: "Jeddah Yard", u: "https://maps.app.goo.gl/Jeddah" },
+    { n: "Riyadh AWP Yard", u: "https://maps.app.goo.gl/RiyadhAWP" },
+    { n: "Riyadh Genset Yard", u: "https://maps.app.goo.gl/RiyadhGenset" },
+    { n: "Dammam Yard", u: "https://maps.app.goo.gl/Dammam" }
 ];
 
 const TEAM_DATA = [
@@ -196,7 +199,6 @@ const TEAM_DATA = [
         { n: "Soud (AWP)", d: "Dammam Yard", p: "966582727601" },
         { n: "Rony (Genset)", d: "Riyadh Yard", p: "966530894929" },
         { n: "Shanto (AWP)", d: "Riyadh Yard", p: "966565130225" },
-        { n: "Shamir", d: "Jeddah Yard", p: "966533326321" },
         { n: "Rajesh (Genset)", d: "Tabuk Yard", p: "966555286534" },
         { n: "Mukesh (AWP)", d: "Tabuk Yard", p: "966552767809" }
     ]}
@@ -208,15 +210,12 @@ let currentFile = { name: "", url: "", blob: null };
 function updateSync(pct) {
     const bar = document.getElementById('sync-bar');
     const label = document.getElementById('sync-pct');
-    const offset = 283 - (pct / 100) * 283;
-    bar.style.strokeDashoffset = offset;
+    bar.style.strokeDashoffset = 283 - (pct / 100) * 283;
     label.innerText = pct + '%';
-    if(pct >= 100) {
-        setTimeout(() => {
-            document.getElementById('sync-overlay').classList.add('hidden');
-            document.getElementById('app-shell').classList.remove('hidden');
-        }, 800);
-    }
+    if(pct >= 100) setTimeout(() => {
+        document.getElementById('sync-overlay').classList.add('hidden');
+        document.getElementById('app-shell').classList.remove('hidden');
+    }, 800);
 }
 
 function doAuth() {
@@ -231,7 +230,6 @@ async function init() {
     lucide.createIcons();
     renderYards();
     renderTeam();
-    
     updateSync(10);
     await loadRates();
     updateSync(50);
@@ -239,7 +237,6 @@ async function init() {
     updateSync(80);
     await loadNotif();
     updateSync(100);
-    
     renderGrids();
 }
 
@@ -311,12 +308,14 @@ function renderGrids() {
 }
 
 function switchTab(tab) {
+    document.getElementById('main-content').scrollTop = 0;
     document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
     document.getElementById('tab-'+tab).classList.remove('hidden');
-    document.querySelectorAll('.nav-tab').forEach(n => {
-        n.classList.remove('active');
-        if(n.querySelector('span') && n.querySelector('span').innerText === (tab === 'yards' ? 'HOME' : tab.toUpperCase())) n.classList.add('active');
-    });
+    
+    document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
+    if(tab === 'home') document.getElementById('btn-home').classList.add('active');
+    else if(tab === 'rates') document.getElementById('btn-rates').classList.add('active');
+    else if(tab === 'team') document.getElementById('btn-team').classList.add('active');
 }
 
 function goBack() {
@@ -346,32 +345,24 @@ async function openPdf(url, name) {
     const overlay = document.getElementById('pdf-overlay');
     const box = document.getElementById('pdf-render-box');
     overlay.classList.remove('hidden');
-    box.innerHTML = `<div style="padding:40px; text-align:center"><p style="color:var(--accent)">Connecting to GitHub...</p></div>`;
+    box.innerHTML = `<div style="padding:40px; text-align:center"><p style="color:var(--accent)">Connecting...</p></div>`;
 
     try {
-        const response = await fetch(url, { mode: 'cors' });
-        if (!response.ok) throw new Error("Could not fetch file");
-        
+        const response = await fetch(url);
         currentFile.blob = await response.blob();
         const pdfData = new Uint8Array(await currentFile.blob.arrayBuffer());
         const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-        
         box.innerHTML = "";
         for(let i=1; i<=pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
             const viewport = page.getViewport({ scale: 1.5 });
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            await page.render({ canvasContext: context, viewport }).promise;
+            canvas.width = viewport.width; canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
             box.appendChild(canvas);
         }
     } catch (err) {
-        box.innerHTML = `<div class="error-msg">
-            <p>Unable to load preview directly.</p>
-            <button class="retry-btn" onclick="window.open('${url}', '_blank')">Open in Browser</button>
-        </div>`;
+        box.innerHTML = `<div class="error-msg"><p>Failed to load.</p><button class="retry-btn" onclick="window.open('${url}', '_blank')">Open Browser</button></div>`;
     }
 }
 
