@@ -126,6 +126,7 @@
             <div class="dash-grid">
                 <div class="dash-card" onclick="switchTab('rates')"><i data-lucide="calculator" size="28"></i><span>PRICE LOOKUP</span></div>
                 <div class="dash-card" onclick="switchTab('docs')"><i data-lucide="file-text" size="28"></i><span>DATASHEETS</span></div>
+                <div class="dash-card" onclick="openMachinePhotos()"><i data-lucide="camera" size="28"></i><span>MACHINE PHOTOS</span></div>
                 <div class="dash-card" onclick="switchTab('yards')"><i data-lucide="map-pin" size="28"></i><span>YARD LOCATION</span></div>
                 <div class="dash-card" onclick="switchTab('team')"><i data-lucide="phone-forwarded" size="28"></i><span>TEAM CONTACT</span></div>
             </div>
@@ -140,6 +141,7 @@
         <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>BACK</span></button>
         <button class="nav-tab active" id="btn-home" onclick="switchTab('home')"><i data-lucide="home"></i><span>HOME</span></button>
         <button class="nav-tab" id="btn-rates" onclick="switchTab('rates')"><i data-lucide="calculator"></i><span>RATES</span></button>
+        <button class="nav-tab" id="btn-photos" onclick="openMachinePhotos()"><i data-lucide="camera"></i><span>PHOTOS</span></button>
         <button class="nav-tab" id="btn-team" onclick="switchTab('team')"><i data-lucide="users"></i><span>TEAM</span></button>
     </nav>
 </div>
@@ -168,7 +170,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 const CONFIG = {
     SHEET: '1yn96hq69kWn_MdrFwY_OgUBfhqu-NtJz_LADBxjVrZQ',
     KEY: 'AIzaSyDUGiUA64AawBtYD-v1Op4lXtW7mX8F4J0',
-    GH: { user: "nasirsudhir320-source", repo: "Datasheets" }
+    GH: { user: "nasirsudhir320-source", repo: "Datasheets" },
+    PHOTOS_URL: "https://nasirowayne-wq.github.io/Machine-Photos/"
 };
 
 const YARD_DATA = [
@@ -316,6 +319,10 @@ function switchTab(tab) {
     if(tab === 'home') document.getElementById('btn-home').classList.add('active');
     else if(tab === 'rates') document.getElementById('btn-rates').classList.add('active');
     else if(tab === 'team') document.getElementById('btn-team').classList.add('active');
+}
+
+function openMachinePhotos() {
+    window.open(CONFIG.PHOTOS_URL, '_blank');
 }
 
 function goBack() {
