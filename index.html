@@ -38,7 +38,6 @@
         .logo { font-weight: 800; font-size: 18px; }
         .logo span { color: var(--accent); }
 
-        /* FIXED: Increased padding to prevent bottom tab overlap */
         main { flex: 1; overflow-y: auto; padding-bottom: 120px; }
         .view-section { padding: 15px; animation: fadeIn 0.15s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -65,11 +64,9 @@
         .act-btn.success { color: var(--success); }
         .act-btn.wa { color: var(--wa); }
 
-        /* Detail/PDF Overlay */
+        /* Overlays */
         .overlay-view { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; }
         .overlay-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; background: var(--card); }
-        
-        /* FIXED: Ensuring overlays also respect the bottom navigation area */
         .scroll-area { flex: 1; overflow: auto; padding: 10px 10px 100px 10px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -175,11 +172,11 @@ const CONFIG = {
 };
 
 const YARD_DATA = [
-    { n: "Tabuk Yard", u: "https://maps.app.goo.gl/AXQmg7kAA3oTZ2gX6" },
-    { n: "Jeddah Yard", u: "https://maps.app.goo.gl/UtBuiZgZFWYccafP7" },
-    { n: "Riyadh AWP Yard", u: "https://maps.app.goo.gl/rcF3wBS66RsNnxLh9" },
-    { n: "Riyadh Genset Yard", u: "https://maps.app.goo.gl/FTgDVzjYNoZh9rHu8" },
-    { n: "Dammam Yard", u: "https://maps.app.goo.gl/vBy88NCwQN7ZR1uh8" }
+    { n: "Tabuk Yard", u: "https://maps.google.com/?q=Tabuk+Yard" },
+    { n: "Jeddah Yard", u: "https://maps.google.com/?q=Jeddah+Yard" },
+    { n: "Riyadh AWP Yard", u: "https://maps.google.com/?q=Riyadh+AWP+Yard" },
+    { n: "Riyadh Genset Yard", u: "https://maps.google.com/?q=Riyadh+Genset+Yard" },
+    { n: "Dammam Yard", u: "https://maps.google.com/?q=Dammam+Yard" }
 ];
 
 const TEAM_DATA = [
@@ -356,8 +353,10 @@ async function openPdf(url, name) {
 
     try {
         const response = await fetch(url);
-        currentFile.blob = await response.blob();
-        const pdfData = new Uint8Array(await currentFile.blob.arrayBuffer());
+        const blob = await response.blob();
+        currentFile.blob = blob; // CRITICAL: Store blob for sharing
+        
+        const pdfData = new Uint8Array(await blob.arrayBuffer());
         const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
         box.innerHTML = "";
         for(let i=1; i<=pdf.numPages; i++) {
@@ -373,10 +372,44 @@ async function openPdf(url, name) {
     }
 }
 
+async function shareCurrentFile() {
+    if (!currentFile.blob) {
+        alert("Please wait for document to load.");
+        return;
+    }
+
+    try {
+        // Create a proper File object from the downloaded blob
+        const file = new File([currentFile.blob], `${currentFile.name}.pdf`, { type: 'application/pdf' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: currentFile.name,
+                text: `Datasheet: ${currentFile.name}`
+            });
+        } else {
+            // Fallback to sharing the link if the browser doesn't support file sharing
+            await navigator.share({
+                title: currentFile.name,
+                url: currentFile.url
+            });
+        }
+    } catch (err) {
+        console.error("Share failed", err);
+    }
+}
+
 function closeDetails() { document.getElementById('detail-layer').classList.add('hidden'); }
 function closePdf() { document.getElementById('pdf-overlay').classList.add('hidden'); }
-function downloadCurrentFile() { const a = document.createElement('a'); a.href = URL.createObjectURL(currentFile.blob); a.download = `${currentFile.name}.pdf`; a.click(); }
-function shareCurrentFile() { if(navigator.share) navigator.share({ title: currentFile.name, url: currentFile.url }); }
+
+function downloadCurrentFile() { 
+    if(!currentFile.blob) return;
+    const a = document.createElement('a'); 
+    a.href = URL.createObjectURL(currentFile.blob); 
+    a.download = `${currentFile.name}.pdf`; 
+    a.click(); 
+}
 </script>
 </body>
 </html>
