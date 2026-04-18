@@ -231,11 +231,16 @@ async function init() {
     renderYards();
     renderTeam();
     updateSync(10);
-    await loadRates();
-    updateSync(50);
-    await loadDocs();
-    updateSync(80);
-    await loadNotif();
+    
+    // Start loading everything in parallel for maximum speed
+    try {
+        await Promise.all([
+            loadRatesParallel(),
+            loadDocs(),
+            loadNotif()
+        ]);
+    } catch(e) { console.error("Sync partial failure", e); }
+    
     updateSync(100);
     renderGrids();
 }
@@ -275,18 +280,25 @@ function renderTeam() {
 function openWA(num, msg) { window.open(num === '0' ? `https://wa.me/?text=${encodeURIComponent(msg)}` : `https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank'); }
 function copyText(txt) { navigator.clipboard.writeText(txt); alert("Copied!"); }
 
-async function loadRates() {
+// OPTIMIZED: Fetches all rates in one batch call
+async function loadRatesParallel() {
     try {
         const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}?key=${CONFIG.KEY}`);
         const meta = await res.json();
-        for(let s of meta.sheets) {
-            const name = s.properties.title;
-            if(name === "Notifications") continue;
-            const dRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}/values/${encodeURIComponent(name)}?key=${CONFIG.KEY}`);
-            const data = await dRes.json();
-            if(data.values) db.rates[name] = data.values;
-        }
-    } catch(e) {}
+        
+        // Build a single "Batch Get" range string for all sheets at once
+        const validSheets = meta.sheets.filter(s => s.properties.title !== "Notifications");
+        const ranges = validSheets.map(s => encodeURIComponent(s.properties.title)).join('&ranges=');
+        
+        const batchRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}/values:batchGet?key=${CONFIG.KEY}&ranges=${ranges}`);
+        const batchData = await batchRes.json();
+        
+        batchData.valueRanges.forEach((vr, index) => {
+            const name = validSheets[index].properties.title;
+            if(vr.values) db.rates[name] = vr.values;
+        });
+        updateSync(60);
+    } catch(e) { console.error("Rates load failed", e); }
 }
 
 async function loadDocs() {
@@ -298,7 +310,8 @@ async function loadDocs() {
             if(!db.docs[cat]) db.docs[cat] = [];
             db.docs[cat].push({ name: f.path.split('/').pop().replace(/\.[^/.]+$/, ""), url: `https://raw.githubusercontent.com/${CONFIG.GH.user}/${CONFIG.GH.repo}/main/${encodeURIComponent(f.path)}` });
         });
-    } catch(e) {}
+        updateSync(90);
+    } catch(e) { console.error("Docs load failed", e); }
 }
 
 function renderGrids() {
@@ -308,7 +321,7 @@ function renderGrids() {
 }
 
 function switchTab(tab) {
-    // Force close any overlays when switching main tabs
+    // Global Home navigation logic: Close everything when moving between tabs
     closeDetails();
     closePdf();
     
@@ -358,7 +371,7 @@ async function openPdf(url, name) {
     try {
         const response = await fetch(url);
         const blob = await response.blob();
-        currentFile.blob = blob;
+        currentFile.blob = blob; 
         
         const pdfData = new Uint8Array(await blob.arrayBuffer());
         const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
@@ -390,14 +403,9 @@ async function shareCurrentFile() {
                 text: `Datasheet: ${currentFile.name}`
             });
         } else {
-            await navigator.share({
-                title: currentFile.name,
-                url: currentFile.url
-            });
+            await navigator.share({ title: currentFile.name, url: currentFile.url });
         }
-    } catch (err) {
-        console.error("Share failed", err);
-    }
+    } catch (err) { console.error("Share failed", err); }
 }
 
 function closeDetails() { document.getElementById('detail-layer').classList.add('hidden'); }
