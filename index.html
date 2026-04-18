@@ -29,7 +29,13 @@
         body { background: var(--bg); color: #fff; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; background-image: radial-gradient(circle at top right, #1e222d, #05070a); }
         .hidden { display: none !important; }
 
-        /* Auth & Sync */
+        /* Updated Sync Indicator Styling */
+        .sync-pill { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .status-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; transition: 0.3s; }
+        .status-dot.ready { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
+        .sync-text { font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* Auth & Sync Overlay */
         #sync-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 3000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .sync-circle-box { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
         .sync-svg { transform: rotate(-90deg); width: 120px; height: 120px; position: absolute; }
@@ -37,13 +43,13 @@
         .sync-bar { fill: none; stroke: var(--accent); stroke-width: 6; stroke-dasharray: 339; stroke-dashoffset: 339; transition: stroke-dashoffset 0.4s ease; stroke-linecap: round; }
         .sync-pct { font-size: 20px; font-weight: 800; color: var(--accent); }
 
-        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2500; display: flex; align-items: center; justify-content: center; padding: 25px; }
+        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2500; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; }
         .auth-card { background: var(--card); border: 1px solid var(--border); padding: 40px 30px; border-radius: 32px; width: 100%; max-width: 360px; text-align: center; }
         .pin-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: var(--accent); font-size: 32px; letter-spacing: 12px; text-align: center; width: 100%; padding: 15px; border-radius: 16px; margin-bottom: 20px; outline: none; }
 
         /* Main Shell */
         #app-shell { display: flex; flex-direction: column; height: 100%; width: 100%; }
-        header { padding: calc(var(--safe-top) + 15px) 20px 15px; border-bottom: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(15px); }
+        header { padding: calc(var(--safe-top) + 15px) 20px 15px; border-bottom: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; }
         .logo { font-weight: 800; font-size: 22px; }
         .logo span { color: var(--accent); }
 
@@ -93,16 +99,26 @@
 </div>
 
 <div id="auth-screen">
+    <div class="sync-pill" style="margin-bottom: 25px;">
+        <div id="auth-dot" class="status-dot"></div>
+        <span id="auth-sync-text" class="sync-text">0% SYNCING</span>
+    </div>
     <div class="auth-card">
         <div class="logo" style="font-size: 28px;">SUDHIR<span>PRO</span></div>
         <p style="color:var(--text-dim); font-size:12px; margin: 15px 0 25px;">Employee Terminal</p>
         <input type="password" id="pin" class="pin-box" maxlength="4" inputmode="numeric" placeholder="••••" />
-        <button style="width:100%; padding:18px; border-radius:18px; background:var(--accent); font-weight:800; border:none; color:#000" onclick="doAuth()">LOGIN</button>
+        <button id="login-btn" style="width:100%; padding:18px; border-radius:18px; background:var(--border); font-weight:800; border:none; color:var(--text-dim); transition: 0.3s;" onclick="doAuth()">LOGIN</button>
     </div>
 </div>
 
 <div id="app-shell" class="hidden">
-    <header><div class="logo">SUDHIR<span>PRO</span></div></header>
+    <header>
+        <div class="logo">SUDHIR<span>PRO</span></div>
+        <div class="sync-pill">
+            <div id="home-dot" class="status-dot"></div>
+            <span id="home-sync-text" class="sync-text">SYNCING</span>
+        </div>
+    </header>
     
     <main id="main-content">
         <div id="tab-home" class="view-section">
@@ -221,24 +237,50 @@
 
     let db = { rates: {}, docs: {}, notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
+    let isDataReady = false;
 
-    function doAuth() {
-        if(document.getElementById('pin').value === '5511') {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('sync-overlay').classList.remove('hidden');
-            init();
-        } else alert("Invalid PIN");
-    }
-
-    async function init() {
+    window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
         renderYards();
         renderTeam();
-        updateSync(20);
-        await Promise.all([loadRates(), loadDocs()]);
-        updateSync(100);
-        renderGrids();
-        document.getElementById('notif-text').innerText = db.notif;
+        initSync();
+    });
+
+    async function initSync() {
+        updateSyncProgress(10, "STARTING");
+        try {
+            await Promise.all([loadRates(), loadDocs()]);
+            updateSyncProgress(100, "DB READY");
+            
+            isDataReady = true;
+            document.querySelectorAll('.status-dot').forEach(d => d.classList.add('ready'));
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.style.background = 'var(--accent)';
+            loginBtn.style.color = '#000';
+            
+            renderGrids();
+            document.getElementById('notif-text').innerText = db.notif;
+        } catch(e) {
+            updateSyncProgress(0, "SYNC ERROR");
+        }
+    }
+
+    function updateSyncProgress(pct, text) {
+        // Sync circle overlay
+        const bar = document.getElementById('sync-bar');
+        if (bar) bar.style.strokeDashoffset = 339 - (pct/100)*339;
+        const pctText = document.getElementById('sync-pct');
+        if (pctText) pctText.innerText = pct+'%';
+
+        // Pills on login and home
+        document.getElementById('auth-sync-text').innerText = pct + "% " + text;
+        document.getElementById('home-sync-text').innerText = (pct === 100) ? "ONLINE" : pct + "%";
+        
+        if(pct >= 100) {
+            setTimeout(() => { 
+                document.getElementById('sync-overlay').classList.add('hidden'); 
+            }, 600);
+        }
     }
 
     async function loadRates() {
@@ -252,6 +294,7 @@
                 if(names[i] === "Notifications") db.notif = vr.values ? vr.values[0][0] : db.notif;
                 else if(vr.values) db.rates[names[i]] = vr.values;
             });
+            updateSyncProgress(60, "RATES SYNCED");
         } catch(e) {}
     }
 
@@ -379,6 +422,14 @@
         document.getElementById('main-content').scrollTop = 0;
     }
 
+    function doAuth() {
+        if(document.getElementById('pin').value === '5511' && isDataReady) {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+        } else if(!isDataReady) alert("Please wait for sync to finish.");
+        else alert("Invalid PIN");
+    }
+
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     function closeDetails() { document.getElementById('detail-layer').classList.add('hidden'); }
@@ -388,7 +439,6 @@
         else if(!document.getElementById('pdf-overlay').classList.contains('hidden')) closePdf(); 
         else switchTab('home'); 
     }
-    function updateSync(pct) { document.getElementById('sync-bar').style.strokeDashoffset = 339 - (pct/100)*339; document.getElementById('sync-pct').innerText = pct+'%'; if(pct >= 100) setTimeout(() => { document.getElementById('sync-overlay').classList.add('hidden'); document.getElementById('app-shell').classList.remove('hidden'); }, 600); }
 </script>
 </body>
 </html>
