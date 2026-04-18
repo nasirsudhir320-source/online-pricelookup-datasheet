@@ -172,11 +172,11 @@ const CONFIG = {
 };
 
 const YARD_DATA = [
-    { n: "Tabuk Yard", u: "https://maps.google.com/?q=Tabuk+Yard" },
-    { n: "Jeddah Yard", u: "https://maps.google.com/?q=Jeddah+Yard" },
-    { n: "Riyadh AWP Yard", u: "https://maps.google.com/?q=Riyadh+AWP+Yard" },
-    { n: "Riyadh Genset Yard", u: "https://maps.google.com/?q=Riyadh+Genset+Yard" },
-    { n: "Dammam Yard", u: "https://maps.google.com/?q=Dammam+Yard" }
+    { n: "Jeddah Yard", u: "https://maps.app.goo.gl/UtBuiZgZFWYccafP7" },
+    { n: "Riyadh AWP Yard", u: "https://maps.app.goo.gl/rcF3wBS66RsNnxLh9" },
+    { n: "Riyadh Genset Yard", u: "https://maps.app.goo.gl/FTgDVzjYNoZh9rHu8" },
+    { n: "Dammam Yard", u: "https://maps.app.goo.gl/vBy88NCwQN7ZR1uh8" },
+    { n: "Tabuk Yard", u: "https://maps.app.goo.gl/AXQmg7kAA3oTZ2gX6" }
 ];
 
 const TEAM_DATA = [
@@ -308,6 +308,10 @@ function renderGrids() {
 }
 
 function switchTab(tab) {
+    // Force close any overlays when switching main tabs
+    closeDetails();
+    closePdf();
+    
     document.getElementById('main-content').scrollTop = 0;
     document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
     document.getElementById('tab-'+tab).classList.remove('hidden');
@@ -354,7 +358,7 @@ async function openPdf(url, name) {
     try {
         const response = await fetch(url);
         const blob = await response.blob();
-        currentFile.blob = blob; // CRITICAL: Store blob for sharing
+        currentFile.blob = blob;
         
         const pdfData = new Uint8Array(await blob.arrayBuffer());
         const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
@@ -377,11 +381,8 @@ async function shareCurrentFile() {
         alert("Please wait for document to load.");
         return;
     }
-
     try {
-        // Create a proper File object from the downloaded blob
         const file = new File([currentFile.blob], `${currentFile.name}.pdf`, { type: 'application/pdf' });
-
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -389,7 +390,6 @@ async function shareCurrentFile() {
                 text: `Datasheet: ${currentFile.name}`
             });
         } else {
-            // Fallback to sharing the link if the browser doesn't support file sharing
             await navigator.share({
                 title: currentFile.name,
                 url: currentFile.url
