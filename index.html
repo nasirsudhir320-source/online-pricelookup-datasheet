@@ -239,15 +239,55 @@
     let currentPdf = { name: "", blob: null, url: "" };
     let isDataReady = false;
 
-    // Custom History Stack array to store structural navigation history
-    let appHistory = [{ type: 'tab', target: 'home' }];
+    // Master tracking properties for deep link verification
+    let currentTabState = "home";
+    let isDetailOpenState = false;
+    let isPdfOpenState = false;
+    let currentDetailCat = "";
+    let currentDetailModule = "";
 
     window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
         renderYards();
         renderTeam();
         initSync();
+
+        // Initialize Native Browser State Tracking
+        window.history.replaceState({ type: 'tab', target: 'home' }, '');
     });
+
+    // CRITICAL: Listen directly to browser physical back-button click or swipe events
+    window.addEventListener('popstate', (event) => {
+        if (!event.state) return;
+        renderState(event.state);
+    });
+
+    function renderState(state) {
+        if (state.type === 'tab') {
+            isDetailOpenState = false;
+            isPdfOpenState = false;
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.add('hidden');
+            currentTabState = state.target;
+            applyTabStyles(state.target);
+        } 
+        else if (state.type === 'detail') {
+            isPdfOpenState = false;
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.remove('hidden');
+            
+            isDetailOpenState = true;
+            currentDetailCat = state.target;
+            currentDetailModule = state.subType;
+            document.getElementById('detail-title').innerText = state.target;
+            
+            if (state.subType === 'rates') {
+                buildRatesContent(state.target);
+            } else {
+                buildDocsContent(state.target);
+            }
+        }
+    }
 
     async function initSync() {
         updateSyncProgress(10, "STARTING");
@@ -364,23 +404,41 @@
     }
 
     function viewRates(cat) {
-        // Push current view context to the custom history stack array
-        appHistory.push({ type: 'detail', target: cat, subType: 'rates' });
+        currentDetailCat = cat;
+        currentDetailModule = "rates";
+        isDetailOpenState = true;
 
-        const rows = db.rates[cat];
+        // Push layout step to window history API
+        window.history.pushState({ type: 'detail', target: cat, subType: 'rates' }, '');
+
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
+        buildRatesContent(cat);
+    }
+
+    function buildRatesContent(cat) {
+        const rows = db.rates[cat];
+        if(!rows) return;
         let html = `<div style="overflow-x:auto"><table style="width:100%; border-collapse:collapse;"><thead><tr>${rows[0].map(h => `<th style="text-align:left; padding:10px; font-size:10px; color:var(--text-dim); border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead><tbody>`;
         rows.slice(1).forEach(r => html += `<tr>${r.map(c => `<td style="padding:10px; font-size:12px; border-bottom:1px solid var(--border);">${c}</td>`).join('')}</tr>`);
         document.getElementById('detail-content').innerHTML = html + `</tbody></table></div>`;
     }
 
     function viewDocs(cat) {
-        // Push current view context to the custom history stack array
-        appHistory.push({ type: 'detail', target: cat, subType: 'docs' });
+        currentDetailCat = cat;
+        currentDetailModule = "docs";
+        isDetailOpenState = true;
+
+        // Push layout step to window history API
+        window.history.pushState({ type: 'detail', target: cat, subType: 'docs' }, '');
 
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
+        buildDocsContent(cat);
+    }
+
+    function buildDocsContent(cat) {
+        if(!db.docs[cat]) return;
         document.getElementById('detail-content').innerHTML = db.docs[cat].map(f => `
             <div class="item-card" onclick="openPdf('${f.url}', '${f.name}')">
                 <div class="item-info"><h4>${f.name}</h4><p>Technical PDF</p></div>
@@ -390,8 +448,9 @@
     }
 
     async function openPdf(url, name) {
-        // Push PDF visibility state context directly to history track loop
-        appHistory.push({ type: 'pdf', url: url, name: name });
+        isPdfOpenState = true;
+        // Push distinct history state layout entry for PDF overlay mapping
+        window.history.pushState({ type: 'pdf', url: url, name: name }, '');
 
         currentPdf = { name, url, blob: null };
         document.getElementById('pdf-overlay').classList.remove('hidden');
@@ -422,15 +481,13 @@
         try { await navigator.share({ files: [file], title: currentPdf.name }); } catch(e) { navigator.share({ url: currentPdf.url }); }
     }
 
-    // Standard baseline navigation tracker
     function navigateToTab(tab) {
-        // If switching tabs completely, reset or update history context base line 
-        if (tab === 'home') {
-            appHistory = [{ type: 'tab', target: 'home' }];
-        } else {
-            // Push tab navigation state securely
-            appHistory.push({ type: 'tab', target: tab });
-        }
+        currentTabState = tab;
+        isDetailOpenState = false;
+        isPdfOpenState = false;
+        
+        // Push base tab transition into window history tracking configuration
+        window.history.pushState({ type: 'tab', target: tab }, '');
         applyTabStyles(tab);
     }
 
@@ -454,35 +511,9 @@
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     
-    /* NEW STACK-BASED HISTORY NAVIGATION ENGINE */
+    // On-screen programmatic navigation button handler triggers native back action safely
     function goBack() {
-        if (appHistory.length <= 1) {
-            // Ensure we keep baseline home view framework safe
-            appHistory = [{ type: 'tab', target: 'home' }];
-            document.getElementById('pdf-overlay').classList.add('hidden');
-            document.getElementById('detail-layer').classList.add('hidden');
-            applyTabStyles('home');
-            return;
-        }
-
-        // Pop current active framework state away
-        appHistory.pop();
-
-        // Check lookahead target to paint layout appropriately
-        const previousState = appHistory[appHistory.length - 1];
-
-        if (previousState.type === 'tab') {
-            // Securely shut layout screens down
-            document.getElementById('pdf-overlay').classList.add('hidden');
-            document.getElementById('detail-layer').classList.add('hidden');
-            applyTabStyles(previousState.target);
-        } 
-        else if (previousState.type === 'detail') {
-            // If the back button goes back into an open category detail grid sheet context
-            document.getElementById('pdf-overlay').classList.add('hidden');
-            document.getElementById('detail-layer').classList.remove('hidden');
-            document.getElementById('detail-title').innerText = previousState.target;
-        }
+        window.history.back();
     }
 </script>
 </body>
