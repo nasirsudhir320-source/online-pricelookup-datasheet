@@ -239,7 +239,7 @@
     let currentPdf = { name: "", blob: null, url: "" };
     let isDataReady = false;
 
-    // Master Internal App History Stack System
+    // Internal App Stack Navigation Tracking Matrix Array
     let appHistory = [{ type: 'tab', target: 'home' }];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -248,22 +248,18 @@
         renderTeam();
         initSync();
 
-        // 1. Force state mapping into browser window loop
-        window.history.replaceState({ step: 1 }, '');
-        window.history.pushState({ step: 2 }, '');
+        // Safe Deep History injection engine. Creates a 100-deep cushion layer
+        // so hardware gestures/back presses just roll backward on dummy numbers
+        // instead of crashing or exiting the standalone viewport container.
+        for (let i = 0; i < 100; i++) {
+            window.history.pushState({ routeDummyIdx: i }, '');
+        }
 
-        // 2. Continuous trap to keep browser history locked from closing app
         window.addEventListener('popstate', function(e) {
-            window.history.pushState({ step: 2 }, '');
-            executeBackAction(); // Run code navigation engine safely instead
+            // Put the back step cushioning state immediately right back in place
+            window.history.pushState({ routeDummyIdx: 101 }, '');
+            executeBackAction();
         });
-
-        // 3. Prevent structural edge touch gesture swipes from triggering app closure on iOS
-        window.addEventListener('touchstart', (e) => {
-            if (e.touches[0].clientX < 40 || e.touches[0].clientX > window.innerWidth - 40) {
-                e.preventDefault();
-            }
-        }, { passive: false });
     });
 
     async function initSync() {
@@ -370,4 +366,132 @@
             </div>`;
         });
         
-        document.getElementById('contact-list').innerHTML
+        document.getElementById('contact-list').innerHTML = html;
+        lucide.createIcons();
+    }
+
+    function renderGrids() {
+        document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => `<div class="dash-card" onclick="viewRates('${cat}')"><i data-lucide="tag"></i><span>${cat}</span></div>`).join('');
+        document.getElementById('docs-grid').innerHTML = Object.keys(db.docs).map(cat => `<div class="dash-card" onclick="viewDocs('${cat}')"><i data-lucide="file-text"></i><span>${cat}</span></div>`).join('');
+        lucide.createIcons();
+    }
+
+    function viewRates(cat) {
+        appHistory.push({ type: 'detail', target: cat, subType: 'rates' });
+
+        const rows = db.rates[cat];
+        document.getElementById('detail-layer').classList.remove('hidden');
+        document.getElementById('detail-title').innerText = cat;
+        let html = `<div style="overflow-x:auto"><table style="width:100%; border-collapse:collapse;"><thead><tr>${rows[0].map(h => `<th style="text-align:left; padding:10px; font-size:10px; color:var(--text-dim); border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead><tbody>`;
+        rows.slice(1).forEach(r => html += `<tr>${r.map(c => `<td style="padding:10px; font-size:12px; border-bottom:1px solid var(--border);">${c}</td>`).join('')}</tr>`);
+        document.getElementById('detail-content').innerHTML = html + `</tbody></table></div>`;
+    }
+
+    function viewDocs(cat) {
+        appHistory.push({ type: 'detail', target: cat, subType: 'docs' });
+
+        document.getElementById('detail-layer').classList.remove('hidden');
+        document.getElementById('detail-title').innerText = cat;
+        document.getElementById('detail-content').innerHTML = db.docs[cat].map(f => `
+            <div class="item-card" onclick="openPdf('${f.url}', '${f.name}')">
+                <div class="item-info"><h4>${f.name}</h4><p>Technical PDF</p></div>
+                <i data-lucide="eye" style="color:var(--accent)"></i>
+            </div>`).join('');
+        lucide.createIcons();
+    }
+
+    async function openPdf(url, name) {
+        appHistory.push({ type: 'pdf', url: url, name: name });
+
+        currentPdf = { name, url, blob: null };
+        document.getElementById('pdf-overlay').classList.remove('hidden');
+        const box = document.getElementById('pdf-render-box');
+        box.innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING PDF...</div>`;
+        try {
+            const res = await fetch(url);
+            const blob = await res.blob();
+            currentPdf.blob = blob;
+            const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+            box.innerHTML = "";
+            for(let i=1; i<=pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const canvas = document.createElement('canvas');
+                const viewport = page.getViewport({ scale: 1.2 });
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                canvas.style.width = "100%"; canvas.style.height = "auto"; canvas.style.marginBottom = "10px"; canvas.style.borderRadius = "8px";
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                box.appendChild(canvas);
+            }
+        } catch(e) { box.innerHTML = "Error loading file."; }
+    }
+
+    function downloadPdf() { if(currentPdf.blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(currentPdf.blob); a.download = `${currentPdf.name}.pdf`; a.click(); } }
+    async function sharePdf() { 
+        if(!currentPdf.blob) return;
+        const file = new File([currentPdf.blob], `${currentPdf.name}.pdf`, { type: 'application/pdf' });
+        try { await navigator.share({ files: [file], title: currentPdf.name }); } catch(e) { navigator.share({ url: currentPdf.url }); }
+    }
+
+    function navigateToTab(tab) {
+        if (tab === 'home') {
+            appHistory = [{ type: 'tab', target: 'home' }];
+        } else {
+            appHistory.push({ type: 'tab', target: tab });
+        }
+        applyTabStyles(tab);
+    }
+
+    function applyTabStyles(tab) {
+        document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+        document.getElementById('tab-'+tab).classList.remove('hidden');
+        document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
+        const btn = document.getElementById('btn-'+tab);
+        if(btn) btn.classList.add('active');
+        document.getElementById('main-content').scrollTop = 0;
+    }
+
+    function doAuth() {
+        if(document.getElementById('pin').value === '5511' && isDataReady) {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+        } else if(!isDataReady) alert("Please wait for sync to finish.");
+        else alert("Invalid PIN");
+    }
+
+    function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
+    function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
+    
+    // Physical/on-screen dual-purpose back button processor
+    function goBack() {
+        executeBackAction();
+    }
+
+    function executeBackAction() {
+        if (appHistory.length <= 1) {
+            appHistory = [{ type: 'tab', target: 'home' }];
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.add('hidden');
+            applyTabStyles('home');
+            return;
+        }
+
+        // Pop current layer from system array
+        appHistory.pop();
+
+        // Check layout requirements
+        const previousState = appHistory[appHistory.length - 1];
+
+        if (previousState.type === 'tab') {
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.add('hidden');
+            applyTabStyles(previousState.target);
+        } 
+        else if (previousState.type === 'detail') {
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.remove('hidden');
+            document.getElementById('detail-title').innerText = previousState.target;
+        }
+    }
+</script>
+</body>
+</html>
