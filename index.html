@@ -124,10 +124,10 @@
         <div id="tab-home" class="view-section">
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
-                <div class="dash-card" onclick="navigateToTab('rates')"><i data-lucide="tag"></i><span>RENTAL<br>RATES</span></div>
-                <div class="dash-card" onclick="navigateToTab('docs')"><i data-lucide="file-text"></i><span>TECH<br>SPECS</span></div>
+                <div class="dash-card" onclick="window.location.hash = 'rates'"><i data-lucide="tag"></i><span>RENTAL<br>RATES</span></div>
+                <div class="dash-card" onclick="window.location.hash = 'docs'"><i data-lucide="file-text"></i><span>TECH<br>SPECS</span></div>
                 <div class="dash-card" onclick="openPhotos()"><i data-lucide="camera"></i><span>GALLERY</span></div>
-                <div class="dash-card" onclick="navigateToTab('yards')"><i data-lucide="map-pin"></i><span>YARDS</span></div>
+                <div class="dash-card" onclick="window.location.hash = 'yards'"><i data-lucide="map-pin"></i><span>YARDS</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
@@ -141,10 +141,10 @@
 
     <nav>
         <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>Back</span></button>
-        <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><i data-lucide="home"></i><span>Home</span></button>
+        <button class="nav-tab active" id="btn-home" onclick="window.location.hash = 'home'"><i data-lucide="home"></i><span>Home</span></button>
         <button class="nav-tab" id="btn-photos" onclick="openPhotos()"><i data-lucide="image"></i><span>Photos</span></button>
-        <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><i data-lucide="users"></i><span>Team</span></button>
-        <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><i data-lucide="map"></i><span>Yards</span></button>
+        <button class="nav-tab" id="btn-team" onclick="window.location.hash = 'team'"><i data-lucide="users"></i><span>Team</span></button>
+        <button class="nav-tab" id="btn-yards" onclick="window.location.hash = 'yards'"><i data-lucide="map"></i><span>Yards</span></button>
     </nav>
 </div>
 
@@ -238,17 +238,7 @@
     let db = { rates: {}, docs: {}, notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
     let isDataReady = false;
-
-    // Custom internal stack array system for view memory tracking
-    let appHistory = [{ type: 'tab', target: 'home' }];
-
-    // Universal Engine to completely trap browser/hardware routing loops
-    function ensureHistoryBuffer() {
-        // Keeps an unbreakable 10-step dummy array trail running at all times
-        for (let i = 0; i < 10; i++) {
-            window.history.pushState({ bufferElementIdx: i }, '');
-        }
-    }
+    let selectedCategory = "";
 
     window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
@@ -256,16 +246,77 @@
         renderTeam();
         initSync();
 
-        // Inject initial protection buffer stack
-        ensureHistoryBuffer();
+        // Initialize default safe hash state right away
+        if (!window.location.hash || window.location.hash === '#') {
+            window.location.hash = 'home';
+        }
 
-        // Intercept every hardware popstate gesture event cleanly
-        window.addEventListener('popstate', function(e) {
-            // Re-apply cushion instantly so the next quick press can't break out
-            ensureHistoryBuffer();
-            executeBackAction();
-        });
+        // The master hardware routing router listener loop engine
+        window.addEventListener('hashchange', handleRoutingChange);
     });
+
+    function handleRoutingChange() {
+        const hash = window.location.hash.replace('#', '') || 'home';
+        
+        // Split layout arguments safely
+        const parameters = hash.split('/');
+        const primaryRoute = parameters[0];
+        const secondaryRoute = parameters[1];
+
+        // Core Layout Resets
+        document.getElementById('pdf-overlay').addOrRemoveHidden(true);
+        document.getElementById('detail-layer').addOrRemoveHidden(true);
+        document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+        document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
+
+        // Target matching application window layers safely
+        if (primaryRoute === 'home' || primaryRoute === 'yards' || primaryRoute === 'team' || primaryRoute === 'rates' || primaryRoute === 'docs') {
+            const section = document.getElementById('tab-' + primaryRoute);
+            if (section) section.classList.remove('hidden');
+            const btn = document.getElementById('btn-' + primaryRoute);
+            if (btn) btn.classList.add('active');
+        } 
+        else if (primaryRoute === 'view-category') {
+            const type = secondaryRoute; 
+            const decodedCat = decodeURIComponent(parameters[2] || '');
+            selectedCategory = decodedCat;
+
+            // Maintain under-tab highlighting
+            const parentTab = (type === 'rates') ? 'rates' : 'docs';
+            document.getElementById('tab-' + parentTab).classList.remove('hidden');
+            document.getElementById('btn-' + parentTab).classList.add('active');
+
+            document.getElementById('detail-layer').addOrRemoveHidden(false);
+            document.getElementById('detail-title').innerText = decodedCat;
+            
+            if (type === 'rates') buildRatesTableHTML(decodedCat);
+            if (type === 'docs') buildDocsGridHTML(decodedCat);
+        }
+        else if (primaryRoute === 'view-pdf') {
+            // Unpack parent data structures safely
+            const decodedCat = decodeURIComponent(secondaryRoute || '');
+            const fileUrl = decodeURIComponent(parameters[2] || '');
+            const fileName = decodeURIComponent(parameters[3] || '');
+
+            document.getElementById('tab-docs').classList.remove('hidden');
+            document.getElementById('btn-docs').classList.add('active');
+
+            // Restore lower detail framework view beneath the open overlay layer
+            document.getElementById('detail-layer').addOrRemoveHidden(false);
+            document.getElementById('detail-title').innerText = decodedCat;
+            buildDocsGridHTML(decodedCat);
+
+            // Trigger full viewport layout layer container render execution path
+            document.getElementById('pdf-overlay').addOrRemoveHidden(false);
+            executePdfPipeline(fileUrl, fileName);
+        }
+    }
+
+    // HTMLElement prototype extension to simplify view toggles safely
+    HTMLElement.prototype.addOrRemoveHidden = function(shouldHide) {
+        if (shouldHide) this.classList.add('hidden');
+        else this.classList.remove('hidden');
+    };
 
     async function initSync() {
         updateSyncProgress(10, "STARTING");
@@ -281,6 +332,9 @@
             
             renderGrids();
             document.getElementById('notif-text').innerText = db.notif;
+            
+            // Run immediate route check if logging in late
+            handleRoutingChange();
         } catch(e) {
             updateSyncProgress(0, "SYNC ERROR");
         }
@@ -376,45 +430,35 @@
     }
 
     function renderGrids() {
-        document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => `<div class="dash-card" onclick="viewRates('${cat}')"><i data-lucide="tag"></i><span>${cat}</span></div>`).join('');
-        document.getElementById('docs-grid').innerHTML = Object.keys(db.docs).map(cat => `<div class="dash-card" onclick="viewDocs('${cat}')"><i data-lucide="file-text"></i><span>${cat}</span></div>`).join('');
+        document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => `<div class="dash-card" onclick="window.location.hash = 'view-category/rates/${encodeURIComponent(cat)}'"><i data-lucide="tag"></i><span>${cat}</span></div>`).join('');
+        document.getElementById('docs-grid').innerHTML = Object.keys(db.docs).map(cat => `<div class="dash-card" onclick="window.location.hash = 'view-category/docs/${encodeURIComponent(cat)}'"><i data-lucide="file-text"></i><span>${cat}</span></div>`).join('');
         lucide.createIcons();
     }
 
-    function viewRates(cat) {
-        appHistory.push({ type: 'detail', target: cat, subType: 'rates' });
-        ensureHistoryBuffer();
-
+    function buildRatesTableHTML(cat) {
         const rows = db.rates[cat];
-        document.getElementById('detail-layer').classList.remove('hidden');
-        document.getElementById('detail-title').innerText = cat;
+        if(!rows) return;
         let html = `<div style="overflow-x:auto"><table style="width:100%; border-collapse:collapse;"><thead><tr>${rows[0].map(h => `<th style="text-align:left; padding:10px; font-size:10px; color:var(--text-dim); border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead><tbody>`;
         rows.slice(1).forEach(r => html += `<tr>${r.map(c => `<td style="padding:10px; font-size:12px; border-bottom:1px solid var(--border);">${c}</td>`).join('')}</tr>`);
         document.getElementById('detail-content').innerHTML = html + `</tbody></table></div>`;
     }
 
-    function viewDocs(cat) {
-        appHistory.push({ type: 'detail', target: cat, subType: 'docs' });
-        ensureHistoryBuffer();
-
-        document.getElementById('detail-layer').classList.remove('hidden');
-        document.getElementById('detail-title').innerText = cat;
-        document.getElementById('detail-content').innerHTML = db.docs[cat].map(f => `
-            <div class="item-card" onclick="openPdf('${f.url}', '${f.name}')">
+    function buildDocsGridHTML(cat) {
+        const files = db.docs[cat];
+        if(!files) return;
+        document.getElementById('detail-content').innerHTML = files.map(f => `
+            <div class="item-card" onclick="window.location.hash = 'view-pdf/${encodeURIComponent(cat)}/${encodeURIComponent(f.url)}/${encodeURIComponent(f.name)}'">
                 <div class="item-info"><h4>${f.name}</h4><p>Technical PDF</p></div>
                 <i data-lucide="eye" style="color:var(--accent)"></i>
             </div>`).join('');
         lucide.createIcons();
     }
 
-    async function openPdf(url, name) {
-        appHistory.push({ type: 'pdf', url: url, name: name });
-        ensureHistoryBuffer();
-
+    async function executePdfPipeline(url, name) {
         currentPdf = { name, url, blob: null };
-        document.getElementById('pdf-overlay').classList.remove('hidden');
         const box = document.getElementById('pdf-render-box');
         box.innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING PDF...</div>`;
+        document.getElementById('pdf-title').innerText = name;
         try {
             const res = await fetch(url);
             const blob = await res.blob();
@@ -440,25 +484,6 @@
         try { await navigator.share({ files: [file], title: currentPdf.name }); } catch(e) { navigator.share({ url: currentPdf.url }); }
     }
 
-    function navigateToTab(tab) {
-        if (tab === 'home') {
-            appHistory = [{ type: 'tab', target: 'home' }];
-        } else {
-            appHistory.push({ type: 'tab', target: tab });
-        }
-        ensureHistoryBuffer();
-        applyTabStyles(tab);
-    }
-
-    function applyTabStyles(tab) {
-        document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-        document.getElementById('tab-'+tab).classList.remove('hidden');
-        document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
-        const btn = document.getElementById('btn-'+tab);
-        if(btn) btn.classList.add('active');
-        document.getElementById('main-content').scrollTop = 0;
-    }
-
     function doAuth() {
         if(document.getElementById('pin').value === '5511' && isDataReady) {
             document.getElementById('auth-screen').classList.add('hidden');
@@ -470,35 +495,24 @@
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     
-    // UI/Hardware back routing gateway
+    // Core structural hardware fallback engine logic
     function goBack() {
-        executeBackAction();
-    }
+        const hash = window.location.hash.replace('#', '') || 'home';
+        const parameters = hash.split('/');
+        const primaryRoute = parameters[0];
 
-    function executeBackAction() {
-        if (appHistory.length <= 1) {
-            appHistory = [{ type: 'tab', target: 'home' }];
-            document.getElementById('pdf-overlay').classList.add('hidden');
-            document.getElementById('detail-layer').classList.add('hidden');
-            applyTabStyles('home');
-            return;
-        }
-
-        // Pop current active state out of tracking framework array
-        appHistory.pop();
-
-        // Render previous screen state configuration smoothly
-        const previousState = appHistory[appHistory.length - 1];
-
-        if (previousState.type === 'tab') {
-            document.getElementById('pdf-overlay').classList.add('hidden');
-            document.getElementById('detail-layer').classList.add('hidden');
-            applyTabStyles(previousState.target);
+        if (primaryRoute === 'view-pdf') {
+            // Drop out of viewer back down to item grid layer securely
+            window.location.hash = `view-category/docs/${encodeURIComponent(selectedCategory)}`;
         } 
-        else if (previousState.type === 'detail') {
-            document.getElementById('pdf-overlay').classList.add('hidden');
-            document.getElementById('detail-layer').classList.remove('hidden');
-            document.getElementById('detail-title').innerText = previousState.target;
+        else if (primaryRoute === 'view-category') {
+            // Drop back out to primary layout dashboard tab containers seamlessly
+            const type = parameters[1];
+            window.location.hash = type;
+        } 
+        else {
+            // Revert back safely down to home dashboard layout base framework context
+            window.location.hash = 'home';
         }
     }
 </script>
