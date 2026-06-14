@@ -239,8 +239,16 @@
     let currentPdf = { name: "", blob: null, url: "" };
     let isDataReady = false;
 
-    // Internal App Stack Navigation Tracking Matrix Array
+    // Custom internal stack array system for view memory tracking
     let appHistory = [{ type: 'tab', target: 'home' }];
+
+    // Universal Engine to completely trap browser/hardware routing loops
+    function ensureHistoryBuffer() {
+        // Keeps an unbreakable 10-step dummy array trail running at all times
+        for (let i = 0; i < 10; i++) {
+            window.history.pushState({ bufferElementIdx: i }, '');
+        }
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
@@ -248,16 +256,13 @@
         renderTeam();
         initSync();
 
-        // Safe Deep History injection engine. Creates a 100-deep cushion layer
-        // so hardware gestures/back presses just roll backward on dummy numbers
-        // instead of crashing or exiting the standalone viewport container.
-        for (let i = 0; i < 100; i++) {
-            window.history.pushState({ routeDummyIdx: i }, '');
-        }
+        // Inject initial protection buffer stack
+        ensureHistoryBuffer();
 
+        // Intercept every hardware popstate gesture event cleanly
         window.addEventListener('popstate', function(e) {
-            // Put the back step cushioning state immediately right back in place
-            window.history.pushState({ routeDummyIdx: 101 }, '');
+            // Re-apply cushion instantly so the next quick press can't break out
+            ensureHistoryBuffer();
             executeBackAction();
         });
     });
@@ -378,6 +383,7 @@
 
     function viewRates(cat) {
         appHistory.push({ type: 'detail', target: cat, subType: 'rates' });
+        ensureHistoryBuffer();
 
         const rows = db.rates[cat];
         document.getElementById('detail-layer').classList.remove('hidden');
@@ -389,6 +395,7 @@
 
     function viewDocs(cat) {
         appHistory.push({ type: 'detail', target: cat, subType: 'docs' });
+        ensureHistoryBuffer();
 
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
@@ -402,6 +409,7 @@
 
     async function openPdf(url, name) {
         appHistory.push({ type: 'pdf', url: url, name: name });
+        ensureHistoryBuffer();
 
         currentPdf = { name, url, blob: null };
         document.getElementById('pdf-overlay').classList.remove('hidden');
@@ -438,6 +446,7 @@
         } else {
             appHistory.push({ type: 'tab', target: tab });
         }
+        ensureHistoryBuffer();
         applyTabStyles(tab);
     }
 
@@ -461,7 +470,7 @@
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     
-    // Physical/on-screen dual-purpose back button processor
+    // UI/Hardware back routing gateway
     function goBack() {
         executeBackAction();
     }
@@ -475,10 +484,10 @@
             return;
         }
 
-        // Pop current layer from system array
+        // Pop current active state out of tracking framework array
         appHistory.pop();
 
-        // Check layout requirements
+        // Render previous screen state configuration smoothly
         const previousState = appHistory[appHistory.length - 1];
 
         if (previousState.type === 'tab') {
