@@ -29,7 +29,7 @@
         body { background: var(--bg); color: #fff; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; background-image: radial-gradient(circle at top right, #1e222d, #05070a); }
         .hidden { display: none !important; }
 
-        /* Updated Sync Indicator Styling */
+        /* Sync Indicator Styling */
         .sync-pill { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .status-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; transition: 0.3s; }
         .status-dot.ready { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
@@ -149,7 +149,7 @@
 </div>
 
 <div id="detail-layer" class="overlay-view hidden">
-    <div class="overlay-header"><button class="act-btn" onclick="closeDetails()"><i data-lucide="chevron-left"></i></button><div id="detail-title" style="flex:1; font-weight:800; text-align:center;">Details</div><div style="width:42px"></div></div>
+    <div class="overlay-header"><button class="act-btn" onclick="closeDetails(); goBack();"><i data-lucide="chevron-left"></i></button><div id="detail-title" style="flex:1; font-weight:800; text-align:center;">Details</div><div style="width:42px"></div></div>
     <div class="scroll-area" id="detail-content"></div>
 </div>
 
@@ -237,6 +237,7 @@
 
     let db = { rates: {}, docs: {}, notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
+    let activeModuleType = ""; 
     let isDataReady = false;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -361,6 +362,7 @@
     }
 
     function viewRates(cat) {
+        activeModuleType = "rates";
         const rows = db.rates[cat];
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
@@ -370,6 +372,7 @@
     }
 
     function viewDocs(cat) {
+        activeModuleType = "docs";
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
         document.getElementById('detail-content').innerHTML = db.docs[cat].map(f => `
@@ -411,8 +414,6 @@
     }
 
     function switchTab(tab) {
-        closePdf();
-        closeDetails();
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
         document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
@@ -431,24 +432,35 @@
 
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
-    function closeDetails() { document.getElementById('detail-layer').classList.add('hidden'); }
-    function closePdf() { document.getElementById('pdf-overlay').classList.add('hidden'); }
     
-    /* SEQUENTIAL LAYERING NAVIGATION LOGIC */
+    function closeDetails() { 
+        document.getElementById('detail-layer').classList.add('hidden'); 
+    }
+    
+    function closePdf() { 
+        document.getElementById('pdf-overlay').classList.add('hidden'); 
+    }
+    
     function goBack() { 
         const isPdfOpen = !document.getElementById('pdf-overlay').classList.contains('hidden');
         const isDetailOpen = !document.getElementById('detail-layer').classList.contains('hidden');
 
         if (isPdfOpen) {
             closePdf();
-            return;
+            return; 
         } 
         if (isDetailOpen) {
             closeDetails();
+            if (activeModuleType === "rates") {
+                switchTab('rates');
+            } else if (activeModuleType === "docs") {
+                switchTab('docs');
+            } else {
+                switchTab('home');
+            }
             return;
         }
         
-        // If no overlays are open, safely fallback to the home landing view
         switchTab('home'); 
     }
 </script>
