@@ -124,10 +124,10 @@
         <div id="tab-home" class="view-section">
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
-                <div class="dash-card" onclick="switchTab('rates')"><i data-lucide="tag"></i><span>RENTAL<br>RATES</span></div>
-                <div class="dash-card" onclick="switchTab('docs')"><i data-lucide="file-text"></i><span>TECH<br>SPECS</span></div>
+                <div class="dash-card" onclick="navigateToTab('rates')"><i data-lucide="tag"></i><span>RENTAL<br>RATES</span></div>
+                <div class="dash-card" onclick="navigateToTab('docs')"><i data-lucide="file-text"></i><span>TECH<br>SPECS</span></div>
                 <div class="dash-card" onclick="openPhotos()"><i data-lucide="camera"></i><span>GALLERY</span></div>
-                <div class="dash-card" onclick="switchTab('yards')"><i data-lucide="map-pin"></i><span>YARDS</span></div>
+                <div class="dash-card" onclick="navigateToTab('yards')"><i data-lucide="map-pin"></i><span>YARDS</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
@@ -141,10 +141,10 @@
 
     <nav>
         <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>Back</span></button>
-        <button class="nav-tab active" id="btn-home" onclick="switchTab('home')"><i data-lucide="home"></i><span>Home</span></button>
+        <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><i data-lucide="home"></i><span>Home</span></button>
         <button class="nav-tab" id="btn-photos" onclick="openPhotos()"><i data-lucide="image"></i><span>Photos</span></button>
-        <button class="nav-tab" id="btn-team" onclick="switchTab('team')"><i data-lucide="users"></i><span>Team</span></button>
-        <button class="nav-tab" id="btn-yards" onclick="switchTab('yards')"><i data-lucide="map"></i><span>Yards</span></button>
+        <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><i data-lucide="users"></i><span>Team</span></button>
+        <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><i data-lucide="map"></i><span>Yards</span></button>
     </nav>
 </div>
 
@@ -155,7 +155,7 @@
 
 <div id="pdf-overlay" class="overlay-view hidden" style="background:#000">
     <div class="overlay-header">
-        <button class="act-btn" onclick="closePdf()"><i data-lucide="x"></i></button>
+        <button class="act-btn" onclick="goBack()"><i data-lucide="x"></i></button>
         <div id="pdf-title" style="flex:1; font-size:11px; text-align:center;">Viewer</div>
         <button class="act-btn primary" onclick="sharePdf()"><i data-lucide="share-2"></i></button>
         <button class="act-btn primary" onclick="downloadPdf()" style="margin-left:8px;"><i data-lucide="download"></i></button>
@@ -237,8 +237,10 @@
 
     let db = { rates: {}, docs: {}, notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
-    let activeModuleType = ""; 
     let isDataReady = false;
+
+    // Custom History Stack array to store structural navigation history
+    let appHistory = [{ type: 'tab', target: 'home' }];
 
     window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
@@ -362,7 +364,9 @@
     }
 
     function viewRates(cat) {
-        activeModuleType = "rates";
+        // Push current view context to the custom history stack array
+        appHistory.push({ type: 'detail', target: cat, subType: 'rates' });
+
         const rows = db.rates[cat];
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
@@ -372,7 +376,9 @@
     }
 
     function viewDocs(cat) {
-        activeModuleType = "docs";
+        // Push current view context to the custom history stack array
+        appHistory.push({ type: 'detail', target: cat, subType: 'docs' });
+
         document.getElementById('detail-layer').classList.remove('hidden');
         document.getElementById('detail-title').innerText = cat;
         document.getElementById('detail-content').innerHTML = db.docs[cat].map(f => `
@@ -384,6 +390,9 @@
     }
 
     async function openPdf(url, name) {
+        // Push PDF visibility state context directly to history track loop
+        appHistory.push({ type: 'pdf', url: url, name: name });
+
         currentPdf = { name, url, blob: null };
         document.getElementById('pdf-overlay').classList.remove('hidden');
         const box = document.getElementById('pdf-render-box');
@@ -413,7 +422,19 @@
         try { await navigator.share({ files: [file], title: currentPdf.name }); } catch(e) { navigator.share({ url: currentPdf.url }); }
     }
 
-    function switchTab(tab) {
+    // Standard baseline navigation tracker
+    function navigateToTab(tab) {
+        // If switching tabs completely, reset or update history context base line 
+        if (tab === 'home') {
+            appHistory = [{ type: 'tab', target: 'home' }];
+        } else {
+            // Push tab navigation state securely
+            appHistory.push({ type: 'tab', target: tab });
+        }
+        applyTabStyles(tab);
+    }
+
+    function applyTabStyles(tab) {
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
         document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
@@ -433,35 +454,35 @@
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     
-    function closeDetails() { 
-        document.getElementById('detail-layer').classList.add('hidden'); 
-    }
-    
-    function closePdf() { 
-        document.getElementById('pdf-overlay').classList.add('hidden'); 
-    }
-    
-    function goBack() { 
-        const isPdfOpen = !document.getElementById('pdf-overlay').classList.contains('hidden');
-        const isDetailOpen = !document.getElementById('detail-layer').classList.contains('hidden');
-
-        if (isPdfOpen) {
-            closePdf();
-            return; 
-        } 
-        if (isDetailOpen) {
-            closeDetails();
-            if (activeModuleType === "rates") {
-                switchTab('rates');
-            } else if (activeModuleType === "docs") {
-                switchTab('docs');
-            } else {
-                switchTab('home');
-            }
+    /* NEW STACK-BASED HISTORY NAVIGATION ENGINE */
+    function goBack() {
+        if (appHistory.length <= 1) {
+            // Ensure we keep baseline home view framework safe
+            appHistory = [{ type: 'tab', target: 'home' }];
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.add('hidden');
+            applyTabStyles('home');
             return;
         }
-        
-        switchTab('home'); 
+
+        // Pop current active framework state away
+        appHistory.pop();
+
+        // Check lookahead target to paint layout appropriately
+        const previousState = appHistory[appHistory.length - 1];
+
+        if (previousState.type === 'tab') {
+            // Securely shut layout screens down
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.add('hidden');
+            applyTabStyles(previousState.target);
+        } 
+        else if (previousState.type === 'detail') {
+            // If the back button goes back into an open category detail grid sheet context
+            document.getElementById('pdf-overlay').classList.add('hidden');
+            document.getElementById('detail-layer').classList.remove('hidden');
+            document.getElementById('detail-title').innerText = previousState.target;
+        }
     }
 </script>
 </body>
