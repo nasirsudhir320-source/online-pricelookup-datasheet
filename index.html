@@ -75,7 +75,7 @@
 
         /* Navigation */
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--glass); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; padding: 10px 5px calc(var(--safe-bottom) + 10px); z-index: 2000; }
-        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); border: none; background: none; }
+        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); border: none; background: none; cursor: pointer; }
         .nav-tab.active { color: var(--accent); }
         .nav-tab span { font-size: 9px; font-weight: 800; text-transform: uppercase; }
 
@@ -266,13 +266,11 @@
     }
 
     function updateSyncProgress(pct, text) {
-        // Sync circle overlay
         const bar = document.getElementById('sync-bar');
         if (bar) bar.style.strokeDashoffset = 339 - (pct/100)*339;
         const pctText = document.getElementById('sync-pct');
         if (pctText) pctText.innerText = pct+'%';
 
-        // Pills on login and home
         document.getElementById('auth-sync-text').innerText = pct + "% " + text;
         document.getElementById('home-sync-text').innerText = (pct === 100) ? "ONLINE" : pct + "%";
         
@@ -413,7 +411,8 @@
     }
 
     function switchTab(tab) {
-        closeDetails(); closePdf();
+        closePdf();
+        closeDetails();
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
         document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
@@ -434,10 +433,23 @@
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     function closeDetails() { document.getElementById('detail-layer').classList.add('hidden'); }
     function closePdf() { document.getElementById('pdf-overlay').classList.add('hidden'); }
+    
+    /* SEQUENTIAL LAYERING NAVIGATION LOGIC */
     function goBack() { 
-        if(!document.getElementById('detail-layer').classList.contains('hidden')) closeDetails(); 
-        else if(!document.getElementById('pdf-overlay').classList.contains('hidden')) closePdf(); 
-        else switchTab('home'); 
+        const isPdfOpen = !document.getElementById('pdf-overlay').classList.contains('hidden');
+        const isDetailOpen = !document.getElementById('detail-layer').classList.contains('hidden');
+
+        if (isPdfOpen) {
+            closePdf();
+            return;
+        } 
+        if (isDetailOpen) {
+            closeDetails();
+            return;
+        }
+        
+        // If no overlays are open, safely fallback to the home landing view
+        switchTab('home'); 
     }
 </script>
 </body>
