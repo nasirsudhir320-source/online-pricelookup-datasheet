@@ -123,7 +123,7 @@
     <div class="auth-card">
         <div class="logo" style="font-size: 28px;">SUDHIR<span>PRO</span></div>
         <p style="color:var(--text-dim); font-size:12px; margin: 15px 0 25px;">Employee Terminal</p>
-        <input type="password" id="pin" class="pin-box" maxlength="4" inputmode="numeric" placeholder="••••" />
+        <input type="password" id="pin" class="pin-box" maxlength="4" inputmode="numeric" placeholder="••••" onkeyup="if(event.key==='Enter') doAuth(); if(this.value.length===4) doAuth();" />
         <button id="login-btn" style="width:100%; padding:18px; border-radius:18px; background:var(--border); font-weight:800; border:none; color:var(--text-dim); transition: 0.3s;" onclick="doAuth()">LOGIN</button>
     </div>
 </div>
@@ -217,6 +217,12 @@
         lucide.createIcons();
         renderYards();
         renderTeam();
+        // Show the PIN screen immediately so the person can start typing right away —
+        // sync runs in the background underneath it instead of blocking entry.
+        document.getElementById('sync-overlay').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('pin').focus();
+        updateSyncProgress(5, "SYNCING");
         initSync();
         window.history.replaceState({ type: 'tab', target: 'home' }, '');
     });
@@ -238,7 +244,12 @@
 
     async function initSync() {
         try {
-            await Promise.all([loadRates(), loadDocs()]);
+            updateSyncProgress(15, "FETCHING RATES");
+            // Rates and docs load in parallel (not one after another) to save time.
+            const ratesPromise = loadRates().then(() => updateSyncProgress(60, "RATES READY"));
+            const docsPromise = loadDocs().then(() => updateSyncProgress(85, "DOCS READY"));
+            await Promise.all([ratesPromise, docsPromise]);
+
             isDataReady = true;
             document.querySelectorAll('.status-dot').forEach(d => d.classList.add('ready'));
             const loginBtn = document.getElementById('login-btn');
@@ -246,9 +257,12 @@
             loginBtn.style.color = '#000';
             renderGrids();
             document.getElementById('notif-text').innerText = db.notif;
-            document.getElementById('sync-overlay').classList.add('hidden');
-            document.getElementById('auth-screen').classList.remove('hidden');
             updateSyncProgress(100, "READY");
+
+            // If the person already typed the correct PIN while syncing was in
+            // progress, log them straight in instead of making them press the button again.
+            const pinVal = document.getElementById('pin').value;
+            if (pinVal === '5511') doAuth();
         } catch(e) { updateSyncProgress(0, "ERROR"); }
     }
 
@@ -410,10 +424,19 @@
     }
 
     function doAuth() {
-        if(document.getElementById('pin').value === '5511' && isDataReady) {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-shell').classList.remove('hidden');
-        } else alert("Invalid PIN or Sync incomplete");
+        const pin = document.getElementById('pin').value;
+        if(pin !== '5511') {
+            if(pin.length === 4) alert("Invalid PIN");
+            return;
+        }
+        if(!isDataReady) {
+            // Correct PIN, but data isn't ready yet — wait quietly, no alert.
+            // initSync() will call doAuth() again automatically the moment sync finishes.
+            document.getElementById('auth-sync-text').innerText = document.getElementById('auth-sync-text').innerText.replace(/SYNCING|RATES READY|DOCS READY/, "ALMOST READY");
+            return;
+        }
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app-shell').classList.remove('hidden');
     }
 
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
