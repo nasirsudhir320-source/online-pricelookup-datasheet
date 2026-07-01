@@ -106,7 +106,17 @@
         #notif-bar { margin: 15px 0; background: var(--accent-dim); border: 1px solid var(--accent-dim); padding: 12px 15px; border-radius: 15px; border-left: 4px solid var(--accent); }
         #notif-text { font-size: 12px; color: #fff; font-weight: 600; }
 
-        /* Documents Merger */
+        /* Offline dino game */
+        #dino-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px; margin-top: 6px; }
+        #dino-hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 2px; }
+        #dino-hud .dino-score { font-family: 'Plus Jakarta Sans', monospace; font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--text-dim); }
+        #dino-hud .dino-score span { color: var(--accent); }
+        #dino-canvas-wrap { position: relative; border-radius: 12px; overflow: hidden; background: #05070a; border: 1px solid var(--border); }
+        #dino-canvas { display: block; width: 100%; touch-action: manipulation; }
+        #dino-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: rgba(5,7,10,0.72); text-align: center; }
+        #dino-overlay h4 { font-size: 13px; font-weight: 800; color: #fff; }
+        #dino-overlay p { font-size: 10px; color: var(--text-dim); font-weight: 600; }
+        #dino-overlay.hidden { display: none; }
         #merge-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 34px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
         #merge-drop-zone:active, #merge-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
         #merge-drop-zone i { color: var(--accent); margin-bottom: 10px; }
@@ -192,6 +202,21 @@
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
+
+            <h3 class="group-title">NO SIGNAL? PLAY THIS</h3>
+            <div id="dino-card">
+                <div id="dino-hud">
+                    <span class="dino-score">SCORE <span id="dino-score">0</span></span>
+                    <span class="dino-score">BEST <span id="dino-best">0</span></span>
+                </div>
+                <div id="dino-canvas-wrap">
+                    <canvas id="dino-canvas" width="600" height="180"></canvas>
+                    <div id="dino-overlay">
+                        <h4 id="dino-overlay-title">Tap or press Space to run</h4>
+                        <p>Jump the crates &middot; runs even with no internet</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="tab-yards" class="view-section hidden"><h3 class="group-title">Operational Yards</h3><div id="yard-list"></div></div>
@@ -951,6 +976,149 @@ window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('merge-status').textContent = 'QR checking failed to load — merging will still work.';
         });
     });
+
+    /* ===================== OFFLINE RUNNER GAME ===================== */
+    /* A small Chrome-dino-style runner, playable entirely offline — jump the
+       crates with a tap/click or Space/Up. Score persists locally as "best". */
+    (function () {
+        const canvas = document.getElementById('dino-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('dino-overlay');
+        const overlayTitle = document.getElementById('dino-overlay-title');
+        const scoreEl = document.getElementById('dino-score');
+        const bestEl = document.getElementById('dino-best');
+
+        const W = canvas.width, H = canvas.height;
+        const GROUND_Y = H - 30;
+        const GRAVITY = 0.9;
+        const JUMP_VELOCITY = -13;
+
+        let best = parseInt(localStorage.getItem('sudhirpro_dino_best') || '0', 10);
+        bestEl.textContent = best;
+
+        let state = 'idle'; // idle | running | over
+        let player, obstacles, speed, score, frame, spawnTimer;
+
+        function resetState() {
+            player = { x: 40, y: GROUND_Y - 24, w: 20, h: 24, vy: 0, jumping: false };
+            obstacles = [];
+            speed = 5;
+            score = 0;
+            frame = 0;
+            spawnTimer = 60;
+            scoreEl.textContent = '0';
+        }
+
+        function drawStatic() {
+            ctx.clearRect(0, 0, W, H);
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, GROUND_Y);
+            ctx.lineTo(W, GROUND_Y);
+            ctx.stroke();
+            ctx.fillStyle = '#fbc531';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+        }
+
+        function jump() {
+            if (state === 'idle' || state === 'over') { startGame(); return; }
+            if (state === 'running' && !player.jumping) {
+                player.vy = JUMP_VELOCITY;
+                player.jumping = true;
+            }
+        }
+
+        function startGame() {
+            resetState();
+            state = 'running';
+            overlay.classList.add('hidden');
+            requestAnimationFrame(loop);
+        }
+
+        function gameOver() {
+            state = 'over';
+            overlay.classList.remove('hidden');
+            overlayTitle.textContent = `Crashed — score ${score}. Tap to retry`;
+            if (score > best) {
+                best = score;
+                try { localStorage.setItem('sudhirpro_dino_best', String(best)); } catch (e) {}
+                bestEl.textContent = best;
+            }
+        }
+
+        function spawnObstacle() {
+            const h = 18 + Math.random() * 22;
+            obstacles.push({ x: W + 10, y: GROUND_Y - h, w: 14 + Math.random() * 8, h });
+        }
+
+        function update() {
+            frame++;
+            player.vy += GRAVITY;
+            player.y += player.vy;
+            if (player.y > GROUND_Y - player.h) {
+                player.y = GROUND_Y - player.h;
+                player.vy = 0;
+                player.jumping = false;
+            }
+
+            spawnTimer--;
+            if (spawnTimer <= 0) {
+                spawnObstacle();
+                spawnTimer = Math.max(28, 55 + Math.random() * 45 - Math.min(speed * 2, 40));
+            }
+            obstacles.forEach(o => { o.x -= speed; });
+            obstacles = obstacles.filter(o => o.x + o.w > -5);
+
+            for (const o of obstacles) {
+                if (player.x < o.x + o.w && player.x + player.w > o.x &&
+                    player.y < o.y + o.h && player.y + player.h > o.y) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            if (frame % 6 === 0) score++;
+            scoreEl.textContent = score;
+            if (frame % 400 === 0) speed += 0.6;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, GROUND_Y);
+            ctx.lineTo(W, GROUND_Y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fbc531';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+
+            ctx.fillStyle = '#ef4444';
+            obstacles.forEach(o => { ctx.fillRect(o.x, o.y, o.w, o.h); });
+        }
+
+        function loop() {
+            update();
+            draw();
+            if (state === 'running') requestAnimationFrame(loop);
+        }
+
+        resetState();
+        drawStatic();
+
+        canvas.addEventListener('click', jump);
+        document.getElementById('dino-canvas-wrap').addEventListener('click', jump);
+        document.addEventListener('keydown', e => {
+            if (document.getElementById('tab-home') && document.getElementById('tab-home').classList.contains('hidden')) return;
+            if (e.code === 'Space' || e.code === 'ArrowUp') {
+                e.preventDefault();
+                jump();
+            }
+        });
+    })();
 </script>
 </body>
 </html>
