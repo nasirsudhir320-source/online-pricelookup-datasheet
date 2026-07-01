@@ -251,7 +251,8 @@
         <div id="merge-list"><div class="merge-empty">No files yet — add PDFs or photos above.</div></div>
 
         <div class="merge-sticky">
-            <button id="merge-btn" disabled onclick="mergeAndDownload()"><i data-lucide="download" size="16"></i> Merge &amp; Download PDF</button>
+            <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
+            <button id="merge-btn" disabled onclick="mergeAndDownload()"><i data-lucide="save" size="16"></i> Merge &amp; Save PDF</button>
             <div id="merge-status"></div>
         </div>
     </div>
@@ -655,8 +656,22 @@
             mergeRenderList();
             try {
                 await mergeEnsureLibrary();
-                if (!mergeQrScanner) mergeQrScanner = new Html5Qrcode('merge-hidden-reader');
-                const decoded = await mergeQrScanner.scanFile(item.file, true);
+                if (!mergeQrScanner) {
+                    mergeQrScanner = new Html5Qrcode('merge-hidden-reader', {
+                        useBarCodeDetectorIfSupported: true,
+                        verbose: false
+                    });
+                }
+                let decoded;
+                try {
+                    // First attempt: scan the photo as-is.
+                    decoded = await mergeQrScanner.scanFile(item.file, false);
+                } catch (firstErr) {
+                    // Retry on a normalized, size-capped copy — this is what usually
+                    // rescues very large phone-camera photos or odd formats/orientations.
+                    const resized = await mergeResizeImageFile(item.file, 1400);
+                    decoded = await mergeQrScanner.scanFile(resized, false);
+                }
                 item.qrStatus = 'found';
                 item.qrText = decoded;
             } catch (e) {
@@ -698,6 +713,14 @@
                         <button class="doc-qr-chip" onclick="mergeDownloadOriginal('${item.id}')">Download Photo</button>
                     </div>
                 </div>`;
+        } else if (item.qrStatus === 'none') {
+            badge = `
+                <div class="doc-qr-badge">
+                    <span style="font-size:10px; color:var(--text-dim); font-weight:700;">No QR detected</span>
+                    <div class="doc-qr-actions">
+                        <button class="doc-qr-chip" onclick="mergeRetryQrScan('${item.id}')">Retry scan</button>
+                    </div>
+                </div>`;
         }
 
         return `
@@ -716,6 +739,15 @@
                 </div>
                 ${badge}
             </div>`;
+    }
+
+    function mergeRetryQrScan(id) {
+        const item = mergeItems.find(i => i.id === id);
+        if (!item) return;
+        item.qrStatus = 'queued';
+        item.qrText = null;
+        mergeEnqueueQrScan(item);
+        mergeRenderList();
     }
 
     function mergeMoveItem(id, dir) {
@@ -787,10 +819,61 @@
         });
     }
 
+    // Converts an image to a smaller/normalized PNG copy — helps QR detection succeed
+    // on very large phone-camera photos or unusual formats that sometimes fail to scan directly.
+    function mergeResizeImageFile(file, maxDim) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                const w = img.naturalWidth, h = img.naturalHeight;
+                const scale = Math.min(1, maxDim / Math.max(w, h));
+                const cw = Math.max(1, Math.round(w * scale));
+                const ch = Math.max(1, Math.round(h * scale));
+                const canvas = document.createElement('canvas');
+                canvas.width = cw;
+                canvas.height = ch;
+                canvas.getContext('2d').drawImage(img, 0, 0, cw, ch);
+                canvas.toBlob(blob => {
+                    URL.revokeObjectURL(url);
+                    if (!blob) { reject(new Error('canvas-empty')); return; }
+                    resolve(new File([blob], file.name.replace(/\.[^.]+$/, '') + '.png', { type: 'image/png' }));
+                }, 'image/png', 0.95);
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('load-failed')); };
+            img.src = url;
+        });
+    }
+
     async function mergeAndDownload() {
         if (!mergeItems.length) return;
         const btn = document.getElementById('merge-btn');
         const status = document.getElementById('merge-status');
+
+        let rawName = document.getElementById('merge-filename').value.trim();
+        if (!rawName) rawName = 'merged-document';
+        rawName = rawName.replace(/[\\/:*?"<>|]/g, '-'); // strip characters invalid in filenames
+        if (!/\.pdf$/i.test(rawName)) rawName += '.pdf';
+
+        // Ask where to save FIRST, while the click's user-gesture is still fresh —
+        // the save-location dialog must open before the merge work, not after.
+        const canPickLocation = 'showSaveFilePicker' in window;
+        if (!canPickLocation) {
+            status.textContent = 'This browser can\'t show a Save dialog — try Chrome or Edge to choose a save location.';
+            return;
+        }
+        let fileHandle;
+        try {
+            fileHandle = await window.showSaveFilePicker({
+                suggestedName: rawName,
+                types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
+            });
+        } catch (err) {
+            if (err && err.name === 'AbortError') return; // person cancelled the save dialog
+            status.textContent = 'Could not open the save dialog. Please try again.';
+            return;
+        }
+
         btn.disabled = true;
         btn.innerHTML = `<span class="merge-spinner"></span> Merging...`;
         status.textContent = '';
@@ -812,30 +895,25 @@
                     page.drawImage(img, { x: 0, y: 0, width, height });
                 }
             }
-            status.textContent = 'Preparing download...';
+
+            status.textContent = 'Saving...';
             const mergedBytes = await mergedPdf.save();
-            const blob = new Blob([mergedBytes], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
-            a.href = url;
-            a.download = `merged-document-${stamp}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 4000);
-            status.textContent = `Done — ${mergeItems.length} file(s) merged and downloaded.`;
+            const writable = await fileHandle.createWritable();
+            await writable.write(mergedBytes);
+            await writable.close();
+            status.textContent = `Done — saved as ${fileHandle.name}.`;
         } catch (err) {
             status.textContent = 'Something went wrong while merging. Please try again.';
             console.error(err);
         } finally {
             btn.disabled = mergeItems.length === 0;
-            btn.innerHTML = `<i data-lucide="download" size="16"></i> Merge &amp; Download PDF`;
+            btn.innerHTML = `<i data-lucide="save" size="16"></i> Merge &amp; Save PDF`;
             lucide.createIcons();
         }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    
+window.addEventListener('DOMContentLoaded', () => {
         const hidden = document.createElement('div');
         hidden.id = 'merge-hidden-reader';
         hidden.style.display = 'none';
