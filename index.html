@@ -8,6 +8,8 @@
     <title>SUDHIR PRO MOBILE</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <style>
         :root { 
@@ -103,6 +105,43 @@
 
         #notif-bar { margin: 15px 0; background: var(--accent-dim); border: 1px solid var(--accent-dim); padding: 12px 15px; border-radius: 15px; border-left: 4px solid var(--accent); }
         #notif-text { font-size: 12px; color: #fff; font-weight: 600; }
+
+        /* Documents Merger */
+        #merge-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 34px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
+        #merge-drop-zone:active, #merge-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
+        #merge-drop-zone i { color: var(--accent); margin-bottom: 10px; }
+        #merge-drop-zone h4 { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+        #merge-drop-zone p { font-size: 11px; color: var(--text-dim); }
+
+        .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px; }
+        .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .merge-clear { font-size: 11px; font-weight: 800; color: #ef4444; background: none; border: none; }
+
+        .doc-item { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+        .doc-item-row { display: flex; align-items: center; gap: 12px; }
+        .doc-thumb { width: 46px; height: 46px; border-radius: 10px; flex-shrink: 0; object-fit: cover; background: #1e222d; display: flex; align-items: center; justify-content: center; color: var(--accent); }
+        .doc-meta { flex: 1; min-width: 0; }
+        .doc-meta h4 { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .doc-meta p { font-size: 10px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .doc-order-controls { display: flex; flex-direction: column; gap: 4px; }
+        .doc-order-controls button { width: 26px; height: 22px; background: #1e222d; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; }
+        .doc-remove { width: 34px; height: 34px; border-radius: 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+        .doc-qr-badge { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .doc-qr-tag { font-size: 10px; font-weight: 800; color: var(--bg); background: var(--accent); padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
+        .doc-qr-actions { display: flex; gap: 6px; flex: 1; }
+        .doc-qr-chip { font-size: 11px; font-weight: 800; color: #fff; background: #1e222d; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+        .doc-qr-scanning { font-size: 10px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+
+        .merge-empty { text-align: center; color: var(--text-dim); font-size: 12px; padding: 24px 0; }
+
+        .merge-sticky { position: sticky; bottom: 0; background: linear-gradient(to top, var(--bg) 60%, transparent); padding: 16px 0 4px; margin-top: 6px; }
+        #merge-btn { width: 100%; padding: 16px; border-radius: 16px; background: var(--accent); border: none; color: #000; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #merge-btn:disabled { background: var(--border); color: var(--text-dim); }
+        #merge-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
+        .merge-spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.2); border-top-color: #000; display: inline-block; animation: qrspin 0.7s linear infinite; }
+        .qr-spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(251,197,49,0.25); border-top-color: var(--accent); display: inline-block; animation: qrspin 0.7s linear infinite; }
+        @keyframes qrspin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -131,9 +170,12 @@
 <div id="app-shell" class="hidden">
     <header>
         <div class="logo">SUDHIR<span>PRO</span></div>
-        <div class="sync-pill">
-            <div id="home-dot" class="status-dot"></div>
-            <span id="home-sync-text" class="sync-text">SYNCING</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div class="sync-pill">
+                <div id="home-dot" class="status-dot"></div>
+                <span id="home-sync-text" class="sync-text">SYNCING</span>
+            </div>
+            <button class="act-btn" onclick="logout()" style="width:34px; height:34px; border-radius:10px;" title="Log out"><i data-lucide="log-out" size="14"></i></button>
         </div>
     </header>
     
@@ -145,6 +187,8 @@
                 <div class="dash-card" onclick="navigateToTab('docs')"><i data-lucide="file-text"></i><span>TECH<br>SPECS</span></div>
                 <div class="dash-card" onclick="openPhotos()"><i data-lucide="camera"></i><span>GALLERY</span></div>
                 <div class="dash-card" onclick="navigateToTab('yards')"><i data-lucide="map-pin"></i><span>YARDS</span></div>
+                <div class="dash-card" onclick="navigateToTab('team')"><i data-lucide="users"></i><span>TEAM</span></div>
+                <div class="dash-card" onclick="openMerger()"><i data-lucide="layers"></i><span>DOCS<br>MERGER</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
@@ -180,6 +224,39 @@
     <div class="scroll-area" id="pdf-render-box"></div>
 </div>
 
+<div id="merger-overlay" class="overlay-view hidden">
+    <div class="overlay-header">
+        <button class="act-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+        <div style="flex:1; font-weight:800; text-align:center;">Documents Merger</div>
+        <div style="width:42px"></div>
+    </div>
+    <div class="scroll-area">
+        <div id="merge-lib-banner" class="doc-qr-scanning hidden" style="justify-content:center; padding:10px; border:1px solid var(--border); border-radius:12px;">
+            <span class="qr-spinner"></span>
+            <span>Loading scanner engine...</span>
+        </div>
+
+        <div id="merge-drop-zone">
+            <i data-lucide="upload-cloud" size="30"></i>
+            <h4>Drop PDFs or photos here</h4>
+            <p>Or tap to choose files &middot; order below is the merge order</p>
+            <input type="file" id="merge-file-input" accept="application/pdf,image/*" multiple class="hidden" />
+        </div>
+
+        <div class="merge-toolbar">
+            <span class="merge-count" id="merge-count">0 files added</span>
+            <button class="merge-clear" id="merge-clear-btn" onclick="mergeClearAll()">Clear all</button>
+        </div>
+
+        <div id="merge-list"><div class="merge-empty">No files yet — add PDFs or photos above.</div></div>
+
+        <div class="merge-sticky">
+            <button id="merge-btn" disabled onclick="mergeAndDownload()"><i data-lucide="download" size="16"></i> Merge &amp; Download PDF</button>
+            <div id="merge-status"></div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Keep-alive: Prevents tab sleep
     setInterval(() => { console.log("System Heartbeat"); }, 30000);
@@ -213,15 +290,53 @@
     let isDataReady = false;
     let currentRateCat = null;
 
+    // Session persistence: without this, any time the mobile browser reloads a
+    // backgrounded tab (very common — this is what feels like "getting logged out"),
+    // all in-memory state is lost and the PIN screen reappears. Storing a signed-in
+    // flag in localStorage lets the app skip straight past the PIN screen again.
+    const AUTH_KEY = 'sudhirpro_session';
+    const SESSION_DAYS = 14;
+    let autoLoginPending = false;
+
+    function saveSession() {
+        try { localStorage.setItem(AUTH_KEY, JSON.stringify({ t: Date.now() })); } catch (e) {}
+    }
+    function hasValidSession() {
+        try {
+            const raw = localStorage.getItem(AUTH_KEY);
+            if (!raw) return false;
+            const { t } = JSON.parse(raw);
+            return (Date.now() - t) < SESSION_DAYS * 24 * 60 * 60 * 1000;
+        } catch (e) { return false; }
+    }
+    function clearSession() {
+        try { localStorage.removeItem(AUTH_KEY); } catch (e) {}
+    }
+    function logout() {
+        clearSession();
+        location.reload();
+    }
+    function enterApp() {
+        document.getElementById('sync-overlay').classList.add('hidden');
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app-shell').classList.remove('hidden');
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
         renderYards();
         renderTeam();
-        // Show the PIN screen immediately so the person can start typing right away —
-        // sync runs in the background underneath it instead of blocking entry.
-        document.getElementById('sync-overlay').classList.add('hidden');
-        document.getElementById('auth-screen').classList.remove('hidden');
-        document.getElementById('pin').focus();
+        // If already signed in recently, skip the PIN screen and stay on the
+        // branded sync screen until data is ready, then go straight into the app.
+        autoLoginPending = hasValidSession();
+        if (autoLoginPending) {
+            document.getElementById('sync-overlay').classList.remove('hidden');
+            document.getElementById('auth-screen').classList.add('hidden');
+        } else {
+            document.getElementById('sync-overlay').classList.add('hidden');
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('pin').focus();
+        }
         updateSyncProgress(5, "SYNCING");
         initSync();
         window.history.replaceState({ type: 'tab', target: 'home' }, '');
@@ -233,7 +348,10 @@
         if (state.type === 'tab') {
             document.getElementById('pdf-overlay').classList.add('hidden');
             document.getElementById('detail-layer').classList.add('hidden');
+            document.getElementById('merger-overlay').classList.add('hidden');
             applyTabStyles(state.target);
+        } else if (state.type === 'merger') {
+            document.getElementById('merger-overlay').classList.remove('hidden');
         } else if (state.type === 'detail') {
             document.getElementById('detail-layer').classList.remove('hidden');
             document.getElementById('detail-title').innerText = state.target;
@@ -258,6 +376,9 @@
             renderGrids();
             document.getElementById('notif-text').innerText = db.notif;
             updateSyncProgress(100, "READY");
+
+            // If a valid session already existed, go straight in — no PIN needed.
+            if (autoLoginPending) { enterApp(); return; }
 
             // If the person already typed the correct PIN while syncing was in
             // progress, log them straight in instead of making them press the button again.
@@ -435,13 +556,323 @@
             document.getElementById('auth-sync-text').innerText = document.getElementById('auth-sync-text').innerText.replace(/SYNCING|RATES READY|DOCS READY/, "ALMOST READY");
             return;
         }
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('app-shell').classList.remove('hidden');
+        saveSession();
+        enterApp();
     }
 
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     function goBack() { window.history.back(); }
+
+    /* ===================== DOCUMENTS MERGER ===================== */
+    /* Merges PDFs and photos (in any order) into a single downloadable PDF.
+       Each photo is also silently checked for a QR code; if found, the person
+       gets the option to open the QR's link or download that original photo. */
+
+    let mergeItems = [];
+    let mergeLibReady = typeof Html5Qrcode !== 'undefined';
+    let mergeQrScanner = null;
+    let mergeQrQueue = [];
+    let mergeQrProcessing = false;
+
+    function openMerger() {
+        window.history.pushState({ type: 'merger' }, '');
+        document.getElementById('merger-overlay').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    function mergeEnsureLibrary() {
+        if (mergeLibReady) return Promise.resolve();
+        document.getElementById('merge-lib-banner').classList.remove('hidden');
+        return new Promise((resolve, reject) => {
+            const check = setInterval(() => {
+                if (typeof Html5Qrcode !== 'undefined') {
+                    clearInterval(check);
+                    mergeLibReady = true;
+                    document.getElementById('merge-lib-banner').classList.add('hidden');
+                    resolve();
+                }
+            }, 150);
+            setTimeout(() => {
+                if (!mergeLibReady) { clearInterval(check); reject(new Error('timeout')); }
+            }, 12000);
+        });
+    }
+
+    function mergeEscape(str) {
+        return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function mergeIsUrl(text) {
+        try { const u = new URL(text); return u.protocol === 'http:' || u.protocol === 'https:'; }
+        catch (e) { return false; }
+    }
+
+    function mergeFormatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function genId() { return 'f' + Math.random().toString(36).slice(2, 9); }
+
+    function mergeAddFiles(fileList) {
+        const files = Array.from(fileList || []);
+        let skipped = 0;
+        files.forEach(file => {
+            const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+            const isImage = file.type.startsWith('image/');
+            if (!isPdf && !isImage) { skipped++; return; }
+            const item = {
+                id: genId(),
+                file,
+                type: isPdf ? 'pdf' : 'image',
+                name: file.name,
+                sizeLabel: mergeFormatSize(file.size),
+                thumbUrl: isImage ? URL.createObjectURL(file) : null,
+                qrStatus: isImage ? 'queued' : 'none',
+                qrText: null
+            };
+            mergeItems.push(item);
+            if (isImage) mergeEnqueueQrScan(item);
+        });
+        mergeRenderList();
+        const statusEl = document.getElementById('merge-status');
+        statusEl.textContent = skipped ? `${skipped} file(s) skipped — only PDFs and photos are supported.` : '';
+    }
+
+    function mergeEnqueueQrScan(item) {
+        mergeQrQueue.push(item);
+        if (!mergeQrProcessing) processMergeQrQueue();
+    }
+
+    async function processMergeQrQueue() {
+        mergeQrProcessing = true;
+        while (mergeQrQueue.length) {
+            const item = mergeQrQueue.shift();
+            if (!mergeItems.find(i => i.id === item.id)) continue; // removed before its turn
+            item.qrStatus = 'scanning';
+            mergeRenderList();
+            try {
+                await mergeEnsureLibrary();
+                if (!mergeQrScanner) mergeQrScanner = new Html5Qrcode('merge-hidden-reader');
+                const decoded = await mergeQrScanner.scanFile(item.file, true);
+                item.qrStatus = 'found';
+                item.qrText = decoded;
+            } catch (e) {
+                item.qrStatus = 'none';
+            }
+            mergeRenderList();
+        }
+        mergeQrProcessing = false;
+    }
+
+    function mergeRenderList() {
+        const count = mergeItems.length;
+        document.getElementById('merge-count').textContent = count ? `${count} file${count > 1 ? 's' : ''} added` : '0 files added';
+        document.getElementById('merge-btn').disabled = count === 0;
+        const list = document.getElementById('merge-list');
+        if (!count) {
+            list.innerHTML = `<div class="merge-empty">No files yet — add PDFs or photos above.</div>`;
+            return;
+        }
+        list.innerHTML = mergeItems.map((item, idx) => mergeItemRowHtml(item, idx, count)).join('');
+        lucide.createIcons();
+    }
+
+    function mergeItemRowHtml(item, idx, total) {
+        const thumb = item.type === 'image'
+            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
+            : `<div class="doc-thumb"><i data-lucide="file-text" size="20"></i></div>`;
+
+        let badge = '';
+        if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
+            badge = `<div class="doc-qr-scanning"><span class="qr-spinner"></span> Checking for QR code...</div>`;
+        } else if (item.qrStatus === 'found') {
+            const linky = mergeIsUrl(item.qrText);
+            badge = `
+                <div class="doc-qr-badge">
+                    <span class="doc-qr-tag"><i data-lucide="qr-code" size="11"></i> QR found</span>
+                    <div class="doc-qr-actions">
+                        ${linky ? `<button class="doc-qr-chip" onclick="mergeOpenQrLink('${item.id}')">Open Link</button>` : ''}
+                        <button class="doc-qr-chip" onclick="mergeDownloadOriginal('${item.id}')">Download Photo</button>
+                    </div>
+                </div>`;
+        }
+
+        return `
+            <div class="doc-item">
+                <div class="doc-item-row">
+                    ${thumb}
+                    <div class="doc-meta">
+                        <h4>${mergeEscape(item.name)}</h4>
+                        <p>${item.type === 'pdf' ? 'PDF' : 'Photo'} &middot; ${item.sizeLabel}</p>
+                    </div>
+                    <div class="doc-order-controls">
+                        <button onclick="mergeMoveItem('${item.id}', -1)" ${idx === 0 ? 'disabled' : ''}><i data-lucide="chevron-up" size="13"></i></button>
+                        <button onclick="mergeMoveItem('${item.id}', 1)" ${idx === total - 1 ? 'disabled' : ''}><i data-lucide="chevron-down" size="13"></i></button>
+                    </div>
+                    <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="trash-2" size="15"></i></button>
+                </div>
+                ${badge}
+            </div>`;
+    }
+
+    function mergeMoveItem(id, dir) {
+        const idx = mergeItems.findIndex(i => i.id === id);
+        if (idx === -1) return;
+        const newIdx = idx + dir;
+        if (newIdx < 0 || newIdx >= mergeItems.length) return;
+        const [moved] = mergeItems.splice(idx, 1);
+        mergeItems.splice(newIdx, 0, moved);
+        mergeRenderList();
+    }
+
+    function mergeRemoveItem(id) {
+        const idx = mergeItems.findIndex(i => i.id === id);
+        if (idx === -1) return;
+        const [removed] = mergeItems.splice(idx, 1);
+        if (removed.thumbUrl) URL.revokeObjectURL(removed.thumbUrl);
+        mergeQrQueue = mergeQrQueue.filter(i => i.id !== id);
+        mergeRenderList();
+    }
+
+    function mergeClearAll() {
+        if (!mergeItems.length) return;
+        if (!confirm('Remove all added files?')) return;
+        mergeItems.forEach(i => { if (i.thumbUrl) URL.revokeObjectURL(i.thumbUrl); });
+        mergeItems = [];
+        mergeQrQueue = [];
+        document.getElementById('merge-status').textContent = '';
+        mergeRenderList();
+    }
+
+    function mergeOpenQrLink(id) {
+        const item = mergeItems.find(i => i.id === id);
+        if (item && item.qrText) window.open(item.qrText, '_blank', 'noopener,noreferrer');
+    }
+
+    function mergeDownloadOriginal(id) {
+        const item = mergeItems.find(i => i.id === id);
+        if (!item) return;
+        const url = URL.createObjectURL(item.file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = item.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
+    // Converts any image type (jpg, png, webp, heic-via-browser, etc.) to PNG bytes
+    // via canvas, so pdf-lib can embed it reliably regardless of source format.
+    function mergeImageToPngBytes(file) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                canvas.toBlob(blob => {
+                    URL.revokeObjectURL(url);
+                    if (!blob) { reject(new Error('canvas-empty')); return; }
+                    blob.arrayBuffer().then(buf => resolve({ bytes: new Uint8Array(buf), width: canvas.width, height: canvas.height }));
+                }, 'image/png');
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image-load-failed')); };
+            img.src = url;
+        });
+    }
+
+    async function mergeAndDownload() {
+        if (!mergeItems.length) return;
+        const btn = document.getElementById('merge-btn');
+        const status = document.getElementById('merge-status');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="merge-spinner"></span> Merging...`;
+        status.textContent = '';
+        try {
+            const { PDFDocument } = PDFLib;
+            const mergedPdf = await PDFDocument.create();
+            for (let i = 0; i < mergeItems.length; i++) {
+                const item = mergeItems[i];
+                status.textContent = `Adding ${i + 1} of ${mergeItems.length}: ${item.name}`;
+                if (item.type === 'pdf') {
+                    const bytes = await item.file.arrayBuffer();
+                    const srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+                    const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
+                    pages.forEach(p => mergedPdf.addPage(p));
+                } else {
+                    const { bytes: pngBytes, width, height } = await mergeImageToPngBytes(item.file);
+                    const img = await mergedPdf.embedPng(pngBytes);
+                    const page = mergedPdf.addPage([width, height]);
+                    page.drawImage(img, { x: 0, y: 0, width, height });
+                }
+            }
+            status.textContent = 'Preparing download...';
+            const mergedBytes = await mergedPdf.save();
+            const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+            a.href = url;
+            a.download = `merged-document-${stamp}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 4000);
+            status.textContent = `Done — ${mergeItems.length} file(s) merged and downloaded.`;
+        } catch (err) {
+            status.textContent = 'Something went wrong while merging. Please try again.';
+            console.error(err);
+        } finally {
+            btn.disabled = mergeItems.length === 0;
+            btn.innerHTML = `<i data-lucide="download" size="16"></i> Merge &amp; Download PDF`;
+            lucide.createIcons();
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const hidden = document.createElement('div');
+        hidden.id = 'merge-hidden-reader';
+        hidden.style.display = 'none';
+        document.body.appendChild(hidden);
+
+        const dropZone = document.getElementById('merge-drop-zone');
+        const fileInput = document.getElementById('merge-file-input');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', e => { mergeAddFiles(e.target.files); fileInput.value = ''; });
+
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) mergeAddFiles(e.dataTransfer.files);
+        });
+
+        document.addEventListener('paste', e => {
+            if (document.getElementById('merger-overlay').classList.contains('hidden')) return;
+            const items = e.clipboardData && e.clipboardData.items;
+            if (!items) return;
+            const files = [];
+            for (const item of items) {
+                if (item.kind === 'file') {
+                    const f = item.getAsFile();
+                    if (f) files.push(f);
+                }
+            }
+            if (files.length) mergeAddFiles(files);
+        });
+
+        mergeEnsureLibrary().catch(() => {
+            document.getElementById('merge-status').textContent = 'QR checking failed to load — merging will still work.';
+        });
+    });
 </script>
 </body>
 </html>
