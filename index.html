@@ -13,8 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <style>
         :root { 
-            --accent: #fbc531; 
-            --accent-dim: rgba(251, 197, 49, 0.15);
+            --accent: #22d3ee; 
+            --accent-2: #818cf8;
+            --accent-dim: rgba(34, 211, 238, 0.15);
             --bg: #05070a; 
             --card: #11141d; 
             --border: rgba(255, 255, 255, 0.08); 
@@ -25,6 +26,13 @@
             --safe-bottom: env(safe-area-inset-bottom);
             --safe-top: env(safe-area-inset-top);
         }
+
+        body.theme-amber { --accent: #fbc531; --accent-2: #fb923c; --accent-dim: rgba(251, 197, 49, 0.15); }
+        body.theme-cyan { --accent: #22d3ee; --accent-2: #818cf8; --accent-dim: rgba(34, 211, 238, 0.15); }
+        body.theme-emerald { --accent: #34d399; --accent-2: #a3e635; --accent-dim: rgba(52, 211, 153, 0.15); }
+        body.theme-violet { --accent: #a78bfa; --accent-2: #f472b6; --accent-dim: rgba(167, 139, 250, 0.16); }
+        body.theme-rose { --accent: #fb7185; --accent-2: #fbbf24; --accent-dim: rgba(251, 113, 133, 0.15); }
+        body.theme-orange { --accent: #fb923c; --accent-2: #fbbf24; --accent-dim: rgba(251, 146, 60, 0.15); }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: #fff; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; background-image: radial-gradient(circle at top right, #1e222d, #05070a); }
@@ -80,9 +88,19 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .dash-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+        .dash-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; transition: transform 0.15s ease, border-color 0.15s ease; }
+        .dash-card:active { transform: scale(0.96); border-color: var(--accent); }
         .dash-card i { color: var(--accent); }
         .dash-card span { font-size: 12px; font-weight: 800; line-height: 1.3; }
+        .dash-icon-badge { width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); color: var(--accent); flex-shrink: 0; }
+        .dash-icon-badge i { color: inherit; }
+
+        /* Theme switcher */
+        .theme-toggle-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .theme-dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; position: relative; flex-shrink: 0; }
+        .theme-dot.active { border-color: #fff; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px currentColor; }
+        #theme-picker { position: fixed; top: calc(var(--safe-top) + 62px); right: 15px; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px; z-index: 2600; box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+        #theme-picker p { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 10px; }
 
         .group-title { font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin: 25px 0 12px 5px; letter-spacing: 1.5px; border-left: 3px solid var(--accent); padding-left: 10px; }
         .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -185,25 +203,38 @@
                 <div id="home-dot" class="status-dot"></div>
                 <span id="home-sync-text" class="sync-text">SYNCING</span>
             </div>
+            <button class="act-btn" onclick="toggleThemePicker()" style="width:34px; height:34px; border-radius:10px;" title="Change theme"><i data-lucide="palette" size="14"></i></button>
             <button class="act-btn" onclick="logout()" style="width:34px; height:34px; border-radius:10px;" title="Log out"><i data-lucide="log-out" size="14"></i></button>
         </div>
     </header>
+
+    <div id="theme-picker" class="hidden">
+        <p>Choose a theme</p>
+        <div class="theme-toggle-row">
+            <button class="theme-dot" data-theme="amber" style="background:#fbc531; color:#fbc531;" onclick="setTheme('amber')"></button>
+            <button class="theme-dot" data-theme="cyan" style="background:#22d3ee; color:#22d3ee;" onclick="setTheme('cyan')"></button>
+            <button class="theme-dot" data-theme="emerald" style="background:#34d399; color:#34d399;" onclick="setTheme('emerald')"></button>
+            <button class="theme-dot" data-theme="violet" style="background:#a78bfa; color:#a78bfa;" onclick="setTheme('violet')"></button>
+            <button class="theme-dot" data-theme="rose" style="background:#fb7185; color:#fb7185;" onclick="setTheme('rose')"></button>
+            <button class="theme-dot" data-theme="orange" style="background:#fb923c; color:#fb923c;" onclick="setTheme('orange')"></button>
+        </div>
+    </div>
     
     <main id="main-content">
         <div id="tab-home" class="view-section">
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
-                <div class="dash-card" onclick="navigateToTab('rates')"><i data-lucide="tag"></i><span>RENTAL<br>RATES</span></div>
-                <div class="dash-card" onclick="navigateToTab('docs')"><i data-lucide="file-text"></i><span>TECH<br>SPECS</span></div>
-                <div class="dash-card" onclick="openPhotos()"><i data-lucide="camera"></i><span>GALLERY</span></div>
-                <div class="dash-card" onclick="navigateToTab('yards')"><i data-lucide="map-pin"></i><span>YARDS</span></div>
-                <div class="dash-card" onclick="navigateToTab('team')"><i data-lucide="users"></i><span>TEAM</span></div>
-                <div class="dash-card" onclick="openMerger()"><i data-lucide="layers"></i><span>DOCS<br>MERGER</span></div>
+                <div class="dash-card" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:rgba(251,197,49,0.16); color:#fbc531;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
+                <div class="dash-card" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:rgba(34,211,238,0.16); color:#22d3ee;"><i data-lucide="file-text"></i></div><span>TECH<br>SPECS</span></div>
+                <div class="dash-card" onclick="openPhotos()"><div class="dash-icon-badge" style="background:rgba(244,114,182,0.16); color:#f472b6;"><i data-lucide="camera"></i></div><span>GALLERY</span></div>
+                <div class="dash-card" onclick="navigateToTab('yards')"><div class="dash-icon-badge" style="background:rgba(52,211,153,0.16); color:#34d399;"><i data-lucide="map-pin"></i></div><span>YARDS</span></div>
+                <div class="dash-card" onclick="navigateToTab('team')"><div class="dash-icon-badge" style="background:rgba(167,139,250,0.16); color:#a78bfa;"><i data-lucide="users"></i></div><span>TEAM</span></div>
+                <div class="dash-card" onclick="openMerger()"><div class="dash-icon-badge" style="background:rgba(129,140,248,0.16); color:#818cf8;"><i data-lucide="layers"></i></div><span>DOCS<br>MERGER</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
 
-            <h3 class="group-title">NO SIGNAL? PLAY THIS</h3>
+            <h3 class="group-title">HAVE FUN! PLAY THE GAME</h3>
             <div id="dino-card">
                 <div id="dino-hud">
                     <span class="dino-score">SCORE <span id="dino-score">0</span></span>
@@ -311,10 +342,79 @@
 
     const EMAILS = [ { r: "Eastern", e: "service@sudhirrentals.com" }, { r: "Central", e: "serviceriyadh@sudhirrentals.com" }, { r: "Western", e: "servicejeddah@sudhirrentals.com" }, { r: "Tabuk", e: "servicetabuk@sudhirrentals.com" } ];
 
-    let db = { rates: {}, docs: {}, notif: "Connected." };
+    let db = { rates: {}, docs: {}, docsRoot: { folders: {}, files: [] }, notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
     let isDataReady = false;
     let currentRateCat = null;
+
+    // ---- Theme switcher ----
+    const THEMES = ['amber', 'cyan', 'emerald', 'violet', 'rose', 'orange'];
+    function initTheme() {
+        let saved = 'cyan';
+        try { saved = localStorage.getItem('sudhirpro_theme') || 'cyan'; } catch (e) {}
+        applyTheme(saved);
+    }
+    function applyTheme(name) {
+        THEMES.forEach(t => document.body.classList.remove('theme-' + t));
+        document.body.classList.add('theme-' + name);
+        document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.theme === name));
+    }
+    function setTheme(name) {
+        applyTheme(name);
+        try { localStorage.setItem('sudhirpro_theme', name); } catch (e) {}
+        document.getElementById('theme-picker').classList.add('hidden');
+    }
+    function toggleThemePicker() {
+        document.getElementById('theme-picker').classList.toggle('hidden');
+    }
+    document.addEventListener('click', (e) => {
+        const picker = document.getElementById('theme-picker');
+        if (!picker || picker.classList.contains('hidden')) return;
+        if (picker.contains(e.target) || e.target.closest('[onclick="toggleThemePicker()"]')) return;
+        picker.classList.add('hidden');
+    });
+    initTheme();
+
+    // ---- Category icon mapping: picks a fitting lucide icon + color based on
+    // keywords found in a folder/category name, for both Tech Specs and Rates tabs ----
+    const CATEGORY_ICON_RULES = [
+        { k: ['genset', 'generator', 'diesel', 'dg set', 'dg-set'], icon: 'zap', color: '#f59e0b' },
+        { k: ['crane', 'crawler', 'boom truck'], icon: 'construction', color: '#ef4444' },
+        { k: ['awp', 'manlift', 'man lift', 'boom lift', 'scissor', 'aerial', 'platform'], icon: 'move-vertical', color: '#3b82f6' },
+        { k: ['forklift', 'telehandler'], icon: 'truck', color: '#22c55e' },
+        { k: ['compressor', 'air comp'], icon: 'wind', color: '#06b6d4' },
+        { k: ['pump', 'water'], icon: 'droplets', color: '#0ea5e9' },
+        { k: ['weld'], icon: 'flame', color: '#f97316' },
+        { k: ['light tower', 'lighting', 'light'], icon: 'lightbulb', color: '#eab308' },
+        { k: ['chiller', 'ac unit', 'cooling', 'hvac'], icon: 'snowflake', color: '#38bdf8' },
+        { k: ['transport', 'trailer', 'truck', 'lowbed', 'low-bed'], icon: 'truck', color: '#8b5cf6' },
+        { k: ['tool'], icon: 'wrench', color: '#94a3b8' },
+        { k: ['safety', 'ppe', 'helmet'], icon: 'hard-hat', color: '#facc15' },
+        { k: ['battery', 'electric'], icon: 'battery-charging', color: '#10b981' },
+        { k: ['container', 'cabin', 'porta'], icon: 'container', color: '#f472b6' },
+        { k: ['fuel', 'tank'], icon: 'fuel', color: '#fb7185' }
+    ];
+    function getCategoryVisual(name, fallbackIcon) {
+        const n = (name || '').toLowerCase();
+        for (const rule of CATEGORY_ICON_RULES) {
+            if (rule.k.some(kw => n.includes(kw))) return rule;
+        }
+        return { icon: fallbackIcon || 'folder', color: null };
+    }
+    function hexToRgba(hex, alpha) {
+        const bigint = parseInt(hex.slice(1), 16);
+        const r = (bigint >> 16) & 255, g = (bigint >> 8) & 255, b = bigint & 255;
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
+    // Builds a dash-card with a colored icon badge picked from the category name.
+    function categoryCardHtml(label, clickValue, onclickFnName, fallbackIcon) {
+        const v = getCategoryVisual(label, fallbackIcon);
+        const fg = v.color || 'var(--accent)';
+        const bg = v.color ? hexToRgba(v.color, 0.16) : 'var(--accent-dim)';
+        const escapedClick = String(clickValue).replace(/'/g, "\\'");
+        const escapedLabel = String(label).replace(/</g, '&lt;');
+        return `<div class="dash-card" onclick="${onclickFnName}('${escapedClick}')"><div class="dash-icon-badge" style="background:${bg}; color:${fg};"><i data-lucide="${v.icon}"></i></div><span>${escapedLabel}</span></div>`;
+    }
 
     // Session persistence: without this, any time the mobile browser reloads a
     // backgrounded tab (very common — this is what feels like "getting logged out"),
@@ -437,11 +537,31 @@
     async function loadDocs() {
         const res = await fetch(`https://api.github.com/repos/${CONFIG.GH.user}/${CONFIG.GH.repo}/git/trees/main?recursive=1`);
         const data = await res.json();
+        db.docsRoot = { folders: {}, files: [] };
         data.tree.filter(f => f.path.endsWith('.pdf')).forEach(f => {
-            const cat = f.path.split('/')[0] || "General";
-            if(!db.docs[cat]) db.docs[cat] = [];
-            db.docs[cat].push({ name: f.path.split('/').pop().replace(".pdf",""), url: `https://raw.githubusercontent.com/${CONFIG.GH.user}/${CONFIG.GH.repo}/main/${encodeURIComponent(f.path)}` });
+            const parts = f.path.split('/');
+            const fileName = parts.pop().replace(".pdf", "");
+            // Encode each path segment individually so folder slashes survive in the raw URL.
+            const encodedPath = [...parts, fileName + ".pdf"].map(encodeURIComponent).join('/');
+            let node = db.docsRoot;
+            parts.forEach(folder => {
+                if (!node.folders[folder]) node.folders[folder] = { folders: {}, files: [] };
+                node = node.folders[folder];
+            });
+            node.files.push({ name: fileName, url: `https://raw.githubusercontent.com/${CONFIG.GH.user}/${CONFIG.GH.repo}/main/${encodedPath}` });
         });
+    }
+
+    // Walks db.docsRoot using a '/'-joined path (e.g. "Cranes/Tower Cranes") and
+    // returns the { folders, files } node at that location, or null if missing.
+    function getDocsNode(path) {
+        if (!path) return db.docsRoot;
+        let node = db.docsRoot;
+        for (const part of path.split('/')) {
+            if (!node || !node.folders[part]) return null;
+            node = node.folders[part];
+        }
+        return node;
     }
 
     function renderYards() {
@@ -462,8 +582,8 @@
     }
 
     function renderGrids() {
-        document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => `<div class="dash-card" onclick="viewRates('${cat}')"><i data-lucide="tag"></i><span>${cat}</span></div>`).join('');
-        document.getElementById('docs-grid').innerHTML = Object.keys(db.docs).map(cat => `<div class="dash-card" onclick="viewDocs('${cat}')"><i data-lucide="file-text"></i><span>${cat}</span></div>`).join('');
+        document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => categoryCardHtml(cat, cat, 'viewRates', 'tag')).join('');
+        document.getElementById('docs-grid').innerHTML = Object.keys(db.docsRoot.folders).sort().map(cat => categoryCardHtml(cat, cat, 'viewDocs', 'folder')).join('');
         lucide.createIcons();
     }
 
@@ -518,15 +638,35 @@
         renderRateCards(filtered, headers);
     }
 
-    function viewDocs(cat) {
-        window.history.pushState({ type: 'detail', target: cat, subType: 'docs' }, '');
+    function viewDocs(path) {
+        window.history.pushState({ type: 'detail', target: path, subType: 'docs' }, '');
         document.getElementById('detail-layer').classList.remove('hidden');
-        document.getElementById('detail-title').innerText = cat;
-        buildDocsContent(cat);
+        document.getElementById('detail-title').innerText = path.split('/').pop();
+        buildDocsContent(path);
     }
 
-    function buildDocsContent(cat) {
-        document.getElementById('detail-content').innerHTML = db.docs[cat].map(f => `<div class="item-card" onclick="openPdf('${f.url}', '${f.name}')"><div class="item-info"><h4>${f.name}</h4><p>Technical PDF</p></div><i data-lucide="eye" style="color:var(--accent)"></i></div>`).join('');
+    // path is a '/'-joined breadcrumb (e.g. "Cranes/Tower Cranes"). Renders any
+    // subfolders as tappable cards and any PDFs at this level as file rows.
+    function buildDocsContent(path) {
+        const node = getDocsNode(path);
+        const container = document.getElementById('detail-content');
+        if (!node || (Object.keys(node.folders).length === 0 && node.files.length === 0)) {
+            container.innerHTML = `<div class="rate-empty">No datasheets found</div>`;
+            return;
+        }
+        let html = '';
+        const folderNames = Object.keys(node.folders).sort();
+        if (folderNames.length) {
+            html += `<div class="dash-grid" style="margin-bottom:16px;">` + folderNames.map(fname => {
+                const childPath = path ? `${path}/${fname}` : fname;
+                return categoryCardHtml(fname, childPath, 'viewDocs', 'folder');
+            }).join('') + `</div>`;
+        }
+        if (node.files.length) {
+            html += node.files.map(f => `<div class="item-card" onclick="openPdf('${f.url}', '${f.name.replace(/'/g, "\\'")}')"><div class="item-info"><h4>${f.name}</h4><p>Technical PDF</p></div><i data-lucide="eye" style="color:var(--accent)"></i></div>`).join('');
+        }
+        container.innerHTML = html;
+        lucide.createIcons();
         lucide.createIcons();
     }
 
