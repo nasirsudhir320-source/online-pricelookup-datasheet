@@ -88,7 +88,7 @@
         .auth-card { background: var(--card); border: 1.5px solid var(--border); padding: 40px 30px; border-radius: 28px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 20px 50px rgba(22,23,27,0.12); border-top: 5px solid var(--accent); }
         .pin-box { background: var(--bg); border: 1.5px solid var(--border); color: var(--accent); font-size: 32px; letter-spacing: 12px; text-align: center; width: 100%; padding: 15px; border-radius: 16px; margin-bottom: 20px; outline: none; font-family: 'Space Grotesk', sans-serif; }
 
-        #app-shell { display: flex; flex-direction: column; height: 100%; width: 100%; }
+        #app-shell { display: flex; flex-direction: column; height: 100%; width: 100%; position: relative; }
         header { padding: calc(var(--safe-top) + 15px) 20px 15px; border-bottom: 1.5px solid var(--border); background: var(--glass); backdrop-filter: blur(14px); display: flex; justify-content: space-between; align-items: center; position: relative; }
         header::after { content: ''; position: absolute; bottom: -1.5px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2), transparent); }
         .logo { font-weight: 700; font-size: 21px; letter-spacing: 0.5px; color: var(--ink); }
@@ -97,6 +97,12 @@
         main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 118px; }
         .view-section { padding: 15px; animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero-banner { position: relative; width: 100%; height: 150px; border-radius: 20px; overflow: hidden; margin-bottom: 16px; border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(22,23,27,0.1); }
+        .hero-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .hero-banner-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; background: linear-gradient(180deg, rgba(22,23,27,0) 40%, rgba(22,23,27,0.85) 100%); }
+        .hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1.6px; color: var(--accent-2); text-transform: uppercase; margin-bottom: 4px; }
+        .hero-banner-overlay h2 { color: #fff; font-size: 18px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 
         /* Bento-style dashboard: first tile featured/wide, rest form a colorful grid */
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -112,7 +118,7 @@
         .theme-toggle-row { display: flex; gap: 10px; flex-wrap: wrap; }
         .theme-dot { width: 32px; height: 32px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; position: relative; flex-shrink: 0; }
         .theme-dot.active { border-color: var(--ink); box-shadow: 0 3px 8px rgba(22,23,27,0.2); }
-        #theme-picker { position: fixed; top: calc(var(--safe-top) + 62px); right: 15px; background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 14px; z-index: 2600; box-shadow: 0 14px 34px rgba(22,23,27,0.16); }
+        #theme-picker { position: absolute; top: calc(var(--safe-top) + 62px); right: 15px; background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 14px; z-index: 2600; box-shadow: 0 14px 34px rgba(22,23,27,0.16); }
         #theme-picker p { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; }
 
         .group-title { display: inline-block; font-size: 11px; font-weight: 700; color: #fff; text-transform: uppercase; margin: 25px 0 12px 0; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); padding: 7px 16px; border-radius: 10px; }
@@ -125,7 +131,7 @@
         .act-btn.success { color: var(--success); }
         .act-btn.primary { color: var(--accent); }
 
-        nav { position: fixed; bottom: 12px; left: 12px; right: 12px; background: var(--glass); backdrop-filter: blur(14px); border: 1.5px solid var(--border); border-radius: 24px; display: flex; padding: 8px 6px calc(var(--safe-bottom) + 8px); z-index: 2000; box-shadow: 0 12px 30px rgba(22,23,27,0.14); }
+        nav { position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 496px; margin: 0 auto; background: var(--glass); backdrop-filter: blur(14px); border: 1.5px solid var(--border); border-radius: 24px; display: flex; padding: 8px 6px calc(var(--safe-bottom) + 8px); z-index: 2000; box-shadow: 0 12px 30px rgba(22,23,27,0.14); }
         .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); border: none; background: none; cursor: pointer; padding: 6px 2px; border-radius: 16px; transition: 0.15s ease; }
         .nav-tab.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
         .nav-tab span { font-size: 9px; font-weight: 800; text-transform: uppercase; }
@@ -183,6 +189,39 @@
         .merge-spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; display: inline-block; animation: qrspin 0.7s linear infinite; }
         .qr-spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent-dim); border-top-color: var(--accent); display: inline-block; animation: qrspin 0.7s linear infinite; }
         @keyframes qrspin { to { transform: rotate(360deg); } }
+
+        /* Desktop: full-width header, left sidebar nav, wide multi-column content */
+        @media (min-width: 900px) {
+            body { align-items: stretch; justify-content: flex-start; }
+            #app-shell {
+                display: grid;
+                grid-template-columns: 220px 1fr;
+                grid-template-rows: auto 1fr;
+                grid-template-areas: "header header" "nav main";
+                max-width: none; width: 100%; height: 100vh;
+            }
+            header { grid-area: header; }
+            nav {
+                grid-area: nav; position: static; inset: auto; width: auto; max-width: none; margin: 0;
+                flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 4px;
+                padding: 18px 10px; border-radius: 0; border: none; border-right: 1.5px solid var(--border);
+                background: var(--glass);
+            }
+            .nav-tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 12px; border-radius: 14px; }
+            .nav-tab span { font-size: 12px; letter-spacing: 0.3px; }
+            main { padding: 22px 30px 40px; max-width: 1100px; }
+            .view-section { padding: 0; }
+            .hero-banner { height: 200px; }
+            .dash-grid { grid-template-columns: repeat(4, 1fr); }
+            .dash-grid .dash-card:first-child { grid-column: span 4; }
+            .rate-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            #theme-picker { top: 56px; }
+        }
+        @media (min-width: 1300px) {
+            .dash-grid { grid-template-columns: repeat(5, 1fr); }
+            .dash-grid .dash-card:first-child { grid-column: span 5; }
+            .rate-cards { grid-template-columns: repeat(3, 1fr); }
+        }
     </style>
 </head>
 <body>
@@ -235,6 +274,13 @@
     
     <main id="main-content">
         <div id="tab-home" class="view-section">
+            <div class="hero-banner">
+                <img src="https://images.pexels.com/photos/4513940/pexels-photo-4513940.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Construction cranes at sunset" loading="lazy" />
+                <div class="hero-banner-overlay">
+                    <span class="hero-eyebrow">SUDHIR PRO FLEET</span>
+                    <h2>Equipment, on demand.</h2>
+                </div>
+            </div>
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
                 <div class="dash-card" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#fbc531; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
@@ -272,6 +318,7 @@
     <nav>
         <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>Back</span></button>
         <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><i data-lucide="home"></i><span>Home</span></button>
+        <button class="nav-tab" id="btn-docs" onclick="navigateToTab('docs')"><i data-lucide="file-text"></i><span>Specs</span></button>
         <button class="nav-tab" id="btn-photos" onclick="openPhotos()"><i data-lucide="image"></i><span>Photos</span></button>
         <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><i data-lucide="users"></i><span>Team</span></button>
         <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><i data-lucide="map"></i><span>Yards</span></button>
@@ -393,8 +440,11 @@
     const CATEGORY_ICON_RULES = [
         { k: ['genset', 'generator', 'diesel', 'dg set', 'dg-set'], icon: 'zap', color: '#f59e0b' },
         { k: ['crane', 'crawler', 'boom truck'], icon: 'construction', color: '#ef4444' },
-        { k: ['awp', 'manlift', 'man lift', 'boom lift', 'scissor', 'aerial', 'platform'], icon: 'move-vertical', color: '#3b82f6' },
-        { k: ['forklift', 'telehandler'], icon: 'truck', color: '#22c55e' },
+        { k: ['scissor'], icon: 'arrow-up-down', color: '#3b82f6' },
+        { k: ['boom lift', 'boomlift', 'manlift', 'man lift'], icon: 'ladder', color: '#2563eb' },
+        { k: ['awp', 'aerial', 'platform'], icon: 'move-vertical', color: '#60a5fa' },
+        { k: ['forklift', 'telehandler'], icon: 'forklift', color: '#22c55e' },
+        { k: ['excavator', 'loader', 'backhoe'], icon: 'shovel', color: '#f97316' },
         { k: ['compressor', 'air comp'], icon: 'wind', color: '#06b6d4' },
         { k: ['pump', 'water'], icon: 'droplets', color: '#0ea5e9' },
         { k: ['weld'], icon: 'flame', color: '#f97316' },
