@@ -64,6 +64,9 @@
         .rate-search::placeholder { color: var(--text-dim); }
         .rate-cards { display: flex; flex-direction: column; gap: 12px; }
         .rate-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px 18px; border-left: 5px solid var(--accent); box-shadow: 0 3px 14px rgba(22,23,27,0.05); }
+        .rate-card.rate-card-electric { border-left-color: #10b981; background: linear-gradient(90deg, rgba(16,185,129,0.07), var(--card) 45%); }
+        .rate-card.rate-card-electric .rate-value { color: #10b981; }
+        .electric-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; color: #fff; background: #10b981; padding: 3px 8px; border-radius: 8px; letter-spacing: 0.4px; vertical-align: middle; margin-left: 8px; text-transform: uppercase; }
         .rate-item-name { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 12px; line-height: 1.3; }
         .rate-pills { display: flex; flex-wrap: wrap; gap: 10px; }
         .rate-pill { background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 14px; min-width: 92px; flex: 1 1 auto; }
@@ -98,10 +101,12 @@
         .view-section { padding: 15px; animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hero-banner { position: relative; width: 100%; height: 150px; border-radius: 20px; overflow: hidden; margin-bottom: 16px; border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(22,23,27,0.1); }
-        .hero-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .hero-banner-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; background: linear-gradient(180deg, rgba(22,23,27,0) 40%, rgba(22,23,27,0.85) 100%); }
-        .hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1.6px; color: var(--accent-2); text-transform: uppercase; margin-bottom: 4px; }
+        .hero-banner { position: relative; width: 100%; height: 150px; border-radius: 20px; overflow: hidden; margin-bottom: 16px; border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(22,23,27,0.14); background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: flex-end; }
+        .hero-banner::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.22) 1.5px, transparent 1.5px); background-size: 20px 20px; }
+        .hero-decor { position: absolute; right: -14px; bottom: -18px; color: rgba(255,255,255,0.22); pointer-events: none; }
+        .hero-decor svg { width: 130px; height: 130px; }
+        .hero-banner-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.28) 100%); }
+        .hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1.6px; color: rgba(255,255,255,0.85); text-transform: uppercase; margin-bottom: 4px; }
         .hero-banner-overlay h2 { color: #fff; font-size: 18px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 
         /* Bento-style dashboard: first tile featured/wide, rest form a colorful grid */
@@ -164,21 +169,35 @@
         .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
         .merge-clear { font-size: 11px; font-weight: 800; color: #dc2626; background: none; border: none; }
 
-        .doc-item { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(22,23,27,0.05); }
-        .doc-item-row { display: flex; align-items: center; gap: 12px; }
-        .doc-thumb { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; object-fit: cover; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; color: var(--accent); }
-        .doc-meta { flex: 1; min-width: 0; }
-        .doc-meta h4 { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
-        .doc-meta p { font-size: 10px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .doc-order-controls { display: flex; flex-direction: column; gap: 4px; }
-        .doc-order-controls button { width: 26px; height: 22px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 7px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; }
-        .doc-remove { width: 34px; height: 34px; border-radius: 11px; background: #fde9e8; border: 1.5px solid rgba(220,38,38,0.25); color: #dc2626; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        /* Horizontal, side-scrolling strip of file cards. Drag the grip on any
+           card left/right to reorder; tap the thumbnail/name to preview. */
+        #merge-list { display: flex; flex-direction: row; gap: 12px; overflow-x: auto; overflow-y: visible; padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+        #merge-list::-webkit-scrollbar { height: 6px; }
+        #merge-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .doc-item { position: relative; flex: 0 0 148px; width: 148px; scroll-snap-align: start; background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: 0 2px 10px rgba(22,23,27,0.05); }
+        .doc-item.doc-dragging { opacity: 0.92; box-shadow: 0 14px 28px rgba(22,23,27,0.22); border-color: var(--accent); cursor: grabbing; z-index: 5; }
+        .doc-drag-handle { position: absolute; top: 6px; left: 6px; width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: rgba(255,255,255,0.88); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; z-index: 3; }
+        .doc-drag-handle:active { cursor: grabbing; color: var(--accent); }
+        .doc-index-pill { position: absolute; bottom: 6px; left: 6px; font-size: 10px; font-weight: 800; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 6px; z-index: 3; }
+        .doc-remove { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 9px; background: #fde9e8; border: 1.5px solid rgba(220,38,38,0.25); color: #dc2626; display: flex; align-items: center; justify-content: center; z-index: 3; }
+        .doc-preview-trigger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding-top: 26px; }
+        .doc-thumb-wrap { position: relative; }
+        .doc-thumb { width: 100%; height: 92px; border-radius: 12px; object-fit: cover; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .doc-eye-badge { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; border-radius: 7px; background: rgba(22,23,27,0.6); color: #fff; display: flex; align-items: center; justify-content: center; }
+        .doc-meta { min-width: 0; text-align: left; }
+        .doc-meta h4 { font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+        .doc-meta p { font-size: 9px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .doc-drag-placeholder { flex: 0 0 148px; width: 148px; border: 2px dashed var(--accent); border-radius: 16px; background: var(--accent-dim); opacity: 0.6; }
 
-        .doc-qr-badge { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .doc-qr-tag { font-size: 10px; font-weight: 800; color: #fff; background: var(--accent); padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
-        .doc-qr-actions { display: flex; gap: 6px; flex: 1; }
-        .doc-qr-chip { font-size: 11px; font-weight: 800; color: var(--ink); background: var(--bg); border: 1.5px solid var(--border); border-radius: 9px; padding: 6px 10px; }
-        .doc-qr-scanning { font-size: 10px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+        #img-preview-box { display: flex; align-items: center; justify-content: center; min-height: 100%; padding: 10px; }
+        #img-preview-box img { max-width: 100%; max-height: calc(100vh - 90px); border-radius: 10px; object-fit: contain; }
+        .pdf-native-frame { width: 100%; height: calc(100vh - 66px); border: 0; display: block; background: #525659; }
+
+        .doc-qr-badge { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+        .doc-qr-tag { font-size: 9px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 6px; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase; }
+        .doc-qr-actions { display: flex; flex-direction: column; gap: 5px; }
+        .doc-qr-chip { font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 4px; text-align: center; }
+        .doc-qr-scanning { font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
 
         .merge-empty { text-align: center; color: var(--text-dim); font-size: 12px; padding: 24px 0; }
 
@@ -209,13 +228,15 @@
             }
             .nav-tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 12px; border-radius: 14px; }
             .nav-tab span { font-size: 12px; letter-spacing: 0.3px; }
-            main { padding: 22px 30px 40px; max-width: 1100px; }
+            main { padding: 22px 30px 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
             .view-section { padding: 0; }
             .hero-banner { height: 200px; }
             .dash-grid { grid-template-columns: repeat(4, 1fr); }
             .dash-grid .dash-card:first-child { grid-column: span 4; }
             .rate-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
             #theme-picker { top: 56px; }
+            .overlay-header { padding: 18px 30px; }
+            .scroll-area { max-width: 1100px; margin: 0 auto; width: 100%; }
         }
         @media (min-width: 1300px) {
             .dash-grid { grid-template-columns: repeat(5, 1fr); }
@@ -275,7 +296,7 @@
     <main id="main-content">
         <div id="tab-home" class="view-section">
             <div class="hero-banner">
-                <img src="https://images.pexels.com/photos/4513940/pexels-photo-4513940.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Construction cranes at sunset" loading="lazy" />
+                <div class="hero-decor"><i data-lucide="construction" size="130"></i></div>
                 <div class="hero-banner-overlay">
                     <span class="hero-eyebrow">SUDHIR PRO FLEET</span>
                     <h2>Equipment, on demand.</h2>
@@ -338,6 +359,15 @@
         <button class="act-btn primary" onclick="downloadPdf()" style="margin-left:8px;"><i data-lucide="download"></i></button>
     </div>
     <div class="scroll-area" id="pdf-render-box"></div>
+</div>
+
+<div id="img-preview-overlay" class="overlay-view hidden" style="background:#000">
+    <div class="overlay-header">
+        <button class="act-btn" onclick="goBack()"><i data-lucide="x"></i></button>
+        <div id="img-preview-title" style="flex:1; font-size:11px; text-align:center;">Preview</div>
+        <button class="act-btn primary" onclick="downloadPreviewImage()"><i data-lucide="download"></i></button>
+    </div>
+    <div class="scroll-area" id="img-preview-box"></div>
 </div>
 
 <div id="merger-overlay" class="overlay-view hidden">
@@ -464,6 +494,34 @@
         }
         return { icon: fallbackIcon || 'folder', color: null };
     }
+
+    // ---- Spec Sheet (Tech Specs / Docs) display order: manlift, scissorlift,
+    // generators, air compressor, forklift, telehandler always come first (in
+    // that order), everything else follows alphabetically after them. ----
+    const SPEC_ORDER_RULES = [
+        ['man lift', 'manlift', 'boom lift', 'boomlift'],
+        ['scissor'],
+        ['generator', 'genset', 'diesel', 'dg set', 'dg-set'],
+        ['air comp', 'air-comp', 'compressor'],
+        ['forklift'],
+        ['telehandler']
+    ];
+    function getSpecPriority(name) {
+        const n = (name || '').toLowerCase();
+        for (let i = 0; i < SPEC_ORDER_RULES.length; i++) {
+            if (SPEC_ORDER_RULES[i].some(kw => n.includes(kw))) return i;
+        }
+        return SPEC_ORDER_RULES.length;
+    }
+    // Sorts category/folder names using the priority order above; anything not
+    // matched keeps its place at the end, alphabetically among itself.
+    function sortSpecNames(names) {
+        return names.slice().sort((a, b) => {
+            const pa = getSpecPriority(a), pb = getSpecPriority(b);
+            if (pa !== pb) return pa - pb;
+            return a.localeCompare(b, undefined, { sensitivity: 'base' });
+        });
+    }
     function hexToRgba(hex, alpha) {
         const bigint = parseInt(hex.slice(1), 16);
         const r = (bigint >> 16) & 255, g = (bigint >> 8) & 255, b = bigint & 255;
@@ -534,14 +592,19 @@
     window.addEventListener('popstate', (event) => { if (event.state) renderState(event.state); });
 
     function renderState(state) {
+        // Always clear the top-most overlays first — otherwise going back from a
+        // PDF/image preview leaves them visible on top of the view underneath.
+        document.getElementById('pdf-overlay').classList.add('hidden');
+        document.getElementById('img-preview-overlay').classList.add('hidden');
         if (state.type === 'tab') {
-            document.getElementById('pdf-overlay').classList.add('hidden');
             document.getElementById('detail-layer').classList.add('hidden');
             document.getElementById('merger-overlay').classList.add('hidden');
             applyTabStyles(state.target);
         } else if (state.type === 'merger') {
+            document.getElementById('detail-layer').classList.add('hidden');
             document.getElementById('merger-overlay').classList.remove('hidden');
         } else if (state.type === 'detail') {
+            document.getElementById('merger-overlay').classList.add('hidden');
             document.getElementById('detail-layer').classList.remove('hidden');
             document.getElementById('detail-title').innerText = state.target;
             if (state.subType === 'rates') buildRatesContent(state.target);
@@ -646,7 +709,7 @@
 
     function renderGrids() {
         document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => categoryCardHtml(cat, cat, 'viewRates', 'tag')).join('');
-        document.getElementById('docs-grid').innerHTML = Object.keys(db.docsRoot.folders).sort().map(cat => categoryCardHtml(cat, cat, 'viewDocs', 'folder')).join('');
+        document.getElementById('docs-grid').innerHTML = sortSpecNames(Object.keys(db.docsRoot.folders)).map(cat => categoryCardHtml(cat, cat, 'viewDocs', 'folder')).join('');
         lucide.createIcons();
     }
 
@@ -681,14 +744,17 @@
         if(!dataRows.length) { list.innerHTML = `<div class="rate-empty">No matching items.</div>`; return; }
         list.innerHTML = dataRows.map(r => {
             const itemName = r[0] || '';
+            const isElectric = /electric/i.test(itemName);
             let pills = '';
             for(let i = 1; i < headers.length; i++) {
                 const label = headers[i] || '';
                 const val = (r[i] !== undefined && r[i] !== '') ? r[i] : '-';
                 pills += `<div class="rate-pill"><span class="rate-label">${label}</span><span class="rate-value">${val}</span></div>`;
             }
-            return `<div class="rate-card"><h4 class="rate-item-name">${itemName}</h4><div class="rate-pills">${pills}</div></div>`;
+            const tag = isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '';
+            return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}"><h4 class="rate-item-name">${itemName}${tag}</h4><div class="rate-pills">${pills}</div></div>`;
         }).join('');
+        lucide.createIcons();
     }
 
     function filterRateCards(query) {
@@ -718,7 +784,7 @@
             return;
         }
         let html = '';
-        const folderNames = Object.keys(node.folders).sort();
+        const folderNames = sortSpecNames(Object.keys(node.folders));
         if (folderNames.length) {
             html += `<div class="dash-grid" style="margin-bottom:16px;">` + folderNames.map(fname => {
                 const childPath = path ? `${path}/${fname}` : fname;
@@ -736,12 +802,23 @@
     async function openPdf(url, name) {
         window.history.pushState({ type: 'pdf' }, '');
         document.getElementById('pdf-overlay').classList.remove('hidden');
+        document.getElementById('pdf-title').textContent = name || 'Viewer';
         const box = document.getElementById('pdf-render-box');
+        box.style.padding = '';
         box.innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING PDF...</div>`;
         try {
             const res = await fetch(url);
             const blob = await res.blob();
-            currentPdf = { name, url, blob };
+            await renderPdfBlobIntoOverlay(blob, name, url);
+        } catch(e) { box.innerHTML = "Error loading file."; }
+    }
+
+    // Renders an already-in-hand PDF Blob (e.g. a local file picked for the
+    // merger) straight into the pdf-overlay, without needing a network fetch.
+    async function renderPdfBlobIntoOverlay(blob, name, sourceUrl) {
+        const box = document.getElementById('pdf-render-box');
+        try {
+            currentPdf = { name, url: sourceUrl || null, blob };
             const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
             box.innerHTML = "";
             for(let i=1; i<=pdf.numPages; i++) {
@@ -757,7 +834,53 @@
     }
 
     function downloadPdf() { if(currentPdf.blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(currentPdf.blob); a.download = `${currentPdf.name}.pdf`; a.click(); } }
-    async function sharePdf() { if(!currentPdf.blob) return; const file = new File([currentPdf.blob], `${currentPdf.name}.pdf`, { type: 'application/pdf' }); try { await navigator.share({ files: [file] }); } catch(e) { navigator.share({ url: currentPdf.url }); } }
+    async function sharePdf() {
+        if(!currentPdf.blob) return;
+        const file = new File([currentPdf.blob], `${currentPdf.name}.pdf`, { type: 'application/pdf' });
+        try { await navigator.share({ files: [file] }); }
+        catch(e) { if (currentPdf.url) navigator.share({ url: currentPdf.url }); }
+    }
+
+    // ---- Preview for a merger item (local PDF or photo, not yet uploaded anywhere) ----
+    // PDFs use the browser's own built-in PDF viewer via a blob: URL — this needs
+    // no external library or worker script, so it can't be broken by a CDN/network
+    // hiccup the way the pdf.js canvas renderer used elsewhere can be.
+    let currentPreviewImageUrl = null;
+    let currentMergePdfUrl = null;
+    function mergePreviewItem(id) {
+        try {
+            const item = mergeItems.find(i => i.id === id);
+            if (!item) return;
+            if (item.type === 'pdf') {
+                if (currentMergePdfUrl) { URL.revokeObjectURL(currentMergePdfUrl); currentMergePdfUrl = null; }
+                currentMergePdfUrl = URL.createObjectURL(item.file);
+                currentPdf = { name: item.name, url: null, blob: item.file };
+
+                window.history.pushState({ type: 'pdf' }, '');
+                document.getElementById('pdf-overlay').classList.remove('hidden');
+                document.getElementById('pdf-title').textContent = item.name;
+                const box = document.getElementById('pdf-render-box');
+                box.style.padding = '0';
+                box.innerHTML = `<iframe src="${currentMergePdfUrl}" class="pdf-native-frame" title="${mergeEscape(item.name)}"></iframe>`;
+            } else {
+                window.history.pushState({ type: 'imgpreview' }, '');
+                document.getElementById('img-preview-overlay').classList.remove('hidden');
+                document.getElementById('img-preview-title').textContent = item.name;
+                currentPreviewImageUrl = item.thumbUrl || URL.createObjectURL(item.file);
+                document.getElementById('img-preview-box').innerHTML = `<img src="${currentPreviewImageUrl}" alt="${mergeEscape(item.name)}" />`;
+            }
+        } catch (e) {
+            alert('Could not open preview for this file. Please try again.');
+        }
+    }
+    function downloadPreviewImage() {
+        if (!currentPreviewImageUrl) return;
+        const a = document.createElement('a');
+        a.href = currentPreviewImageUrl;
+        a.download = document.getElementById('img-preview-title').textContent || 'photo';
+        a.click();
+    }
+
 
     function navigateToTab(tab) {
         window.history.pushState({ type: 'tab', target: tab }, '');
@@ -800,7 +923,8 @@
 
     let mergeItems = [];
     let mergeLibReady = typeof Html5Qrcode !== 'undefined';
-    let mergeQrScanner = null;
+    let mergeQrScanners = []; // pool of scanner instances, for concurrent scanning
+    const MERGE_QR_CONCURRENCY = 3;
     let mergeQrQueue = [];
     let mergeQrProcessing = false;
 
@@ -875,39 +999,78 @@
         if (!mergeQrProcessing) processMergeQrQueue();
     }
 
+    // Lazily builds a small pool of Html5Qrcode instances (each needs its own
+    // hidden container) so several photos can be scanned in parallel instead
+    // of strictly one-at-a-time — this is most of the "performance improvement".
+    function mergeGetScannerPool() {
+        if (mergeQrScanners.length) return mergeQrScanners;
+        for (let i = 0; i < MERGE_QR_CONCURRENCY; i++) {
+            let div = document.getElementById('merge-hidden-reader-' + i);
+            if (!div) {
+                div = document.createElement('div');
+                div.id = 'merge-hidden-reader-' + i;
+                div.style.display = 'none';
+                document.body.appendChild(div);
+            }
+            mergeQrScanners.push(new Html5Qrcode(div.id, { useBarCodeDetectorIfSupported: true, verbose: false }));
+        }
+        return mergeQrScanners;
+    }
+
     async function processMergeQrQueue() {
         mergeQrProcessing = true;
-        while (mergeQrQueue.length) {
-            const item = mergeQrQueue.shift();
-            if (!mergeItems.find(i => i.id === item.id)) continue; // removed before its turn
-            item.qrStatus = 'scanning';
-            mergeRenderList();
-            try {
-                await mergeEnsureLibrary();
-                if (!mergeQrScanner) {
-                    mergeQrScanner = new Html5Qrcode('merge-hidden-reader', {
-                        useBarCodeDetectorIfSupported: true,
-                        verbose: false
-                    });
-                }
-                let decoded;
-                try {
-                    // First attempt: scan the photo as-is.
-                    decoded = await mergeQrScanner.scanFile(item.file, false);
-                } catch (firstErr) {
-                    // Retry on a normalized, size-capped copy — this is what usually
-                    // rescues very large phone-camera photos or odd formats/orientations.
-                    const resized = await mergeResizeImageFile(item.file, 1400);
-                    decoded = await mergeQrScanner.scanFile(resized, false);
-                }
-                item.qrStatus = 'found';
-                item.qrText = decoded;
-            } catch (e) {
-                item.qrStatus = 'none';
-            }
+        try {
+            await mergeEnsureLibrary();
+            const pool = mergeGetScannerPool();
+            await Promise.all(pool.map(scanner => mergeQrWorker(scanner)));
+        } catch (e) {
+            // Library failed to load in time — mark whatever's left as not found
+            // rather than leaving items stuck on "Checking for QR code...".
+            mergeQrQueue.forEach(item => { item.qrStatus = 'none'; });
+            mergeQrQueue = [];
             mergeRenderList();
         }
         mergeQrProcessing = false;
+    }
+
+    // One worker pulls items off the shared queue until it's empty — with
+    // MERGE_QR_CONCURRENCY workers running this same loop, several photos get
+    // scanned at once instead of waiting in a strict single-file line.
+    async function mergeQrWorker(scanner) {
+        while (mergeQrQueue.length) {
+            const item = mergeQrQueue.shift();
+            if (!item) return;
+            if (!mergeItems.find(i => i.id === item.id)) continue; // removed before its turn
+            item.qrStatus = 'scanning';
+            mergeRenderList();
+            item.qrText = await mergeScanImageForQr(scanner, item.file);
+            item.qrStatus = item.qrText ? 'found' : 'none';
+            mergeRenderList();
+        }
+    }
+
+    // Tries several variants of the same photo — original, a couple of resized
+    // scales (both down and up), and a contrast-boosted grayscale pass — and
+    // stops at the first one that decodes. A single fixed size/format is what
+    // was causing real-world misses: QR codes that are very small in a big
+    // photo, washed out by glare, or slightly blurry each respond to a
+    // different variant, so trying several catches far more of them.
+    async function mergeScanImageForQr(scanner, file) {
+        const variants = [
+            () => file,
+            () => mergeResizeImageFile(file, 1600),
+            () => mergeResizeImageFile(file, 900),
+            () => mergeResizeImageFile(file, 2200),
+            () => mergeEnhanceImageFile(file, 1200)
+        ];
+        for (const makeVariant of variants) {
+            try {
+                const candidate = await makeVariant();
+                const decoded = await scanner.scanFile(candidate, false);
+                if (decoded) return decoded;
+            } catch (e) { /* this variant didn't decode — try the next one */ }
+        }
+        return null;
     }
 
     function mergeRenderList() {
@@ -921,30 +1084,109 @@
         }
         list.innerHTML = mergeItems.map((item, idx) => mergeItemRowHtml(item, idx, count)).join('');
         lucide.createIcons();
+        initMergeDragHandles();
+    }
+
+    /* ---- Drag-to-reorder (mouse + touch, via Pointer Events) ----
+       Press and hold the grip handle, drag up/down; the list reflows live and
+       mergeItems is resynced to the new DOM order on release. Pointer Events
+       unify mouse and touch so this works the same on desktop and mobile. */
+    let mergeDrag = null;
+
+    function initMergeDragHandles() {
+        document.querySelectorAll('#merge-list .doc-drag-handle').forEach(handle => {
+            handle.addEventListener('pointerdown', onMergeDragStart);
+        });
+    }
+
+    function onMergeDragStart(e) {
+        e.preventDefault();
+        const row = e.currentTarget.closest('.doc-item');
+        const list = document.getElementById('merge-list');
+        if (!row || !list) return;
+        const rect = row.getBoundingClientRect();
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'doc-drag-placeholder';
+        placeholder.style.width = rect.width + 'px';
+        row.after(placeholder);
+
+        row.style.position = 'relative';
+        row.classList.add('doc-dragging');
+
+        mergeDrag = { row, list, placeholder, startX: e.clientX, lastDx: 0 };
+        document.addEventListener('pointermove', onMergeDragMove);
+        document.addEventListener('pointerup', onMergeDragEnd);
+        document.addEventListener('pointercancel', onMergeDragEnd);
+    }
+
+    function onMergeDragMove(e) {
+        if (!mergeDrag) return;
+        const dx = e.clientX - mergeDrag.startX;
+        mergeDrag.lastDx = dx;
+        mergeDrag.row.style.transform = `translateX(${dx}px)`;
+
+        const rowRect = mergeDrag.row.getBoundingClientRect();
+        const rowMid = rowRect.left + rowRect.width / 2;
+        const siblings = Array.from(mergeDrag.list.children).filter(el => el.classList.contains('doc-item') && el !== mergeDrag.row);
+
+        for (const sib of siblings) {
+            const sibRect = sib.getBoundingClientRect();
+            const sibMid = sibRect.left + sibRect.width / 2;
+            const placeholderIsAfterSib = !!(sib.compareDocumentPosition(mergeDrag.placeholder) & Node.DOCUMENT_POSITION_FOLLOWING);
+            if (rowMid < sibMid && placeholderIsAfterSib) {
+                mergeDrag.list.insertBefore(mergeDrag.placeholder, sib);
+                break;
+            } else if (rowMid > sibMid && !placeholderIsAfterSib) {
+                mergeDrag.list.insertBefore(mergeDrag.placeholder, sib.nextSibling);
+                break;
+            }
+        }
+    }
+
+    function onMergeDragEnd() {
+        if (!mergeDrag) return;
+        const { row, placeholder, list } = mergeDrag;
+        list.insertBefore(row, placeholder);
+        placeholder.remove();
+        row.style.transform = '';
+        row.style.position = '';
+        row.classList.remove('doc-dragging');
+
+        const newOrderIds = Array.from(list.children)
+            .filter(el => el.classList.contains('doc-item'))
+            .map(el => el.dataset.id);
+        mergeItems.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+
+        document.removeEventListener('pointermove', onMergeDragMove);
+        document.removeEventListener('pointerup', onMergeDragEnd);
+        document.removeEventListener('pointercancel', onMergeDragEnd);
+        mergeDrag = null;
+        mergeRenderList(); // refresh "#N" index pills
     }
 
     function mergeItemRowHtml(item, idx, total) {
-        const thumb = item.type === 'image'
+        const thumbInner = item.type === 'image'
             ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
-            : `<div class="doc-thumb"><i data-lucide="file-text" size="20"></i></div>`;
+            : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
 
         let badge = '';
         if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
-            badge = `<div class="doc-qr-scanning"><span class="qr-spinner"></span> Checking for QR code...</div>`;
+            badge = `<div class="doc-qr-scanning"><span class="qr-spinner"></span> Checking QR...</div>`;
         } else if (item.qrStatus === 'found') {
             const linky = mergeIsUrl(item.qrText);
             badge = `
                 <div class="doc-qr-badge">
-                    <span class="doc-qr-tag"><i data-lucide="qr-code" size="11"></i> QR found</span>
+                    <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
                     <div class="doc-qr-actions">
                         ${linky ? `<button class="doc-qr-chip" onclick="mergeOpenQrLink('${item.id}')">Open Link</button>` : ''}
-                        <button class="doc-qr-chip" onclick="mergeDownloadOriginal('${item.id}')">Download Photo</button>
+                        <button class="doc-qr-chip" onclick="mergeDownloadOriginal('${item.id}')">Download</button>
                     </div>
                 </div>`;
         } else if (item.qrStatus === 'none') {
             badge = `
                 <div class="doc-qr-badge">
-                    <span style="font-size:10px; color:var(--text-dim); font-weight:700;">No QR detected</span>
+                    <span style="font-size:9px; color:var(--text-dim); font-weight:700; text-align:center;">No QR detected</span>
                     <div class="doc-qr-actions">
                         <button class="doc-qr-chip" onclick="mergeRetryQrScan('${item.id}')">Retry scan</button>
                     </div>
@@ -952,19 +1194,20 @@
         }
 
         return `
-            <div class="doc-item">
-                <div class="doc-item-row">
-                    ${thumb}
+            <div class="doc-item" data-id="${item.id}">
+                <div class="doc-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical" size="14"></i></div>
+                <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="x" size="13"></i></button>
+                <div class="doc-preview-trigger" onclick="mergePreviewItem('${item.id}')">
+                    <div class="doc-thumb-wrap">
+                        ${thumbInner}
+                        <span class="doc-eye-badge"><i data-lucide="eye" size="11"></i></span>
+                    </div>
                     <div class="doc-meta">
                         <h4>${mergeEscape(item.name)}</h4>
                         <p>${item.type === 'pdf' ? 'PDF' : 'Photo'} &middot; ${item.sizeLabel}</p>
                     </div>
-                    <div class="doc-order-controls">
-                        <button onclick="mergeMoveItem('${item.id}', -1)" ${idx === 0 ? 'disabled' : ''}><i data-lucide="chevron-up" size="13"></i></button>
-                        <button onclick="mergeMoveItem('${item.id}', 1)" ${idx === total - 1 ? 'disabled' : ''}><i data-lucide="chevron-down" size="13"></i></button>
-                    </div>
-                    <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="trash-2" size="15"></i></button>
                 </div>
+                <span class="doc-index-pill">#${idx + 1}</span>
                 ${badge}
             </div>`;
     }
@@ -975,16 +1218,6 @@
         item.qrStatus = 'queued';
         item.qrText = null;
         mergeEnqueueQrScan(item);
-        mergeRenderList();
-    }
-
-    function mergeMoveItem(id, dir) {
-        const idx = mergeItems.findIndex(i => i.id === id);
-        if (idx === -1) return;
-        const newIdx = idx + dir;
-        if (newIdx < 0 || newIdx >= mergeItems.length) return;
-        const [moved] = mergeItems.splice(idx, 1);
-        mergeItems.splice(newIdx, 0, moved);
         mergeRenderList();
     }
 
@@ -1073,6 +1306,35 @@
         });
     }
 
+    // Grayscale + contrast boost, on top of a resize — helps the decoder pick
+    // out QR modules that are faint, glare-washed, or low-contrast against
+    // their background, which plain resizing alone doesn't fix.
+    function mergeEnhanceImageFile(file, maxDim) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                const w = img.naturalWidth, h = img.naturalHeight;
+                const scale = Math.min(1, maxDim / Math.max(w, h));
+                const cw = Math.max(1, Math.round(w * scale));
+                const ch = Math.max(1, Math.round(h * scale));
+                const canvas = document.createElement('canvas');
+                canvas.width = cw;
+                canvas.height = ch;
+                const ctx = canvas.getContext('2d');
+                try { ctx.filter = 'grayscale(1) contrast(1.6) brightness(1.05)'; } catch (e) {}
+                ctx.drawImage(img, 0, 0, cw, ch);
+                canvas.toBlob(blob => {
+                    URL.revokeObjectURL(url);
+                    if (!blob) { reject(new Error('canvas-empty')); return; }
+                    resolve(new File([blob], file.name.replace(/\.[^.]+$/, '') + '-enh.png', { type: 'image/png' }));
+                }, 'image/png', 0.95);
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('load-failed')); };
+            img.src = url;
+        });
+    }
+
     async function mergeAndDownload() {
         if (!mergeItems.length) return;
         const btn = document.getElementById('merge-btn');
@@ -1142,10 +1404,7 @@
 
     
 window.addEventListener('DOMContentLoaded', () => {
-        const hidden = document.createElement('div');
-        hidden.id = 'merge-hidden-reader';
-        hidden.style.display = 'none';
-        document.body.appendChild(hidden);
+        // Hidden QR-scanner containers are created lazily by mergeGetScannerPool().
 
         const dropZone = document.getElementById('merge-drop-zone');
         const fileInput = document.getElementById('merge-file-input');
