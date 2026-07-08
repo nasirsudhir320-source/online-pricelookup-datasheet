@@ -13,9 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <style>
         :root { 
-            --accent: #ff5d3b; 
-            --accent-2: #ffb703;
-            --accent-dim: #fff0e8;
+            --accent: #2f6feb; 
+            --accent-2: #06b6d4;
+            --accent-dim: #e8f0fe;
             --bg: #f4f1ea; 
             --card: #ffffff; 
             --ink: #16171b;
@@ -98,6 +98,13 @@
         .logo span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
         main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 118px; }
+
+        /* Thin, subtle scrollbars everywhere instead of the default thick bar */
+        * { scrollbar-width: thin; scrollbar-color: var(--border-strong, rgba(22,23,27,0.18)) transparent; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(22,23,27,0.16); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(22,23,27,0.28); }
         .view-section { padding: 15px; animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -255,12 +262,209 @@
             #theme-picker { top: 56px; }
             .overlay-header { padding: 18px 30px; }
             .scroll-area { max-width: 1100px; margin: 0 auto; width: 100%; }
+            #yard-list, #contact-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; align-items: start; }
+            #yard-list .item-card, #contact-list .item-card { margin-bottom: 0; }
+            #contact-list .group-title { grid-column: 1 / -1; margin-top: 22px; }
+            #contact-list .group-title:first-child { margin-top: 0; }
         }
         @media (min-width: 1300px) {
             .dash-grid { grid-template-columns: repeat(5, 1fr); }
             .dash-grid .dash-card:first-child { grid-column: span 5; }
             .rate-cards { grid-template-columns: repeat(3, 1fr); }
+            #yard-list, #contact-list { grid-template-columns: repeat(3, 1fr); }
         }
+        @media (min-width: 1600px) {
+            main, .scroll-area { max-width: 1320px; }
+        }
+
+    /* ===================== PRICE EDITOR (merged) ===================== */
+
+  /* ---- scoped tokens: reuse the app's live theme vars, add the few this panel needs ---- */
+  #price-editor-panel{
+    --card-2:#faf8f3;
+    --border-strong:rgba(22,23,27,0.16);
+    --text-faint:#a9aab1;
+    --bg-raised:var(--card-2);
+    --panel:var(--card);
+    --panel-2:var(--card-2);
+    --ink-dim:var(--text-dim);
+    --ink-faint:var(--text-faint);
+    --amber:var(--accent);
+    --amber-dim:color-mix(in srgb, var(--accent) 45%, transparent);
+    --amber-glow:color-mix(in srgb, var(--accent) 14%, transparent);
+    --teal:#0f9b8e;
+    --teal-dim:#e3f6f4;
+    --good:var(--success);
+    --bad:#dc2626;
+    --mono:'Space Grotesk','Manrope',-apple-system,sans-serif;
+    --sans:'Manrope',-apple-system,sans-serif;
+    --display:'Space Grotesk','Manrope',-apple-system,sans-serif;
+
+    background:
+      radial-gradient(circle at 12% -5%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 42%),
+      radial-gradient(circle at 105% 15%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 38%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    padding:16px 16px 140px;
+  }
+  #price-editor-panel *{box-sizing:border-box;}
+
+#price-editor-panel .wrap{max-width:1040px;margin:0 auto;}#price-editor-panel .slim-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-bottom:14px;
+  }#price-editor-panel .status{
+    font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-dim);
+    display:flex;align-items:center;gap:8px;padding:8px 12px;
+    background:var(--panel);border:1.5px solid var(--border);border-radius:20px;
+    box-shadow:0 2px 8px rgba(22,23,27,0.04);
+  }#price-editor-panel .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);flex:none;}#price-editor-panel .dot.ok{background:var(--good);box-shadow:0 0 6px 1px rgba(26,160,83,.35);}#price-editor-panel .dot.err{background:var(--bad);}#price-editor-panel .dot.pending{background:var(--amber);animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}#price-editor-panel button{
+    font-family:var(--display);font-size:13px;font-weight:700;
+    border:1.5px solid var(--border-strong);background:var(--panel);
+    color:var(--ink);padding:10px 16px;border-radius:13px;cursor:pointer;
+    transition:border-color .15s, background .15s, transform .1s;
+    display:inline-flex;align-items:center;gap:6px;
+  }#price-editor-panel button:hover{border-color:var(--amber-dim);}#price-editor-panel button:active{transform:scale(0.97);}#price-editor-panel button.primary{background:var(--amber);color:#1a1408;border-color:var(--amber);box-shadow:0 3px 10px color-mix(in srgb, var(--accent) 28%, transparent);}#price-editor-panel button.primary:hover{background:color-mix(in srgb, var(--accent) 85%, white);}#price-editor-panel button.ghost{background:transparent;border-color:var(--border);color:var(--ink-dim);box-shadow:none;}#price-editor-panel button.ghost:hover{color:var(--ink);}#price-editor-panel button:disabled{opacity:.4;cursor:not-allowed;transform:none;}#price-editor-panel #editBtn{width:34px;height:34px;padding:0;border-radius:11px;justify-content:center;box-shadow:0 2px 8px rgba(22,23,27,0.05);}#price-editor-panel #editBtn span{display:none;}#price-editor-panel .tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}#price-editor-panel .tab{
+    font-family:var(--display);font-size:11.5px;text-transform:uppercase;font-weight:700;
+    letter-spacing:0.03em;padding:9px 14px;border-radius:11px;
+    background:var(--panel);color:var(--ink-dim);cursor:pointer;
+
+    border:1px solid var(--border);white-space:nowrap;
+    transition:border-color .12s, color .12s, background .12s;
+    position:relative;
+  }#price-editor-panel .tab:hover{color:var(--ink);border-color:var(--border-strong);}#price-editor-panel .tab.active{background:var(--amber-glow);color:var(--amber);border-color:var(--amber-dim);}#price-editor-panel .tab.loading::after{
+    content:'';position:absolute;right:8px;top:50%;width:5px;height:5px;
+    margin-top:-2px;border-radius:50%;background:var(--amber);animation:pulse .8s infinite;
+  }#price-editor-panel .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}#price-editor-panel .search-wrap{flex:1;min-width:220px;position:relative;}#price-editor-panel .search{
+    width:100%;background:var(--panel);border:1.5px solid var(--border);
+    border-radius:14px;padding:11px 12px 11px 36px;color:var(--ink);
+    font-family:var(--sans);font-size:13px;font-weight:600;
+    box-shadow:0 2px 10px rgba(22,23,27,0.04);
+  }#price-editor-panel .search:focus{outline:none;border-color:var(--amber-dim);}#price-editor-panel .search::placeholder{color:var(--ink-faint);}#price-editor-panel .search-icon{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    color:var(--ink-faint);pointer-events:none;
+  }#price-editor-panel .kbd{
+    font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+    border:1px solid var(--border-strong);border-radius:4px;padding:1px 5px;
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  }#price-editor-panel .edit-banner{
+    display:none;align-items:center;gap:8px;
+    font-family:var(--sans);font-size:12.5px;font-weight:600;color:color-mix(in srgb, var(--accent) 75%, black);
+    background:var(--amber-glow);border:1.5px solid var(--amber-dim);
+    padding:10px 14px;border-radius:14px;margin-bottom:12px;
+  }#price-editor-panel .edit-banner.show{display:flex;}#price-editor-panel .edit-banner .pip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;}#price-editor-panel .table-scroll{border-radius:16px;overflow:hidden;border:1.5px solid var(--border);box-shadow:0 3px 14px rgba(22,23,27,0.05);}#price-editor-panel table{width:100%;border-collapse:collapse;}#price-editor-panel thead th{
+    text-align:left;font-family:var(--display);font-size:10.5px;text-transform:uppercase;font-weight:700;
+    letter-spacing:0.06em;color:var(--amber);padding:12px 14px;
+    background:var(--accent-dim);border-bottom:1px solid var(--border);
+    position:sticky;top:0;z-index:1;
+  }#price-editor-panel thead th.num{text-align:right;}#price-editor-panel thead th.bool{text-align:center;}#price-editor-panel thead th .type-mark{font-size:9px;color:var(--ink-faint);margin-left:5px;}#price-editor-panel tbody tr{background:var(--panel);}#price-editor-panel tbody tr:nth-child(even){background:var(--panel-2);}#price-editor-panel tbody tr:hover{background:rgba(22,23,27,0.035);}#price-editor-panel tbody td{padding:11px 14px;font-size:13.5px;vertical-align:middle;border-bottom:1px solid var(--border);}#price-editor-panel tbody tr:last-child td{border-bottom:none;}#price-editor-panel .label-cell{font-weight:600;color:var(--ink);}#price-editor-panel .sub-cell{color:var(--ink-dim);}#price-editor-panel td.num{text-align:right;}#price-editor-panel td.bool{text-align:center;}#price-editor-panel input.field{
+    width:100%;background:transparent;border:1px solid transparent;
+    color:var(--ink);font-family:var(--sans);font-size:13.5px;font-weight:600;
+    padding:7px 9px;border-radius:9px;
+  }#price-editor-panel input.field.mono{font-family:var(--mono);}#price-editor-panel input.field.num{text-align:right;font-family:var(--mono);}#price-editor-panel input.field[readonly]{color:var(--ink);cursor:default;}#price-editor-panel input.field:not([readonly]){border:1.5px solid var(--border-strong);background:var(--bg);}#price-editor-panel input.field:not([readonly]):hover{border-color:var(--border-strong);}#price-editor-panel input.field:not([readonly]):focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-glow);}#price-editor-panel input.field.dirty{color:var(--amber);}#price-editor-panel input.field.dirty:not([readonly]){border-color:var(--amber-dim);}#price-editor-panel textarea.field{
+    width:100%;background:transparent;border:1px solid transparent;color:var(--ink);
+    font-family:var(--sans);font-size:13.5px;padding:7px 9px;border-radius:9px;
+    resize:vertical;min-height:36px;line-height:1.4;
+  }#price-editor-panel textarea.field[readonly]{color:var(--ink);cursor:default;}#price-editor-panel textarea.field:not([readonly]){border:1.5px solid var(--border-strong);background:var(--bg);}#price-editor-panel textarea.field:not([readonly]):focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-glow);}#price-editor-panel textarea.field.dirty{color:var(--amber);border-color:var(--amber-dim);}#price-editor-panel .toggle{
+    position:relative;display:inline-block;width:38px;height:21px;flex:none;
+  }#price-editor-panel .toggle input{opacity:0;width:0;height:0;position:absolute;}#price-editor-panel .toggle .track{
+    position:absolute;inset:0;background:var(--border-strong);border-radius:20px;
+    transition:background .15s;cursor:pointer;
+  }#price-editor-panel .toggle .track::before{
+    content:'';position:absolute;width:15px;height:15px;left:3px;top:3px;
+    background:var(--ink-dim);border-radius:50%;transition:transform .15s, background .15s;
+  }#price-editor-panel .toggle input:checked + .track{background:var(--teal-dim);}#price-editor-panel .toggle input:checked + .track::before{transform:translateX(17px);background:var(--teal);}#price-editor-panel .toggle input:disabled + .track{cursor:default;}#price-editor-panel .bool-badge{
+    display:inline-flex;width:9px;height:9px;border-radius:50%;
+    background:var(--ink-faint);
+  }#price-editor-panel .bool-badge.on{background:var(--teal);box-shadow:0 0 6px 1px rgba(15,155,142,.4);}#price-editor-panel .empty, #price-editor-panel .loading-state{
+    text-align:center;padding:70px 0;color:var(--ink-dim);
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;
+  }#price-editor-panel .empty .sub{color:var(--ink-faint);margin-top:6px;font-size:11.5px;}#price-editor-panel .skeleton-row{display:flex;gap:14px;padding:13px 14px;border-bottom:1px solid var(--border);}#price-editor-panel .skel{height:12px;border-radius:4px;background:linear-gradient(90deg, var(--panel-2) 0%, #ece8dd 50%, var(--panel-2) 100%);
+    background-size:200% 100%;animation:shimmer 1.3s infinite;}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}#price-editor-panel .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--panel);border:1px solid var(--border-strong);padding:10px 18px;
+    border-radius:8px;font-family:var(--mono);font-size:12px;opacity:0;
+    transition:opacity .2s, transform .2s;pointer-events:none;z-index:60;
+  }#price-editor-panel .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}#price-editor-panel .toast.err{border-color:var(--bad);color:var(--bad);}#price-editor-panel .toast.ok{border-color:var(--good);color:var(--good);}#price-editor-panel .tray{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    display:flex;justify-content:center;
+    transform:translateY(100%);transition:transform .22s ease;
+    pointer-events:none;
+  }#price-editor-panel .tray.show{transform:translateY(0);pointer-events:auto;}#price-editor-panel .tray-inner{
+    width:100%;max-width:1040px;margin:0 20px;
+    background:var(--card);border:1.5px solid var(--border-strong);
+    border-bottom:none;border-radius:22px 22px 0 0;
+    box-shadow:0 -10px 30px rgba(22,23,27,.14);
+  }#price-editor-panel .tray-head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;
+  }#price-editor-panel .tray-title{
+    font-family:var(--display);font-size:12.5px;font-weight:700;color:var(--amber);
+    display:flex;align-items:center;gap:8px;letter-spacing:.02em;
+  }#price-editor-panel .tray-count{
+    background:var(--amber);color:#1a1408;font-family:var(--display);font-weight:700;
+    font-size:11px;padding:1px 7px;border-radius:10px;
+  }#price-editor-panel .tray-actions{display:flex;gap:8px;}#price-editor-panel .tray-actions button{padding:7px 13px;font-size:12.5px;}#price-editor-panel .tray-list{max-height:220px;overflow-y:auto;padding:4px 8px;}#price-editor-panel .tray-item{
+    display:flex;align-items:center;gap:10px;padding:8px 8px;
+    border-bottom:1px solid var(--border);font-size:12.5px;
+  }#price-editor-panel .tray-item:last-child{border-bottom:none;}#price-editor-panel .tray-item .loc{color:var(--ink-dim);font-family:var(--mono);font-size:11px;min-width:0;flex:1;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}#price-editor-panel .tray-item .diff{font-family:var(--mono);font-size:12px;display:flex;align-items:center;gap:6px;flex:none;}#price-editor-panel .tray-item .old{color:var(--ink-faint);text-decoration:line-through;}#price-editor-panel .tray-item .arrow{color:var(--ink-faint);}#price-editor-panel .tray-item .new{color:var(--amber);font-weight:600;}#price-editor-panel .tray-item .revert{
+    background:none;border:none;color:var(--ink-faint);cursor:pointer;
+    display:flex;align-items:center;padding:5px;border-radius:8px;
+  }#price-editor-panel .tray-item .revert:hover{color:var(--bad);background:rgba(220,38,38,.08);}#price-editor-panel .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(22,23,27,0.55);
+    align-items:center;justify-content:center;z-index:50;backdrop-filter:blur(2px);
+  }#price-editor-panel .modal-overlay.show{display:flex;}#price-editor-panel .modal{
+    background:var(--panel);border:1.5px solid var(--border-strong);
+    border-radius:22px;padding:24px;width:280px;
+    box-shadow:0 20px 50px rgba(22,23,27,0.12);border-top:5px solid var(--amber);
+  }#price-editor-panel .modal h3{margin:0 0 12px;font-size:14px;font-family:var(--display);font-weight:600;}#price-editor-panel .modal input{
+    width:100%;background:var(--bg);border:1.5px solid var(--border-strong);
+    color:var(--amber);font-family:var(--display);font-size:16px;letter-spacing:0.2em;
+    padding:12px;border-radius:14px;text-align:center;margin-bottom:12px;
+  }#price-editor-panel .modal input:focus{outline:none;border-color:var(--amber);}#price-editor-panel .modal-actions{display:flex;gap:8px;justify-content:flex-end;}#price-editor-panel .modal-err{color:var(--bad);font-family:var(--mono);font-size:11px;margin:-6px 0 10px;display:none;}#price-editor-panel .modal-err.show{display:block;}
+
+  @media (prefers-reduced-motion: reduce){#price-editor-panel *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  /* ---- desktop: roomier layout, bigger touch targets, floating tray instead of a full-width bar ---- */
+  @media (min-width: 900px){
+    #price-editor-panel{padding:0 0 40px;background:none;}
+    #price-editor-panel .wrap{max-width:100%;}
+    #price-editor-panel .slim-bar{margin-bottom:18px;}
+    #price-editor-panel .status{font-size:12.5px;padding:9px 14px;}
+    #price-editor-panel #editBtn{width:38px;height:38px;border-radius:12px;}
+
+    #price-editor-panel .tabbar{gap:8px;margin-bottom:18px;}
+    #price-editor-panel .tab{padding:10px 18px;font-size:12px;}
+
+    #price-editor-panel .toolbar{margin-bottom:20px;}
+    #price-editor-panel .search-wrap{max-width:360px;}
+
+    #price-editor-panel .table-scroll{border-radius:18px;}
+    #price-editor-panel thead th{padding:14px 18px;font-size:11px;}
+    #price-editor-panel tbody td{padding:13px 18px;font-size:14px;}
+    #price-editor-panel .label-cell{font-size:14px;}
+
+    /* the tray becomes a compact floating card, bottom-right, instead of a full-width dock */
+    #price-editor-panel .tray{left:auto;right:28px;bottom:24px;justify-content:flex-end;}
+    #price-editor-panel .tray-inner{
+      margin:0;width:420px;max-width:calc(100vw - 56px);
+      border-radius:18px;border-bottom:1.5px solid var(--border-strong);
+      box-shadow:0 20px 50px rgba(22,23,27,0.18);
+    }
+    #price-editor-panel .tray-list{max-height:280px;}
+
+    #price-editor-panel .modal{width:320px;}
+  }
+
+  @media (min-width: 1300px){
+    #price-editor-panel thead th{padding:15px 20px;}
+    #price-editor-panel tbody td{padding:14px 20px;font-size:14.5px;}
+  }
+
     </style>
 </head>
 <body>
@@ -294,6 +498,7 @@
                 <div id="home-dot" class="status-dot"></div>
                 <span id="home-sync-text" class="sync-text">SYNCING</span>
             </div>
+            <button class="act-btn" onclick="openPriceEditor()" style="width:34px; height:34px; border-radius:10px;" title="Edit rates"><i data-lucide="pencil" size="14"></i></button>
             <button class="act-btn" onclick="toggleThemePicker()" style="width:34px; height:34px; border-radius:10px;" title="Change theme"><i data-lucide="palette" size="14"></i></button>
             <button class="act-btn" onclick="logout()" style="width:34px; height:34px; border-radius:10px;" title="Log out"><i data-lucide="log-out" size="14"></i></button>
         </div>
@@ -444,6 +649,552 @@
     </div>
 </div>
 
+<div id="price-editor-overlay" class="overlay-view hidden">
+    <div class="overlay-header">
+        <button class="act-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
+        <div style="flex:1; font-weight:800; text-align:center;">Edit Rates</div>
+        <button class="act-btn primary" onclick="reloadPriceEditor()" title="Refresh"><i data-lucide="refresh-cw" size="16"></i></button>
+    </div>
+    <div class="scroll-area" id="price-editor-panel">
+<div class="wrap">
+  <div class="slim-bar">
+    <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">connecting…</span></div>
+    <button id="editBtn"><i data-lucide="pencil" size="14"></i><span>Edit</span></button>
+  </div>
+
+  <div class="tabbar" id="tabbar"></div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i data-lucide="search" class="search-icon" size="14"></i>
+      <input class="search" id="searchInput" placeholder="Search this tab…">
+      <span class="kbd">/</span>
+    </div>
+  </div>
+
+  <div class="edit-banner" id="editBanner"><span class="pip"></span><span>Edit mode — fields are unlocked. Changes queue in the tray below until you save.</span></div>
+
+  <div class="table-scroll"><div id="content"><div class="loading-state">Loading…</div></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="tray" id="tray">
+  <div class="tray-inner">
+    <div class="tray-head" id="trayHead">
+      <div class="tray-title"><span class="tray-count" id="trayCount">0</span> pending change<span id="trayPlural">s</span></div>
+      <div class="tray-actions">
+        <button class="ghost" id="discardBtn">Discard all</button>
+        <button class="primary" id="saveBtn">Save changes</button>
+      </div>
+    </div>
+    <div class="tray-list" id="trayList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Enter password to edit</h3>
+    <input type="password" id="pwInput" maxlength="8" inputmode="numeric">
+    <div class="modal-err" id="pwErr">Incorrect password</div>
+    <div class="modal-actions">
+      <button id="pwCancel">Cancel</button>
+      <button id="pwSubmit" class="primary">Unlock</button>
+    </div>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<script>(function(){
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyl7aMEdOuOTrdtI3kMN9zQUNBM5i7TrawBkQ6_L6ddJeTGuF0jussUP7X6hR5TxOxzeg/exec";
+const EDIT_PASSWORD = "9768";
+
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const tabbar = document.getElementById('tabbar');
+const content = document.getElementById('content');
+const searchInput = document.getElementById('searchInput');
+const editBtn = document.getElementById('editBtn');
+const editBanner = document.getElementById('editBanner');
+const toastEl = document.getElementById('toast');
+const modalOverlay = document.getElementById('modalOverlay');
+const pwInput = document.getElementById('pwInput');
+const pwErr = document.getElementById('pwErr');
+const pwSubmit = document.getElementById('pwSubmit');
+const pwCancel = document.getElementById('pwCancel');
+const tray = document.getElementById('tray');
+const trayHead = document.getElementById('trayHead');
+const trayList = document.getElementById('trayList');
+const trayCount = document.getElementById('trayCount');
+const trayPlural = document.getElementById('trayPlural');
+const saveBtn = document.getElementById('saveBtn');
+const discardBtn = document.getElementById('discardBtn');
+
+let sheets = [];
+let currentGid = null;
+let currentColumns = [];
+let currentRows = [];
+let editMode = false;
+let dirty = {}; // "row-col" -> {row,col,type,value,oldValue,colName,rowLabel}
+let trayCollapsed = false;
+
+const tabCache = {};   // gid -> {columns, rows}
+const inflight = {};   // gid -> promise, to avoid duplicate fetches
+
+function setStatus(state, text){
+  statusDot.className = 'dot ' + state;
+  statusText.textContent = text;
+}
+function showToast(msg, kind){
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show ' + kind;
+  setTimeout(()=> toastEl.className = 'toast ' + kind, 2400);
+}
+function fmtNumber(n){
+  const num = Number(n);
+  if (isNaN(num) || n === '' || n === null) return '';
+  return num.toLocaleString('en-US');
+}
+function truthy(v){ return v === true || v === 'true' || v === 'TRUE'; }
+
+// ---------- column type detection ----------
+function detectColType(colIndex, rows){
+  let allBool = true, allNum = true, hasVal = false, maxLen = 0;
+  rows.forEach(r => {
+    const v = r.cells[colIndex];
+    if (v === '' || v === null || v === undefined) return;
+    hasVal = true;
+    if (typeof v !== 'boolean') allBool = false;
+    if (typeof v !== 'number') allNum = false;
+    maxLen = Math.max(maxLen, String(v).length);
+  });
+  if (!hasVal) return 'text';
+  if (allBool) return 'boolean';
+  if (allNum) return 'number';
+  return maxLen > 40 ? 'longtext' : 'text';
+}
+
+// ---------- fetching ----------
+async function fetchTab(gid){
+  if (inflight[gid]) return inflight[gid];
+  const p = fetch(`${SCRIPT_URL}?gid=${gid}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.ok) throw new Error(data.error || 'load failed');
+      tabCache[gid] = { columns: data.columns, rows: data.rows };
+      delete inflight[gid];
+      return tabCache[gid];
+    })
+    .catch(err => { delete inflight[gid]; throw err; });
+  inflight[gid] = p;
+  return p;
+}
+
+function prefetch(gid){
+  if (tabCache[gid] || inflight[gid]) return;
+  fetchTab(gid).catch(()=>{}); // silent — errors surface on real navigation
+}
+
+async function init(){
+  setStatus('pending', 'loading tabs…');
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=list`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'failed to list tabs');
+    sheets = data.sheets;
+    renderTabs();
+    if (sheets.length){
+      loadTab(sheets[0].gid);
+      // warm the cache for the rest so switching tabs feels instant
+      sheets.slice(1, 5).forEach(s => prefetch(s.gid));
+    }
+  } catch (err) {
+    setStatus('err', 'connection failed');
+    content.innerHTML = `<div class="empty">Couldn't reach the spreadsheet.<br><span class="sub">${err.message}</span></div>`;
+  }
+}
+
+function renderTabs(){
+  tabbar.innerHTML = '';
+  sheets.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'tab' + (s.gid === currentGid ? ' active' : '');
+    el.textContent = s.name;
+    el.addEventListener('click', () => loadTab(s.gid));
+    el.addEventListener('mouseenter', () => prefetch(s.gid));
+    tabbar.appendChild(el);
+  });
+}
+
+async function loadTab(gid){
+  if (editMode && Object.keys(dirty).length) {
+    if (!confirm('You have unsaved changes on this tab. Switch tabs and discard them?')) return;
+  }
+  if (editMode) exitEditMode();
+  currentGid = gid;
+  dirty = {};
+  searchInput.value = '';
+  renderTabs();
+  updateTray();
+
+  const cached = tabCache[gid];
+  if (cached){
+    currentColumns = cached.columns;
+    currentRows = cached.rows;
+    renderTable();
+    setStatus('ok', `connected · ${currentRows.length} rows`);
+  } else {
+    content.innerHTML = renderSkeleton();
+    setStatus('pending', 'loading…');
+  }
+
+  try {
+    const fresh = await fetchTab(gid);
+    if (gid !== currentGid) return; // user navigated away while this was in flight
+    currentColumns = fresh.columns;
+    currentRows = fresh.rows;
+    renderTable();
+    setStatus('ok', `connected · ${currentRows.length} rows`);
+  } catch (err) {
+    if (gid !== currentGid) return;
+    if (!cached){
+      content.innerHTML = `<div class="empty">Couldn't load this tab.<br><span class="sub">${err.message}</span></div>`;
+      setStatus('err', 'load failed');
+    }
+  }
+}
+
+function renderSkeleton(){
+  let rows = '';
+  for (let i=0;i<7;i++){
+    rows += `<div class="skeleton-row"><div class="skel" style="width:22%"></div><div class="skel" style="width:38%"></div><div class="skel" style="width:14%;margin-left:auto"></div></div>`;
+  }
+  return rows;
+}
+
+// ---------- rendering ----------
+function renderTable(){
+  if (!currentColumns.length){
+    content.innerHTML = '<div class="empty">No columns on this tab.</div>';
+    return;
+  }
+  if (!currentRows.length){
+    content.innerHTML = '<div class="empty">No rows on this tab.</div>';
+    return;
+  }
+
+  // Column 0 is only treated as a fixed label when there's a second column
+  // to actually hold an editable value. A single-column sheet (e.g. one bare
+  // notification line with no separate ID column) has nothing else to edit,
+  // so that lone column becomes editable itself instead of being locked.
+  const colTypes = currentColumns.map((_, i) =>
+    (i === 0 && currentColumns.length > 1) ? 'label' : detectColType(i, currentRows)
+  );
+  const query = searchInput.value.trim().toLowerCase();
+
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  currentColumns.forEach((name, i) => {
+    const th = document.createElement('th');
+    const type = colTypes[i];
+    th.className = type === 'number' ? 'num' : type === 'boolean' ? 'bool' : '';
+    th.textContent = name || '';
+    if (type === 'number') th.innerHTML += '<span class="type-mark">#</span>';
+    if (type === 'boolean') th.innerHTML += '<span class="type-mark">◐</span>';
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  let visibleCount = 0;
+
+  currentRows.forEach(r => {
+    const rowText = r.cells.join(' ').toLowerCase();
+    if (query && rowText.indexOf(query) === -1) return;
+    visibleCount++;
+
+    const tr = document.createElement('tr');
+    currentColumns.forEach((name, ci) => {
+      const type = colTypes[ci];
+      const td = document.createElement('td');
+      const rawVal = r.cells[ci];
+
+      if (type === 'label'){
+        td.className = 'label-cell';
+        td.textContent = rawVal || '';
+        tr.appendChild(td);
+        return;
+      }
+
+      const key = `${r.row}-${ci}`;
+      const d = dirty[key];
+      const displayVal = d ? d.value : rawVal;
+
+      if (type === 'number'){
+        td.className = 'num';
+        const input = document.createElement('input');
+        input.className = 'field num' + (d ? ' dirty' : '');
+        input.type = 'number';
+        input.value = displayVal === '' || displayVal === null ? '' : displayVal;
+        input.readOnly = !editMode;
+        if (editMode){
+          input.addEventListener('input', () => {
+            setDirty(r, ci, name, input.value, rawVal, 'number');
+            input.classList.add('dirty');
+          });
+        }
+        td.appendChild(input);
+      } else if (type === 'boolean'){
+        td.className = 'bool';
+        if (editMode){
+          const label = document.createElement('label');
+          label.className = 'toggle';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = truthy(displayVal);
+          cb.addEventListener('change', () => {
+            setDirty(r, ci, name, cb.checked, rawVal, 'boolean');
+          });
+          const track = document.createElement('span');
+          track.className = 'track';
+          label.appendChild(cb); label.appendChild(track);
+          td.appendChild(label);
+        } else {
+          const badge = document.createElement('span');
+          badge.className = 'bool-badge' + (truthy(displayVal) ? ' on' : '');
+          td.appendChild(badge);
+        }
+      } else if (type === 'longtext'){
+        td.className = 'sub-cell';
+        const ta = document.createElement('textarea');
+        ta.className = 'field' + (d ? ' dirty' : '');
+        ta.value = displayVal || '';
+        ta.readOnly = !editMode;
+        ta.rows = 1;
+        if (editMode){
+          ta.addEventListener('input', () => {
+            setDirty(r, ci, name, ta.value, rawVal, 'text');
+            ta.classList.add('dirty');
+          });
+        }
+        td.appendChild(ta);
+      } else {
+        td.className = 'sub-cell';
+        const input = document.createElement('input');
+        input.className = 'field' + (d ? ' dirty' : '');
+        input.type = 'text';
+        input.value = displayVal || '';
+        input.readOnly = !editMode;
+        if (editMode){
+          input.addEventListener('input', () => {
+            setDirty(r, ci, name, input.value, rawVal, 'text');
+            input.classList.add('dirty');
+          });
+        }
+        td.appendChild(input);
+      }
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  content.innerHTML = '';
+  content.appendChild(table);
+
+  if (!visibleCount){
+    content.innerHTML = `<div class="empty">No matches for "${query}".<br><span class="sub">Try a different search term.</span></div>`;
+  }
+}
+
+searchInput.addEventListener('input', renderTable);
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput){
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+
+// ---------- dirty / pending tray ----------
+function setDirty(r, col, colName, value, oldValue, type){
+  const key = `${r.row}-${col}`;
+  if (String(value) === String(oldValue)){
+    delete dirty[key];
+  } else {
+    dirty[key] = { row: r.row, col, type, value, oldValue, colName, rowLabel: r.cells[0] || `Row ${r.row}` };
+  }
+  updateTray();
+}
+
+function displayVal(v, type){
+  if (type === 'boolean') return truthy(v) ? 'On' : 'Off';
+  if (type === 'number') return fmtNumber(v) || '—';
+  return v === '' ? '—' : v;
+}
+
+function updateTray(){
+  const items = Object.values(dirty);
+  trayCount.textContent = items.length;
+  trayPlural.textContent = items.length === 1 ? '' : 's';
+  saveBtn.disabled = items.length === 0;
+
+  if (editMode && items.length > 0){
+    tray.className = 'tray show';
+  } else if (editMode) {
+    tray.className = 'tray show';
+  } else {
+    tray.className = 'tray';
+  }
+
+  trayList.innerHTML = '';
+  items.forEach(d => {
+    const row = document.createElement('div');
+    row.className = 'tray-item';
+    const loc = document.createElement('div');
+    loc.className = 'loc';
+    loc.textContent = `${d.rowLabel} · ${d.colName}`;
+    const diff = document.createElement('div');
+    diff.className = 'diff';
+    diff.innerHTML = `<span class="old">${displayVal(d.oldValue, d.type)}</span><span class="arrow">→</span><span class="new">${displayVal(d.value, d.type)}</span>`;
+    const revert = document.createElement('button');
+    revert.className = 'revert';
+    revert.innerHTML = '<i data-lucide="x" size="13"></i>';
+    revert.title = 'Revert this change';
+    revert.addEventListener('click', () => {
+      delete dirty[`${d.row}-${d.col}`];
+      updateTray();
+      renderTable();
+    });
+    row.appendChild(loc); row.appendChild(diff); row.appendChild(revert);
+    trayList.appendChild(row);
+  });
+  if (window.lucide) lucide.createIcons();
+}
+
+// ---------- edit / password / save flow ----------
+editBtn.addEventListener('click', () => {
+  if (editMode){
+    if (Object.keys(dirty).length && !confirm('Discard unsaved changes?')) return;
+    exitEditMode();
+  } else {
+    pwInput.value = '';
+    pwErr.className = 'modal-err';
+    modalOverlay.className = 'modal-overlay show';
+    pwInput.focus();
+  }
+});
+
+pwCancel.addEventListener('click', () => modalOverlay.className = 'modal-overlay');
+pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') pwSubmit.click(); });
+
+pwSubmit.addEventListener('click', () => {
+  if (pwInput.value === EDIT_PASSWORD){
+    modalOverlay.className = 'modal-overlay';
+    enterEditMode();
+  } else {
+    pwErr.className = 'modal-err show';
+  }
+});
+
+function enterEditMode(){
+  editMode = true;
+  dirty = {};
+  editBtn.innerHTML = '<i data-lucide="x" size="14"></i>';
+  editBtn.title = 'Cancel edit';
+  if (window.lucide) lucide.createIcons();
+  editBanner.className = 'edit-banner show';
+  renderTable();
+  updateTray();
+}
+
+function exitEditMode(){
+  editMode = false;
+  dirty = {};
+  editBtn.innerHTML = '<i data-lucide="pencil" size="14"></i>';
+  editBtn.title = 'Edit';
+  if (window.lucide) lucide.createIcons();
+  editBanner.className = 'edit-banner';
+  renderTable();
+  updateTray();
+}
+
+trayHead.addEventListener('click', (e) => {
+  if (e.target.closest('button')) return;
+  trayCollapsed = !trayCollapsed;
+  trayList.style.display = trayCollapsed ? 'none' : '';
+});
+
+discardBtn.addEventListener('click', () => {
+  if (!Object.keys(dirty).length) return;
+  if (!confirm('Discard all pending changes?')) return;
+  dirty = {};
+  renderTable();
+  updateTray();
+});
+
+saveBtn.addEventListener('click', async () => {
+  const items = Object.values(dirty);
+  if (!items.length) return;
+
+  const updates = items.map(d => ({ row: d.row, col: d.col, value: d.value, type: d.type }));
+  setStatus('pending', 'saving…');
+  saveBtn.disabled = true;
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ gid: currentGid, updates })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'save failed');
+
+    // optimistic local update — no full reload needed
+    items.forEach(d => {
+      const row = currentRows.find(r => r.row === d.row);
+      if (row) row.cells[d.col] = d.type === 'number' ? Number(d.value) : d.value;
+    });
+    tabCache[currentGid] = { columns: currentColumns, rows: currentRows };
+
+    setStatus('ok', `saved ${data.updated} change${data.updated === 1 ? '' : 's'}`);
+    showToast(`Saved ${data.updated} change${data.updated === 1 ? '' : 's'} to sheet`, 'ok');
+    // Refresh the host app's own cached rates/notifications in the background
+    // so whatever the person looks at next (home screen, a rates category)
+    // already reflects this save — no logout/login needed.
+    try {
+      if (typeof loadRates === 'function') {
+        loadRates().then(() => {
+          const notifEl = document.getElementById('notif-text');
+          if (notifEl && typeof db !== 'undefined') notifEl.innerText = db.notif;
+          if (typeof renderGrids === 'function') renderGrids();
+          if (typeof currentRateCat !== 'undefined' && currentRateCat &&
+              typeof db !== 'undefined' && db.rates[currentRateCat] &&
+              typeof buildRatesContent === 'function') {
+            buildRatesContent(currentRateCat);
+          }
+        }).catch(() => {});
+      }
+    } catch (e) {}
+    exitEditMode();
+  } catch (err) {
+    setStatus('err', 'save failed');
+    showToast(`Save failed: ${err.message}`, 'err');
+    saveBtn.disabled = false;
+  }
+});
+
+if (window.lucide) lucide.createIcons();
+window.__priceEditorRefresh = init;
+init();
+
+})();</script>
+
 <script>
     // Keep-alive: Prevents tab sleep
     setInterval(() => { console.log("System Heartbeat"); }, 30000);
@@ -480,8 +1231,8 @@
     // ---- Theme switcher ----
     const THEMES = ['ember', 'volt', 'cobalt', 'magenta', 'steel', 'crimson'];
     function initTheme() {
-        let saved = 'ember';
-        try { saved = localStorage.getItem('sudhirpro_theme') || 'ember'; } catch (e) {}
+        let saved = 'cobalt';
+        try { saved = localStorage.getItem('sudhirpro_theme') || 'cobalt'; } catch (e) {}
         applyTheme(saved);
     }
     function applyTheme(name) {
@@ -639,12 +1390,19 @@
         if (state.type === 'tab') {
             document.getElementById('detail-layer').classList.add('hidden');
             document.getElementById('merger-overlay').classList.add('hidden');
+            document.getElementById('price-editor-overlay').classList.add('hidden');
             applyTabStyles(state.target);
         } else if (state.type === 'merger') {
             document.getElementById('detail-layer').classList.add('hidden');
+            document.getElementById('price-editor-overlay').classList.add('hidden');
             document.getElementById('merger-overlay').classList.remove('hidden');
+        } else if (state.type === 'priceEditor') {
+            document.getElementById('detail-layer').classList.add('hidden');
+            document.getElementById('merger-overlay').classList.add('hidden');
+            document.getElementById('price-editor-overlay').classList.remove('hidden');
         } else if (state.type === 'detail') {
             document.getElementById('merger-overlay').classList.add('hidden');
+            document.getElementById('price-editor-overlay').classList.add('hidden');
             document.getElementById('detail-layer').classList.remove('hidden');
             document.getElementById('detail-title').innerText = state.target;
             if (state.subType === 'rates') buildRatesContent(state.target);
@@ -955,6 +1713,16 @@
     function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
     function openPhotos() { window.open("https://nasirowayne-wq.github.io/Machine-Photos/", "_blank"); }
     function goBack() { window.history.back(); }
+
+    function openPriceEditor() {
+        window.history.pushState({ type: 'priceEditor' }, '');
+        document.getElementById('detail-layer').classList.add('hidden');
+        document.getElementById('merger-overlay').classList.add('hidden');
+        document.getElementById('price-editor-overlay').classList.remove('hidden');
+    }
+    function reloadPriceEditor() {
+        if (typeof window.__priceEditorRefresh === 'function') window.__priceEditorRefresh();
+    }
 
     /* ===================== DOCUMENTS MERGER ===================== */
     /* Merges PDFs and photos (in any order) into a single downloadable PDF.
