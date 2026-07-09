@@ -193,6 +193,17 @@
         .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px; }
         .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
         .merge-clear { font-size: 11px; font-weight: 800; color: #dc2626; background: none; border: none; }
+        .merge-sort { font-size: 11px; font-weight: 800; color: var(--accent); background: none; border: none; }
+        .merge-toolbar-actions { display: flex; align-items: center; gap: 16px; }
+        #merger-overlay.merge-drag-over-all::after {
+            content: 'Drop anywhere to add files';
+            position: fixed; inset: 0; z-index: 4000;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--accent-dim); backdrop-filter: blur(3px);
+            border: 3px dashed var(--accent); border-radius: 0;
+            font-weight: 800; font-size: 16px; color: var(--accent);
+            pointer-events: none;
+        }
 
         /* Horizontal, side-scrolling strip of file cards. Drag the grip on any
            card left/right to reorder; tap the thumbnail/name to preview. */
@@ -636,7 +647,10 @@
 
         <div class="merge-toolbar">
             <span class="merge-count" id="merge-count">0 files added</span>
-            <button class="merge-clear" id="merge-clear-btn" onclick="mergeClearAll()">Clear all</button>
+            <div class="merge-toolbar-actions">
+                <button class="merge-sort" id="merge-sort-btn" onclick="mergeSortAll()">Sort A→Z</button>
+                <button class="merge-clear" id="merge-clear-btn" onclick="mergeClearAll()">Clear all</button>
+            </div>
         </div>
 
         <div id="merge-list"><div class="merge-empty">No files yet — add PDFs or photos above.</div></div>
@@ -2019,8 +2033,29 @@ init();
 
     function genId() { return 'f' + Math.random().toString(36).slice(2, 9); }
 
+    // Numeric-aware "natural" comparison so e.g. "photo2.jpg" sorts before
+    // "photo10.jpg" instead of after it (plain string sort would put "10"
+    // before "2"). Used both to order each newly-added batch sensibly and
+    // for the manual "Sort A→Z" button.
+    function mergeNaturalCompare(a, b) {
+        return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
+    }
+
+    function mergeSortAll() {
+        if (!mergeItems.length) return;
+        mergeItems.sort((a, b) => mergeNaturalCompare(a.name, b.name));
+        mergeRenderList();
+    }
+
     function mergeAddFiles(fileList) {
         const files = Array.from(fileList || []);
+        // Multi-file drag-drop / selection order from the OS or browser is
+        // often arbitrary (filesystem order, not alphabetical) — sort each
+        // incoming batch into natural filename order before appending, so
+        // it lands in a sensible sequence. This only orders the new batch
+        // among itself; it doesn't touch any files already in the list, so
+        // it won't undo manual reordering you've already done.
+        files.sort((a, b) => mergeNaturalCompare(a.name, b.name));
         let skipped = 0;
         files.forEach(file => {
             const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
@@ -2062,7 +2097,7 @@ init();
                 div.style.display = 'none';
                 document.body.appendChild(div);
             }
-            mergeQrScanners.push(new Html5Qrcode(div.id, { useBarCodeDetectorIfSupported: true, verbose: false }));
+            mergeQrScanners.push(new Html5Qrcode(div.id, { useBarCodeDetectorIfSupported: false, verbose: false }));
         }
         return mergeQrScanners;
     }
@@ -2292,7 +2327,18 @@ init();
 
     function mergeOpenQrLink(id) {
         const item = mergeItems.find(i => i.id === id);
-        if (item && item.qrText) window.open(item.qrText, '_blank', 'noopener,noreferrer');
+        if (!item || !item.qrText) return;
+        // A real anchor click is honored far more reliably than window.open()
+        // across mobile browsers, in-app webviews, and installed PWAs, several
+        // of which silently swallow programmatic window.open() even when it's
+        // triggered from a genuine click.
+        const a = document.createElement('a');
+        a.href = item.qrText;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     }
 
     function mergeDownloadOriginal(id) {
@@ -2470,6 +2516,45 @@ window.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             dropZone.classList.remove('drag-over');
             if (e.dataTransfer.files.length) mergeAddFiles(e.dataTransfer.files);
+        });
+
+        // Drag-and-drop anywhere within the Documents Merger tab, not just the
+        // small drop zone. Uses an enter/leave counter because dragenter/
+        // dragleave fire repeatedly as the pointer crosses child elements —
+        // without the counter the highlight would flicker on and off.
+        const mergerOverlay = document.getElementById('merger-overlay');
+        let mergeDragDepth = 0;
+        mergerOverlay.addEventListener('dragenter', e => {
+            if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) return;
+            e.preventDefault();
+            mergeDragDepth++;
+            mergerOverlay.classList.add('merge-drag-over-all');
+        });
+        mergerOverlay.addEventListener('dragover', e => {
+            if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) return;
+            e.preventDefault();
+        });
+        mergerOverlay.addEventListener('dragleave', () => {
+            mergeDragDepth = Math.max(0, mergeDragDepth - 1);
+            if (mergeDragDepth === 0) mergerOverlay.classList.remove('merge-drag-over-all');
+        });
+        mergerOverlay.addEventListener('drop', e => {
+            if (!e.dataTransfer) return;
+            e.preventDefault();
+            mergeDragDepth = 0;
+            mergerOverlay.classList.remove('merge-drag-over-all');
+            if (e.dataTransfer.files.length) mergeAddFiles(e.dataTransfer.files);
+        });
+
+        // Safety net: if a file gets dropped just outside the overlay bounds
+        // (or anywhere else) while the merger tab is open, stop the browser
+        // from navigating to/opening it instead of silently failing.
+        ['dragover', 'drop'].forEach(evt => {
+            document.addEventListener(evt, e => {
+                if (mergerOverlay.classList.contains('hidden')) return;
+                if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) return;
+                e.preventDefault();
+            });
         });
 
         document.addEventListener('paste', e => {
@@ -2759,6 +2844,12 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('dino-canvas-wrap').addEventListener('click', jump);
         document.addEventListener('keydown', e => {
             if (document.getElementById('tab-home') && document.getElementById('tab-home').classList.contains('hidden')) return;
+            // Don't hijack Space/ArrowUp while the user is actually typing
+            // somewhere (e.g. the merge filename field) — overlays like the
+            // Documents Merger sit on top of the home tab without marking it
+            // "hidden", so the check above alone isn't enough.
+            const active = document.activeElement;
+            if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
             if (e.code === 'Space' || e.code === 'ArrowUp') {
                 e.preventDefault();
                 jump();
