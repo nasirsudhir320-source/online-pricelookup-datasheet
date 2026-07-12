@@ -639,7 +639,10 @@
         <div id="tab-docs" class="view-section hidden"><h3 class="group-title">Datasheets</h3><div id="docs-grid" class="dash-grid"></div></div>
         <div id="tab-machine-docs" class="view-section hidden">
             <h3 class="group-title">Machine Documents</h3>
-            <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." oninput="mdSearchInput(this.value)" />
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." oninput="mdSearchInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" style="flex:1;" />
+                <button id="md-search-btn" class="act-btn primary" onclick="mdTriggerSearch()" title="Search" style="width:46px; height:46px; border-radius:12px; flex-shrink:0;"><i data-lucide="search" size="18"></i></button>
+            </div>
 
             <div class="coc-gen-card">
                 <div class="coc-gen-head">
@@ -793,6 +796,28 @@
             <h4>Drop PDFs or photos here</h4>
             <p>Or tap to choose files &middot; order below is the merge order</p>
             <input type="file" id="merge-file-input" accept="application/pdf,image/*" multiple class="hidden" />
+        </div>
+
+        <div class="coc-gen-card">
+            <div class="coc-gen-head">
+                <div class="dash-icon-badge"><i data-lucide="file-text" size="17"></i></div>
+                <div>
+                    <h4>Generate COC Certificate</h4>
+                    <p>Pick a machine, fill the details, add it straight into the merge list</p>
+                </div>
+            </div>
+
+            <div class="coc-field coc-field-wide">
+                <label>Machine Type</label>
+                <select id="coc-type" class="rate-search" onchange="cocRenderFields()">
+                    <option value="">-- Select machine type --</option>
+                </select>
+            </div>
+
+            <div id="coc-fields" class="hidden"></div>
+
+            <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="16"></i> Generate &amp; Add to Merger</button>
+            <div id="coc-status"></div>
         </div>
 
         <div class="merge-toolbar">
@@ -1692,6 +1717,29 @@ init();
         }
     }
 
+    // Auto-recovery: if the initial load failed (commonly because the device
+    // had no internet at the time), silently retry once the connection comes
+    // back or the tab is revisited — no button tap required. A short cooldown
+    // stops repeated 'online'/visibility flickers from spamming GitHub's API.
+    let mdAutoRetryInFlight = false;
+    let mdLastAutoRetryAt = 0;
+    async function mdAutoRetryIfNeeded() {
+        const needsRetry = mdLoadError || !db.machineDocsFiles || !db.machineDocsFiles.length;
+        if (!needsRetry || mdAutoRetryInFlight) return;
+        if (Date.now() - mdLastAutoRetryAt < 5000) return;
+        mdLastAutoRetryAt = Date.now();
+        mdAutoRetryInFlight = true;
+        try {
+            await loadMachineDocs();
+        } finally {
+            mdAutoRetryInFlight = false;
+        }
+    }
+    window.addEventListener('online', mdAutoRetryIfNeeded);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') mdAutoRetryIfNeeded();
+    });
+
     // Walks db.docsRoot using a '/'-joined path (e.g. "Cranes/Tower Cranes") and
     // returns the { folders, files } node at that location, or null if missing.
     function getDocsNode(path) {
@@ -1940,6 +1988,7 @@ init();
     let photoTouchStartX = 0, photoTouchStartY = 0, photoTouchDeltaY = 0;
     let photoSwiping = false, photoAnimating = false, photoLastTap = 0;
 
+    let photoLoadFailed = false;
     async function loadPhotoData() {
         if (photoDataLoading) return;
         photoDataLoading = true;
@@ -1954,14 +2003,41 @@ init();
             photoRawData = data.items || [];
             document.getElementById('photo-stats').innerText = (data.totalFolders || 0) + ' Folders · ' + (data.totalFiles || 0) + ' Photos';
             photoDataLoaded = true;
+            photoLoadFailed = false;
             renderPhotoFolder('images');
         } catch (e) {
+            photoLoadFailed = true;
             grid.innerHTML = '<div class="gal-empty-state"><i data-lucide="wifi-off" size="34"></i><div class="t">Could not load photos — check your connection</div><button class="nav-btn" style="margin-top:12px; max-width:170px;" onclick="loadPhotoData()"><i data-lucide="refresh-cw" size="14"></i> RETRY</button></div>';
             if (window.lucide) lucide.createIcons();
         } finally {
             photoDataLoading = false;
         }
     }
+
+    // Auto-recovery: if a previous attempt to load the photo manifest failed
+    // (commonly because the device had no internet at the time), silently
+    // retry once the connection comes back or the tab is revisited — no
+    // RETRY tap required. Guarded by photoLoadFailed so this never triggers
+    // an eager load before the person has opened the Photos tab at all. A
+    // short cooldown stops repeated 'online'/visibility flickers from
+    // spamming the Photos host.
+    let photoAutoRetryInFlight = false;
+    let photoLastAutoRetryAt = 0;
+    async function photoAutoRetryIfNeeded() {
+        if (!photoLoadFailed || photoDataLoaded || photoDataLoading || photoAutoRetryInFlight) return;
+        if (Date.now() - photoLastAutoRetryAt < 5000) return;
+        photoLastAutoRetryAt = Date.now();
+        photoAutoRetryInFlight = true;
+        try {
+            await loadPhotoData();
+        } finally {
+            photoAutoRetryInFlight = false;
+        }
+    }
+    window.addEventListener('online', photoAutoRetryIfNeeded);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') photoAutoRetryIfNeeded();
+    });
 
     // ---- Favorites (stored locally on this device only) ----
     const PHOTO_FAV_KEY = 'sudhirpro_favorites';
@@ -3005,6 +3081,38 @@ window.addEventListener('DOMContentLoaded', () => {
     function mdSearchInput(value) {
         clearTimeout(mdSearchTimer);
         mdSearchTimer = setTimeout(() => mdRunSearch(value), 200);
+    }
+
+    // Manual trigger for the search button (and Enter key). Covers the case
+    // where the background tab was inactive during initSync and the browser
+    // throttled/killed that fetch — pressing the button re-fetches the file
+    // list before searching, instead of leaving the tab stuck on stale data.
+    let mdSearchInFlight = false;
+    async function mdTriggerSearch() {
+        if (mdSearchInFlight) return;
+        clearTimeout(mdSearchTimer);
+        const input = document.getElementById('md-search');
+        const box = document.getElementById('md-results');
+        const btn = document.getElementById('md-search-btn');
+        const query = input ? input.value : '';
+
+        if (!db.machineDocsFiles || !db.machineDocsFiles.length || mdLoadError) {
+            mdSearchInFlight = true;
+            btn.disabled = true;
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="merge-spinner"></span>';
+            box.innerHTML = `<div class="rate-empty">Loading Machine Documents...</div>`;
+            try {
+                await loadMachineDocs();
+            } finally {
+                mdSearchInFlight = false;
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+                lucide.createIcons();
+            }
+        } else {
+            mdRunSearch(query);
+        }
     }
 
     function mdRunSearch(query) {
