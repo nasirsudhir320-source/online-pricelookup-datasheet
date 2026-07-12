@@ -432,7 +432,7 @@
     font-family:var(--sans);font-size:12.5px;font-weight:600;color:color-mix(in srgb, var(--accent) 75%, black);
     background:var(--amber-glow);border:1.5px solid var(--amber-dim);
     padding:10px 14px;border-radius:14px;margin-bottom:12px;
-  }#price-editor-panel .edit-banner.show{display:flex;}#price-editor-panel .edit-banner .pip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;}#price-editor-panel .table-scroll{border-radius:16px;overflow:hidden;border:1.5px solid var(--border);box-shadow:0 3px 14px rgba(22,23,27,0.05);}#price-editor-panel table{width:100%;border-collapse:collapse;}#price-editor-panel thead th{
+  }#price-editor-panel .edit-banner.show{display:flex;}#price-editor-panel .edit-banner .pip{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;}#price-editor-panel .table-scroll{border-radius:16px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1.5px solid var(--border);box-shadow:0 3px 14px rgba(22,23,27,0.05);}#price-editor-panel table{width:100%;min-width:640px;border-collapse:collapse;}#price-editor-panel thead th{
     text-align:left;font-family:var(--display);font-size:10.5px;text-transform:uppercase;font-weight:700;
     letter-spacing:0.06em;color:var(--amber);padding:12px 14px;
     background:var(--accent-dim);border-bottom:1px solid var(--border);
@@ -1378,6 +1378,30 @@ saveBtn.addEventListener('click', async () => {
 if (window.lucide) lucide.createIcons();
 window.__priceEditorRefresh = init;
 init();
+
+// Auto-recovery: if loading the sheet list (or the current tab) failed —
+// commonly because the device had no internet at the time — silently retry
+// once the connection comes back or the tab is revisited, instead of
+// leaving the "connection failed" state on screen. A short cooldown stops
+// repeated 'online'/visibility flickers from spamming the sheet.
+let peAutoRetryInFlight = false;
+let peLastAutoRetryAt = 0;
+async function peAutoRetryIfNeeded() {
+  if (!statusDot.classList.contains('err') || peAutoRetryInFlight) return;
+  if (Date.now() - peLastAutoRetryAt < 5000) return;
+  peLastAutoRetryAt = Date.now();
+  peAutoRetryInFlight = true;
+  try {
+    if (sheets.length && currentGid) await loadTab(currentGid);
+    else await init();
+  } finally {
+    peAutoRetryInFlight = false;
+  }
+}
+window.addEventListener('online', peAutoRetryIfNeeded);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') peAutoRetryIfNeeded();
+});
 
 })();</script>
 
