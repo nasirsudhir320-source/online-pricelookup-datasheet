@@ -1639,10 +1639,13 @@ document.addEventListener('visibilitychange', () => {
         try {
             updateSyncProgress(15, "FETCHING RATES");
             // Rates and docs load in parallel (not one after another) to save time.
+            // Machine Documents is intentionally NOT fetched here — it's a large
+            // recursive repo listing that was slowing down every app launch even
+            // though most sessions never open that tab. It now loads lazily, only
+            // when the person actually searches it (see mdTriggerSearch()).
             const ratesPromise = loadRates().then(() => updateSyncProgress(60, "RATES READY"));
-            const docsPromise = loadDocs().then(() => updateSyncProgress(85, "DOCS READY"));
-            const machineDocsPromise = loadMachineDocs().then(() => updateSyncProgress(90, "MACHINE DOCS READY"));
-            await Promise.all([ratesPromise, docsPromise, machineDocsPromise]);
+            const docsPromise = loadDocs().then(() => updateSyncProgress(90, "DOCS READY"));
+            await Promise.all([ratesPromise, docsPromise]);
 
             isDataReady = true;
             document.querySelectorAll('.status-dot').forEach(d => d.classList.add('ready'));
@@ -1704,8 +1707,13 @@ document.addEventListener('visibilitychange', () => {
 
     // Loads the Machine-Documents repo (CONFIG.GH2) as a flat, searchable list
     // instead of a folder tree — the Machine Documents tab is search-only.
+    // Loaded lazily: only mdTriggerSearch() (Enter key / search button) calls
+    // this, never on tab-open or app-startup, so browsing the app never pays
+    // for this fetch unless the person actually searches Machine Documents.
     let mdLoadError = null;
+    let mdHasAttemptedLoad = false;
     async function loadMachineDocs() {
+        mdHasAttemptedLoad = true;
         mdLoadError = null;
         db.machineDocsFiles = [];
         try {
@@ -1737,25 +1745,36 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
+    // 12s timeout — on a slow connection the raw fetch() could otherwise hang
+    // for a very long time with no feedback; this fails fast so the person
+    // sees an error (and can retry) instead of a spinner that never resolves.
     async function mdFetchTree(branch) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 12000);
         try {
-            const res = await fetch(`https://api.github.com/repos/${CONFIG.GH2.user}/${CONFIG.GH2.repo}/git/trees/${branch}?recursive=1`);
+            const res = await fetch(`https://api.github.com/repos/${CONFIG.GH2.user}/${CONFIG.GH2.repo}/git/trees/${branch}?recursive=1`, { signal: controller.signal });
             const data = await res.json();
             if (data.tree) data.branchUsed = branch;
             return data;
         } catch (e) {
             return null;
+        } finally {
+            clearTimeout(timer);
         }
     }
 
-    // Auto-recovery: if the initial load failed (commonly because the device
-    // had no internet at the time), silently retry once the connection comes
-    // back or the tab is revisited — no button tap required. A short cooldown
-    // stops repeated 'online'/visibility flickers from spamming GitHub's API.
+    // Auto-recovery: if a search was already attempted and it failed
+    // (commonly because the device had no/slow internet at the time),
+    // silently retry once the connection comes back or the tab is revisited
+    // — no button tap required. Gated on mdHasAttemptedLoad so this never
+    // fetches in the background just because the tab regained focus or the
+    // connection came back — Machine Documents only fetches when the person
+    // actually searches it. A short cooldown stops repeated
+    // 'online'/visibility flickers from spamming GitHub's API.
     let mdAutoRetryInFlight = false;
     let mdLastAutoRetryAt = 0;
     async function mdAutoRetryIfNeeded() {
-        const needsRetry = mdLoadError || !db.machineDocsFiles || !db.machineDocsFiles.length;
+        const needsRetry = mdHasAttemptedLoad && (mdLoadError || !db.machineDocsFiles || !db.machineDocsFiles.length);
         if (!needsRetry || mdAutoRetryInFlight) return;
         if (Date.now() - mdLastAutoRetryAt < 5000) return;
         mdLastAutoRetryAt = Date.now();
@@ -3349,13 +3368,16 @@ window.addEventListener('DOMContentLoaded', () => {
     function mdOpenQrLink(id) {
         const item = mdSelection.find(i => i.id === id);
         if (!item || !item.qrText) return;
-        const a = document.createElement('a');
-        a.href = item.qrText;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        const url = item.qrText;
+        // Try a real new-tab open first (works in normal mobile browsers).
+        const win = window.open(url, '_blank', 'noopener,noreferrer');
+        if (win) return;
+        // Installed PWAs / mobile webviews often can't spawn a real new tab —
+        // a synthetic target="_blank" click either no-ops or ends up forcing
+        // a download instead of viewing the link. Falling back to a direct
+        // top-level navigation opens/renders it the same way tapping a
+        // normal browser link does.
+        window.location.href = url;
     }
 
     async function mdDownloadQrOriginal(id) {
