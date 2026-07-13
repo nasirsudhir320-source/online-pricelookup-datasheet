@@ -640,7 +640,7 @@
         <div id="tab-machine-docs" class="view-section hidden">
             <h3 class="group-title">Machine Documents</h3>
             <div style="display:flex; gap:8px; align-items:center;">
-                <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." oninput="mdSearchInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" style="flex:1;" />
+                <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" style="flex:1;" />
                 <button id="md-search-btn" class="act-btn primary" onclick="mdTriggerSearch()" title="Search" style="width:46px; height:46px; border-radius:12px; flex-shrink:0;"><i data-lucide="search" size="18"></i></button>
             </div>
 
@@ -1717,8 +1717,8 @@ document.addEventListener('visibilitychange', () => {
         mdLoadError = null;
         db.machineDocsFiles = [];
         try {
-            let data = await mdFetchTree('main');
-            if (!data || !data.tree) data = await mdFetchTree('master');
+            let data = await mdFetchTreeWithRetries('main');
+            if (!data || !data.tree) data = await mdFetchTreeWithRetries('master');
             if (!data) { mdLoadError = 'Could not reach GitHub — check your internet connection.'; return; }
             if (data.message) { mdLoadError = data.message; return; } // e.g. "Not Found" (wrong repo/private) or rate-limit message
             if (!data.tree) { mdLoadError = 'Repo returned no files.'; return; }
@@ -1745,9 +1745,10 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
-    // 12s timeout — on a slow connection the raw fetch() could otherwise hang
-    // for a very long time with no feedback; this fails fast so the person
-    // sees an error (and can retry) instead of a spinner that never resolves.
+    // 12s timeout per attempt — on a slow connection the raw fetch() could
+    // otherwise hang for a very long time with no feedback; this fails fast
+    // so a retry (or a clear error) happens instead of a spinner that never
+    // resolves.
     async function mdFetchTree(branch) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 12000);
@@ -1761,6 +1762,25 @@ document.addEventListener('visibilitychange', () => {
         } finally {
             clearTimeout(timer);
         }
+    }
+
+    // Retries only genuine connection-level failures (timeout, dropped mid-
+    // fetch, DNS hiccup, etc — where mdFetchTree() comes back with nothing).
+    // A real answer from GitHub — even an error like "Not Found" — is
+    // returned immediately since retrying that would never succeed. This is
+    // what makes a single button press resilient to a slow or momentarily
+    // interrupted connection instead of failing on the first attempt.
+    async function mdFetchTreeWithRetries(branch, attempts = 3) {
+        for (let i = 0; i < attempts; i++) {
+            const data = await mdFetchTree(branch);
+            if (data) return data; // got a real response (success or a genuine API error) — stop
+            if (i < attempts - 1) {
+                const box = document.getElementById('md-results');
+                if (box) box.innerHTML = `<div class="rate-empty">Connection unstable — retrying (${i + 2}/${attempts})...</div>`;
+                await new Promise(r => setTimeout(r, 1200 * (i + 1))); // short backoff before trying again
+            }
+        }
+        return null;
     }
 
     // Auto-recovery: if a search was already attempted and it failed
@@ -3149,23 +3169,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     /* ===================== MACHINE DOCUMENTS (search + select + merge) ===================== */
     const MD_VISIBLE_EXT = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
-    let mdSearchTimer = null;
     let mdCurrentResults = [];
     let mdSelection = [];
 
-    function mdSearchInput(value) {
-        clearTimeout(mdSearchTimer);
-        mdSearchTimer = setTimeout(() => mdRunSearch(value), 200);
-    }
-
-    // Manual trigger for the search button (and Enter key). Covers the case
-    // where the background tab was inactive during initSync and the browser
-    // throttled/killed that fetch — pressing the button re-fetches the file
-    // list before searching, instead of leaving the tab stuck on stale data.
+    // Sole entry point for Machine Documents — the search button and Enter
+    // key both call this. Typing alone does nothing; nothing is fetched or
+    // filtered until the person deliberately searches. If data isn't loaded
+    // yet, or the last attempt failed, this (re)fetches before searching.
     let mdSearchInFlight = false;
     async function mdTriggerSearch() {
         if (mdSearchInFlight) return;
-        clearTimeout(mdSearchTimer);
         const input = document.getElementById('md-search');
         const box = document.getElementById('md-results');
         const btn = document.getElementById('md-search-btn');
