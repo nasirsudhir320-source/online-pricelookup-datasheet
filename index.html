@@ -159,11 +159,11 @@
         #dino-overlay h4 { font-size: 13px; font-weight: 700; color: #fff; }
         #dino-overlay p { font-size: 10px; color: #cfd0d6; font-weight: 600; }
         #dino-overlay.hidden { display: none; }
-        #merge-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 34px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
-        #merge-drop-zone:active, #merge-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
-        #merge-drop-zone i { color: var(--accent); margin-bottom: 10px; }
-        #merge-drop-zone h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
-        #merge-drop-zone p { font-size: 11px; color: var(--text-dim); }
+        #merge-drop-zone, #md-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 34px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
+        #merge-drop-zone:active, #merge-drop-zone.drag-over, #md-drop-zone:active, #md-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
+        #merge-drop-zone i, #md-drop-zone i { color: var(--accent); margin-bottom: 10px; }
+        #merge-drop-zone h4, #md-drop-zone h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
+        #merge-drop-zone p, #md-drop-zone p { font-size: 11px; color: var(--text-dim); }
 
         .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px; }
         .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -644,6 +644,13 @@
                 <button id="md-search-btn" class="act-btn primary" onclick="mdTriggerSearch()" title="Search" style="width:46px; height:46px; border-radius:12px; flex-shrink:0;"><i data-lucide="search" size="18"></i></button>
             </div>
 
+            <div id="md-drop-zone" style="margin-top:14px;">
+                <i data-lucide="upload-cloud" size="26"></i>
+                <h4>Add files from this device</h4>
+                <p>Tap to choose, or drop PDFs/photos here — added straight to your selection</p>
+                <input type="file" id="md-file-input" accept="application/pdf,image/*" multiple class="hidden" />
+            </div>
+
             <div class="coc-gen-card">
                 <div class="coc-gen-head">
                     <div class="dash-icon-badge"><i data-lucide="file-text" size="17"></i></div>
@@ -666,7 +673,7 @@
             <div id="md-results" class="rate-empty">Type to search Machine Documents...</div>
 
             <div id="md-selection-bar" class="merge-sticky hidden">
-                <div id="md-selection-chips" style="margin-bottom:8px;"></div>
+                <div id="md-selection-chips" style="display:flex; flex-direction:row; gap:12px; overflow-x:auto; overflow-y:visible; padding:4px 2px 10px; -webkit-overflow-scrolling:touch;"></div>
                 <div class="merge-count" id="md-selection-count" style="display:block; margin-bottom:8px;">0 files selected</div>
                 <input type="text" id="md-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
                 <div class="md-btn-row">
@@ -2858,7 +2865,18 @@ document.addEventListener('visibilitychange', () => {
 
     function mergeOpenQrLink(id) {
         const item = mergeItems.find(i => i.id === id);
-        if (item && item.qrText) window.open(item.qrText, '_blank', 'noopener,noreferrer');
+        if (!item || !item.qrText) return;
+        // window.open() is unreliable inside installed PWAs / mobile webviews
+        // (silently no-ops in some of them). A real anchor click is the
+        // technique that reliably opens external links there — same trick
+        // mergeDownloadOriginal() already uses successfully below.
+        const a = document.createElement('a');
+        a.href = item.qrText;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     }
 
     function mergeDownloadOriginal(id) {
@@ -3038,6 +3056,20 @@ window.addEventListener('DOMContentLoaded', () => {
             if (e.dataTransfer.files.length) mergeAddFiles(e.dataTransfer.files);
         });
 
+        const mdDropZone = document.getElementById('md-drop-zone');
+        const mdFileInput = document.getElementById('md-file-input');
+
+        mdDropZone.addEventListener('click', () => mdFileInput.click());
+        mdFileInput.addEventListener('change', e => { mdAddLocalFiles(e.target.files); mdFileInput.value = ''; });
+
+        mdDropZone.addEventListener('dragover', e => { e.preventDefault(); mdDropZone.classList.add('drag-over'); });
+        mdDropZone.addEventListener('dragleave', () => mdDropZone.classList.remove('drag-over'));
+        mdDropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            mdDropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) mdAddLocalFiles(e.dataTransfer.files);
+        });
+
         // Drag-and-drop anywhere within the Documents Merger tab, not just the
         // small drop zone. Uses an enter/leave counter because dragenter/
         // dragleave fire repeatedly as the pointer crosses child elements —
@@ -3182,8 +3214,20 @@ window.addEventListener('DOMContentLoaded', () => {
         const f = mdCurrentResults[idx];
         if (!f) return;
         const pos = mdSelection.findIndex(s => s.url === f.url);
-        if (pos >= 0) mdSelection.splice(pos, 1);
-        else mdSelection.push({ id: f.url, name: f.name, ext: f.ext, url: f.url, file: null });
+        if (pos >= 0) {
+            mdQrQueue = mdQrQueue.filter(i => i.id !== mdSelection[pos].id);
+            mdSelection.splice(pos, 1);
+        } else {
+            const isImage = f.ext !== 'pdf';
+            const item = {
+                id: f.url, name: f.name, ext: f.ext, url: f.url, file: null,
+                thumbUrl: isImage ? f.url : null,
+                qrStatus: isImage ? 'queued' : 'none',
+                qrText: null
+            };
+            mdSelection.push(item);
+            if (isImage) mdEnqueueQrScan(item);
+        }
         mdRenderSelectionBar();
     }
 
@@ -3195,16 +3239,194 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // Generated COC certificates go straight into the selection (they have a
-    // real Blob already, so no fetch is needed at merge time).
+    // real Blob already, so no fetch is needed at merge time). They're PDFs,
+    // so — same as the Docs Merger tab — they aren't run through QR scanning.
     function mdAddGeneratedFile(file) {
-        mdSelection.push({ id: 'gen-' + genId(), name: file.name.replace(/\.pdf$/i, ''), ext: 'pdf', url: null, file });
+        mdSelection.push({ id: 'gen-' + genId(), name: file.name.replace(/\.pdf$/i, ''), ext: 'pdf', url: null, file, thumbUrl: null, qrStatus: 'none', qrText: null });
         mdRenderSelectionBar();
     }
 
+    // Lets the person add PDFs/photos straight from this device (not just
+    // GitHub search results) into the Machine Documents selection — same
+    // File-handling as the Docs Merger tab's drop zone.
+    function mdAddLocalFiles(fileList) {
+        const files = Array.from(fileList || []);
+        let skipped = 0;
+        files.forEach(file => {
+            const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+            const isImage = file.type.startsWith('image/');
+            if (!isPdf && !isImage) { skipped++; return; }
+            const item = {
+                id: 'local-' + genId(),
+                name: file.name.replace(/\.[^.]+$/, ''),
+                ext: isPdf ? 'pdf' : (file.name.split('.').pop() || 'jpg').toLowerCase(),
+                url: null,
+                file,
+                thumbUrl: isImage ? URL.createObjectURL(file) : null,
+                qrStatus: isImage ? 'queued' : 'none',
+                qrText: null
+            };
+            mdSelection.push(item);
+            if (isImage) mdEnqueueQrScan(item);
+        });
+        mdRenderSelectionBar();
+        const status = document.getElementById('md-status');
+        if (status) status.textContent = skipped ? `${skipped} file(s) skipped — only PDFs and photos are supported.` : '';
+    }
+
     function mdRemoveSelected(id) {
+        const item = mdSelection.find(s => s.id === id);
+        if (item && item.thumbUrl && item.file) URL.revokeObjectURL(item.thumbUrl);
         mdSelection = mdSelection.filter(s => s.id !== id);
+        mdQrQueue = mdQrQueue.filter(i => i.id !== id);
         mdRenderSelectionBar();
         mdRenderResults();
+    }
+
+    // ---- QR scanning for Machine Documents selection (images only) ----
+    // Reuses the same scanner pool / decoding logic as the Docs Merger tab
+    // (mergeGetScannerPool, mergeEnsureLibrary, mergeScanImageForQr) so both
+    // tabs behave identically — the only difference is that a selected item
+    // here may be a remote GitHub file rather than a local File, so the
+    // worker fetches its bytes (via mdFetchItemBlob) right before scanning.
+    let mdQrQueue = [];
+    let mdQrProcessing = false;
+
+    function mdEnqueueQrScan(item) {
+        mdQrQueue.push(item);
+        if (!mdQrProcessing) processMdQrQueue();
+    }
+
+    async function processMdQrQueue() {
+        mdQrProcessing = true;
+        try {
+            await mergeEnsureLibrary();
+            const pool = mergeGetScannerPool();
+            await Promise.all(pool.map(scanner => mdQrWorker(scanner)));
+        } catch (e) {
+            mdQrQueue.forEach(item => { item.qrStatus = 'none'; });
+            mdQrQueue = [];
+            mdRenderSelectionBar();
+        }
+        mdQrProcessing = false;
+    }
+
+    async function mdQrWorker(scanner) {
+        while (mdQrQueue.length) {
+            const item = mdQrQueue.shift();
+            if (!item) return;
+            if (!mdSelection.find(i => i.id === item.id)) continue; // removed before its turn
+            item.qrStatus = 'scanning';
+            mdRenderSelectionBar();
+            try {
+                const blob = await mdFetchItemBlob(item);
+                // mergeScanImageForQr (and the resize/enhance variants it tries)
+                // read file.name and pass it to the QR library's scanFile(),
+                // which expects a real File — a remote item fetched via
+                // mdFetchItemBlob() comes back as a plain Blob with no name,
+                // so every variant was silently throwing and QR always came
+                // back "not found". Wrapping it into a File fixes that.
+                const file = blob instanceof File ? blob
+                    : new File([blob], (item.name || 'image') + '.' + (item.ext || 'jpg'), { type: blob.type || 'image/jpeg' });
+                item.qrText = await mergeScanImageForQr(scanner, file);
+            } catch (e) {
+                item.qrText = null;
+            }
+            item.qrStatus = item.qrText ? 'found' : 'none';
+            mdRenderSelectionBar();
+        }
+    }
+
+    function mdRetryQrScan(id) {
+        const item = mdSelection.find(i => i.id === id);
+        if (!item) return;
+        item.qrStatus = 'queued';
+        item.qrText = null;
+        mdEnqueueQrScan(item);
+        mdRenderSelectionBar();
+    }
+
+    function mdOpenQrLink(id) {
+        const item = mdSelection.find(i => i.id === id);
+        if (!item || !item.qrText) return;
+        const a = document.createElement('a');
+        a.href = item.qrText;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+    async function mdDownloadQrOriginal(id) {
+        const item = mdSelection.find(i => i.id === id);
+        if (!item) return;
+        const blob = await mdFetchItemBlob(item);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = item.name + (item.ext ? '.' + item.ext : '');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
+    async function mdPreviewItem(id) {
+        const item = mdSelection.find(s => s.id === id);
+        if (!item) return;
+        if (item.thumbUrl) { mdPreviewImage(item.thumbUrl, item.name); return; }
+        if (item.url) { openPdf(item.url, item.name); return; }
+        if (item.file) {
+            window.history.pushState({ type: 'pdf' }, '');
+            document.getElementById('pdf-overlay').classList.remove('hidden');
+            document.getElementById('pdf-title').textContent = item.name || 'Viewer';
+            await renderPdfBlobIntoOverlay(item.file, item.name, null);
+        }
+    }
+
+    function mdSelectionItemHtml(item) {
+        const thumbInner = item.thumbUrl
+            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
+            : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
+
+        let badge = '';
+        if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
+            badge = `<div class="doc-qr-scanning"><span class="qr-spinner"></span> Checking QR...</div>`;
+        } else if (item.qrStatus === 'found') {
+            const linky = mergeIsUrl(item.qrText);
+            badge = `
+                <div class="doc-qr-badge">
+                    <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
+                    <div class="doc-qr-actions">
+                        ${linky ? `<button class="doc-qr-chip" onclick="mdOpenQrLink('${item.id}')">Open Link</button>` : ''}
+                        <button class="doc-qr-chip" onclick="mdDownloadQrOriginal('${item.id}')">Download</button>
+                    </div>
+                </div>`;
+        } else if (item.qrStatus === 'none') {
+            badge = `
+                <div class="doc-qr-badge">
+                    <span style="font-size:9px; color:var(--text-dim); font-weight:700; text-align:center;">No QR detected</span>
+                    <div class="doc-qr-actions">
+                        <button class="doc-qr-chip" onclick="mdRetryQrScan('${item.id}')">Retry scan</button>
+                    </div>
+                </div>`;
+        }
+
+        const canPreview = !!(item.thumbUrl || item.url || item.file);
+
+        return `
+            <div class="doc-item" data-id="${item.id}">
+                <button class="doc-remove" onclick="mdRemoveSelected('${item.id}')"><i data-lucide="x" size="13"></i></button>
+                <div class="doc-preview-trigger" ${canPreview ? `onclick="mdPreviewItem('${item.id}')"` : ''} style="${canPreview ? '' : 'cursor:default;'}">
+                    <div class="doc-thumb-wrap">${thumbInner}</div>
+                    <div class="doc-meta">
+                        <h4>${mergeEscape(item.name)}</h4>
+                        <p>${item.ext === 'pdf' ? 'PDF' : 'Photo'}</p>
+                    </div>
+                </div>
+                ${badge}
+            </div>`;
     }
 
     function mdRenderSelectionBar() {
@@ -3213,9 +3435,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (!count) { bar.classList.add('hidden'); return; }
         bar.classList.remove('hidden');
         document.getElementById('md-selection-count').textContent = `${count} file${count > 1 ? 's' : ''} selected`;
-        document.getElementById('md-selection-chips').innerHTML = mdSelection.map(s =>
-            `<span class="md-chip">${mergeEscape(s.name)} <i data-lucide="x" size="12" onclick="mdRemoveSelected('${s.id}')"></i></span>`
-        ).join('');
+        document.getElementById('md-selection-chips').innerHTML = mdSelection.map(s => mdSelectionItemHtml(s)).join('');
         lucide.createIcons();
     }
 
@@ -3851,6 +4071,14 @@ window.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('click', jump);
         document.getElementById('dino-canvas-wrap').addEventListener('click', jump);
         document.addEventListener('keydown', e => {
+            // Never steal Space/ArrowUp while the person is actually typing —
+            // this used to only check whether the Home tab was hidden, but
+            // overlays (Docs Merger, Machine Documents, Price Editor) sit on
+            // top of Home without hiding it, so typing a space into e.g. the
+            // merge filename field was wrongly triggering the game's jump.
+            const active = document.activeElement;
+            const activeTag = active && active.tagName;
+            if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || (active && active.isContentEditable)) return;
             if (document.getElementById('tab-home') && document.getElementById('tab-home').classList.contains('hidden')) return;
             if (e.code === 'Space' || e.code === 'ArrowUp') {
                 e.preventDefault();
