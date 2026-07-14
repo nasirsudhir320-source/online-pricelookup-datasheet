@@ -159,92 +159,49 @@
         #dino-overlay h4 { font-size: 13px; font-weight: 700; color: #fff; }
         #dino-overlay p { font-size: 10px; color: #cfd0d6; font-weight: 600; }
         #dino-overlay.hidden { display: none; }
-        #merge-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 38px 18px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--bg); }
-        #merge-drop-zone:active, #merge-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
-        #merge-drop-zone i { color: var(--accent); margin-bottom: 10px; }
-        #merge-drop-zone h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
-        #merge-drop-zone p { font-size: 11.5px; color: var(--text-dim); }
+        .md-dropzone { border: 2px dashed var(--border); border-radius: 18px; padding: 30px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--accent-dim); }
+        .md-dropzone:active, .md-dropzone.drag-over { border-color: var(--accent); }
+        .md-dropzone-icon { width: 50px; height: 50px; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: var(--accent); box-shadow: 0 4px 12px rgba(22,23,27,0.08); }
+        .md-dropzone h4 { font-size: 14.5px; font-weight: 800; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
+        .md-dropzone .md-browse-link { font-size: 12.5px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+        .md-dropzone .md-dropzone-hint { font-size: 10.5px; color: var(--text-dim); }
 
-        /* ============================================================
-           MACHINE DOCUMENTS — full rebuild.
-           Old layout was three equal-width columns competing for space.
-           New layout: one tabbed "source" panel (Add Files / Search
-           Archive) that gets the full working width, plus a persistent
-           Merge Queue dock beside it that holds the running selection as
-           a proper reorderable vertical list (not a cramped horizontal
-           scroll strip). Everything now has room to breathe.
-           ============================================================ */
-        .md-hint { font-size: 12px; color: var(--text-dim); font-weight: 600; margin: -6px 0 16px; line-height: 1.5; max-width: 680px; }
-
-        .mdw-shell { display: flex; flex-direction: column; gap: 16px; }
-
-        /* ---- Main working card: tabs + active pane ---- */
-        .mdw-main { background: var(--card); border: 1.5px solid var(--border); border-radius: 22px; box-shadow: 0 4px 16px rgba(22,23,27,0.06); overflow: hidden; }
-        .mdw-tabs { display: flex; border-bottom: 1.5px solid var(--border); }
-        .mdw-tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 10px; background: none; border: none; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-dim); cursor: pointer; position: relative; transition: color 0.15s ease; }
-        .mdw-tab i { stroke-width: 2.2; }
-        .mdw-tab.active { color: var(--accent); }
-        .mdw-tab.active::after { content: ''; position: absolute; bottom: -1.5px; left: 16px; right: 16px; height: 3px; border-radius: 3px 3px 0 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
-        .mdw-pane { padding: 20px; }
-        .mdw-pane.hidden { display: none; }
-
-        .mdw-or-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-dim); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; }
-        .mdw-or-divider::before, .mdw-or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-        /* ---- Search pane: results as a responsive grid, not a squeezed column ---- */
-        #md-results { margin-top: 16px; }
-        #md-results.md-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-        .mdw-pane .item-card.md-result-row { background: var(--bg); border: 1.5px solid var(--border); box-shadow: none; border-radius: 14px; margin-bottom: 0; padding: 10px 12px; }
-        .md-result-row { display: flex; align-items: center; gap: 10px; }
-        .md-add-btn { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; border: 1.5px solid var(--border); background: var(--card); color: var(--accent); display: flex; align-items: center; justify-content: center; transition: 0.15s ease; }
-        .md-add-btn.added { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-        /* ---- Merge Queue dock ---- */
-        .mdw-dock { background: var(--card); border: 1.5px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: 22px; padding: 18px; box-shadow: 0 10px 26px rgba(22,23,27,0.1); position: relative; display: flex; flex-direction: column; }
-        .mdw-dock::before { content: ''; position: absolute; top: -1.5px; left: 18px; right: 18px; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
-        .mdw-dock-title { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--ink); }
-        .mdw-dock-title i { color: var(--accent); }
-
-        .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 10px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
-        .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px; }
+        .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 10px; }
         .merge-clear { font-size: 11px; font-weight: 800; color: #dc2626; background: none; border: none; }
 
-        /* Vertical reorderable list — drag the grip up/down to reorder, tap
-           the thumbnail/name to preview. Scrolls internally once the queue
-           grows past a comfortable height so the Save/Share bar never gets
-           pushed off screen. */
-        #merge-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 2px 4px; max-height: 44vh; }
-        #merge-list::-webkit-scrollbar { width: 6px; }
+        /* Horizontal, side-scrolling strip of file cards. Drag the grip on any
+           card left/right to reorder; tap the thumbnail/name to preview. */
+        #merge-list { display: flex; flex-direction: row; gap: 12px; overflow-x: auto; overflow-y: visible; padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+        #merge-list::-webkit-scrollbar { height: 6px; }
         #merge-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        .doc-item { position: relative; width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 9px; display: flex; flex-direction: column; gap: 8px; }
-        .doc-item.doc-dragging { opacity: 0.94; box-shadow: 0 12px 26px rgba(22,23,27,0.2); border-color: var(--accent); cursor: grabbing; z-index: 5; background: var(--card); }
-        .doc-item-main { display: flex; align-items: center; gap: 9px; }
-        .doc-drag-handle { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: none; cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
+        .doc-item { position: relative; flex: 0 0 148px; width: 148px; scroll-snap-align: start; background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: 0 2px 10px rgba(22,23,27,0.05); }
+        .doc-item.doc-dragging { opacity: 0.92; box-shadow: 0 14px 28px rgba(22,23,27,0.22); border-color: var(--accent); cursor: grabbing; z-index: 5; }
+        .doc-drag-handle { position: absolute; top: 6px; left: 6px; width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: rgba(255,255,255,0.88); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; z-index: 3; }
         .doc-drag-handle:active { cursor: grabbing; color: var(--accent); }
-        .doc-index-pill { flex-shrink: 0; font-size: 10px; font-weight: 800; background: var(--ink); color: #fff; padding: 3px 6px; border-radius: 6px; }
-        .doc-remove { flex-shrink: 0; width: 28px; height: 28px; border-radius: 9px; background: #fde9e8; border: 1.5px solid rgba(220,38,38,0.25); color: #dc2626; display: flex; align-items: center; justify-content: center; }
-        .doc-preview-trigger { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .doc-thumb-wrap { position: relative; flex-shrink: 0; }
-        .doc-thumb { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
-        .doc-eye-badge { position: absolute; bottom: -3px; right: -3px; width: 17px; height: 17px; border-radius: 6px; background: rgba(22,23,27,0.65); color: #fff; display: flex; align-items: center; justify-content: center; }
+        .doc-index-pill { position: absolute; bottom: 6px; left: 6px; font-size: 10px; font-weight: 800; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 6px; z-index: 3; }
+        .doc-remove { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 9px; background: #fde9e8; border: 1.5px solid rgba(220,38,38,0.25); color: #dc2626; display: flex; align-items: center; justify-content: center; z-index: 3; }
+        .doc-preview-trigger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding-top: 26px; }
+        .doc-thumb-wrap { position: relative; }
+        .doc-thumb { width: 100%; height: 92px; border-radius: 12px; object-fit: cover; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .doc-eye-badge { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; border-radius: 7px; background: rgba(22,23,27,0.6); color: #fff; display: flex; align-items: center; justify-content: center; }
         .doc-meta { min-width: 0; text-align: left; }
-        .doc-meta h4 { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
-        .doc-meta p { font-size: 9.5px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .doc-drag-placeholder { width: 100%; border: 2px dashed var(--accent); border-radius: 14px; background: var(--accent-dim); opacity: 0.6; }
+        .doc-meta h4 { font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+        .doc-meta p { font-size: 9px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .doc-drag-placeholder { flex: 0 0 148px; width: 148px; border: 2px dashed var(--accent); border-radius: 16px; background: var(--accent-dim); opacity: 0.6; }
 
         #img-preview-box { display: flex; align-items: center; justify-content: center; min-height: 100%; padding: 10px; }
         #img-preview-box img { max-width: 100%; max-height: calc(100vh - 90px); border-radius: 10px; object-fit: contain; }
 
-        .doc-qr-badge { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 35px; }
-        .doc-qr-tag { font-size: 9px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 7px; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase; }
-        .doc-qr-actions { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; }
-        .doc-qr-chip { font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 9px; text-align: center; }
-        .doc-qr-scanning { font-size: 9.5px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; padding-left: 35px; }
+        .doc-qr-badge { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+        .doc-qr-tag { font-size: 9px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 6px; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase; }
+        .doc-qr-actions { display: flex; flex-direction: column; gap: 5px; }
+        .doc-qr-chip { font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 4px; text-align: center; }
+        .doc-qr-scanning { font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
 
         .merge-empty { text-align: center; color: var(--text-dim); font-size: 12px; padding: 24px 0; }
 
-        .merge-sticky { position: sticky; bottom: 0; background: linear-gradient(to top, var(--card) 70%, transparent); padding: 14px 0 2px; margin-top: auto; }
+        .merge-sticky { position: sticky; bottom: 0; background: linear-gradient(to top, var(--bg) 60%, transparent); padding: 16px 0 4px; margin-top: 6px; }
         #merge-btn { width: 100%; padding: 16px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); border: none; color: #fff; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px rgba(22,23,27,0.15); }
         #merge-btn:disabled { background: var(--border); color: var(--text-dim); box-shadow: none; }
         #merge-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
@@ -252,10 +209,8 @@
         .qr-spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent-dim); border-top-color: var(--accent); display: inline-block; animation: qrspin 0.7s linear infinite; }
         @keyframes qrspin { to { transform: rotate(360deg); } }
 
-        /* ---- COC Certificate Generator: a distinct soft-filled zone that
-           sits as the second of two "ways to add a file", below an OR
-           divider under the drop zone — not a floating card of its own. ---- */
-        .coc-gen-card { background: var(--bg); border: 1.5px solid var(--border); border-radius: 18px; padding: 16px; }
+        /* ---- COC Certificate Generator ---- */
+        .coc-gen-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 16px; margin-top: 14px; box-shadow: 0 3px 14px rgba(22,23,27,0.05); }
         .coc-gen-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
         .coc-gen-head .dash-icon-badge { width: 34px; height: 34px; border-radius: 11px; }
         .coc-gen-head h4 { font-size: 13.5px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
@@ -266,27 +221,73 @@
         .coc-field { display: flex; flex-direction: column; gap: 4px; }
         .coc-field.coc-field-wide { grid-column: 1 / -1; }
         .coc-field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 800; color: var(--text-dim); }
-        .coc-field input { padding: 11px 12px; border-radius: 11px; background: var(--card); border: 1.5px solid var(--border); color: var(--ink); font-size: 13px; font-weight: 600; outline: none; width: 100%; }
+        .coc-field input { padding: 11px 12px; border-radius: 11px; background: var(--bg); border: 1.5px solid var(--border); color: var(--ink); font-size: 13px; font-weight: 600; outline: none; width: 100%; }
         .coc-field input:focus { border-color: var(--accent); }
         #coc-add-btn { width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #818cf8, #6366f1); border: none; color: #fff; font-weight: 800; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; box-shadow: 0 6px 16px rgba(99,102,241,0.25); }
         #coc-add-btn:disabled { background: var(--border); color: var(--text-dim); box-shadow: none; }
         #coc-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
 
+        /* ---- Machine Documents search tab ---- */
         .md-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-dim); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; margin: 0 6px 6px 0; }
         .md-chip i { cursor: pointer; }
         .md-btn-row { display: flex; gap: 10px; }
-        .md-action-btn { flex: 1; padding: 14px; border-radius: 14px; border: none; color: #fff; font-weight: 800; font-size: 12.5px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 8px 20px rgba(22,23,27,0.15); }
-        .md-action-btn:disabled { background: var(--border) !important; color: var(--text-dim); box-shadow: none; }
-        .md-action-btn.save { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
-        .md-action-btn.whatsapp { background: var(--wa); }
+        .md-action-btn { flex: 1; padding: 14px; border-radius: 14px; border: 1.5px solid transparent; font-weight: 800; font-size: 12.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .md-action-btn:disabled { background: var(--bg) !important; color: var(--text-dim) !important; border-color: var(--border) !important; }
+        .md-action-btn.save { background: var(--accent-dim); color: var(--accent); }
+        .md-action-btn.whatsapp { background: rgba(37,211,102,0.12); color: var(--wa); }
 
-        @media (min-width: 980px) {
-            .mdw-shell { display: grid; grid-template-columns: 1fr 380px; gap: 22px; align-items: start; }
-            .mdw-dock { position: sticky; top: 14px; max-height: calc(100vh - 150px); }
-            #merge-list { max-height: calc(100vh - 430px); }
+        /* ---- Machine Documents: 3-panel layout (Add & Manage / Find Documents / Review & Merge) ---- */
+        .md-layout { display: flex; flex-direction: column; gap: 20px; }
+        .md-col { min-width: 0; }
+        .md-col-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 22px; padding: 22px; box-shadow: 0 4px 18px rgba(22,23,27,0.05); height: 100%; display: flex; flex-direction: column; }
+        .md-col-head { margin-bottom: 18px; }
+        .md-col-head h4 { font-size: 17px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); margin-bottom: 3px; }
+        .md-col-head p { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+        .md-col-head-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 10px; }
+        .md-col-head-row h4 { font-size: 17px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); margin-bottom: 3px; }
+        .md-col-head-row p { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+        .md-clear-all { flex-shrink: 0; display: flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 800; color: #dc2626; background: none; border: none; padding: 6px 0; }
+
+        .md-quick-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; margin-top: 14px; border: 1.5px solid var(--border); border-radius: 15px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+        .md-quick-row:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .md-quick-icon { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .md-quick-text { flex: 1; min-width: 0; }
+        .md-quick-text h5 { font-size: 13px; font-weight: 800; color: var(--ink); }
+        .md-quick-text p { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+        .md-quick-arrow { flex-shrink: 0; color: var(--text-dim); }
+        .md-col-tools .coc-gen-card { box-shadow: none; border: none; background: none; padding: 0; margin-top: 6px; }
+        .md-col-tools .coc-gen-card #coc-add-btn { margin-top: 14px; }
+
+        .md-search-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+        .md-search-input-wrap { flex: 1; position: relative; }
+        .md-search-input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+        .md-search-input-wrap input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 13px; padding: 13px 14px 13px 40px; color: var(--ink); font-size: 13.5px; font-weight: 600; outline: none; transition: border-color 0.2s; }
+        .md-search-input-wrap input:focus { border-color: var(--accent); }
+        .md-search-go { flex-shrink: 0; width: 46px; height: 46px; border-radius: 13px; background: var(--accent-dim); color: var(--accent); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; }
+        .md-view-all-btn { margin-top: 14px; width: 100%; padding: 13px; border-radius: 13px; background: var(--accent-dim); color: var(--accent); border: 1.5px solid var(--border); font-weight: 800; font-size: 12.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+        .md-col-search #md-results { flex: 1; }
+        .md-result-row { display: flex; align-items: center; gap: 12px; padding: 12px; }
+        .md-result-icon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; overflow: hidden; background: #ef4444; }
+        .md-result-icon.folder-1 { background: #1e3a5f; }
+        .md-result-icon.folder-2 { background: #16a34a; }
+        .md-result-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .md-result-icon .md-ext-label { font-size: 8px; font-weight: 800; letter-spacing: 0.3px; margin-top: 1px; }
+        .md-add-btn { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; border: 1.5px solid var(--border); background: var(--bg); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .md-add-btn.added { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        .merge-empty-state { text-align: center; padding: 30px 10px; }
+        .merge-empty-illustration { width: 78px; height: 78px; border-radius: 20px; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+        .merge-empty-state h4 { font-size: 15px; font-weight: 800; color: var(--ink); font-family: 'Space Grotesk', sans-serif; margin-bottom: 6px; }
+        .merge-empty-state p { font-size: 12px; color: var(--text-dim); font-weight: 600; line-height: 1.5; max-width: 220px; margin: 0 auto; }
+        .md-col-queue #merge-list { flex: 1; }
+
+        @media (min-width: 900px) {
+            .md-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+            .md-col-queue .merge-sticky { position: sticky; bottom: 6px; }
         }
         @media (min-width: 1300px) {
-            .mdw-shell { grid-template-columns: 1fr 420px; }
+            .md-layout { grid-template-columns: 1fr 1.15fr 1fr; gap: 24px; }
         }
 
         /* Drag-and-drop anywhere on the Machine Documents tab (not just the drop zone) */
@@ -319,7 +320,7 @@
             }
             .nav-tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 12px; border-radius: 14px; }
             .nav-tab span { font-size: 12px; letter-spacing: 0.3px; }
-            main { padding: 22px 30px 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
+            main { padding: 26px 36px 44px; max-width: 1180px; margin: 0 auto; width: 100%; }
             .view-section { padding: 0; }
             .hero-banner { height: 200px; }
             .dash-grid { grid-template-columns: repeat(4, 1fr); }
@@ -327,12 +328,27 @@
             .rate-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
             #theme-picker { top: 56px; }
             .overlay-header { padding: 18px 30px; }
-            .scroll-area { max-width: 1100px; margin: 0 auto; width: 100%; }
+            .scroll-area { max-width: 1180px; margin: 0 auto; width: 100%; }
         }
+        /* Large desktop: give the sidebar and content real breathing room instead
+           of leaving it visually stranded in a small centered column */
         @media (min-width: 1300px) {
-            .dash-grid { grid-template-columns: repeat(5, 1fr); }
+            #app-shell { grid-template-columns: 250px 1fr; }
+            .nav-tab { padding: 11px 14px; }
+            .nav-tab span { font-size: 12.5px; }
+            main, .scroll-area { max-width: 1400px; padding-left: 44px; padding-right: 44px; }
+            .dash-grid { grid-template-columns: repeat(5, 1fr); gap: 14px; }
             .dash-grid .dash-card:first-child { grid-column: span 5; }
-            .rate-cards { grid-template-columns: repeat(3, 1fr); }
+            .rate-cards { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        }
+        /* Ultra-wide desktop / large monitors */
+        @media (min-width: 1700px) {
+            #app-shell { grid-template-columns: 270px 1fr; }
+            main, .scroll-area { max-width: 1680px; padding-left: 56px; padding-right: 56px; }
+            .dash-grid { grid-template-columns: repeat(6, 1fr); }
+            .dash-grid .dash-card:first-child { grid-column: span 6; }
+            .rate-cards { grid-template-columns: repeat(4, 1fr); }
+            .md-layout { gap: 30px; }
         }
     /* ===== Photos tab (in-app gallery) ===== */
     .search-container { padding: 10px 0 8px 0; }
@@ -366,6 +382,14 @@
     @media (min-width: 768px) {
         .grid.folder-view { grid-template-columns: repeat(4, 1fr) !important; gap: 16px !important; }
         .grid.photo-view { grid-template-columns: repeat(6, 1fr) !important; gap: 14px !important; }
+    }
+    @media (min-width: 1300px) {
+        .grid.folder-view { grid-template-columns: repeat(5, 1fr) !important; gap: 18px !important; }
+        .grid.photo-view { grid-template-columns: repeat(8, 1fr) !important; gap: 16px !important; }
+    }
+    @media (min-width: 1700px) {
+        .grid.folder-view { grid-template-columns: repeat(6, 1fr) !important; gap: 20px !important; }
+        .grid.photo-view { grid-template-columns: repeat(10, 1fr) !important; gap: 18px !important; }
     }
     .gal-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); transition: transform 0.15s ease, border-color 0.18s ease, box-shadow 0.18s ease; position: relative; user-select: none; -webkit-user-select: none; width: 100%; cursor: pointer; box-shadow: 0 3px 14px rgba(22,23,27,0.05); animation: fadeIn 0.28s ease both; }
     .gal-card:active { transform: scale(0.96); }
@@ -693,82 +717,103 @@
         <div id="tab-rates" class="view-section hidden"><h3 class="group-title">Rates</h3><div id="rates-grid" class="dash-grid"></div></div>
         <div id="tab-docs" class="view-section hidden"><h3 class="group-title">Datasheets</h3><div id="docs-grid" class="dash-grid"></div></div>
         <div id="tab-machine-docs" class="view-section hidden">
-            <h3 class="group-title">Machine Documents</h3>
-            <p class="md-hint">Add new files or search the archive on the left, then reorder and merge your selection into one PDF using the queue on the right. Drag &amp; drop files anywhere on this page.</p>
+            <div class="md-layout" id="md-layout">
 
-            <div class="mdw-shell" id="md-layout">
+                <!-- LEFT: Add & Manage -->
+                <div class="md-col md-col-tools">
+                    <div class="md-col-card">
+                        <div class="md-col-head">
+                            <h4>Add &amp; Manage</h4>
+                            <p>Upload new documents or generate certificates</p>
+                        </div>
 
-                <!-- MAIN: tabbed source panel — Add Files / Search Archive share one full-width working area -->
-                <div class="mdw-main">
-                    <div class="mdw-tabs" role="tablist">
-                        <button class="mdw-tab active" id="mdw-tab-add" onclick="mdSwitchPane('add')" role="tab" aria-selected="true"><i data-lucide="upload-cloud" size="15"></i> Add Files</button>
-                        <button class="mdw-tab" id="mdw-tab-search" onclick="mdSwitchPane('search')" role="tab" aria-selected="false"><i data-lucide="search" size="15"></i> Search Archive</button>
-                    </div>
-
-                    <div class="mdw-pane" id="mdw-pane-add">
-                        <div id="merge-lib-banner" class="doc-qr-scanning hidden" style="justify-content:center; padding:10px; border:1px solid var(--border); border-radius:12px; margin-bottom:12px; padding-left:10px;">
+                        <div id="merge-lib-banner" class="doc-qr-scanning hidden" style="justify-content:center; padding:10px; border:1px solid var(--border); border-radius:12px; margin-bottom:14px;">
                             <span class="qr-spinner"></span>
                             <span>Loading scanner engine...</span>
                         </div>
 
-                        <div id="merge-drop-zone">
-                            <i data-lucide="upload-cloud" size="30"></i>
-                            <h4>Drop PDFs or photos here</h4>
-                            <p>Or tap to choose files &middot; drag &amp; drop anywhere on this page</p>
+                        <div id="merge-drop-zone" class="md-dropzone">
+                            <div class="md-dropzone-icon"><i data-lucide="upload-cloud" size="26"></i></div>
+                            <h4>Drag &amp; Drop files here</h4>
+                            <p class="md-browse-link">or click to browse</p>
+                            <p class="md-dropzone-hint">PDF, JPG, PNG &middot; drag &amp; drop anywhere on this page</p>
                             <input type="file" id="merge-file-input" accept="application/pdf,image/*" multiple class="hidden" />
                         </div>
 
-                        <div class="mdw-or-divider"><span>OR</span></div>
+                        <div class="md-quick-row" onclick="document.getElementById('coc-type').focus(); document.getElementById('coc-type').scrollIntoView({behavior:'smooth', block:'center'});">
+                            <div class="md-quick-icon"><i data-lucide="file-text" size="17"></i></div>
+                            <div class="md-quick-text">
+                                <h5>Generate COC Certificate</h5>
+                                <p>Create COC certificate for machine</p>
+                            </div>
+                            <i data-lucide="chevron-right" size="16" class="md-quick-arrow"></i>
+                        </div>
 
                         <div class="coc-gen-card">
-                            <div class="coc-gen-head">
-                                <div class="dash-icon-badge"><i data-lucide="file-text" size="17"></i></div>
-                                <div>
-                                    <h4>Generate COC Certificate</h4>
-                                    <p>Pick a machine, fill the details, add it straight into the merge queue</p>
-                                </div>
-                            </div>
                             <div class="coc-field coc-field-wide">
                                 <label>Machine Type</label>
                                 <select id="coc-type" class="rate-search" onchange="cocRenderFields()">
-                                    <option value="">-- Select machine type --</option>
+                                    <option value="">-- Select machine category --</option>
                                 </select>
                             </div>
                             <div id="coc-fields" class="hidden"></div>
-                            <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="16"></i> Generate &amp; Add to Queue</button>
+                            <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="16"></i> Add to Queue</button>
                             <div id="coc-status"></div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mdw-pane hidden" id="mdw-pane-search">
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" style="flex:1; margin-bottom:0;" />
-                            <button id="md-search-btn" class="act-btn primary" onclick="mdTriggerSearch()" title="Search" style="width:46px; height:46px; border-radius:12px; flex-shrink:0;"><i data-lucide="search" size="18"></i></button>
+                <!-- MIDDLE: Find Documents -->
+                <div class="md-col md-col-search">
+                    <div class="md-col-card">
+                        <div class="md-col-head">
+                            <h4>Find Documents</h4>
+                            <p>Search and filter machine documents</p>
                         </div>
-                        <div id="md-results" class="rate-empty md-results-grid">Type to search Machine Documents...</div>
+                        <div class="md-search-row">
+                            <div class="md-search-input-wrap">
+                                <i data-lucide="search" size="16"></i>
+                                <input type="text" id="md-search" placeholder="Search documents, machine ID..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" />
+                            </div>
+                            <button id="md-search-btn" class="md-search-go" onclick="mdTriggerSearch()" title="Search"><i data-lucide="search" size="17"></i></button>
+                        </div>
+                        <div id="md-results" class="rate-empty">Type to search Machine Documents...</div>
+                        <button class="md-view-all-btn" onclick="mdShowAllDocuments()">View All Documents <i data-lucide="arrow-right" size="15"></i></button>
                     </div>
                 </div>
 
-                <!-- DOCK: persistent merge queue — order, preview, QR actions, save/share -->
-                <div class="mdw-dock">
-                    <div class="mdw-dock-title"><i data-lucide="layers" size="16"></i> Merge Queue</div>
-                    <div class="merge-toolbar">
-                        <span class="merge-count" id="merge-count">0 files added</span>
-                        <button class="merge-clear" id="merge-clear-btn" onclick="mergeClearAll()">Clear all</button>
-                    </div>
-                    <div id="merge-list"><div class="merge-empty">No files yet — add files or search on the left.</div></div>
-                    <div class="merge-sticky">
-                        <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
-                        <div class="md-btn-row">
-                            <button id="merge-btn" class="md-action-btn save" disabled onclick="mergeAndDownload()"><i data-lucide="save" size="15"></i> Merge &amp; Save</button>
-                            <button id="merge-wa-btn" class="md-action-btn whatsapp" disabled onclick="mergeShareToWhatsApp()"><i data-lucide="message-square" size="15"></i> WhatsApp</button>
+                <!-- RIGHT: Review & Merge -->
+                <div class="md-col md-col-queue">
+                    <div class="md-col-card">
+                        <div class="md-col-head-row">
+                            <div>
+                                <h4>Review &amp; Merge</h4>
+                                <p>Review, reorder and merge files</p>
+                            </div>
+                            <button class="md-clear-all" id="merge-clear-btn" onclick="mergeClearAll()"><i data-lucide="trash-2" size="14"></i> Clear All</button>
                         </div>
-                        <div id="merge-status"></div>
+                        <span class="merge-count hidden" id="merge-count">0 files added</span>
+                        <div id="merge-list">
+                            <div class="merge-empty-state">
+                                <div class="merge-empty-illustration"><i data-lucide="folder-check" size="40"></i></div>
+                                <h4>No files added yet</h4>
+                                <p>Add documents from search or upload new files to review and merge.</p>
+                            </div>
+                        </div>
+                        <div class="merge-sticky">
+                            <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
+                            <div class="md-btn-row">
+                                <button id="merge-btn" class="md-action-btn save" disabled onclick="mergeAndDownload()"><i data-lucide="save" size="15"></i> Merge &amp; Save</button>
+                                <button id="merge-wa-btn" class="md-action-btn whatsapp" disabled onclick="mergeShareToWhatsApp()"><i data-lucide="message-square" size="15"></i> Share / WhatsApp</button>
+                            </div>
+                            <div id="merge-status"></div>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </div>
+
 
         <div id="tab-photos" class="view-section hidden" style="padding:0;">
             <div class="search-container">
@@ -1297,7 +1342,7 @@ function updateTray(){
     row.appendChild(loc); row.appendChild(diff); row.appendChild(revert);
     trayList.appendChild(row);
   });
-  if (window.lucide) lucide.createIcons();
+  if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
 }
 
 // ---------- edit / password / save flow ----------
@@ -1330,7 +1375,7 @@ function enterEditMode(){
   dirty = {};
   editBtn.innerHTML = '<i data-lucide="x" size="14"></i>';
   editBtn.title = 'Cancel edit';
-  if (window.lucide) lucide.createIcons();
+  if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
   editBanner.className = 'edit-banner show';
   renderTable();
   updateTray();
@@ -1341,7 +1386,7 @@ function exitEditMode(){
   dirty = {};
   editBtn.innerHTML = '<i data-lucide="pencil" size="14"></i>';
   editBtn.title = 'Edit';
-  if (window.lucide) lucide.createIcons();
+  if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
   editBanner.className = 'edit-banner';
   renderTable();
   updateTray();
@@ -1412,7 +1457,7 @@ saveBtn.addEventListener('click', async () => {
   }
 });
 
-if (window.lucide) lucide.createIcons();
+if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
 window.__priceEditorRefresh = init;
 init();
 
@@ -1447,7 +1492,11 @@ document.addEventListener('visibilitychange', () => {
     // Keep-alive: Prevents tab sleep
     setInterval(() => { console.log("System Heartbeat"); }, 30000);
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    } else {
+        console.warn('pdf.js failed to load from CDN — PDF preview features will be disabled, but the rest of the app will still work.');
+    }
 
     const CONFIG = {
         SHEET: '1yn96hq69kWn_MdrFwY_OgUBfhqu-NtJz_LADBxjVrZQ',
@@ -1610,7 +1659,8 @@ document.addEventListener('visibilitychange', () => {
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') { (typeof lucide!=='undefined'&&lucide.createIcons()); }
+        else { console.warn('lucide icons failed to load from CDN — icons will be missing, but the app will still work.'); }
         renderYards();
         renderTeam();
         // If already signed in recently, skip the PIN screen and stay on the
@@ -1657,6 +1707,22 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
+    // Wraps fetch() with a timeout so a stalled/hanging network request fails
+    // fast instead of leaving a promise pending forever (which used to freeze
+    // the sync screen indefinitely with no error shown).
+    async function fetchWithTimeout(url, ms = 15000) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), ms);
+        try {
+            return await fetch(url, { signal: controller.signal });
+        } catch (err) {
+            if (err.name === 'AbortError') throw new Error('request timed out');
+            throw err;
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
     async function initSync() {
         try {
             updateSyncProgress(15, "FETCHING RATES");
@@ -1666,7 +1732,18 @@ document.addEventListener('visibilitychange', () => {
             // though most sessions never open that tab. It now loads lazily, only
             // when the person actually searches it (see mdTriggerSearch()).
             const ratesPromise = loadRates().then(() => updateSyncProgress(60, "RATES READY"));
-            const docsPromise = loadDocs().then(() => updateSyncProgress(90, "DOCS READY"));
+            // Docs are treated as non-critical: if the GitHub fetch is slow,
+            // stalls, or fails, we no longer let it block the whole app from
+            // opening. We catch its error here so Promise.all below still
+            // resolves — the Documents tab just shows a retry/empty state.
+            const docsPromise = loadDocs()
+                .then(() => updateSyncProgress(90, "DOCS READY"))
+                .catch(err => {
+                    console.warn('Documents failed to load, continuing without them:', err);
+                    db.docsRoot = db.docsRoot || { folders: {}, files: [] };
+                    db.docsLoadError = err.message || 'failed to load';
+                    updateSyncProgress(90, "DOCS UNAVAILABLE");
+                });
             await Promise.all([ratesPromise, docsPromise]);
 
             isDataReady = true;
@@ -1698,11 +1775,13 @@ document.addEventListener('visibilitychange', () => {
     }
 
     async function loadRates() {
-        const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}?key=${CONFIG.KEY}`);
+        const res = await fetchWithTimeout(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}?key=${CONFIG.KEY}`);
         const meta = await res.json();
+        if (!meta.sheets) throw new Error(meta.error?.message || 'could not read spreadsheet');
         const names = meta.sheets.map(s => s.properties.title);
-        const batch = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}/values:batchGet?key=${CONFIG.KEY}&ranges=${names.join('&ranges=')}`);
+        const batch = await fetchWithTimeout(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET}/values:batchGet?key=${CONFIG.KEY}&ranges=${names.join('&ranges=')}`);
         const data = await batch.json();
+        if (!data.valueRanges) throw new Error(data.error?.message || 'could not read rate values');
         data.valueRanges.forEach((vr, i) => {
             if(names[i] === "Notifications") db.notif = vr.values ? vr.values[0][0] : db.notif;
             else if(vr.values) db.rates[names[i]] = vr.values;
@@ -1710,8 +1789,9 @@ document.addEventListener('visibilitychange', () => {
     }
 
     async function loadDocs() {
-        const res = await fetch(`https://api.github.com/repos/${CONFIG.GH.user}/${CONFIG.GH.repo}/git/trees/main?recursive=1`);
+        const res = await fetchWithTimeout(`https://api.github.com/repos/${CONFIG.GH.user}/${CONFIG.GH.repo}/git/trees/main?recursive=1`);
         const data = await res.json();
+        if (!data.tree) throw new Error(data.message || 'could not read documents repo');
         db.docsRoot = { folders: {}, files: [] };
         data.tree.filter(f => f.path.endsWith('.pdf')).forEach(f => {
             const parts = f.path.split('/');
@@ -1734,32 +1814,109 @@ document.addEventListener('visibilitychange', () => {
     // for this fetch unless the person actually searches Machine Documents.
     let mdLoadError = null;
     let mdHasAttemptedLoad = false;
+
+    // ---- Local cache (stale-while-revalidate) ----
+    // The Photos tab "never fails" because it reads one static JSON file from
+    // GitHub Pages — no per-request API limit, and it works even if the
+    // source repo is private. Machine Documents can't do that (it lists an
+    // arbitrary/changing file tree), so instead it caches the last good
+    // listing in localStorage: once loaded once on a device, that device
+    // shows results instantly and keeps working even if a later refresh hits
+    // GitHub's unauthenticated rate limit (60 requests/hour per IP — easy to
+    // exhaust when several people on the same office network use this app).
+    const MD_CACHE_KEY = 'mdFilesCache_v1';
+    const MD_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h — plenty fresh for a document repo, far under the rate limit
+
+    function mdReadCache() {
+        try {
+            const raw = localStorage.getItem(MD_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (!parsed || !Array.isArray(parsed.files) || !parsed.files.length) return null;
+            return parsed;
+        } catch (e) { return null; }
+    }
+    function mdWriteCache(files) {
+        try { localStorage.setItem(MD_CACHE_KEY, JSON.stringify({ files, savedAt: Date.now() })); } catch (e) { /* storage full/blocked — fine, just skip caching */ }
+    }
+
+    function mdMapEntries(files, urlFor) {
+        return files.map(f => {
+            const path = (f.name || f.path).replace(/^\//, '');
+            const parts = path.split('/');
+            const fullName = parts.pop();
+            const dotIdx = fullName.lastIndexOf('.');
+            const fileName = dotIdx > 0 ? fullName.slice(0, dotIdx) : fullName;
+            const ext = dotIdx > 0 ? fullName.slice(dotIdx + 1).toLowerCase() : '';
+            const encodedPath = [...parts, fullName].map(encodeURIComponent).join('/');
+            return { name: fileName, ext, folder: parts.join('/'), url: urlFor(encodedPath) };
+        });
+    }
+
+    // Loads Machine Documents from a single static manifest published to
+    // GitHub Pages by a repo Action (.github/workflows/build-manifest.yml) —
+    // the exact same pattern that already makes the Photos tab reliable
+    // (PHOTO_DATA_URL below). This deliberately does NOT talk to the GitHub
+    // API or jsDelivr at request time any more: walking the live API (even
+    // one folder at a time) still burns through the 60-req/hour
+    // unauthenticated limit on a repo with this many folders, and a single
+    // `?recursive=1` call 500s outright on a repo this size. A static file
+    // has neither problem — it's just a CDN-served JSON file, same as
+    // data.json for Photos.
+    const MD_BASE_URL = `https://${CONFIG.GH2.user.toLowerCase()}.github.io/${CONFIG.GH2.repo}/`;
+    const MD_DATA_URL = MD_BASE_URL + "data.json";
+
     async function loadMachineDocs() {
         mdHasAttemptedLoad = true;
         mdLoadError = null;
-        db.machineDocsFiles = [];
+
+        // Serve instantly from cache, then refresh in the background — the
+        // person sees results immediately instead of waiting on a network
+        // round trip every single time they open this tab.
+        const cached = mdReadCache();
+        if (cached) db.machineDocsFiles = cached.files;
+        const cacheIsFresh = cached && (Date.now() - cached.savedAt < MD_CACHE_TTL_MS);
+        if (cacheIsFresh) return;
+        if (!db.machineDocsFiles) db.machineDocsFiles = [];
+
+        // If a refresh fails but we already have cached results on screen,
+        // don't blow those away with an error — silently keep showing the
+        // cache and try again next time. Only surface an error when there's
+        // truly nothing to show.
+        const reportError = (msg) => { if (!cached) mdLoadError = msg; };
+
         try {
-            let data = await mdFetchTree('main');
-            if (!data || !data.tree) data = await mdFetchTree('master');
-            if (!data) { mdLoadError = 'Could not reach GitHub — check your internet connection and hit search again.'; return; }
-            if (data.message) { mdLoadError = data.message; return; } // e.g. "Not Found" (wrong repo/private) or rate-limit message
-            if (!data.tree) { mdLoadError = 'Repo returned no files.'; return; }
-            data.tree.filter(f => f.type === 'blob').forEach(f => {
-                const parts = f.path.split('/');
-                const fullName = parts.pop();
-                const dotIdx = fullName.lastIndexOf('.');
-                const fileName = dotIdx > 0 ? fullName.slice(0, dotIdx) : fullName;
-                const ext = dotIdx > 0 ? fullName.slice(dotIdx + 1).toLowerCase() : '';
-                const encodedPath = [...parts, fullName].map(encodeURIComponent).join('/');
-                db.machineDocsFiles.push({
-                    name: fileName,
-                    ext,
-                    folder: parts.join('/'),
-                    url: `https://raw.githubusercontent.com/${CONFIG.GH2.user}/${CONFIG.GH2.repo}/${data.branchUsed}/${encodedPath}`
-                });
-            });
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 12000);
+            let res;
+            try {
+                res = await fetch(MD_DATA_URL, { cache: 'no-store', signal: controller.signal });
+            } finally {
+                clearTimeout(timer);
+            }
+
+            if (!res.ok) {
+                reportError(res.status === 404
+                    ? `Manifest not found at ${MD_DATA_URL}. Either the "Build Machine Documents manifest" Action hasn't run yet on the repo, or GitHub Pages isn't enabled for it (Settings → Pages → Source: GitHub Actions).`
+                    : `Manifest request failed (HTTP ${res.status}).`);
+                return;
+            }
+            const data = await res.json();
+            if (!data || !Array.isArray(data.files)) {
+                reportError('Manifest loaded but was in an unexpected format.');
+                return;
+            }
+
+            const mapped = mdMapEntries(
+                data.files.map(p => ({ path: p })),
+                encodedPath => `https://raw.githubusercontent.com/${CONFIG.GH2.user}/${CONFIG.GH2.repo}/main/${encodedPath}`
+            );
+            db.machineDocsFiles = mapped;
+            mdWriteCache(mapped);
         } catch (e) {
-            mdLoadError = e.message || 'Failed to load Machine Documents.';
+            reportError(e.name === 'AbortError'
+                ? 'Timed out reaching the manifest — check your internet connection and hit search again.'
+                : (e.message || 'Failed to load Machine Documents.'));
             console.error('loadMachineDocs error:', e);
         } finally {
             const searchInput = document.getElementById('md-search');
@@ -1767,24 +1924,6 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
-    // One attempt, one request — no automatic retries or backoff. If it
-    // fails, the person hits the search button again to try once more.
-    // 12s timeout so a dead connection fails fast with a clear error
-    // instead of a spinner that never resolves.
-    async function mdFetchTree(branch) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 12000);
-        try {
-            const res = await fetch(`https://api.github.com/repos/${CONFIG.GH2.user}/${CONFIG.GH2.repo}/git/trees/${branch}?recursive=1`, { signal: controller.signal });
-            const data = await res.json();
-            if (data.tree) data.branchUsed = branch;
-            return data;
-        } catch (e) {
-            return null;
-        } finally {
-            clearTimeout(timer);
-        }
-    }
 
     // Walks db.docsRoot using a '/'-joined path (e.g. "Cranes/Tower Cranes") and
     // returns the { folders, files } node at that location, or null if missing.
@@ -1800,7 +1939,7 @@ document.addEventListener('visibilitychange', () => {
 
     function renderYards() {
         document.getElementById('yard-list').innerHTML = YARDS.map(y => `<div class="item-card"><div class="item-info"><h4>${y.n}</h4><p>Yard Location</p></div><div style="display:flex; gap:8px;"><button class="act-btn" onclick="copyText('${y.u}')"><i data-lucide="copy" size="16"></i></button><button class="act-btn wa" onclick="window.open('https://wa.me/?text=${encodeURIComponent(y.n + ': ' + y.u)}')"><i data-lucide="message-square" size="16"></i></button><button class="act-btn primary" onclick="window.open('${y.u}')"><i data-lucide="navigation" size="16"></i></button></div></div>`).join('');
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function renderTeam() {
@@ -1812,13 +1951,13 @@ document.addEventListener('visibilitychange', () => {
             });
         });
         document.getElementById('contact-list').innerHTML = html;
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function renderGrids() {
         document.getElementById('rates-grid').innerHTML = Object.keys(db.rates).map(cat => categoryCardHtml(cat, cat, 'viewRates', 'tag')).join('');
         document.getElementById('docs-grid').innerHTML = sortSpecNames(Object.keys(db.docsRoot.folders)).map(cat => categoryCardHtml(cat, cat, 'viewDocs', 'folder')).join('');
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function viewRates(cat) {
@@ -1862,7 +2001,7 @@ document.addEventListener('visibilitychange', () => {
             const tag = isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '';
             return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}"><h4 class="rate-item-name">${itemName}${tag}</h4><div class="rate-pills">${pills}</div></div>`;
         }).join('');
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function filterRateCards(query) {
@@ -1903,8 +2042,8 @@ document.addEventListener('visibilitychange', () => {
             html += node.files.map(f => `<div class="item-card" onclick="openPdf('${f.url}', '${f.name.replace(/'/g, "\\'")}')"><div class="item-info"><h4>${f.name}</h4><p>Technical PDF</p></div><i data-lucide="eye" style="color:var(--accent)"></i></div>`).join('');
         }
         container.innerHTML = html;
-        lucide.createIcons();
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+        (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     async function openPdf(url, name) {
@@ -2045,7 +2184,7 @@ document.addEventListener('visibilitychange', () => {
         const grid = document.getElementById('gallery');
         grid.className = 'grid folder-view';
         grid.innerHTML = '<div class="gal-empty-state"><i data-lucide="loader" size="34"></i><div class="t">Loading photos…</div></div>';
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
         try {
             const res = await fetch(PHOTO_DATA_URL, { cache: 'no-store' });
             if (!res.ok) throw new Error('bad response');
@@ -2058,7 +2197,7 @@ document.addEventListener('visibilitychange', () => {
         } catch (e) {
             photoLoadFailed = true;
             grid.innerHTML = '<div class="gal-empty-state"><i data-lucide="wifi-off" size="34"></i><div class="t">Could not load photos — check your connection</div><button class="nav-btn" style="margin-top:12px; max-width:170px;" onclick="loadPhotoData()"><i data-lucide="refresh-cw" size="14"></i> RETRY</button></div>';
-            if (window.lucide) lucide.createIcons();
+            if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
         } finally {
             photoDataLoading = false;
         }
@@ -2125,7 +2264,7 @@ document.addEventListener('visibilitychange', () => {
         if (btn) {
             btn.classList.toggle('active', photoGridCompact);
             btn.innerHTML = '<i data-lucide="grid-3x3" size="15"></i> ' + (photoGridCompact ? 'COMFY' : 'COMPACT');
-            if (window.lucide) lucide.createIcons();
+            if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
         }
     }
     (function loadPhotoGridDensity() {
@@ -2164,7 +2303,7 @@ document.addEventListener('visibilitychange', () => {
             document.body.classList.remove('select-mode-active');
             clearPhotoSelections();
         }
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function handlePhotoCardClick(item, cardItem) {
@@ -2286,7 +2425,7 @@ document.addEventListener('visibilitychange', () => {
             const msg = photoFavMode ? 'No favorites yet — tap the heart on any photo' : 'This folder is empty';
             empty.innerHTML = '<i data-lucide="folder-open" size="34"></i><div class="t">' + msg + '</div>';
             grid.appendChild(empty);
-            if (window.lucide) lucide.createIcons();
+            if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
             return;
         }
 
@@ -2329,7 +2468,7 @@ document.addEventListener('visibilitychange', () => {
             card.onclick = () => handlePhotoCardClick(item, card);
             grid.appendChild(card);
         });
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function photoSearch() {
@@ -2393,7 +2532,7 @@ document.addEventListener('visibilitychange', () => {
         img.src = PHOTO_BASE_URL + encodeURI(photoGalleryItems[index].path);
         updateLbChrome();
         lb.classList.remove('hidden');
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function slidePhotoTo(newIndex, direction) {
@@ -2757,18 +2896,25 @@ document.addEventListener('visibilitychange', () => {
 
     function mergeRenderList() {
         const count = mergeItems.length;
-        document.getElementById('merge-count').textContent = count ? `${count} file${count > 1 ? 's' : ''} added` : '0 files added';
+        const countEl = document.getElementById('merge-count');
+        countEl.textContent = count ? `${count} file${count > 1 ? 's' : ''} added` : '0 files added';
+        countEl.classList.toggle('hidden', count === 0);
         document.getElementById('merge-btn').disabled = count === 0;
         const waBtn = document.getElementById('merge-wa-btn');
         if (waBtn) waBtn.disabled = count === 0;
         const list = document.getElementById('merge-list');
         if (!count) {
-            list.innerHTML = `<div class="merge-empty">No files yet — add PDFs or photos above.</div>`;
+            list.innerHTML = `<div class="merge-empty-state">
+                <div class="merge-empty-illustration"><i data-lucide="folder-check" size="40"></i></div>
+                <h4>No files added yet</h4>
+                <p>Add documents from search or upload new files to review and merge.</p>
+            </div>`;
+            (typeof lucide!=='undefined'&&lucide.createIcons());
             if (typeof mdCurrentResults !== 'undefined' && mdCurrentResults.length && document.getElementById('md-results')) mdRenderResults();
             return;
         }
         list.innerHTML = mergeItems.map((item, idx) => mergeItemRowHtml(item, idx, count)).join('');
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
         initMergeDragHandles();
         // Keep the search results panel's "add to merge" badges in sync
         // whenever the queue changes (added/removed from either side).
@@ -2796,14 +2942,13 @@ document.addEventListener('visibilitychange', () => {
 
         const placeholder = document.createElement('div');
         placeholder.className = 'doc-drag-placeholder';
-        placeholder.style.height = rect.height + 'px';
+        placeholder.style.width = rect.width + 'px';
         row.after(placeholder);
 
         row.style.position = 'relative';
-        row.style.width = rect.width + 'px';
         row.classList.add('doc-dragging');
 
-        mergeDrag = { row, list, placeholder, startY: e.clientY, lastDy: 0 };
+        mergeDrag = { row, list, placeholder, startX: e.clientX, lastDx: 0 };
         document.addEventListener('pointermove', onMergeDragMove);
         document.addEventListener('pointerup', onMergeDragEnd);
         document.addEventListener('pointercancel', onMergeDragEnd);
@@ -2811,17 +2956,17 @@ document.addEventListener('visibilitychange', () => {
 
     function onMergeDragMove(e) {
         if (!mergeDrag) return;
-        const dy = e.clientY - mergeDrag.startY;
-        mergeDrag.lastDy = dy;
-        mergeDrag.row.style.transform = `translateY(${dy}px)`;
+        const dx = e.clientX - mergeDrag.startX;
+        mergeDrag.lastDx = dx;
+        mergeDrag.row.style.transform = `translateX(${dx}px)`;
 
         const rowRect = mergeDrag.row.getBoundingClientRect();
-        const rowMid = rowRect.top + rowRect.height / 2;
+        const rowMid = rowRect.left + rowRect.width / 2;
         const siblings = Array.from(mergeDrag.list.children).filter(el => el.classList.contains('doc-item') && el !== mergeDrag.row);
 
         for (const sib of siblings) {
             const sibRect = sib.getBoundingClientRect();
-            const sibMid = sibRect.top + sibRect.height / 2;
+            const sibMid = sibRect.left + sibRect.width / 2;
             const placeholderIsAfterSib = !!(sib.compareDocumentPosition(mergeDrag.placeholder) & Node.DOCUMENT_POSITION_FOLLOWING);
             if (rowMid < sibMid && placeholderIsAfterSib) {
                 mergeDrag.list.insertBefore(mergeDrag.placeholder, sib);
@@ -2840,7 +2985,6 @@ document.addEventListener('visibilitychange', () => {
         placeholder.remove();
         row.style.transform = '';
         row.style.position = '';
-        row.style.width = '';
         row.classList.remove('doc-dragging');
 
         const newOrderIds = Array.from(list.children)
@@ -2858,7 +3002,7 @@ document.addEventListener('visibilitychange', () => {
     function mergeItemRowHtml(item, idx, total) {
         const thumbInner = item.type === 'image'
             ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
-            : `<div class="doc-thumb"><i data-lucide="file-text" size="18"></i></div>`;
+            : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
 
         let badge = '';
         if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
@@ -2876,7 +3020,7 @@ document.addEventListener('visibilitychange', () => {
         } else if (item.qrStatus === 'none') {
             badge = `
                 <div class="doc-qr-badge">
-                    <span style="font-size:9px; color:var(--text-dim); font-weight:700;">No QR detected</span>
+                    <span style="font-size:9px; color:var(--text-dim); font-weight:700; text-align:center;">No QR detected</span>
                     <div class="doc-qr-actions">
                         <button class="doc-qr-chip" onclick="mergeRetryQrScan('${item.id}')">Retry scan</button>
                     </div>
@@ -2885,21 +3029,19 @@ document.addEventListener('visibilitychange', () => {
 
         return `
             <div class="doc-item" data-id="${item.id}">
-                <div class="doc-item-main">
-                    <div class="doc-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical" size="15"></i></div>
-                    <span class="doc-index-pill">#${idx + 1}</span>
-                    <div class="doc-preview-trigger" onclick="mergePreviewItem('${item.id}')">
-                        <div class="doc-thumb-wrap">
-                            ${thumbInner}
-                            <span class="doc-eye-badge"><i data-lucide="eye" size="9"></i></span>
-                        </div>
-                        <div class="doc-meta">
-                            <h4>${mergeEscape(item.name)}</h4>
-                            <p>${item.type === 'pdf' ? 'PDF' : 'Photo'}${item.sizeLabel ? ' &middot; ' + item.sizeLabel : ''}</p>
-                        </div>
+                <div class="doc-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical" size="14"></i></div>
+                <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="x" size="13"></i></button>
+                <div class="doc-preview-trigger" onclick="mergePreviewItem('${item.id}')">
+                    <div class="doc-thumb-wrap">
+                        ${thumbInner}
+                        <span class="doc-eye-badge"><i data-lucide="eye" size="11"></i></span>
                     </div>
-                    <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="x" size="13"></i></button>
+                    <div class="doc-meta">
+                        <h4>${mergeEscape(item.name)}</h4>
+                        <p>${item.type === 'pdf' ? 'PDF' : 'Photo'}${item.sizeLabel ? ' &middot; ' + item.sizeLabel : ''}</p>
+                    </div>
                 </div>
+                <span class="doc-index-pill">#${idx + 1}</span>
                 ${badge}
             </div>`;
     }
@@ -3132,7 +3274,7 @@ document.addEventListener('visibilitychange', () => {
         } finally {
             btn.disabled = mergeItems.length === 0;
             btn.innerHTML = `<i data-lucide="save" size="15"></i> Merge &amp; Save`;
-            lucide.createIcons();
+            (typeof lucide!=='undefined'&&lucide.createIcons());
         }
     }
 
@@ -3238,34 +3380,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     /* ===================== MACHINE DOCUMENTS (search + select + merge) ===================== */
     /* ===================== MACHINE DOCUMENTS SEARCH ===================== */
-
-    // Switches the main working panel between "Add Files" and "Search
-    // Archive" — the two source tabs now share one full-width pane instead
-    // of permanently splitting the screen into competing columns. The merge
-    // queue dock beside it stays visible regardless of which tab is active.
-    function mdSwitchPane(name) {
-        const isAdd = name === 'add';
-        const tabAdd = document.getElementById('mdw-tab-add');
-        const tabSearch = document.getElementById('mdw-tab-search');
-        const paneAdd = document.getElementById('mdw-pane-add');
-        const paneSearch = document.getElementById('mdw-pane-search');
-        if (!tabAdd || !tabSearch || !paneAdd || !paneSearch) return;
-        tabAdd.classList.toggle('active', isAdd);
-        tabSearch.classList.toggle('active', !isAdd);
-        tabAdd.setAttribute('aria-selected', String(isAdd));
-        tabSearch.setAttribute('aria-selected', String(!isAdd));
-        paneAdd.classList.toggle('hidden', !isAdd);
-        paneSearch.classList.toggle('hidden', isAdd);
-        if (!isAdd) {
-            const input = document.getElementById('md-search');
-            if (input) setTimeout(() => input.focus(), 60);
-        }
-    }
-
     /* Search-only browser over the Machine-Documents repo. Results here don't
        carry their own merge/QR machinery any more — "Add to merge" just drops
        the result straight into the shared merge queue (mergeItems) that the
-       "Add Files" tab and the QR/preview/reorder code all use. */
+       middle "Add Files" column and the QR/preview/reorder code all use. */
     const MD_VISIBLE_EXT = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
     let mdCurrentResults = [];
 
@@ -3293,7 +3411,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 mdSearchInFlight = false;
                 btn.disabled = false;
                 btn.innerHTML = origHtml;
-                lucide.createIcons();
+                (typeof lucide!=='undefined'&&lucide.createIcons());
             }
         } else {
             mdRunSearch(query);
@@ -3337,22 +3455,36 @@ window.addEventListener('DOMContentLoaded', () => {
         box.innerHTML = mdCurrentResults.map((f, idx) => {
             const isPdf = f.ext === 'pdf';
             const added = mergeItems.some(i => i.url === f.url);
-            const thumb = isPdf
-                ? `<div class="dash-icon-badge" style="width:44px; height:44px; border-radius:10px; flex-shrink:0;"><i data-lucide="file-text" size="18"></i></div>`
-                : `<img src="${f.url}" loading="lazy" style="width:44px; height:44px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--bg);" />`;
-            const sub = (isPdf ? 'PDF Document' : 'Photo') + (f.folder ? ` &middot; ${f.folder}` : '');
+            const sizeLabel = f.folder ? f.folder : (isPdf ? 'PDF Document' : 'Photo');
+            const icon = isPdf
+                ? `<div class="md-result-icon"><i data-lucide="file-text" size="18"></i><span class="md-ext-label">PDF</span></div>`
+                : `<div class="md-result-icon"><img src="${f.url}" loading="lazy" alt="" /></div>`;
             return `<div class="item-card md-result-row">
-                <div style="flex:1; display:flex; align-items:center; gap:10px; min-width:0; cursor:pointer;" onclick="mdOpenPreview(${idx})">
-                    ${thumb}
+                <div style="flex:1; display:flex; align-items:center; gap:12px; min-width:0; cursor:pointer;" onclick="mdOpenPreview(${idx})">
+                    ${icon}
                     <div class="item-info" style="min-width:0;">
                         <h4 style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${f.name}</h4>
-                        <p style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${sub}</p>
+                        <p style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${sizeLabel}</p>
                     </div>
                 </div>
                 <button class="md-add-btn${added ? ' added' : ''}" title="${added ? 'Remove from merge queue' : 'Add to merge queue'}" onclick="mdToggleAddResult(${idx})"><i data-lucide="${added ? 'check' : 'plus'}" size="16"></i></button>
             </div>`;
         }).join('');
-        lucide.createIcons();
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+    }
+
+    // "View All Documents" — bypasses the search box and lists everything in
+    // the repo (sorted alphabetically), loading it first if this is the
+    // first thing the person does in this tab.
+    async function mdShowAllDocuments() {
+        const box = document.getElementById('md-results');
+        if (!db.machineDocsFiles || !db.machineDocsFiles.length || mdLoadError) {
+            box.innerHTML = `<div class="rate-empty">Loading Machine Documents...</div>`;
+            await loadMachineDocs();
+            if (mdLoadError) { box.innerHTML = `<div class="rate-empty">Couldn't load Machine Documents: ${mdLoadError}</div>`; return; }
+        }
+        mdCurrentResults = mdRankResults((db.machineDocsFiles || []).filter(f => MD_VISIBLE_EXT.includes(f.ext)), '').slice(0, 60);
+        mdRenderResults();
     }
 
     // The single bridge between search results (right column) and the merge
@@ -3652,7 +3784,7 @@ window.addEventListener('DOMContentLoaded', () => {
         } finally {
             btn.disabled = false;
             btn.innerHTML = origHtml;
-            lucide.createIcons();
+            (typeof lucide!=='undefined'&&lucide.createIcons());
         }
     }
 
