@@ -159,57 +159,92 @@
         #dino-overlay h4 { font-size: 13px; font-weight: 700; color: #fff; }
         #dino-overlay p { font-size: 10px; color: #cfd0d6; font-weight: 600; }
         #dino-overlay.hidden { display: none; }
-        #merge-drop-zone, #md-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 34px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
-        #merge-drop-zone:active, #merge-drop-zone.drag-over, #md-drop-zone:active, #md-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
-        #merge-drop-zone i, #md-drop-zone i { color: var(--accent); margin-bottom: 10px; }
-        #merge-drop-zone h4, #md-drop-zone h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
-        #merge-drop-zone p, #md-drop-zone p { font-size: 11px; color: var(--text-dim); }
+        #merge-drop-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 38px 18px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--bg); }
+        #merge-drop-zone:active, #merge-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
+        #merge-drop-zone i { color: var(--accent); margin-bottom: 10px; }
+        #merge-drop-zone h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
+        #merge-drop-zone p { font-size: 11.5px; color: var(--text-dim); }
 
-        .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px; }
+        /* ============================================================
+           MACHINE DOCUMENTS — full rebuild.
+           Old layout was three equal-width columns competing for space.
+           New layout: one tabbed "source" panel (Add Files / Search
+           Archive) that gets the full working width, plus a persistent
+           Merge Queue dock beside it that holds the running selection as
+           a proper reorderable vertical list (not a cramped horizontal
+           scroll strip). Everything now has room to breathe.
+           ============================================================ */
+        .md-hint { font-size: 12px; color: var(--text-dim); font-weight: 600; margin: -6px 0 16px; line-height: 1.5; max-width: 680px; }
+
+        .mdw-shell { display: flex; flex-direction: column; gap: 16px; }
+
+        /* ---- Main working card: tabs + active pane ---- */
+        .mdw-main { background: var(--card); border: 1.5px solid var(--border); border-radius: 22px; box-shadow: 0 4px 16px rgba(22,23,27,0.06); overflow: hidden; }
+        .mdw-tabs { display: flex; border-bottom: 1.5px solid var(--border); }
+        .mdw-tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 10px; background: none; border: none; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-dim); cursor: pointer; position: relative; transition: color 0.15s ease; }
+        .mdw-tab i { stroke-width: 2.2; }
+        .mdw-tab.active { color: var(--accent); }
+        .mdw-tab.active::after { content: ''; position: absolute; bottom: -1.5px; left: 16px; right: 16px; height: 3px; border-radius: 3px 3px 0 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+        .mdw-pane { padding: 20px; }
+        .mdw-pane.hidden { display: none; }
+
+        .mdw-or-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-dim); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; }
+        .mdw-or-divider::before, .mdw-or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* ---- Search pane: results as a responsive grid, not a squeezed column ---- */
+        #md-results { margin-top: 16px; }
+        #md-results.md-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+        .mdw-pane .item-card.md-result-row { background: var(--bg); border: 1.5px solid var(--border); box-shadow: none; border-radius: 14px; margin-bottom: 0; padding: 10px 12px; }
+        .md-result-row { display: flex; align-items: center; gap: 10px; }
+        .md-add-btn { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; border: 1.5px solid var(--border); background: var(--card); color: var(--accent); display: flex; align-items: center; justify-content: center; transition: 0.15s ease; }
+        .md-add-btn.added { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* ---- Merge Queue dock ---- */
+        .mdw-dock { background: var(--card); border: 1.5px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: 22px; padding: 18px; box-shadow: 0 10px 26px rgba(22,23,27,0.1); position: relative; display: flex; flex-direction: column; }
+        .mdw-dock::before { content: ''; position: absolute; top: -1.5px; left: 18px; right: 18px; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+        .mdw-dock-title { display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14.5px; color: var(--ink); }
+        .mdw-dock-title i { color: var(--accent); }
+
+        .merge-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 10px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
         .merge-count { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
         .merge-clear { font-size: 11px; font-weight: 800; color: #dc2626; background: none; border: none; }
-        #merger-overlay.merge-drag-over-all::after {
-            content: 'Drop anywhere to add files';
-            position: fixed; inset: 0; z-index: 4000;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--accent-dim); backdrop-filter: blur(3px);
-            border: 3px dashed var(--accent); border-radius: 0;
-            font-weight: 800; font-size: 16px; color: var(--accent);
-            pointer-events: none;
-        }
 
-        /* Horizontal, side-scrolling strip of file cards. Drag the grip on any
-           card left/right to reorder; tap the thumbnail/name to preview. */
-        #merge-list { display: flex; flex-direction: row; gap: 12px; overflow-x: auto; overflow-y: visible; padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
-        #merge-list::-webkit-scrollbar { height: 6px; }
+        /* Vertical reorderable list — drag the grip up/down to reorder, tap
+           the thumbnail/name to preview. Scrolls internally once the queue
+           grows past a comfortable height so the Save/Share bar never gets
+           pushed off screen. */
+        #merge-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 2px 4px; max-height: 44vh; }
+        #merge-list::-webkit-scrollbar { width: 6px; }
         #merge-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-        .doc-item { position: relative; flex: 0 0 148px; width: 148px; scroll-snap-align: start; background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: 0 2px 10px rgba(22,23,27,0.05); }
-        .doc-item.doc-dragging { opacity: 0.92; box-shadow: 0 14px 28px rgba(22,23,27,0.22); border-color: var(--accent); cursor: grabbing; z-index: 5; }
-        .doc-drag-handle { position: absolute; top: 6px; left: 6px; width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: rgba(255,255,255,0.88); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; z-index: 3; }
+
+        .doc-item { position: relative; width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 9px; display: flex; flex-direction: column; gap: 8px; }
+        .doc-item.doc-dragging { opacity: 0.94; box-shadow: 0 12px 26px rgba(22,23,27,0.2); border-color: var(--accent); cursor: grabbing; z-index: 5; background: var(--card); }
+        .doc-item-main { display: flex; align-items: center; gap: 9px; }
+        .doc-drag-handle { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: none; cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
         .doc-drag-handle:active { cursor: grabbing; color: var(--accent); }
-        .doc-index-pill { position: absolute; bottom: 6px; left: 6px; font-size: 10px; font-weight: 800; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 6px; z-index: 3; }
-        .doc-remove { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 9px; background: #fde9e8; border: 1.5px solid rgba(220,38,38,0.25); color: #dc2626; display: flex; align-items: center; justify-content: center; z-index: 3; }
-        .doc-preview-trigger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding-top: 26px; }
-        .doc-thumb-wrap { position: relative; }
-        .doc-thumb { width: 100%; height: 92px; border-radius: 12px; object-fit: cover; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
-        .doc-eye-badge { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; border-radius: 7px; background: rgba(22,23,27,0.6); color: #fff; display: flex; align-items: center; justify-content: center; }
+        .doc-index-pill { flex-shrink: 0; font-size: 10px; font-weight: 800; background: var(--ink); color: #fff; padding: 3px 6px; border-radius: 6px; }
+        .doc-remove { flex-shrink: 0; width: 28px; height: 28px; border-radius: 9px; background: #fde9e8; border: 1.5px solid rgba(220,38,38,0.25); color: #dc2626; display: flex; align-items: center; justify-content: center; }
+        .doc-preview-trigger { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .doc-thumb-wrap { position: relative; flex-shrink: 0; }
+        .doc-thumb { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .doc-eye-badge { position: absolute; bottom: -3px; right: -3px; width: 17px; height: 17px; border-radius: 6px; background: rgba(22,23,27,0.65); color: #fff; display: flex; align-items: center; justify-content: center; }
         .doc-meta { min-width: 0; text-align: left; }
-        .doc-meta h4 { font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
-        .doc-meta p { font-size: 9px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .doc-drag-placeholder { flex: 0 0 148px; width: 148px; border: 2px dashed var(--accent); border-radius: 16px; background: var(--accent-dim); opacity: 0.6; }
+        .doc-meta h4 { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+        .doc-meta p { font-size: 9.5px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .doc-drag-placeholder { width: 100%; border: 2px dashed var(--accent); border-radius: 14px; background: var(--accent-dim); opacity: 0.6; }
 
         #img-preview-box { display: flex; align-items: center; justify-content: center; min-height: 100%; padding: 10px; }
         #img-preview-box img { max-width: 100%; max-height: calc(100vh - 90px); border-radius: 10px; object-fit: contain; }
 
-        .doc-qr-badge { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
-        .doc-qr-tag { font-size: 9px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 6px; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase; }
-        .doc-qr-actions { display: flex; flex-direction: column; gap: 5px; }
-        .doc-qr-chip { font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 4px; text-align: center; }
-        .doc-qr-scanning { font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+        .doc-qr-badge { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 35px; }
+        .doc-qr-tag { font-size: 9px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 7px; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase; }
+        .doc-qr-actions { display: flex; flex-direction: row; flex-wrap: wrap; gap: 5px; }
+        .doc-qr-chip { font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 9px; text-align: center; }
+        .doc-qr-scanning { font-size: 9.5px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; padding-left: 35px; }
 
         .merge-empty { text-align: center; color: var(--text-dim); font-size: 12px; padding: 24px 0; }
 
-        .merge-sticky { position: sticky; bottom: 0; background: linear-gradient(to top, var(--bg) 60%, transparent); padding: 16px 0 4px; margin-top: 6px; }
+        .merge-sticky { position: sticky; bottom: 0; background: linear-gradient(to top, var(--card) 70%, transparent); padding: 14px 0 2px; margin-top: auto; }
         #merge-btn { width: 100%; padding: 16px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); border: none; color: #fff; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px rgba(22,23,27,0.15); }
         #merge-btn:disabled { background: var(--border); color: var(--text-dim); box-shadow: none; }
         #merge-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
@@ -217,25 +252,26 @@
         .qr-spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent-dim); border-top-color: var(--accent); display: inline-block; animation: qrspin 0.7s linear infinite; }
         @keyframes qrspin { to { transform: rotate(360deg); } }
 
-        /* ---- COC Certificate Generator ---- */
-        .coc-gen-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 16px; margin-top: 14px; box-shadow: 0 3px 14px rgba(22,23,27,0.05); }
+        /* ---- COC Certificate Generator: a distinct soft-filled zone that
+           sits as the second of two "ways to add a file", below an OR
+           divider under the drop zone — not a floating card of its own. ---- */
+        .coc-gen-card { background: var(--bg); border: 1.5px solid var(--border); border-radius: 18px; padding: 16px; }
         .coc-gen-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
         .coc-gen-head .dash-icon-badge { width: 34px; height: 34px; border-radius: 11px; }
         .coc-gen-head h4 { font-size: 13.5px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
         .coc-gen-head p { font-size: 10.5px; color: var(--text-dim); margin-top: 1px; }
         select.rate-search { -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2375767e' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-        #coc-fields, #coc-fields-md { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        #coc-fields.hidden, #coc-fields-md.hidden { display: none; }
+        #coc-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        #coc-fields.hidden { display: none; }
         .coc-field { display: flex; flex-direction: column; gap: 4px; }
         .coc-field.coc-field-wide { grid-column: 1 / -1; }
         .coc-field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 800; color: var(--text-dim); }
-        .coc-field input { padding: 11px 12px; border-radius: 11px; background: var(--bg); border: 1.5px solid var(--border); color: var(--ink); font-size: 13px; font-weight: 600; outline: none; width: 100%; }
+        .coc-field input { padding: 11px 12px; border-radius: 11px; background: var(--card); border: 1.5px solid var(--border); color: var(--ink); font-size: 13px; font-weight: 600; outline: none; width: 100%; }
         .coc-field input:focus { border-color: var(--accent); }
-        #coc-add-btn, #coc-add-btn-md { width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #818cf8, #6366f1); border: none; color: #fff; font-weight: 800; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; box-shadow: 0 6px 16px rgba(99,102,241,0.25); }
-        #coc-add-btn:disabled, #coc-add-btn-md:disabled { background: var(--border); color: var(--text-dim); box-shadow: none; }
-        #coc-status, #coc-status-md { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
+        #coc-add-btn { width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #818cf8, #6366f1); border: none; color: #fff; font-weight: 800; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; box-shadow: 0 6px 16px rgba(99,102,241,0.25); }
+        #coc-add-btn:disabled { background: var(--border); color: var(--text-dim); box-shadow: none; }
+        #coc-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
 
-        /* ---- Machine Documents search tab ---- */
         .md-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-dim); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; margin: 0 6px 6px 0; }
         .md-chip i { cursor: pointer; }
         .md-btn-row { display: flex; gap: 10px; }
@@ -243,6 +279,26 @@
         .md-action-btn:disabled { background: var(--border) !important; color: var(--text-dim); box-shadow: none; }
         .md-action-btn.save { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
         .md-action-btn.whatsapp { background: var(--wa); }
+
+        @media (min-width: 980px) {
+            .mdw-shell { display: grid; grid-template-columns: 1fr 380px; gap: 22px; align-items: start; }
+            .mdw-dock { position: sticky; top: 14px; max-height: calc(100vh - 150px); }
+            #merge-list { max-height: calc(100vh - 430px); }
+        }
+        @media (min-width: 1300px) {
+            .mdw-shell { grid-template-columns: 1fr 420px; }
+        }
+
+        /* Drag-and-drop anywhere on the Machine Documents tab (not just the drop zone) */
+        body.merge-drag-over-all::after {
+            content: 'Drop anywhere to add files';
+            position: fixed; inset: 0; z-index: 4000;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--accent-dim); backdrop-filter: blur(3px);
+            border: 3px dashed var(--accent); border-radius: 0;
+            font-weight: 800; font-size: 16px; color: var(--accent);
+            pointer-events: none; text-align: center; padding: 20px;
+        }
 
         /* Desktop: full-width header, left sidebar nav, wide multi-column content */
         @media (min-width: 900px) {
@@ -611,7 +667,6 @@
                 <div class="dash-card" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#f472b6; color:#fff;"><i data-lucide="camera"></i></div><span>GALLERY</span></div>
                 <div class="dash-card" onclick="navigateToTab('yards')"><div class="dash-icon-badge" style="background:#34d399; color:#fff;"><i data-lucide="map-pin"></i></div><span>YARDS</span></div>
                 <div class="dash-card" onclick="navigateToTab('team')"><div class="dash-icon-badge" style="background:#a78bfa; color:#fff;"><i data-lucide="users"></i></div><span>TEAM</span></div>
-                <div class="dash-card" onclick="openMerger()"><div class="dash-icon-badge" style="background:#818cf8; color:#fff;"><i data-lucide="layers"></i></div><span>DOCS<br>MERGER</span></div>
                 <div class="dash-card" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#fb7185; color:#fff;"><i data-lucide="hard-drive"></i></div><span>MACHINE<br>DOCUMENTS</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
@@ -639,48 +694,79 @@
         <div id="tab-docs" class="view-section hidden"><h3 class="group-title">Datasheets</h3><div id="docs-grid" class="dash-grid"></div></div>
         <div id="tab-machine-docs" class="view-section hidden">
             <h3 class="group-title">Machine Documents</h3>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" style="flex:1;" />
-                <button id="md-search-btn" class="act-btn primary" onclick="mdTriggerSearch()" title="Search" style="width:46px; height:46px; border-radius:12px; flex-shrink:0;"><i data-lucide="search" size="18"></i></button>
-            </div>
+            <p class="md-hint">Add new files or search the archive on the left, then reorder and merge your selection into one PDF using the queue on the right. Drag &amp; drop files anywhere on this page.</p>
 
-            <div id="md-drop-zone" style="margin-top:14px;">
-                <i data-lucide="upload-cloud" size="26"></i>
-                <h4>Add files from this device</h4>
-                <p>Tap to choose, or drop PDFs/photos here — added straight to your selection</p>
-                <input type="file" id="md-file-input" accept="application/pdf,image/*" multiple class="hidden" />
-            </div>
+            <div class="mdw-shell" id="md-layout">
 
-            <div class="coc-gen-card">
-                <div class="coc-gen-head">
-                    <div class="dash-icon-badge"><i data-lucide="file-text" size="17"></i></div>
-                    <div>
-                        <h4>Generate COC Certificate</h4>
-                        <p>Pick a machine, fill the details, add it straight into your selection</p>
+                <!-- MAIN: tabbed source panel — Add Files / Search Archive share one full-width working area -->
+                <div class="mdw-main">
+                    <div class="mdw-tabs" role="tablist">
+                        <button class="mdw-tab active" id="mdw-tab-add" onclick="mdSwitchPane('add')" role="tab" aria-selected="true"><i data-lucide="upload-cloud" size="15"></i> Add Files</button>
+                        <button class="mdw-tab" id="mdw-tab-search" onclick="mdSwitchPane('search')" role="tab" aria-selected="false"><i data-lucide="search" size="15"></i> Search Archive</button>
+                    </div>
+
+                    <div class="mdw-pane" id="mdw-pane-add">
+                        <div id="merge-lib-banner" class="doc-qr-scanning hidden" style="justify-content:center; padding:10px; border:1px solid var(--border); border-radius:12px; margin-bottom:12px; padding-left:10px;">
+                            <span class="qr-spinner"></span>
+                            <span>Loading scanner engine...</span>
+                        </div>
+
+                        <div id="merge-drop-zone">
+                            <i data-lucide="upload-cloud" size="30"></i>
+                            <h4>Drop PDFs or photos here</h4>
+                            <p>Or tap to choose files &middot; drag &amp; drop anywhere on this page</p>
+                            <input type="file" id="merge-file-input" accept="application/pdf,image/*" multiple class="hidden" />
+                        </div>
+
+                        <div class="mdw-or-divider"><span>OR</span></div>
+
+                        <div class="coc-gen-card">
+                            <div class="coc-gen-head">
+                                <div class="dash-icon-badge"><i data-lucide="file-text" size="17"></i></div>
+                                <div>
+                                    <h4>Generate COC Certificate</h4>
+                                    <p>Pick a machine, fill the details, add it straight into the merge queue</p>
+                                </div>
+                            </div>
+                            <div class="coc-field coc-field-wide">
+                                <label>Machine Type</label>
+                                <select id="coc-type" class="rate-search" onchange="cocRenderFields()">
+                                    <option value="">-- Select machine type --</option>
+                                </select>
+                            </div>
+                            <div id="coc-fields" class="hidden"></div>
+                            <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="16"></i> Generate &amp; Add to Queue</button>
+                            <div id="coc-status"></div>
+                        </div>
+                    </div>
+
+                    <div class="mdw-pane hidden" id="mdw-pane-search">
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input type="text" id="md-search" class="rate-search" placeholder="Search Machine Documents..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" style="flex:1; margin-bottom:0;" />
+                            <button id="md-search-btn" class="act-btn primary" onclick="mdTriggerSearch()" title="Search" style="width:46px; height:46px; border-radius:12px; flex-shrink:0;"><i data-lucide="search" size="18"></i></button>
+                        </div>
+                        <div id="md-results" class="rate-empty md-results-grid">Type to search Machine Documents...</div>
                     </div>
                 </div>
-                <div class="coc-field coc-field-wide">
-                    <label>Machine Type</label>
-                    <select id="coc-type-md" class="rate-search" onchange="cocRenderFields('-md')">
-                        <option value="">-- Select machine type --</option>
-                    </select>
-                </div>
-                <div id="coc-fields-md" class="hidden"></div>
-                <button id="coc-add-btn-md" disabled onclick="cocGenerateAndAdd('-md')"><i data-lucide="file-plus-2" size="16"></i> Generate &amp; Add to Selection</button>
-                <div id="coc-status-md"></div>
-            </div>
 
-            <div id="md-results" class="rate-empty">Type to search Machine Documents...</div>
-
-            <div id="md-selection-bar" class="merge-sticky hidden">
-                <div id="md-selection-chips" style="display:flex; flex-direction:row; gap:12px; overflow-x:auto; overflow-y:visible; padding:4px 2px 10px; -webkit-overflow-scrolling:touch;"></div>
-                <div class="merge-count" id="md-selection-count" style="display:block; margin-bottom:8px;">0 files selected</div>
-                <input type="text" id="md-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
-                <div class="md-btn-row">
-                    <button class="md-action-btn save" onclick="mdMergeAndSave()"><i data-lucide="save" size="15"></i> Merge &amp; Save</button>
-                    <button class="md-action-btn whatsapp" onclick="mdShareToWhatsApp()"><i data-lucide="message-square" size="15"></i> Share to WhatsApp</button>
+                <!-- DOCK: persistent merge queue — order, preview, QR actions, save/share -->
+                <div class="mdw-dock">
+                    <div class="mdw-dock-title"><i data-lucide="layers" size="16"></i> Merge Queue</div>
+                    <div class="merge-toolbar">
+                        <span class="merge-count" id="merge-count">0 files added</span>
+                        <button class="merge-clear" id="merge-clear-btn" onclick="mergeClearAll()">Clear all</button>
+                    </div>
+                    <div id="merge-list"><div class="merge-empty">No files yet — add files or search on the left.</div></div>
+                    <div class="merge-sticky">
+                        <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
+                        <div class="md-btn-row">
+                            <button id="merge-btn" class="md-action-btn save" disabled onclick="mergeAndDownload()"><i data-lucide="save" size="15"></i> Merge &amp; Save</button>
+                            <button id="merge-wa-btn" class="md-action-btn whatsapp" disabled onclick="mergeShareToWhatsApp()"><i data-lucide="message-square" size="15"></i> WhatsApp</button>
+                        </div>
+                        <div id="merge-status"></div>
+                    </div>
                 </div>
-                <div id="md-status" style="text-align:center; font-size:11px; color:var(--text-dim); margin-top:8px; font-weight:700;"></div>
+
             </div>
         </div>
 
@@ -782,62 +868,6 @@
         <div class="action-bar">
             <button class="act-btn primary" id="photo-dl-btn"><i data-lucide="download"></i>SAVE</button>
             <button class="act-btn primary" onclick="sharePhotoActive()"><i data-lucide="share-2"></i>SHARE</button>
-        </div>
-    </div>
-</div>
-
-<div id="merger-overlay" class="overlay-view hidden">
-    <div class="overlay-header">
-        <button class="act-btn" onclick="goBack()"><i data-lucide="chevron-left"></i></button>
-        <div style="flex:1; font-weight:800; text-align:center;">Documents Merger</div>
-        <div style="width:42px"></div>
-    </div>
-    <div class="scroll-area">
-        <div id="merge-lib-banner" class="doc-qr-scanning hidden" style="justify-content:center; padding:10px; border:1px solid var(--border); border-radius:12px;">
-            <span class="qr-spinner"></span>
-            <span>Loading scanner engine...</span>
-        </div>
-
-        <div id="merge-drop-zone">
-            <i data-lucide="upload-cloud" size="30"></i>
-            <h4>Drop PDFs or photos here</h4>
-            <p>Or tap to choose files &middot; order below is the merge order</p>
-            <input type="file" id="merge-file-input" accept="application/pdf,image/*" multiple class="hidden" />
-        </div>
-
-        <div class="coc-gen-card">
-            <div class="coc-gen-head">
-                <div class="dash-icon-badge"><i data-lucide="file-text" size="17"></i></div>
-                <div>
-                    <h4>Generate COC Certificate</h4>
-                    <p>Pick a machine, fill the details, add it straight into the merge list</p>
-                </div>
-            </div>
-
-            <div class="coc-field coc-field-wide">
-                <label>Machine Type</label>
-                <select id="coc-type" class="rate-search" onchange="cocRenderFields()">
-                    <option value="">-- Select machine type --</option>
-                </select>
-            </div>
-
-            <div id="coc-fields" class="hidden"></div>
-
-            <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="16"></i> Generate &amp; Add to Merger</button>
-            <div id="coc-status"></div>
-        </div>
-
-        <div class="merge-toolbar">
-            <span class="merge-count" id="merge-count">0 files added</span>
-            <button class="merge-clear" id="merge-clear-btn" onclick="mergeClearAll()">Clear all</button>
-        </div>
-
-        <div id="merge-list"><div class="merge-empty">No files yet — add PDFs or photos above.</div></div>
-
-        <div class="merge-sticky">
-            <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" style="margin-bottom:10px;" />
-            <button id="merge-btn" disabled onclick="mergeAndDownload()"><i data-lucide="save" size="16"></i> Merge &amp; Save PDF</button>
-            <div id="merge-status"></div>
         </div>
     </div>
 </div>
@@ -1609,19 +1639,12 @@ document.addEventListener('visibilitychange', () => {
         document.getElementById('photo-lightbox').classList.add('hidden');
         if (state.type === 'tab') {
             document.getElementById('detail-layer').classList.add('hidden');
-            document.getElementById('merger-overlay').classList.add('hidden');
             document.getElementById('price-editor-overlay').classList.add('hidden');
             applyTabStyles(state.target);
-        } else if (state.type === 'merger') {
-            document.getElementById('detail-layer').classList.add('hidden');
-            document.getElementById('price-editor-overlay').classList.add('hidden');
-            document.getElementById('merger-overlay').classList.remove('hidden');
         } else if (state.type === 'priceEditor') {
             document.getElementById('detail-layer').classList.add('hidden');
-            document.getElementById('merger-overlay').classList.add('hidden');
             document.getElementById('price-editor-overlay').classList.remove('hidden');
         } else if (state.type === 'detail') {
-            document.getElementById('merger-overlay').classList.add('hidden');
             document.getElementById('price-editor-overlay').classList.add('hidden');
             document.getElementById('detail-layer').classList.remove('hidden');
             document.getElementById('detail-title').innerText = state.target;
@@ -1629,7 +1652,6 @@ document.addEventListener('visibilitychange', () => {
             else buildDocsContent(state.target);
         } else if (state.type === 'photo-folder') {
             document.getElementById('detail-layer').classList.add('hidden');
-            document.getElementById('merger-overlay').classList.add('hidden');
             document.getElementById('price-editor-overlay').classList.add('hidden');
             renderPhotoFolder(state.target);
         }
@@ -1717,9 +1739,9 @@ document.addEventListener('visibilitychange', () => {
         mdLoadError = null;
         db.machineDocsFiles = [];
         try {
-            let data = await mdFetchTreeWithRetries('main');
-            if (!data || !data.tree) data = await mdFetchTreeWithRetries('master');
-            if (!data) { mdLoadError = 'Could not reach GitHub — check your internet connection.'; return; }
+            let data = await mdFetchTree('main');
+            if (!data || !data.tree) data = await mdFetchTree('master');
+            if (!data) { mdLoadError = 'Could not reach GitHub — check your internet connection and hit search again.'; return; }
             if (data.message) { mdLoadError = data.message; return; } // e.g. "Not Found" (wrong repo/private) or rate-limit message
             if (!data.tree) { mdLoadError = 'Repo returned no files.'; return; }
             data.tree.filter(f => f.type === 'blob').forEach(f => {
@@ -1745,10 +1767,10 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
-    // 12s timeout per attempt — on a slow connection the raw fetch() could
-    // otherwise hang for a very long time with no feedback; this fails fast
-    // so a retry (or a clear error) happens instead of a spinner that never
-    // resolves.
+    // One attempt, one request — no automatic retries or backoff. If it
+    // fails, the person hits the search button again to try once more.
+    // 12s timeout so a dead connection fails fast with a clear error
+    // instead of a spinner that never resolves.
     async function mdFetchTree(branch) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 12000);
@@ -1763,52 +1785,6 @@ document.addEventListener('visibilitychange', () => {
             clearTimeout(timer);
         }
     }
-
-    // Retries only genuine connection-level failures (timeout, dropped mid-
-    // fetch, DNS hiccup, etc — where mdFetchTree() comes back with nothing).
-    // A real answer from GitHub — even an error like "Not Found" — is
-    // returned immediately since retrying that would never succeed. This is
-    // what makes a single button press resilient to a slow or momentarily
-    // interrupted connection instead of failing on the first attempt.
-    async function mdFetchTreeWithRetries(branch, attempts = 3) {
-        for (let i = 0; i < attempts; i++) {
-            const data = await mdFetchTree(branch);
-            if (data) return data; // got a real response (success or a genuine API error) — stop
-            if (i < attempts - 1) {
-                const box = document.getElementById('md-results');
-                if (box) box.innerHTML = `<div class="rate-empty">Connection unstable — retrying (${i + 2}/${attempts})...</div>`;
-                await new Promise(r => setTimeout(r, 1200 * (i + 1))); // short backoff before trying again
-            }
-        }
-        return null;
-    }
-
-    // Auto-recovery: if a search was already attempted and it failed
-    // (commonly because the device had no/slow internet at the time),
-    // silently retry once the connection comes back or the tab is revisited
-    // — no button tap required. Gated on mdHasAttemptedLoad so this never
-    // fetches in the background just because the tab regained focus or the
-    // connection came back — Machine Documents only fetches when the person
-    // actually searches it. A short cooldown stops repeated
-    // 'online'/visibility flickers from spamming GitHub's API.
-    let mdAutoRetryInFlight = false;
-    let mdLastAutoRetryAt = 0;
-    async function mdAutoRetryIfNeeded() {
-        const needsRetry = mdHasAttemptedLoad && (mdLoadError || !db.machineDocsFiles || !db.machineDocsFiles.length);
-        if (!needsRetry || mdAutoRetryInFlight) return;
-        if (Date.now() - mdLastAutoRetryAt < 5000) return;
-        mdLastAutoRetryAt = Date.now();
-        mdAutoRetryInFlight = true;
-        try {
-            await loadMachineDocs();
-        } finally {
-            mdAutoRetryInFlight = false;
-        }
-    }
-    window.addEventListener('online', mdAutoRetryIfNeeded);
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') mdAutoRetryIfNeeded();
-    });
 
     // Walks db.docsRoot using a '/'-joined path (e.g. "Cranes/Tower Cranes") and
     // returns the { folders, files } node at that location, or null if missing.
@@ -1978,16 +1954,20 @@ document.addEventListener('visibilitychange', () => {
         const item = mergeItems.find(i => i.id === id);
         if (!item) return;
         if (item.type === 'pdf') {
-            window.history.pushState({ type: 'pdf' }, '');
-            document.getElementById('pdf-overlay').classList.remove('hidden');
-            document.getElementById('pdf-title').textContent = item.name;
-            document.getElementById('pdf-render-box').innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING PDF...</div>`;
-            renderPdfBlobIntoOverlay(item.file, item.name, null);
+            if (item.file) {
+                window.history.pushState({ type: 'pdf' }, '');
+                document.getElementById('pdf-overlay').classList.remove('hidden');
+                document.getElementById('pdf-title').textContent = item.name;
+                document.getElementById('pdf-render-box').innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING PDF...</div>`;
+                renderPdfBlobIntoOverlay(item.file, item.name, null);
+            } else if (item.url) {
+                openPdf(item.url, item.name); // remote search-result PDF
+            }
         } else {
             window.history.pushState({ type: 'imgpreview' }, '');
             document.getElementById('img-preview-overlay').classList.remove('hidden');
             document.getElementById('img-preview-title').textContent = item.name;
-            currentPreviewImageUrl = item.thumbUrl || URL.createObjectURL(item.file);
+            currentPreviewImageUrl = item.thumbUrl || (item.file ? URL.createObjectURL(item.file) : item.url);
             document.getElementById('img-preview-box').innerHTML = `<img src="${currentPreviewImageUrl}" alt="${mergeEscape(item.name)}" />`;
         }
     }
@@ -2571,7 +2551,6 @@ document.addEventListener('visibilitychange', () => {
     function openPriceEditor() {
         window.history.pushState({ type: 'priceEditor' }, '');
         document.getElementById('detail-layer').classList.add('hidden');
-        document.getElementById('merger-overlay').classList.add('hidden');
         document.getElementById('price-editor-overlay').classList.remove('hidden');
     }
     function reloadPriceEditor() {
@@ -2590,10 +2569,16 @@ document.addEventListener('visibilitychange', () => {
     let mergeQrQueue = [];
     let mergeQrProcessing = false;
 
-    function openMerger() {
-        window.history.pushState({ type: 'merger' }, '');
-        document.getElementById('merger-overlay').classList.remove('hidden');
-        lucide.createIcons();
+    // Any merge item may be a local File (uploaded, or a generated COC) or a
+    // remote Machine-Documents search result (has a .url, no .file yet). This
+    // is the single place that turns either kind into bytes on demand.
+    async function mergeFetchItemBlob(item) {
+        if (item.file) return item.file;
+        if (item.url) {
+            const res = await fetch(item.url);
+            return await res.blob();
+        }
+        return null;
     }
 
     function mergeEnsureLibrary() {
@@ -2656,6 +2641,28 @@ document.addEventListener('visibilitychange', () => {
         statusEl.textContent = skipped ? `${skipped} file(s) skipped — only PDFs and photos are supported.` : '';
     }
 
+    // Adds a Machine Documents search result (a remote GitHub file — no bytes
+    // fetched yet) straight into the merge queue. Matching on .url lets the
+    // search results panel know which of its rows are already queued.
+    function mergeAddResultItem(f) {
+        const isPdf = f.ext === 'pdf';
+        const item = {
+            id: genId(),
+            file: null,
+            url: f.url,
+            type: isPdf ? 'pdf' : 'image',
+            name: f.name + (f.ext ? '.' + f.ext : ''),
+            sizeLabel: '',
+            thumbUrl: isPdf ? null : f.url,
+            qrStatus: isPdf ? 'none' : 'queued',
+            qrText: null
+        };
+        mergeItems.push(item);
+        if (!isPdf) mergeEnqueueQrScan(item);
+        mergeRenderList();
+        return item;
+    }
+
     function mergeEnqueueQrScan(item) {
         mergeQrQueue.push(item);
         if (!mergeQrProcessing) processMergeQrQueue();
@@ -2705,7 +2712,20 @@ document.addEventListener('visibilitychange', () => {
             if (!mergeItems.find(i => i.id === item.id)) continue; // removed before its turn
             item.qrStatus = 'scanning';
             mergeRenderList();
-            item.qrText = await mergeScanImageForQr(scanner, item.file);
+            try {
+                const blob = await mergeFetchItemBlob(item);
+                // mergeScanImageForQr (and the resize/enhance variants it tries)
+                // read file.name and pass it to the QR library's scanFile(),
+                // which expects a real File — a remote item fetched via
+                // mergeFetchItemBlob() comes back as a plain Blob with no
+                // name, so every variant would silently throw. Wrapping it
+                // into a File first fixes that.
+                const file = blob instanceof File ? blob
+                    : new File([blob], (item.name || 'image'), { type: blob.type || 'image/jpeg' });
+                item.qrText = await mergeScanImageForQr(scanner, file);
+            } catch (e) {
+                item.qrText = null;
+            }
             item.qrStatus = item.qrText ? 'found' : 'none';
             mergeRenderList();
         }
@@ -2739,14 +2759,20 @@ document.addEventListener('visibilitychange', () => {
         const count = mergeItems.length;
         document.getElementById('merge-count').textContent = count ? `${count} file${count > 1 ? 's' : ''} added` : '0 files added';
         document.getElementById('merge-btn').disabled = count === 0;
+        const waBtn = document.getElementById('merge-wa-btn');
+        if (waBtn) waBtn.disabled = count === 0;
         const list = document.getElementById('merge-list');
         if (!count) {
             list.innerHTML = `<div class="merge-empty">No files yet — add PDFs or photos above.</div>`;
+            if (typeof mdCurrentResults !== 'undefined' && mdCurrentResults.length && document.getElementById('md-results')) mdRenderResults();
             return;
         }
         list.innerHTML = mergeItems.map((item, idx) => mergeItemRowHtml(item, idx, count)).join('');
         lucide.createIcons();
         initMergeDragHandles();
+        // Keep the search results panel's "add to merge" badges in sync
+        // whenever the queue changes (added/removed from either side).
+        if (typeof mdCurrentResults !== 'undefined' && mdCurrentResults.length && document.getElementById('md-results')) mdRenderResults();
     }
 
     /* ---- Drag-to-reorder (mouse + touch, via Pointer Events) ----
@@ -2770,13 +2796,14 @@ document.addEventListener('visibilitychange', () => {
 
         const placeholder = document.createElement('div');
         placeholder.className = 'doc-drag-placeholder';
-        placeholder.style.width = rect.width + 'px';
+        placeholder.style.height = rect.height + 'px';
         row.after(placeholder);
 
         row.style.position = 'relative';
+        row.style.width = rect.width + 'px';
         row.classList.add('doc-dragging');
 
-        mergeDrag = { row, list, placeholder, startX: e.clientX, lastDx: 0 };
+        mergeDrag = { row, list, placeholder, startY: e.clientY, lastDy: 0 };
         document.addEventListener('pointermove', onMergeDragMove);
         document.addEventListener('pointerup', onMergeDragEnd);
         document.addEventListener('pointercancel', onMergeDragEnd);
@@ -2784,17 +2811,17 @@ document.addEventListener('visibilitychange', () => {
 
     function onMergeDragMove(e) {
         if (!mergeDrag) return;
-        const dx = e.clientX - mergeDrag.startX;
-        mergeDrag.lastDx = dx;
-        mergeDrag.row.style.transform = `translateX(${dx}px)`;
+        const dy = e.clientY - mergeDrag.startY;
+        mergeDrag.lastDy = dy;
+        mergeDrag.row.style.transform = `translateY(${dy}px)`;
 
         const rowRect = mergeDrag.row.getBoundingClientRect();
-        const rowMid = rowRect.left + rowRect.width / 2;
+        const rowMid = rowRect.top + rowRect.height / 2;
         const siblings = Array.from(mergeDrag.list.children).filter(el => el.classList.contains('doc-item') && el !== mergeDrag.row);
 
         for (const sib of siblings) {
             const sibRect = sib.getBoundingClientRect();
-            const sibMid = sibRect.left + sibRect.width / 2;
+            const sibMid = sibRect.top + sibRect.height / 2;
             const placeholderIsAfterSib = !!(sib.compareDocumentPosition(mergeDrag.placeholder) & Node.DOCUMENT_POSITION_FOLLOWING);
             if (rowMid < sibMid && placeholderIsAfterSib) {
                 mergeDrag.list.insertBefore(mergeDrag.placeholder, sib);
@@ -2813,6 +2840,7 @@ document.addEventListener('visibilitychange', () => {
         placeholder.remove();
         row.style.transform = '';
         row.style.position = '';
+        row.style.width = '';
         row.classList.remove('doc-dragging');
 
         const newOrderIds = Array.from(list.children)
@@ -2830,7 +2858,7 @@ document.addEventListener('visibilitychange', () => {
     function mergeItemRowHtml(item, idx, total) {
         const thumbInner = item.type === 'image'
             ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
-            : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
+            : `<div class="doc-thumb"><i data-lucide="file-text" size="18"></i></div>`;
 
         let badge = '';
         if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
@@ -2848,7 +2876,7 @@ document.addEventListener('visibilitychange', () => {
         } else if (item.qrStatus === 'none') {
             badge = `
                 <div class="doc-qr-badge">
-                    <span style="font-size:9px; color:var(--text-dim); font-weight:700; text-align:center;">No QR detected</span>
+                    <span style="font-size:9px; color:var(--text-dim); font-weight:700;">No QR detected</span>
                     <div class="doc-qr-actions">
                         <button class="doc-qr-chip" onclick="mergeRetryQrScan('${item.id}')">Retry scan</button>
                     </div>
@@ -2857,19 +2885,21 @@ document.addEventListener('visibilitychange', () => {
 
         return `
             <div class="doc-item" data-id="${item.id}">
-                <div class="doc-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical" size="14"></i></div>
-                <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="x" size="13"></i></button>
-                <div class="doc-preview-trigger" onclick="mergePreviewItem('${item.id}')">
-                    <div class="doc-thumb-wrap">
-                        ${thumbInner}
-                        <span class="doc-eye-badge"><i data-lucide="eye" size="11"></i></span>
+                <div class="doc-item-main">
+                    <div class="doc-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical" size="15"></i></div>
+                    <span class="doc-index-pill">#${idx + 1}</span>
+                    <div class="doc-preview-trigger" onclick="mergePreviewItem('${item.id}')">
+                        <div class="doc-thumb-wrap">
+                            ${thumbInner}
+                            <span class="doc-eye-badge"><i data-lucide="eye" size="9"></i></span>
+                        </div>
+                        <div class="doc-meta">
+                            <h4>${mergeEscape(item.name)}</h4>
+                            <p>${item.type === 'pdf' ? 'PDF' : 'Photo'}${item.sizeLabel ? ' &middot; ' + item.sizeLabel : ''}</p>
+                        </div>
                     </div>
-                    <div class="doc-meta">
-                        <h4>${mergeEscape(item.name)}</h4>
-                        <p>${item.type === 'pdf' ? 'PDF' : 'Photo'} &middot; ${item.sizeLabel}</p>
-                    </div>
+                    <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="x" size="13"></i></button>
                 </div>
-                <span class="doc-index-pill">#${idx + 1}</span>
                 ${badge}
             </div>`;
     }
@@ -2905,10 +2935,12 @@ document.addEventListener('visibilitychange', () => {
     function mergeOpenQrLink(id) {
         const item = mergeItems.find(i => i.id === id);
         if (!item || !item.qrText) return;
-        // window.open() is unreliable inside installed PWAs / mobile webviews
-        // (silently no-ops in some of them). A real anchor click is the
-        // technique that reliably opens external links there — same trick
-        // mergeDownloadOriginal() already uses successfully below.
+        // Try a real new-tab open first (works in normal desktop/mobile
+        // browsers). window.open() is unreliable inside installed PWAs /
+        // mobile webviews (silently no-ops in some of them) — a synthetic
+        // anchor click is the fallback that reliably opens the link there.
+        const win = window.open(item.qrText, '_blank', 'noopener,noreferrer');
+        if (win) return;
         const a = document.createElement('a');
         a.href = item.qrText;
         a.target = '_blank';
@@ -2918,10 +2950,12 @@ document.addEventListener('visibilitychange', () => {
         a.remove();
     }
 
-    function mergeDownloadOriginal(id) {
+    async function mergeDownloadOriginal(id) {
         const item = mergeItems.find(i => i.id === id);
         if (!item) return;
-        const url = URL.createObjectURL(item.file);
+        const blob = await mergeFetchItemBlob(item);
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = item.name;
@@ -3008,70 +3042,125 @@ document.addEventListener('visibilitychange', () => {
         });
     }
 
+    function mergeCleanFilename() {
+        let rawName = document.getElementById('merge-filename').value.trim() || 'merged-document';
+        rawName = rawName.replace(/[\\/:*?"<>|]/g, '-'); // strip characters invalid in filenames
+        if (!/\.pdf$/i.test(rawName)) rawName += '.pdf';
+        return rawName;
+    }
+
+    // Builds the merged PDF bytes from the current queue, in queue order.
+    // Works for local Files, generated COC Files, and remote search-result
+    // items (fetched on demand via mergeFetchItemBlob).
+    async function mergeBuildMergedPdfBytes(onProgress) {
+        const { PDFDocument } = PDFLib;
+        const mergedPdf = await PDFDocument.create();
+        for (let i = 0; i < mergeItems.length; i++) {
+            const item = mergeItems[i];
+            if (onProgress) onProgress(i, mergeItems.length, item.name);
+            const blob = await mergeFetchItemBlob(item);
+            if (item.type === 'pdf') {
+                const bytes = new Uint8Array(await blob.arrayBuffer());
+                const srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+                const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
+                pages.forEach(p => mergedPdf.addPage(p));
+            } else {
+                const { bytes: pngBytes, width, height } = await mergeImageToPngBytes(blob);
+                const img = await mergedPdf.embedPng(pngBytes);
+                const page = mergedPdf.addPage([width, height]);
+                page.drawImage(img, { x: 0, y: 0, width, height });
+            }
+        }
+        return await mergedPdf.save();
+    }
+
     async function mergeAndDownload() {
         if (!mergeItems.length) return;
         const btn = document.getElementById('merge-btn');
         const status = document.getElementById('merge-status');
+        const rawName = mergeCleanFilename();
 
-        let rawName = document.getElementById('merge-filename').value.trim();
-        if (!rawName) rawName = 'merged-document';
-        rawName = rawName.replace(/[\\/:*?"<>|]/g, '-'); // strip characters invalid in filenames
-        if (!/\.pdf$/i.test(rawName)) rawName += '.pdf';
-
-        // Ask where to save FIRST, while the click's user-gesture is still fresh —
-        // the save-location dialog must open before the merge work, not after.
+        // Desktop (Chrome/Edge): ask where to save FIRST, while the click's
+        // user-gesture is still fresh — the save-location dialog must open
+        // before the merge work, not after.
         const canPickLocation = 'showSaveFilePicker' in window;
-        if (!canPickLocation) {
-            status.textContent = 'This browser can\'t show a Save dialog — try Chrome or Edge to choose a save location.';
-            return;
-        }
-        let fileHandle;
-        try {
-            fileHandle = await window.showSaveFilePicker({
-                suggestedName: rawName,
-                types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
-            });
-        } catch (err) {
-            if (err && err.name === 'AbortError') return; // person cancelled the save dialog
-            status.textContent = 'Could not open the save dialog. Please try again.';
-            return;
+        let fileHandle = null;
+        if (canPickLocation) {
+            try {
+                fileHandle = await window.showSaveFilePicker({
+                    suggestedName: rawName,
+                    types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
+                });
+            } catch (err) {
+                if (err && err.name === 'AbortError') return; // person cancelled the save dialog
+                status.textContent = 'Could not open the save dialog. Please try again.';
+                return;
+            }
         }
 
         btn.disabled = true;
         btn.innerHTML = `<span class="merge-spinner"></span> Merging...`;
         status.textContent = '';
         try {
-            const { PDFDocument } = PDFLib;
-            const mergedPdf = await PDFDocument.create();
-            for (let i = 0; i < mergeItems.length; i++) {
-                const item = mergeItems[i];
-                status.textContent = `Adding ${i + 1} of ${mergeItems.length}: ${item.name}`;
-                if (item.type === 'pdf') {
-                    const bytes = await item.file.arrayBuffer();
-                    const srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-                    const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
-                    pages.forEach(p => mergedPdf.addPage(p));
-                } else {
-                    const { bytes: pngBytes, width, height } = await mergeImageToPngBytes(item.file);
-                    const img = await mergedPdf.embedPng(pngBytes);
-                    const page = mergedPdf.addPage([width, height]);
-                    page.drawImage(img, { x: 0, y: 0, width, height });
-                }
-            }
+            const mergedBytes = await mergeBuildMergedPdfBytes((i, total, name) => {
+                status.textContent = `Adding ${i + 1} of ${total}: ${name}`;
+            });
 
-            status.textContent = 'Saving...';
-            const mergedBytes = await mergedPdf.save();
-            const writable = await fileHandle.createWritable();
-            await writable.write(mergedBytes);
-            await writable.close();
-            status.textContent = `Done — saved as ${fileHandle.name}.`;
+            if (fileHandle) {
+                status.textContent = 'Saving...';
+                const writable = await fileHandle.createWritable();
+                await writable.write(mergedBytes);
+                await writable.close();
+                status.textContent = `Done — saved as ${fileHandle.name}.`;
+            } else {
+                // Mobile / Safari / Firefox: no Save-dialog API, so trigger a
+                // normal browser download instead — this still works fine on
+                // both mobile and desktop, it just can't ask for a location.
+                const blobUrl = URL.createObjectURL(new Blob([mergedBytes], { type: 'application/pdf' }));
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = rawName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
+                status.textContent = `Done — downloaded as ${rawName}.`;
+            }
         } catch (err) {
             status.textContent = 'Something went wrong while merging. Please try again.';
             console.error(err);
         } finally {
             btn.disabled = mergeItems.length === 0;
-            btn.innerHTML = `<i data-lucide="save" size="16"></i> Merge &amp; Save PDF`;
+            btn.innerHTML = `<i data-lucide="save" size="15"></i> Merge &amp; Save`;
             lucide.createIcons();
+        }
+    }
+
+    // Mobile-first alternative to Merge & Save — builds the same merged PDF
+    // and hands it to the OS share sheet (WhatsApp, Mail, Files, etc.) via
+    // the Web Share API, which is the mobile-friendly path Save-dialog-less
+    // browsers need.
+    async function mergeShareToWhatsApp() {
+        if (!mergeItems.length) return;
+        const status = document.getElementById('merge-status');
+        const rawName = mergeCleanFilename();
+
+        status.textContent = 'Preparing file...';
+        try {
+            const bytes = await mergeBuildMergedPdfBytes((i, total, name) => {
+                status.textContent = `Adding ${i + 1} of ${total}: ${name}`;
+            });
+            const file = new File([bytes], rawName, { type: 'application/pdf' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: rawName });
+                status.textContent = '';
+            } else {
+                status.textContent = "Sharing files isn't supported on this browser — use Merge & Save, then share the saved file manually.";
+            }
+        } catch (err) {
+            if (err && err.name === 'AbortError') { status.textContent = ''; return; } // person cancelled the share sheet
+            console.error(err);
+            status.textContent = 'Something went wrong while preparing the file.';
         }
     }
 
@@ -3095,61 +3184,41 @@ window.addEventListener('DOMContentLoaded', () => {
             if (e.dataTransfer.files.length) mergeAddFiles(e.dataTransfer.files);
         });
 
-        const mdDropZone = document.getElementById('md-drop-zone');
-        const mdFileInput = document.getElementById('md-file-input');
-
-        mdDropZone.addEventListener('click', () => mdFileInput.click());
-        mdFileInput.addEventListener('change', e => { mdAddLocalFiles(e.target.files); mdFileInput.value = ''; });
-
-        mdDropZone.addEventListener('dragover', e => { e.preventDefault(); mdDropZone.classList.add('drag-over'); });
-        mdDropZone.addEventListener('dragleave', () => mdDropZone.classList.remove('drag-over'));
-        mdDropZone.addEventListener('drop', e => {
-            e.preventDefault();
-            mdDropZone.classList.remove('drag-over');
-            if (e.dataTransfer.files.length) mdAddLocalFiles(e.dataTransfer.files);
-        });
-
-        // Drag-and-drop anywhere within the Documents Merger tab, not just the
-        // small drop zone. Uses an enter/leave counter because dragenter/
-        // dragleave fire repeatedly as the pointer crosses child elements —
-        // without the counter the highlight would flicker on and off.
-        const mergerOverlay = document.getElementById('merger-overlay');
+        // Drag-and-drop anywhere on the page while the Machine Documents tab
+        // is open — not just the small drop zone. Uses an enter/leave counter
+        // because dragenter/dragleave fire repeatedly as the pointer crosses
+        // child elements — without the counter the highlight would flicker.
+        const mdTab = () => document.getElementById('tab-machine-docs');
+        const mdTabOpen = () => mdTab() && !mdTab().classList.contains('hidden');
         let mergeDragDepth = 0;
-        mergerOverlay.addEventListener('dragenter', e => {
+        document.addEventListener('dragenter', e => {
+            if (!mdTabOpen()) return;
             if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) return;
             e.preventDefault();
             mergeDragDepth++;
-            mergerOverlay.classList.add('merge-drag-over-all');
+            document.body.classList.add('merge-drag-over-all');
         });
-        mergerOverlay.addEventListener('dragover', e => {
+        document.addEventListener('dragover', e => {
+            if (!mdTabOpen()) return;
             if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) return;
             e.preventDefault();
         });
-        mergerOverlay.addEventListener('dragleave', () => {
+        document.addEventListener('dragleave', () => {
+            if (!mdTabOpen()) return;
             mergeDragDepth = Math.max(0, mergeDragDepth - 1);
-            if (mergeDragDepth === 0) mergerOverlay.classList.remove('merge-drag-over-all');
+            if (mergeDragDepth === 0) document.body.classList.remove('merge-drag-over-all');
         });
-        mergerOverlay.addEventListener('drop', e => {
+        document.addEventListener('drop', e => {
+            if (!mdTabOpen()) return;
             if (!e.dataTransfer) return;
             e.preventDefault();
             mergeDragDepth = 0;
-            mergerOverlay.classList.remove('merge-drag-over-all');
+            document.body.classList.remove('merge-drag-over-all');
             if (e.dataTransfer.files.length) mergeAddFiles(e.dataTransfer.files);
         });
 
-        // Safety net: if a file gets dropped just outside the overlay bounds
-        // (or anywhere else) while the merger tab is open, stop the browser
-        // from navigating to/opening it instead of silently failing.
-        ['dragover', 'drop'].forEach(evt => {
-            document.addEventListener(evt, e => {
-                if (mergerOverlay.classList.contains('hidden')) return;
-                if (!e.dataTransfer || !e.dataTransfer.types || !e.dataTransfer.types.includes('Files')) return;
-                e.preventDefault();
-            });
-        });
-
         document.addEventListener('paste', e => {
-            if (document.getElementById('merger-overlay').classList.contains('hidden')) return;
+            if (!mdTabOpen()) return;
             const items = e.clipboardData && e.clipboardData.items;
             if (!items) return;
             const files = [];
@@ -3168,9 +3237,37 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ===================== MACHINE DOCUMENTS (search + select + merge) ===================== */
+    /* ===================== MACHINE DOCUMENTS SEARCH ===================== */
+
+    // Switches the main working panel between "Add Files" and "Search
+    // Archive" — the two source tabs now share one full-width pane instead
+    // of permanently splitting the screen into competing columns. The merge
+    // queue dock beside it stays visible regardless of which tab is active.
+    function mdSwitchPane(name) {
+        const isAdd = name === 'add';
+        const tabAdd = document.getElementById('mdw-tab-add');
+        const tabSearch = document.getElementById('mdw-tab-search');
+        const paneAdd = document.getElementById('mdw-pane-add');
+        const paneSearch = document.getElementById('mdw-pane-search');
+        if (!tabAdd || !tabSearch || !paneAdd || !paneSearch) return;
+        tabAdd.classList.toggle('active', isAdd);
+        tabSearch.classList.toggle('active', !isAdd);
+        tabAdd.setAttribute('aria-selected', String(isAdd));
+        tabSearch.setAttribute('aria-selected', String(!isAdd));
+        paneAdd.classList.toggle('hidden', !isAdd);
+        paneSearch.classList.toggle('hidden', isAdd);
+        if (!isAdd) {
+            const input = document.getElementById('md-search');
+            if (input) setTimeout(() => input.focus(), 60);
+        }
+    }
+
+    /* Search-only browser over the Machine-Documents repo. Results here don't
+       carry their own merge/QR machinery any more — "Add to merge" just drops
+       the result straight into the shared merge queue (mergeItems) that the
+       "Add Files" tab and the QR/preview/reorder code all use. */
     const MD_VISIBLE_EXT = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
     let mdCurrentResults = [];
-    let mdSelection = [];
 
     // Sole entry point for Machine Documents — the search button and Enter
     // key both call this. Typing alone does nothing; nothing is fetched or
@@ -3203,10 +3300,27 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Ranks matches by relevance instead of raw repo order: an exact name
+    // match comes first, then names starting with the query, then names that
+    // just contain it somewhere — each tier alphabetical (natural sort, so
+    // "Manlift 2" sorts before "Manlift 10"). This is what makes the most
+    // likely document the top hit instead of whatever happened to be first
+    // in the file listing.
+    function mdRankResults(files, q) {
+        const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+        return files.slice().sort((a, b) => {
+            const an = a.name.toLowerCase(), bn = b.name.toLowerCase();
+            const rank = n => (n === q ? 0 : n.startsWith(q) ? 1 : 2);
+            const ra = rank(an), rb = rank(bn);
+            if (ra !== rb) return ra - rb;
+            return collator.compare(a.name, b.name);
+        });
+    }
+
     function mdRunSearch(query) {
         const q = query.trim().toLowerCase();
         mdCurrentResults = q
-            ? (db.machineDocsFiles || []).filter(f => MD_VISIBLE_EXT.includes(f.ext) && f.name.toLowerCase().includes(q)).slice(0, 60)
+            ? mdRankResults((db.machineDocsFiles || []).filter(f => MD_VISIBLE_EXT.includes(f.ext) && f.name.toLowerCase().includes(q)), q).slice(0, 60)
             : [];
         const box = document.getElementById('md-results');
         if (mdLoadError) { box.innerHTML = `<div class="rate-empty">Couldn't load Machine Documents: ${mdLoadError}</div>`; return; }
@@ -3222,13 +3336,12 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         box.innerHTML = mdCurrentResults.map((f, idx) => {
             const isPdf = f.ext === 'pdf';
-            const checked = mdSelection.some(s => s.url === f.url);
+            const added = mergeItems.some(i => i.url === f.url);
             const thumb = isPdf
                 ? `<div class="dash-icon-badge" style="width:44px; height:44px; border-radius:10px; flex-shrink:0;"><i data-lucide="file-text" size="18"></i></div>`
                 : `<img src="${f.url}" loading="lazy" style="width:44px; height:44px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--bg);" />`;
             const sub = (isPdf ? 'PDF Document' : 'Photo') + (f.folder ? ` &middot; ${f.folder}` : '');
-            return `<div class="item-card" style="align-items:center; gap:10px;">
-                <input type="checkbox" ${checked ? 'checked' : ''} onchange="mdToggleSelect(${idx})" style="width:20px; height:20px; flex-shrink:0; accent-color:var(--accent);" />
+            return `<div class="item-card md-result-row">
                 <div style="flex:1; display:flex; align-items:center; gap:10px; min-width:0; cursor:pointer;" onclick="mdOpenPreview(${idx})">
                     ${thumb}
                     <div class="item-info" style="min-width:0;">
@@ -3236,31 +3349,21 @@ window.addEventListener('DOMContentLoaded', () => {
                         <p style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${sub}</p>
                     </div>
                 </div>
-                <i data-lucide="${isPdf ? 'eye' : 'image'}" style="color:var(--accent); flex-shrink:0;" onclick="mdOpenPreview(${idx})"></i>
+                <button class="md-add-btn${added ? ' added' : ''}" title="${added ? 'Remove from merge queue' : 'Add to merge queue'}" onclick="mdToggleAddResult(${idx})"><i data-lucide="${added ? 'check' : 'plus'}" size="16"></i></button>
             </div>`;
         }).join('');
         lucide.createIcons();
     }
 
-    function mdToggleSelect(idx) {
+    // The single bridge between search results (right column) and the merge
+    // queue (left column): adds the result as a merge item, or removes it if
+    // it's already queued.
+    function mdToggleAddResult(idx) {
         const f = mdCurrentResults[idx];
         if (!f) return;
-        const pos = mdSelection.findIndex(s => s.url === f.url);
-        if (pos >= 0) {
-            mdQrQueue = mdQrQueue.filter(i => i.id !== mdSelection[pos].id);
-            mdSelection.splice(pos, 1);
-        } else {
-            const isImage = f.ext !== 'pdf';
-            const item = {
-                id: f.url, name: f.name, ext: f.ext, url: f.url, file: null,
-                thumbUrl: isImage ? f.url : null,
-                qrStatus: isImage ? 'queued' : 'none',
-                qrText: null
-            };
-            mdSelection.push(item);
-            if (isImage) mdEnqueueQrScan(item);
-        }
-        mdRenderSelectionBar();
+        const existing = mergeItems.find(i => i.url === f.url);
+        if (existing) mergeRemoveItem(existing.id);
+        else mergeAddResultItem(f);
     }
 
     function mdOpenPreview(idx) {
@@ -3270,303 +3373,24 @@ window.addEventListener('DOMContentLoaded', () => {
         else mdPreviewImage(f.url, f.name);
     }
 
-    // Generated COC certificates go straight into the selection (they have a
-    // real Blob already, so no fetch is needed at merge time). They're PDFs,
-    // so — same as the Docs Merger tab — they aren't run through QR scanning.
-    function mdAddGeneratedFile(file) {
-        mdSelection.push({ id: 'gen-' + genId(), name: file.name.replace(/\.pdf$/i, ''), ext: 'pdf', url: null, file, thumbUrl: null, qrStatus: 'none', qrText: null });
-        mdRenderSelectionBar();
-    }
-
-    // Lets the person add PDFs/photos straight from this device (not just
-    // GitHub search results) into the Machine Documents selection — same
-    // File-handling as the Docs Merger tab's drop zone.
-    function mdAddLocalFiles(fileList) {
-        const files = Array.from(fileList || []);
-        let skipped = 0;
-        files.forEach(file => {
-            const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
-            const isImage = file.type.startsWith('image/');
-            if (!isPdf && !isImage) { skipped++; return; }
-            const item = {
-                id: 'local-' + genId(),
-                name: file.name.replace(/\.[^.]+$/, ''),
-                ext: isPdf ? 'pdf' : (file.name.split('.').pop() || 'jpg').toLowerCase(),
-                url: null,
-                file,
-                thumbUrl: isImage ? URL.createObjectURL(file) : null,
-                qrStatus: isImage ? 'queued' : 'none',
-                qrText: null
-            };
-            mdSelection.push(item);
-            if (isImage) mdEnqueueQrScan(item);
-        });
-        mdRenderSelectionBar();
-        const status = document.getElementById('md-status');
-        if (status) status.textContent = skipped ? `${skipped} file(s) skipped — only PDFs and photos are supported.` : '';
-    }
-
-    function mdRemoveSelected(id) {
-        const item = mdSelection.find(s => s.id === id);
-        if (item && item.thumbUrl && item.file) URL.revokeObjectURL(item.thumbUrl);
-        mdSelection = mdSelection.filter(s => s.id !== id);
-        mdQrQueue = mdQrQueue.filter(i => i.id !== id);
-        mdRenderSelectionBar();
-        mdRenderResults();
-    }
-
-    // ---- QR scanning for Machine Documents selection (images only) ----
-    // Reuses the same scanner pool / decoding logic as the Docs Merger tab
-    // (mergeGetScannerPool, mergeEnsureLibrary, mergeScanImageForQr) so both
-    // tabs behave identically — the only difference is that a selected item
-    // here may be a remote GitHub file rather than a local File, so the
-    // worker fetches its bytes (via mdFetchItemBlob) right before scanning.
-    let mdQrQueue = [];
-    let mdQrProcessing = false;
-
-    function mdEnqueueQrScan(item) {
-        mdQrQueue.push(item);
-        if (!mdQrProcessing) processMdQrQueue();
-    }
-
-    async function processMdQrQueue() {
-        mdQrProcessing = true;
+    // Previews a remote image (fetched on demand) using the same img-preview
+    // overlay used for locally-picked / queued photos.
+    async function mdPreviewImage(url, name) {
+        window.history.pushState({ type: 'imgpreview' }, '');
+        document.getElementById('img-preview-overlay').classList.remove('hidden');
+        document.getElementById('img-preview-title').textContent = name;
+        const box = document.getElementById('img-preview-box');
+        box.innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING...</div>`;
         try {
-            await mergeEnsureLibrary();
-            const pool = mergeGetScannerPool();
-            await Promise.all(pool.map(scanner => mdQrWorker(scanner)));
+            const res = await fetch(url);
+            const blob = await res.blob();
+            currentPreviewImageUrl = URL.createObjectURL(blob);
+            box.innerHTML = `<img src="${currentPreviewImageUrl}" alt="${mergeEscape(name)}" />`;
         } catch (e) {
-            mdQrQueue.forEach(item => { item.qrStatus = 'none'; });
-            mdQrQueue = [];
-            mdRenderSelectionBar();
-        }
-        mdQrProcessing = false;
-    }
-
-    async function mdQrWorker(scanner) {
-        while (mdQrQueue.length) {
-            const item = mdQrQueue.shift();
-            if (!item) return;
-            if (!mdSelection.find(i => i.id === item.id)) continue; // removed before its turn
-            item.qrStatus = 'scanning';
-            mdRenderSelectionBar();
-            try {
-                const blob = await mdFetchItemBlob(item);
-                // mergeScanImageForQr (and the resize/enhance variants it tries)
-                // read file.name and pass it to the QR library's scanFile(),
-                // which expects a real File — a remote item fetched via
-                // mdFetchItemBlob() comes back as a plain Blob with no name,
-                // so every variant was silently throwing and QR always came
-                // back "not found". Wrapping it into a File fixes that.
-                const file = blob instanceof File ? blob
-                    : new File([blob], (item.name || 'image') + '.' + (item.ext || 'jpg'), { type: blob.type || 'image/jpeg' });
-                item.qrText = await mergeScanImageForQr(scanner, file);
-            } catch (e) {
-                item.qrText = null;
-            }
-            item.qrStatus = item.qrText ? 'found' : 'none';
-            mdRenderSelectionBar();
+            box.innerHTML = 'Error loading image.';
         }
     }
 
-    function mdRetryQrScan(id) {
-        const item = mdSelection.find(i => i.id === id);
-        if (!item) return;
-        item.qrStatus = 'queued';
-        item.qrText = null;
-        mdEnqueueQrScan(item);
-        mdRenderSelectionBar();
-    }
-
-    function mdOpenQrLink(id) {
-        const item = mdSelection.find(i => i.id === id);
-        if (!item || !item.qrText) return;
-        const url = item.qrText;
-        // Try a real new-tab open first (works in normal mobile browsers).
-        const win = window.open(url, '_blank', 'noopener,noreferrer');
-        if (win) return;
-        // Installed PWAs / mobile webviews often can't spawn a real new tab —
-        // a synthetic target="_blank" click either no-ops or ends up forcing
-        // a download instead of viewing the link. Falling back to a direct
-        // top-level navigation opens/renders it the same way tapping a
-        // normal browser link does.
-        window.location.href = url;
-    }
-
-    async function mdDownloadQrOriginal(id) {
-        const item = mdSelection.find(i => i.id === id);
-        if (!item) return;
-        const blob = await mdFetchItemBlob(item);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = item.name + (item.ext ? '.' + item.ext : '');
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-    }
-
-    async function mdPreviewItem(id) {
-        const item = mdSelection.find(s => s.id === id);
-        if (!item) return;
-        if (item.thumbUrl) { mdPreviewImage(item.thumbUrl, item.name); return; }
-        if (item.url) { openPdf(item.url, item.name); return; }
-        if (item.file) {
-            window.history.pushState({ type: 'pdf' }, '');
-            document.getElementById('pdf-overlay').classList.remove('hidden');
-            document.getElementById('pdf-title').textContent = item.name || 'Viewer';
-            await renderPdfBlobIntoOverlay(item.file, item.name, null);
-        }
-    }
-
-    function mdSelectionItemHtml(item) {
-        const thumbInner = item.thumbUrl
-            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
-            : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
-
-        let badge = '';
-        if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
-            badge = `<div class="doc-qr-scanning"><span class="qr-spinner"></span> Checking QR...</div>`;
-        } else if (item.qrStatus === 'found') {
-            const linky = mergeIsUrl(item.qrText);
-            badge = `
-                <div class="doc-qr-badge">
-                    <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
-                    <div class="doc-qr-actions">
-                        ${linky ? `<button class="doc-qr-chip" onclick="mdOpenQrLink('${item.id}')">Open Link</button>` : ''}
-                        <button class="doc-qr-chip" onclick="mdDownloadQrOriginal('${item.id}')">Download</button>
-                    </div>
-                </div>`;
-        } else if (item.qrStatus === 'none') {
-            badge = `
-                <div class="doc-qr-badge">
-                    <span style="font-size:9px; color:var(--text-dim); font-weight:700; text-align:center;">No QR detected</span>
-                    <div class="doc-qr-actions">
-                        <button class="doc-qr-chip" onclick="mdRetryQrScan('${item.id}')">Retry scan</button>
-                    </div>
-                </div>`;
-        }
-
-        const canPreview = !!(item.thumbUrl || item.url || item.file);
-
-        return `
-            <div class="doc-item" data-id="${item.id}">
-                <button class="doc-remove" onclick="mdRemoveSelected('${item.id}')"><i data-lucide="x" size="13"></i></button>
-                <div class="doc-preview-trigger" ${canPreview ? `onclick="mdPreviewItem('${item.id}')"` : ''} style="${canPreview ? '' : 'cursor:default;'}">
-                    <div class="doc-thumb-wrap">${thumbInner}</div>
-                    <div class="doc-meta">
-                        <h4>${mergeEscape(item.name)}</h4>
-                        <p>${item.ext === 'pdf' ? 'PDF' : 'Photo'}</p>
-                    </div>
-                </div>
-                ${badge}
-            </div>`;
-    }
-
-    function mdRenderSelectionBar() {
-        const bar = document.getElementById('md-selection-bar');
-        const count = mdSelection.length;
-        if (!count) { bar.classList.add('hidden'); return; }
-        bar.classList.remove('hidden');
-        document.getElementById('md-selection-count').textContent = `${count} file${count > 1 ? 's' : ''} selected`;
-        document.getElementById('md-selection-chips').innerHTML = mdSelection.map(s => mdSelectionItemHtml(s)).join('');
-        lucide.createIcons();
-    }
-
-    // Fetches a remote GitHub file's bytes on demand (generated COC items
-    // already carry their own Blob and skip the fetch).
-    async function mdFetchItemBlob(item) {
-        if (item.file) return item.file;
-        const res = await fetch(item.url);
-        return await res.blob();
-    }
-
-    async function mdBuildMergedPdfBytes(items, onProgress) {
-        const { PDFDocument } = PDFLib;
-        const mergedPdf = await PDFDocument.create();
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            if (onProgress) onProgress(i, items.length, item.name);
-            const blob = await mdFetchItemBlob(item);
-            if (item.ext === 'pdf') {
-                const bytes = new Uint8Array(await blob.arrayBuffer());
-                const srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-                const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
-                pages.forEach(p => mergedPdf.addPage(p));
-            } else {
-                const { bytes: pngBytes, width, height } = await mergeImageToPngBytes(blob);
-                const img = await mergedPdf.embedPng(pngBytes);
-                const page = mergedPdf.addPage([width, height]);
-                page.drawImage(img, { x: 0, y: 0, width, height });
-            }
-        }
-        return await mergedPdf.save();
-    }
-
-    function mdCleanFilename() {
-        let rawName = document.getElementById('md-filename').value.trim() || 'merged-document';
-        rawName = rawName.replace(/[\\/:*?"<>|]/g, '-');
-        if (!/\.pdf$/i.test(rawName)) rawName += '.pdf';
-        return rawName;
-    }
-
-    async function mdMergeAndSave() {
-        if (!mdSelection.length) return;
-        const status = document.getElementById('md-status');
-        const rawName = mdCleanFilename();
-
-        if (!('showSaveFilePicker' in window)) {
-            status.textContent = "This browser can't show a Save dialog — try Chrome or Edge to choose a save location.";
-            return;
-        }
-        let fileHandle;
-        try {
-            fileHandle = await window.showSaveFilePicker({
-                suggestedName: rawName,
-                types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
-            });
-        } catch (err) {
-            if (err && err.name === 'AbortError') return; // person cancelled the save dialog
-            status.textContent = 'Could not open the save dialog. Please try again.';
-            return;
-        }
-
-        status.textContent = 'Merging...';
-        try {
-            const bytes = await mdBuildMergedPdfBytes(mdSelection, (i, total, name) => { status.textContent = `Adding ${i + 1} of ${total}: ${name}`; });
-            status.textContent = 'Saving...';
-            const writable = await fileHandle.createWritable();
-            await writable.write(bytes);
-            await writable.close();
-            status.textContent = `Done — saved as ${fileHandle.name}.`;
-        } catch (err) {
-            console.error(err);
-            status.textContent = 'Something went wrong while merging. Please try again.';
-        }
-    }
-
-    async function mdShareToWhatsApp() {
-        if (!mdSelection.length) return;
-        const status = document.getElementById('md-status');
-        const rawName = mdCleanFilename();
-
-        status.textContent = 'Preparing file...';
-        try {
-            const bytes = await mdBuildMergedPdfBytes(mdSelection, (i, total, name) => { status.textContent = `Adding ${i + 1} of ${total}: ${name}`; });
-            const file = new File([bytes], rawName, { type: 'application/pdf' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: rawName });
-                status.textContent = '';
-            } else {
-                status.textContent = "Sharing files isn't supported on this browser — use Merge & Save, then share the saved file manually.";
-            }
-        } catch (err) {
-            if (err && err.name === 'AbortError') { status.textContent = ''; return; } // person cancelled the share sheet
-            console.error(err);
-            status.textContent = 'Something went wrong while preparing the file.';
-        }
-    }
 
     // Previews a remote image (fetched on demand) using the same img-preview
     // overlay the Documents Merger uses for locally-picked photos.
@@ -3623,7 +3447,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     function cocPopulateTypeSelect() {
-        ['coc-type', 'coc-type-md'].forEach(id => {
+        ['coc-type'].forEach(id => {
             const sel = document.getElementById(id);
             if (!sel) return;
             Object.keys(COC_MACHINES).forEach(key => {
@@ -3820,13 +3644,8 @@ window.addEventListener('DOMContentLoaded', () => {
             const bytes = await cocBuildPdf(machine, values);
             const namePart = (values.equipment + '_' + (values.assetId || type)).replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '');
             const file = new File([bytes], `COC_${namePart || type}.pdf`, { type: 'application/pdf' });
-            if (suffix === '-md') {
-                mdAddGeneratedFile(file);
-                statusEl.textContent = 'Certificate added to your selection below.';
-            } else {
-                mergeAddFiles([file]);
-                statusEl.textContent = 'Certificate added to the merge list below.';
-            }
+            mergeAddFiles([file]);
+            statusEl.textContent = 'Certificate added to the merge queue.';
         } catch (err) {
             console.error(err);
             statusEl.textContent = 'Could not generate the certificate. Please try again.';
@@ -4108,9 +3927,9 @@ window.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', e => {
             // Never steal Space/ArrowUp while the person is actually typing —
             // this used to only check whether the Home tab was hidden, but
-            // overlays (Docs Merger, Machine Documents, Price Editor) sit on
-            // top of Home without hiding it, so typing a space into e.g. the
-            // merge filename field was wrongly triggering the game's jump.
+            // overlays (Machine Documents, Price Editor) sit on top of Home
+            // without hiding it, so typing a space into e.g. the merge
+            // filename field was wrongly triggering the game's jump.
             const active = document.activeElement;
             const activeTag = active && active.tagName;
             if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || (active && active.isContentEditable)) return;
