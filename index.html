@@ -2377,7 +2377,11 @@ document.addEventListener('visibilitychange', () => {
             const fileName = dotIdx > 0 ? fullName.slice(0, dotIdx) : fullName;
             const ext = dotIdx > 0 ? fullName.slice(dotIdx + 1).toLowerCase() : '';
             const encodedPath = [...parts, fullName].map(encodeURIComponent).join('/');
-            return { name: fileName, ext, folder: parts.join('/'), url: urlFor(encodedPath) };
+            // Accepts whichever date field the manifest happens to use for
+            // "last modified / added" — falls back to null if the manifest
+            // entry is just a bare path with no date info at all.
+            const modified = f.modified || f.mtime || f.date || f.updated_at || f.added || null;
+            return { name: fileName, ext, folder: parts.join('/'), url: urlFor(encodedPath), modified };
         });
     }
 
@@ -2436,7 +2440,10 @@ document.addEventListener('visibilitychange', () => {
             }
 
             const mapped = mdMapEntries(
-                data.files.map(p => ({ path: p })),
+                // Manifest entries may be plain path strings (today's format)
+                // or richer objects like {path, modified} if the manifest
+                // Action is updated to include a date — support both.
+                data.files.map(p => (typeof p === 'string' ? { path: p } : p)),
                 encodedPath => `https://raw.githubusercontent.com/${CONFIG.GH2.user}/${CONFIG.GH2.repo}/main/${encodedPath}`
             );
             db.machineDocsFiles = mapped;
@@ -3948,18 +3955,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Ranks matches by relevance instead of raw repo order: an exact name
     // match comes first, then names starting with the query, then names that
-    // just contain it somewhere — each tier alphabetical (natural sort, so
-    // "Manlift 2" sorts before "Manlift 10"). This is what makes the most
-    // likely document the top hit instead of whatever happened to be first
-    // in the file listing.
+    // just contain it somewhere. This is what makes the most likely document
+    // the top hit instead of whatever happened to be first in the file
+    // listing. Within a tier (and for "View All", across everything), the
+    // most recently modified/added file comes first — falling back to
+    // alphabetical (natural sort, so "Manlift 2" sorts before "Manlift 10")
+    // for files with no date info, or when two dates tie.
     function mdRankResults(files, q) {
         const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+        const dateOf = f => f.modified ? new Date(f.modified).getTime() : NaN;
+        const byRecency = (a, b) => {
+            const ad = dateOf(a), bd = dateOf(b);
+            const aValid = !isNaN(ad), bValid = !isNaN(bd);
+            if (aValid && bValid && ad !== bd) return bd - ad; // newest first
+            if (aValid !== bValid) return aValid ? -1 : 1; // dated files before undated ones
+            return collator.compare(a.name, b.name);
+        };
         return files.slice().sort((a, b) => {
             const an = a.name.toLowerCase(), bn = b.name.toLowerCase();
             const rank = n => (n === q ? 0 : n.startsWith(q) ? 1 : 2);
             const ra = rank(an), rb = rank(bn);
             if (ra !== rb) return ra - rb;
-            return collator.compare(a.name, b.name);
+            return byRecency(a, b);
         });
     }
 
