@@ -63,7 +63,7 @@ body.theme-steel   { --accent: #0d9488; --accent-2: #64748b; --accent-dim: rgba(
 body.theme-crimson { --accent: #dc2626; --accent-2: #f59e0b; --accent-dim: rgba(220, 38, 38, 0.10); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'Manrope', sans-serif; }
-h1, h2, h3, .logo, .group-title, .dino-score, button, .rate-item-name { font-family: 'Space Grotesk', sans-serif; }
+h1, h2, h3, .logo, .group-title, button, .rate-item-name { font-family: 'Space Grotesk', sans-serif; }
 .rate-value { font-family: var(--mono); }
 
 body {
@@ -201,18 +201,6 @@ nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--glass); b
 
 #notif-bar { margin: 16px 0; background: var(--accent-dim); border: 1px solid var(--border); padding: 13px 16px; border-radius: 14px; border-left: 4px solid var(--accent); }
 #notif-text { font-size: 12px; color: var(--ink); font-weight: 600; }
-
-/* ---------- Offline dino game ---------- */
-#dino-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; margin-top: 6px; box-shadow: var(--sh-md); }
-#dino-hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 2px; }
-#dino-hud .dino-score { font-family: 'Space Grotesk', monospace; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--text-dim); }
-#dino-hud .dino-score span { color: var(--accent); }
-#dino-canvas-wrap { position: relative; border-radius: 14px; overflow: hidden; background: #0f172a; border: 1px solid var(--border); }
-#dino-canvas { display: block; width: 100%; touch-action: manipulation; }
-#dino-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: rgba(15,23,42,0.82); text-align: center; backdrop-filter: blur(2px); }
-#dino-overlay h4 { font-size: 13px; font-weight: 700; color: #fff; }
-#dino-overlay p { font-size: 10px; color: #cbd5e1; font-weight: 600; }
-#dino-overlay.hidden { display: none; }
 
 /* ---------- Dropzone & merge ---------- */
 .md-dropzone { border: 2px dashed var(--border-strong); border-radius: 18px; padding: 32px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card-2); }
@@ -799,20 +787,9 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
 
-            <h3 class="group-title">HAVE FUN! PLAY THE GAME</h3>
-            <div id="dino-card">
-                <div id="dino-hud">
-                    <span class="dino-score">SCORE <span id="dino-score">0</span></span>
-                    <span class="dino-score">BEST <span id="dino-best">0</span></span>
-                </div>
-                <div id="dino-canvas-wrap">
-                    <canvas id="dino-canvas" width="600" height="180"></canvas>
-                    <div id="dino-overlay">
-                        <h4 id="dino-overlay-title">Tap or press Space to run</h4>
-                        <p>Jump the crates &middot; runs even with no internet</p>
-                    </div>
-                </div>
-            </div>
+            <h3 class="group-title">SEARCH RENTAL EQUIPMENT</h3>
+            <input type="text" id="home-rate-search" class="rate-search" placeholder="Search rental equipment..." oninput="searchHomeRates(this.value)" />
+            <div class="rate-cards" id="home-rate-results"></div>
         </div>
 
         <div id="tab-yards" class="view-section hidden"><h3 class="group-title">Operational Yards</h3><div id="yard-list"></div></div>
@@ -2303,14 +2280,74 @@ document.addEventListener('visibilitychange', () => {
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
+    // Matches query against an item name on token boundaries, so searching
+    // "60" finds "60 MTR" but not "160 KVA" or "(360KW)" — a plain substring
+    // check would wrongly match those since "60" sits inside "160"/"360".
+    function nameMatchesQuery(name, q) {
+        if (!q) return true;
+        const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp('\\b' + escaped, 'i').test(String(name || ''));
+    }
+
+    // Matches a row against the query. Normally only the item name (column 1)
+    // is checked. Crane rows are the exception: every row is named "Aramco
+    // Crane With Operator", so the only thing that actually distinguishes one
+    // row from another is the capacity column ("60 TON MOBILE CRANE" etc) —
+    // without also checking that column, searching "60" would return nothing
+    // for cranes. Other equipment categories keep matching on the name only.
+    function rowMatchesQuery(row, cat, q) {
+        if (nameMatchesQuery(row[0], q)) return true;
+        if (/crane/i.test(cat || '') && nameMatchesQuery(row[1], q)) return true;
+        return false;
+    }
+
     function filterRateCards(query) {
         const rows = db.rates[currentRateCat];
         if(!rows) return;
         const headers = rows[0];
         const dataRows = rows.slice(1);
         const q = query.trim().toLowerCase();
-        const filtered = q ? dataRows.filter(r => r.some(c => String(c).toLowerCase().includes(q))) : dataRows;
+        const filtered = q ? dataRows.filter(r => rowMatchesQuery(r, currentRateCat, q)) : dataRows;
         renderRateCards(filtered, headers);
+    }
+
+    // Single search box on the Home tab — searches equipment rates across
+    // every rate category at once, so the person doesn't need to open the
+    // Rental Rates tab and pick a category first. Only renders once the
+    // person actually types something.
+    function searchHomeRates(query) {
+        const list = document.getElementById('home-rate-results');
+        if (!list) return;
+        const q = query.trim().toLowerCase();
+        if (!q) { list.innerHTML = ''; return; }
+
+        const matches = [];
+        Object.keys(db.rates || {}).forEach(cat => {
+            const rows = db.rates[cat];
+            if (!rows || rows.length < 2) return;
+            const headers = rows[0];
+            rows.slice(1).forEach(r => {
+                if (rowMatchesQuery(r, cat, q)) {
+                    matches.push({ cat, headers, row: r });
+                }
+            });
+        });
+
+        if (!matches.length) { list.innerHTML = `<div class="rate-empty">No matching equipment found.</div>`; return; }
+
+        list.innerHTML = matches.slice(0, 40).map(m => {
+            const itemName = m.row[0] || '';
+            const isElectric = /electric/i.test(itemName);
+            let pills = '';
+            for (let i = 1; i < m.headers.length; i++) {
+                const label = m.headers[i] || '';
+                const val = (m.row[i] !== undefined && m.row[i] !== '') ? m.row[i] : '-';
+                pills += `<div class="rate-pill"><span class="rate-label">${label}</span><span class="rate-value">${val}</span></div>`;
+            }
+            const tag = isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '';
+            return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}" onclick="navigateToTab('rates'); viewRates('${m.cat.replace(/'/g, "\\'")}');"><h4 class="rate-item-name">${itemName}${tag}</h4><p style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:0.4px; margin:-8px 0 12px;">${m.cat}</p><div class="rate-pills">${pills}</div></div>`;
+        }).join('');
+        (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function viewDocs(path) {
@@ -4100,291 +4137,6 @@ window.addEventListener('DOMContentLoaded', () => {
             (typeof lucide!=='undefined'&&lucide.createIcons());
         }
     }
-
-
-
-    /* ===================== OFFLINE RUNNER GAME ===================== */
-    /* A small Chrome-dino-style runner, playable entirely offline — a manlift
-       jumps over site hazards (buildings, generators, forklifts, cranes)
-       with a tap/click or Space/Up. Score persists locally as "best". */
-    (function () {
-        const canvas = document.getElementById('dino-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const overlay = document.getElementById('dino-overlay');
-        const overlayTitle = document.getElementById('dino-overlay-title');
-        const scoreEl = document.getElementById('dino-score');
-        const bestEl = document.getElementById('dino-best');
-
-        const W = canvas.width, H = canvas.height;
-        const GROUND_Y = H - 30;
-        const GRAVITY = 0.9;
-        const JUMP_VELOCITY = -13;
-
-        let best = parseInt(localStorage.getItem('sudhirpro_dino_best') || '0', 10);
-        bestEl.textContent = best;
-
-        let state = 'idle'; // idle | running | over
-        let player, obstacles, speed, score, frame, spawnTimer;
-
-        function resetState() {
-            player = { x: 40, y: GROUND_Y - 24, w: 20, h: 24, vy: 0, jumping: false };
-            obstacles = [];
-            speed = 5;
-            score = 0;
-            frame = 0;
-            spawnTimer = 60;
-            scoreEl.textContent = '0';
-        }
-
-        /* ---- Construction-themed sprites, drawn with canvas primitives so the
-           game stays fully offline (no image assets to load). ---- */
-
-        function drawManlift(x, y, w, h) {
-            // Scissor-lift / boom-lift "player" icon: base + mast + platform basket.
-            const cx = x + w / 2;
-            ctx.save();
-            // base carriage + small wheels
-            ctx.fillStyle = '#2c2f36';
-            ctx.fillRect(x, y + h - 5, w, 5);
-            ctx.fillStyle = '#111';
-            ctx.beginPath(); ctx.arc(x + 3, y + h, 2.4, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(x + w - 3, y + h, 2.4, 0, Math.PI * 2); ctx.fill();
-            // scissor mast (zig-zag)
-            ctx.strokeStyle = '#fbc531';
-            ctx.lineWidth = 2.4;
-            ctx.beginPath();
-            const top = y + 6, bot = y + h - 6, mid = (top + bot) / 2;
-            ctx.moveTo(x + 3, bot); ctx.lineTo(x + w - 3, mid);
-            ctx.lineTo(x + 3, top);
-            ctx.moveTo(x + w - 3, bot); ctx.lineTo(x + 3, mid);
-            ctx.lineTo(x + w - 3, top);
-            ctx.stroke();
-            // platform basket
-            ctx.fillStyle = '#e5e7eb';
-            ctx.fillRect(x, y, w, 6);
-            ctx.strokeStyle = '#111';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(x, y, w, 6);
-            // guard rails
-            ctx.beginPath();
-            ctx.moveTo(x + 2, y); ctx.lineTo(x + 2, y - 4);
-            ctx.moveTo(cx, y); ctx.lineTo(cx, y - 4);
-            ctx.moveTo(x + w - 2, y); ctx.lineTo(x + w - 2, y - 4);
-            ctx.stroke();
-            // worker dot
-            ctx.fillStyle = '#fbc531';
-            ctx.beginPath(); ctx.arc(cx, y - 6, 2.2, 0, Math.PI * 2); ctx.fill();
-            ctx.restore();
-        }
-
-        function drawBuilding(x, y, w, h) {
-            ctx.fillStyle = '#525a66';
-            ctx.fillRect(x, y, w, h);
-            ctx.fillStyle = '#fbc531';
-            const step = 6;
-            for (let wy = y + 4; wy < y + h - 3; wy += step) {
-                for (let wx = x + 3; wx < x + w - 3; wx += step) {
-                    ctx.fillRect(wx, wy, 2.4, 2.4);
-                }
-            }
-        }
-
-        function drawGenerator(x, y, w, h) {
-            ctx.fillStyle = '#e0862a';
-            ctx.fillRect(x, y, w, h);
-            ctx.fillStyle = '#1c1f26';
-            ctx.fillRect(x + w * 0.15, y - 4, w * 0.7, 4);
-            // hazard stripes
-            ctx.fillStyle = 'rgba(0,0,0,0.35)';
-            for (let sx = x; sx < x + w; sx += 6) {
-                ctx.fillRect(sx, y + h - 5, 3, 5);
-            }
-            ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(x, y, w, h);
-        }
-
-        function drawForklift(x, y, w, h) {
-            const bodyY = y + h * 0.35;
-            const bodyH = h * 0.65;
-            // wheels
-            ctx.fillStyle = '#111';
-            ctx.beginPath(); ctx.arc(x + w * 0.28, y + h, 3, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(x + w * 0.78, y + h, 3, 0, Math.PI * 2); ctx.fill();
-            // forks
-            ctx.fillStyle = '#9aa0aa';
-            ctx.fillRect(x, y + h - 3, w * 0.35, 2.4);
-            ctx.fillRect(x, y + h - 7, w * 0.35, 2.4);
-            // body
-            ctx.fillStyle = '#fbc531';
-            ctx.fillRect(x + w * 0.25, bodyY, w * 0.7, bodyH - 2);
-            // mast (backrest)
-            ctx.fillStyle = '#2c2f36';
-            ctx.fillRect(x + w * 0.82, y, 3, h);
-            // cab outline
-            ctx.strokeStyle = '#1c1f26';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(x + w * 0.25, bodyY, w * 0.7, bodyH - 2);
-        }
-
-        function drawCrane(x, y, w, h) {
-            const cx = x + w * 0.3;
-            ctx.strokeStyle = '#fbc531';
-            ctx.lineWidth = 3;
-            // tower
-            ctx.beginPath();
-            ctx.moveTo(cx, y);
-            ctx.lineTo(cx, y + h);
-            ctx.stroke();
-            // base
-            ctx.fillStyle = '#2c2f36';
-            ctx.fillRect(cx - 4, y + h - 3, 8, 3);
-            // jib arm across the top
-            ctx.lineWidth = 2.4;
-            ctx.beginPath();
-            ctx.moveTo(x, y + 2);
-            ctx.lineTo(x + w, y + 2);
-            ctx.stroke();
-            // counter-jib + cab
-            ctx.fillStyle = '#1c1f26';
-            ctx.fillRect(cx - 2, y, 4, 5);
-            // hoist cable + hook
-            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(x + w - 4, y + 2);
-            ctx.lineTo(x + w - 4, y + h * 0.45);
-            ctx.stroke();
-            ctx.strokeStyle = '#fbc531';
-            ctx.beginPath();
-            ctx.arc(x + w - 4, y + h * 0.5, 2, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-
-        const OBSTACLE_TYPES = [
-            { type: 'building', draw: drawBuilding, minH: 26, maxH: 44, minW: 16, maxW: 22 },
-            { type: 'generator', draw: drawGenerator, minH: 14, maxH: 20, minW: 20, maxW: 28 },
-            { type: 'forklift', draw: drawForklift, minH: 16, maxH: 22, minW: 22, maxW: 30 },
-            { type: 'crane', draw: drawCrane, minH: 30, maxH: 46, minW: 16, maxW: 22 }
-        ];
-
-        function drawStatic() {
-            ctx.clearRect(0, 0, W, H);
-            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(0, GROUND_Y);
-            ctx.lineTo(W, GROUND_Y);
-            ctx.stroke();
-            drawManlift(player.x, player.y, player.w, player.h);
-        }
-
-        function jump() {
-            if (state === 'idle' || state === 'over') { startGame(); return; }
-            if (state === 'running' && !player.jumping) {
-                player.vy = JUMP_VELOCITY;
-                player.jumping = true;
-            }
-        }
-
-        function startGame() {
-            resetState();
-            state = 'running';
-            overlay.classList.add('hidden');
-            requestAnimationFrame(loop);
-        }
-
-        function gameOver() {
-            state = 'over';
-            overlay.classList.remove('hidden');
-            overlayTitle.textContent = `Crashed — score ${score}. Tap to retry`;
-            if (score > best) {
-                best = score;
-                try { localStorage.setItem('sudhirpro_dino_best', String(best)); } catch (e) {}
-                bestEl.textContent = best;
-            }
-        }
-
-        function spawnObstacle() {
-            const def = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
-            const h = def.minH + Math.random() * (def.maxH - def.minH);
-            const w = def.minW + Math.random() * (def.maxW - def.minW);
-            obstacles.push({ x: W + 10, y: GROUND_Y - h, w, h, draw: def.draw });
-        }
-
-        function update() {
-            frame++;
-            player.vy += GRAVITY;
-            player.y += player.vy;
-            if (player.y > GROUND_Y - player.h) {
-                player.y = GROUND_Y - player.h;
-                player.vy = 0;
-                player.jumping = false;
-            }
-
-            spawnTimer--;
-            if (spawnTimer <= 0) {
-                spawnObstacle();
-                spawnTimer = Math.max(28, 55 + Math.random() * 45 - Math.min(speed * 2, 40));
-            }
-            obstacles.forEach(o => { o.x -= speed; });
-            obstacles = obstacles.filter(o => o.x + o.w > -5);
-
-            for (const o of obstacles) {
-                if (player.x < o.x + o.w && player.x + player.w > o.x &&
-                    player.y < o.y + o.h && player.y + player.h > o.y) {
-                    gameOver();
-                    return;
-                }
-            }
-
-            if (frame % 6 === 0) score++;
-            scoreEl.textContent = score;
-            if (frame % 400 === 0) speed += 0.6;
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, W, H);
-            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(0, GROUND_Y);
-            ctx.lineTo(W, GROUND_Y);
-            ctx.stroke();
-
-            drawManlift(player.x, player.y, player.w, player.h);
-
-            obstacles.forEach(o => { o.draw(o.x, o.y, o.w, o.h); });
-        }
-
-        function loop() {
-            update();
-            draw();
-            if (state === 'running') requestAnimationFrame(loop);
-        }
-
-        resetState();
-        drawStatic();
-
-        canvas.addEventListener('click', jump);
-        document.getElementById('dino-canvas-wrap').addEventListener('click', jump);
-        document.addEventListener('keydown', e => {
-            // Never steal Space/ArrowUp while the person is actually typing —
-            // this used to only check whether the Home tab was hidden, but
-            // overlays (Machine Documents, Price Editor) sit on top of Home
-            // without hiding it, so typing a space into e.g. the merge
-            // filename field was wrongly triggering the game's jump.
-            const active = document.activeElement;
-            const activeTag = active && active.tagName;
-            if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || (active && active.isContentEditable)) return;
-            if (document.getElementById('tab-home') && document.getElementById('tab-home').classList.contains('hidden')) return;
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                e.preventDefault();
-                jump();
-            }
-        });
-    })();
 </script>
 <script>
 /* ===== Off Hire Note tab logic (from Offhire6.html) ===== */
