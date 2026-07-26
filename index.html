@@ -150,10 +150,13 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bot
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .dash-grid .dash-card:first-child { grid-column: span 2; flex-direction: row; align-items: center; }
 .dash-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.15s ease; box-shadow: var(--sh-md); }
-.dash-card:active { transform: scale(0.97); box-shadow: var(--sh-lg); }
+.dash-card:active { transform: scale(0.97) translateY(-1px); box-shadow: var(--sh-lg); border-color: var(--tint, var(--accent)); background: color-mix(in srgb, var(--tint, var(--accent)) 14%, var(--card)); }
+.dash-card:active .dash-icon-badge { transform: scale(1.08); }
+.dash-card:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); border-color: var(--tint, var(--accent)); background: color-mix(in srgb, var(--tint, var(--accent)) 8%, var(--card)); }
+.dash-card:hover .dash-icon-badge { transform: scale(1.08); }
 .dash-card i { color: var(--accent); }
 .dash-card span { font-size: 11.5px; font-weight: 700; line-height: 1.35; font-family: var(--mono); letter-spacing: 0.3px; text-transform: uppercase; color: var(--ink); }
-.dash-icon-badge { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--card-2); border: 1px solid var(--border); color: #fff; flex-shrink: 0; box-shadow: var(--sh-sm); }
+.dash-icon-badge { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--card-2); border: 1px solid var(--border); color: #fff; flex-shrink: 0; box-shadow: var(--sh-sm); transition: transform 0.15s ease; }
 .dash-icon-badge i { color: inherit; stroke-width: 2.2; }
 
 /* ---------- Theme picker ---------- */
@@ -179,13 +182,16 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bot
 .act-btn.primary { color: var(--accent); }
 
 /* ---------- Bottom nav ---------- */
-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-top: 1px solid var(--border); display: flex; padding: 8px 6px calc(var(--safe-bottom) + 8px); z-index: 2000; }
-.nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-faint); border: none; background: none; cursor: pointer; padding: 7px 2px 5px; border-radius: 12px; transition: 0.15s ease; position: relative; }
+nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-top: 1px solid var(--border); display: flex; padding: 8px 6px calc(var(--safe-bottom) + 8px); z-index: 2000; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+nav::-webkit-scrollbar { display: none; }
+.nav-tab { flex: 1 0 auto; min-width: 58px; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-faint); border: none; background: none; cursor: pointer; padding: 7px 2px 5px; border-radius: 12px; transition: 0.15s ease; position: relative; }
 .nav-tab::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 0; height: 2.5px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 2px; transition: width 0.2s ease; }
 .nav-tab.active { color: var(--ink); }
 .nav-tab.active::after { width: 22px; }
 .nav-tab.active i { color: var(--accent); }
 .nav-tab span { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; font-family: var(--mono); }
+.nav-tab:hover { background: var(--accent-dim); color: var(--ink); transform: translateY(-3px); box-shadow: var(--sh-md); }
+.nav-tab:hover i { color: var(--accent); }
 
 /* ---------- Overlays ---------- */
 .overlay-view { position: fixed; inset: 0; background: var(--bg); z-index: 2200; display: flex; flex-direction: column; }
@@ -358,7 +364,7 @@ body.merge-drag-over-all::after {
     body { align-items: stretch; justify-content: flex-start; }
     #app-shell { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: auto 1fr; grid-template-areas: "header header" "nav main"; max-width: none; width: 100%; height: 100vh; }
     header { grid-area: header; }
-    nav { grid-area: nav; position: static; inset: auto; width: auto; max-width: none; margin: 0; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 4px; padding: 18px 12px; border-radius: 0; border: none; border-right: 1px solid var(--border); background: var(--glass); }
+    nav { grid-area: nav; position: static; inset: auto; width: auto; max-width: none; margin: 0; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 4px; padding: 18px 12px; border-radius: 0; border: none; border-right: 1px solid var(--border); background: var(--glass); overflow: visible; }
     .nav-tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 11px 14px; border-radius: 12px; }
     .nav-tab span { font-size: 12px; letter-spacing: 0.3px; }
     .nav-tab.active { background: var(--accent-dim); }
@@ -761,13 +767,13 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
         <div id="tab-home" class="view-section">
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
-                <div class="dash-card" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#fbc531; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
-                <div class="dash-card" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:#22d3ee; color:#fff;"><i data-lucide="file-text"></i></div><span>TECH<br>SPECS</span></div>
-                <div class="dash-card" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#f472b6; color:#fff;"><i data-lucide="camera"></i></div><span>GALLERY</span></div>
-                <div class="dash-card" onclick="navigateToTab('yards')"><div class="dash-icon-badge" style="background:#34d399; color:#fff;"><i data-lucide="map-pin"></i></div><span>YARDS</span></div>
-                <div class="dash-card" onclick="navigateToTab('team')"><div class="dash-icon-badge" style="background:#a78bfa; color:#fff;"><i data-lucide="users"></i></div><span>TEAM</span></div>
-                <div class="dash-card" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#fb7185; color:#fff;"><i data-lucide="hard-drive"></i></div><span>MACHINE<br>DOCUMENTS</span></div>
-                <div class="dash-card" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:#818cf8; color:#fff;"><i data-lucide="file-minus-2"></i></div><span>OFF<br>HIRE</span></div>
+                <div class="dash-card" style="--tint:#fbc531" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#fbc531; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
+                <div class="dash-card" style="--tint:#22d3ee" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:#22d3ee; color:#fff;"><i data-lucide="file-text"></i></div><span>TECH<br>SPECS</span></div>
+                <div class="dash-card" style="--tint:#f472b6" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#f472b6; color:#fff;"><i data-lucide="camera"></i></div><span>GALLERY</span></div>
+                <div class="dash-card" style="--tint:#34d399" onclick="navigateToTab('yards')"><div class="dash-icon-badge" style="background:#34d399; color:#fff;"><i data-lucide="map-pin"></i></div><span>YARDS</span></div>
+                <div class="dash-card" style="--tint:#a78bfa" onclick="navigateToTab('team')"><div class="dash-icon-badge" style="background:#a78bfa; color:#fff;"><i data-lucide="users"></i></div><span>TEAM</span></div>
+                <div class="dash-card" style="--tint:#fb7185" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#fb7185; color:#fff;"><i data-lucide="hard-drive"></i></div><span>MACHINE<br>DOCUMENTS</span></div>
+                <div class="dash-card" style="--tint:#818cf8" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:#818cf8; color:#fff;"><i data-lucide="file-minus-2"></i></div><span>OFF<br>HIRE</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
@@ -1877,7 +1883,7 @@ document.addEventListener('visibilitychange', () => {
         const fg = '#fff';
         const escapedClick = String(clickValue).replace(/'/g, "\\'");
         const escapedLabel = String(label).replace(/</g, '&lt;');
-        return `<div class="dash-card" onclick="${onclickFnName}('${escapedClick}')"><div class="dash-icon-badge" style="background:${bg}; color:${fg};"><i data-lucide="${v.icon}"></i></div><span>${escapedLabel}</span></div>`;
+        return `<div class="dash-card" style="--tint:${bg}" onclick="${onclickFnName}('${escapedClick}')"><div class="dash-icon-badge" style="background:${bg}; color:${fg};"><i data-lucide="${v.icon}"></i></div><span>${escapedLabel}</span></div>`;
     }
 
     // Session persistence: without this, any time the mobile browser reloads a
