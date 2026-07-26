@@ -145,13 +145,6 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bot
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---------- Hero banner ---------- */
-.hero-banner { position: relative; width: 100%; height: 156px; border-radius: 18px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--sh-lg); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 92%, white), color-mix(in srgb, var(--accent-2) 88%, white)); display: flex; align-items: flex-end; }
-.hero-banner::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px); background-size: 22px 22px; }
-.hero-decor { position: absolute; right: -16px; bottom: -20px; color: rgba(255,255,255,0.22); pointer-events: none; }
-.hero-decor svg { width: 130px; height: 130px; }
-.hero-banner-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.28) 100%); }
-.hero-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 2.4px; color: rgba(255,255,255,0.85); text-transform: uppercase; margin-bottom: 6px; font-family: var(--mono); }
-.hero-banner-overlay h2 { color: #fff; font-size: 21px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.3px; text-shadow: 0 1px 8px rgba(0,0,0,0.15); }
 
 /* ---------- Dashboard bento ---------- */
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -372,7 +365,6 @@ body.merge-drag-over-all::after {
     .nav-tab.active::after { display: none; }
     main { padding: 28px 38px 48px; max-width: 1180px; margin: 0 auto; width: 100%; }
     .view-section { padding: 0; }
-    .hero-banner { height: 210px; }
     .dash-grid { grid-template-columns: repeat(4, 1fr); }
     .dash-grid .dash-card:first-child { grid-column: span 4; }
     .rate-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -767,13 +759,6 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
     
     <main id="main-content">
         <div id="tab-home" class="view-section">
-            <div class="hero-banner">
-                <div class="hero-decor"><i data-lucide="construction" size="130"></i></div>
-                <div class="hero-banner-overlay">
-                    <span class="hero-eyebrow">SUDHIR PRO FLEET</span>
-                    <h2>Equipment, on demand.</h2>
-                </div>
-            </div>
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
                 <div class="dash-card" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#fbc531; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
@@ -2280,13 +2265,32 @@ document.addEventListener('visibilitychange', () => {
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
-    // Matches query against an item name on token boundaries, so searching
-    // "60" finds "60 MTR" but not "160 KVA" or "(360KW)" — a plain substring
-    // check would wrongly match those since "60" sits inside "160"/"360".
+    // Normalizes a string for searching: lowercases it, splits letter/digit
+    // runs that are jammed together (e.g. "60KVA" -> "60 KVA") so number+unit
+    // combos are treated as separate words regardless of how they were typed
+    // in the sheet, then collapses every non-alphanumeric character (spaces,
+    // parentheses, hyphens, etc) down to single spaces.
+    function normalizeForSearch(str) {
+        return String(str || '')
+            .toLowerCase()
+            .replace(/([0-9])([a-z])/g, '$1 $2')
+            .replace(/([a-z])([0-9])/g, '$1 $2')
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    }
+
+    // Matches query against an item name word-by-word: every word typed in
+    // the search box must appear as a WHOLE word somewhere in the name (in
+    // any order, regardless of spacing/punctuation differences). This is
+    // what stops "60" from matching "160" or "360" — and, unlike a plain
+    // substring/exact-phrase check, still finds "60 KVA" whether the sheet
+    // has it as "60 KVA", "60KVA" or "60-KVA".
     function nameMatchesQuery(name, q) {
         if (!q) return true;
-        const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return new RegExp('\\b' + escaped, 'i').test(String(name || ''));
+        const normName = normalizeForSearch(name);
+        const terms = normalizeForSearch(q).split(' ').filter(Boolean);
+        if (!terms.length) return true;
+        return terms.every(t => new RegExp('\\b' + t + '\\b').test(normName));
     }
 
     // Matches a row against the query. Normally only the item name (column 1)
