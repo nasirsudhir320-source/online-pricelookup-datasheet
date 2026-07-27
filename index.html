@@ -6,11 +6,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>SUDHIR PRO MOBILE</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
     <style>
 /* ============================================================
@@ -1139,7 +1138,8 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
     <div class="overlay-header">
         <button class="act-btn" onclick="goBack()"><i data-lucide="x"></i></button>
         <div id="pdf-title" style="flex:1; font-size:11px; text-align:center;">Viewer</div>
-        <button class="act-btn primary" onclick="sharePdf()"><i data-lucide="share-2"></i></button>
+        <button class="act-btn primary" onclick="openPdfInNewTab()" title="Open in new tab" style="margin-left:8px;"><i data-lucide="external-link"></i></button>
+        <button class="act-btn primary" onclick="sharePdf()" style="margin-left:8px;"><i data-lucide="share-2"></i></button>
         <button class="act-btn primary" onclick="downloadPdf()" style="margin-left:8px;"><i data-lucide="download"></i></button>
     </div>
     <div class="scroll-area" id="pdf-render-box"></div>
@@ -1719,7 +1719,12 @@ saveBtn.addEventListener('click', async () => {
 
 if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
 window.__priceEditorRefresh = init;
-init();
+// NOTE: deliberately not calling init() here. This IIFE previously fetched
+// the whole Price Editor's rate data from a Google Apps Script endpoint
+// (which can take several seconds, especially on a cold start) on every
+// single app load — even though most visits never open "Edit Rates" at
+// all. It's now loaded on demand instead, from openPriceEditor() below,
+// the first time someone actually opens that panel.
 
 // Auto-recovery: if loading the sheet list (or the current tab) failed —
 // commonly because the device had no internet at the time — silently retry
@@ -1753,9 +1758,9 @@ document.addEventListener('visibilitychange', () => {
     setInterval(() => { console.log("System Heartbeat"); }, 30000);
 
     if (typeof pdfjsLib !== 'undefined') {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        ensurePdfWorkerConfigured();
     } else {
-        console.warn('pdf.js failed to load from CDN — PDF preview features will be disabled, but the rest of the app will still work.');
+        console.warn('pdf.js failed to load from CDN — will retry on demand when a PDF is opened.');
     }
 
     const CONFIG = {
@@ -1783,6 +1788,7 @@ document.addEventListener('visibilitychange', () => {
 
     let db = { rates: {}, docs: {}, docsRoot: { folders: {}, files: [] }, machineDocsFiles: [], notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
+    let currentPdfObjectUrl = null;
     let isDataReady = false;
     let currentRateCat = null;
 
@@ -1945,6 +1951,7 @@ document.addEventListener('visibilitychange', () => {
         // Always clear the top-most overlays first — otherwise going back from a
         // PDF/image preview leaves them visible on top of the view underneath.
         document.getElementById('pdf-overlay').classList.add('hidden');
+        if (currentPdfObjectUrl) { try { URL.revokeObjectURL(currentPdfObjectUrl); } catch(e){} currentPdfObjectUrl = null; }
         document.getElementById('img-preview-overlay').classList.add('hidden');
         document.getElementById('photo-lightbox').classList.add('hidden');
         if (state.type === 'tab') {
@@ -2392,6 +2399,47 @@ document.addEventListener('visibilitychange', () => {
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
+    // pdf.js is loaded via a <script> tag in <head>. If that request failed
+    // (flaky connection, a blocked CDN, an ad/content blocker) the whole
+    // library — and every PDF preview — silently breaks while everything
+    // else in the app (including image previews, which don't need it)
+    // keeps working fine. This re-attempts the load on demand instead of
+    // leaving the person stuck with "Error loading file." forever.
+    //
+    // pdf.js also needs a separate background *worker* script at runtime.
+    // Some browsers (Safari in particular) refuse to start a worker whose
+    // script lives on a different origin (the CDN), even though the main
+    // library itself loaded fine — so PDFs fail silently while everything
+    // else in the app keeps working. Fetching the worker's source and
+    // running it from a same-origin blob: URL sidesteps that restriction.
+    let pdfjsLoadPromise = null;
+    const PDFJS_VERSION = '3.4.120';
+    async function ensurePdfWorkerConfigured() {
+        if (pdfjsLib.GlobalWorkerOptions.workerSrc) return;
+        const workerUrl = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`;
+        try {
+            const res = await fetch(workerUrl);
+            const code = await res.text();
+            pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
+        } catch (e) {
+            // Last resort: point straight at the CDN. Works on most browsers;
+            // only Safari-style cross-origin-worker blocks would still fail.
+            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+        }
+    }
+    function ensurePdfJsLoaded() {
+        if (typeof pdfjsLib !== 'undefined') return ensurePdfWorkerConfigured();
+        if (pdfjsLoadPromise) return pdfjsLoadPromise;
+        pdfjsLoadPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.min.js`;
+            script.onload = () => ensurePdfWorkerConfigured().then(resolve);
+            script.onerror = () => reject(new Error('The PDF viewer library failed to load — check your internet connection and try again.'));
+            document.head.appendChild(script);
+        });
+        return pdfjsLoadPromise;
+    }
+
     async function openPdf(url, name) {
         window.history.pushState({ type: 'pdf' }, '');
         document.getElementById('pdf-overlay').classList.remove('hidden');
@@ -2399,20 +2447,32 @@ document.addEventListener('visibilitychange', () => {
         const box = document.getElementById('pdf-render-box');
         box.innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING PDF...</div>`;
         try {
+            await ensurePdfJsLoaded();
             const res = await fetch(url);
+            if (!res.ok) throw new Error(`Couldn't fetch this file (server said ${res.status}).`);
             const blob = await res.blob();
             await renderPdfBlobIntoOverlay(blob, name, url);
-        } catch(e) { box.innerHTML = "Error loading file."; }
+        } catch(e) { box.innerHTML = (e && e.message) ? e.message : "Error loading file."; }
     }
 
     // Renders an already-in-hand PDF Blob (e.g. a local file picked for the
     // merger) straight into the pdf-overlay, without needing a network fetch.
+    // Uses pdf.js to draw each page to a <canvas> — this is more reliable
+    // across browsers than embedding the PDF via <iframe src="blob:...">,
+    // since the latter depends on each browser's own PDF-in-iframe support,
+    // which is inconsistent (some valid PDFs render blank on Safari/iOS in
+    // particular). Rendering to canvas ourselves sidesteps that entirely.
     async function renderPdfBlobIntoOverlay(blob, name, sourceUrl) {
         const box = document.getElementById('pdf-render-box');
         try {
+            await ensurePdfJsLoaded();
             currentPdf = { name, url: sourceUrl || null, blob };
+            if (currentPdfObjectUrl) { try { URL.revokeObjectURL(currentPdfObjectUrl); } catch(e){} }
+            currentPdfObjectUrl = URL.createObjectURL(blob);
             const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
             box.innerHTML = "";
+            box.style.overflow = "auto";
+            box.style.padding = "16px";
             for(let i=1; i<=pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const canvas = document.createElement('canvas');
@@ -2422,10 +2482,22 @@ document.addEventListener('visibilitychange', () => {
                 await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
                 box.appendChild(canvas);
             }
-        } catch(e) { box.innerHTML = "Error loading file."; }
+        } catch(e) { box.innerHTML = (e && e.message) ? e.message : "Error loading file."; }
     }
 
     function downloadPdf() { if(currentPdf.blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(currentPdf.blob); a.download = `${currentPdf.name}.pdf`; a.click(); } }
+
+    // Opens the current PDF as a normal top-level browser tab instead of
+    // inside our embedded iframe viewer. Some valid PDFs — usually due to
+    // browser-specific quirks (Safari/iOS in particular) — render blank when
+    // embedded via <iframe src="blob:...">, even though the exact same file
+    // opens fine as a direct/top-level PDF, which is the same code path a
+    // normal https://.../file.pdf link would use. This is the guaranteed
+    // fallback for whenever the in-app viewer doesn't cooperate.
+    function openPdfInNewTab() {
+        if (!currentPdfObjectUrl) { if (currentPdf.blob) currentPdfObjectUrl = URL.createObjectURL(currentPdf.blob); }
+        if (currentPdfObjectUrl) window.open(currentPdfObjectUrl, '_blank');
+    }
     async function sharePdf() {
         if(!currentPdf.blob) return;
         const file = new File([currentPdf.blob], `${currentPdf.name}.pdf`, { type: 'application/pdf' });
@@ -2469,6 +2541,7 @@ document.addEventListener('visibilitychange', () => {
         applyTabStyles(tab);
     }
 
+    let companyListPopulated = false;
     function applyTabStyles(tab) {
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
@@ -2479,6 +2552,10 @@ document.addEventListener('visibilitychange', () => {
         if (tab === 'photos') {
             if (!photoDataLoaded && !photoDataLoading) loadPhotoData();
             else renderPhotoFolder('images');
+        }
+        if (tab === 'offhire' && !companyListPopulated && typeof populateCompanyList === 'function') {
+            companyListPopulated = true;
+            populateCompanyList();
         }
     }
 
@@ -3033,10 +3110,15 @@ document.addEventListener('visibilitychange', () => {
 
     function goBack() { window.history.back(); }
 
+    let priceEditorLoaded = false;
     function openPriceEditor() {
         window.history.pushState({ type: 'priceEditor' }, '');
         document.getElementById('detail-layer').classList.add('hidden');
         document.getElementById('price-editor-overlay').classList.remove('hidden');
+        if (!priceEditorLoaded) {
+            priceEditorLoaded = true;
+            reloadPriceEditor();
+        }
     }
     function reloadPriceEditor() {
         if (typeof window.__priceEditorRefresh === 'function') window.__priceEditorRefresh();
@@ -3537,26 +3619,85 @@ document.addEventListener('visibilitychange', () => {
         return rawName;
     }
 
+    // Renders every page of a PDF to a PNG image and adds each as a page of
+    // mergedPdf. This is the fallback for PDFs that pdf-lib's parser rejects
+    // outright — most often portal-generated documents (insurance certs,
+    // compliance docs) that use a permissions/encryption scheme pdf-lib
+    // doesn't support, even though they open with no password in every
+    // normal PDF viewer. pdf.js is far more permissive about what it can
+    // read, so we use it purely as a "print to image" step here.
+    async function mergeRasterizePdfIntoMergedPdf(mergedPdf, bytes) {
+        const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+        for (let p = 1; p <= pdf.numPages; p++) {
+            const page = await pdf.getPage(p);
+            const viewport = page.getViewport({ scale: 2 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+            const pngBytes = await new Promise((resolve, reject) => {
+                canvas.toBlob(blob => {
+                    if (!blob) { reject(new Error('canvas-empty')); return; }
+                    blob.arrayBuffer().then(buf => resolve(new Uint8Array(buf)));
+                }, 'image/png');
+            });
+            const img = await mergedPdf.embedPng(pngBytes);
+            const pdfPage = mergedPdf.addPage([viewport.width, viewport.height]);
+            pdfPage.drawImage(img, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+        }
+    }
+
     // Builds the merged PDF bytes from the current queue, in queue order.
     // Works for local Files, generated COC Files, and remote search-result
     // items (fetched on demand via mergeFetchItemBlob).
     async function mergeBuildMergedPdfBytes(onProgress) {
+        if (typeof PDFLib === 'undefined') {
+            throw new Error('The PDF engine failed to load (usually a blocked/offline network). Refresh the page and try again.');
+        }
         const { PDFDocument } = PDFLib;
         const mergedPdf = await PDFDocument.create();
         for (let i = 0; i < mergeItems.length; i++) {
             const item = mergeItems[i];
             if (onProgress) onProgress(i, mergeItems.length, item.name);
-            const blob = await mergeFetchItemBlob(item);
-            if (item.type === 'pdf') {
-                const bytes = new Uint8Array(await blob.arrayBuffer());
-                const srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-                const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
-                pages.forEach(p => mergedPdf.addPage(p));
-            } else {
-                const { bytes: pngBytes, width, height } = await mergeImageToPngBytes(blob);
-                const img = await mergedPdf.embedPng(pngBytes);
-                const page = mergedPdf.addPage([width, height]);
-                page.drawImage(img, { x: 0, y: 0, width, height });
+            try {
+                const blob = await mergeFetchItemBlob(item);
+                if (item.type === 'pdf') {
+                    const bytes = new Uint8Array(await blob.arrayBuffer());
+                    try {
+                        const srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+                        const pages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
+                        pages.forEach(p => mergedPdf.addPage(p));
+                    } catch (pdfLibErr) {
+                        // pdf-lib couldn't parse it directly — fall back to
+                        // rendering each page as an image via pdf.js, which
+                        // handles a much wider range of real-world PDFs.
+                        // pdf.js may not have loaded yet (or its initial CDN
+                        // request may have failed), so make sure it's actually
+                        // available before giving up.
+                        try { await ensurePdfJsLoaded(); } catch (loadErr) { throw pdfLibErr; }
+                        await mergeRasterizePdfIntoMergedPdf(mergedPdf, bytes);
+                    }
+                } else {
+                    const { bytes: pngBytes, width, height } = await mergeImageToPngBytes(blob);
+                    const img = await mergedPdf.embedPng(pngBytes);
+                    const page = mergedPdf.addPage([width, height]);
+                    page.drawImage(img, { x: 0, y: 0, width, height });
+                }
+            } catch (itemErr) {
+                // Surface exactly which file failed and the likely reason, instead
+                // of a generic "something went wrong" that hides where to look.
+                // The two most common real-world causes: (1) a photo saved in
+                // HEIC/HEIF — the default iPhone camera format — which most
+                // browsers other than Safari cannot decode via <img>, and
+                // (2) a PDF that even pdf.js's more permissive parser can't
+                // read — genuinely corrupted, or locked with a real open-password.
+                let reason = itemErr && itemErr.message ? itemErr.message : 'unknown error';
+                if (item.type !== 'pdf' && /image-load-failed/i.test(reason)) {
+                    reason = 'this browser can\'t open it — likely a HEIC/HEIF photo. Convert it to JPG/PNG first, or use Safari on iPhone.';
+                } else if (item.type === 'pdf') {
+                    reason = 'this PDF could not be read even with the fallback renderer — it may be locked with a real open-password, or the file is corrupted.';
+                }
+                throw new Error(`"${item.name}" failed to merge: ${reason}`);
             }
         }
         return await mergedPdf.save();
@@ -3615,7 +3756,7 @@ document.addEventListener('visibilitychange', () => {
                 status.textContent = `Done — downloaded as ${rawName}.`;
             }
         } catch (err) {
-            status.textContent = 'Something went wrong while merging. Please try again.';
+            status.textContent = (err && err.message) ? err.message : 'Something went wrong while merging. Please try again.';
             console.error(err);
         } finally {
             btn.disabled = mergeItems.length === 0;
@@ -3820,7 +3961,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 ? `<div class="md-result-icon"><i data-lucide="file-text" size="18"></i><span class="md-ext-label">PDF</span></div>`
                 : `<div class="md-result-icon"><img src="${f.url}" loading="lazy" alt="" /></div>`;
             return `<div class="item-card md-result-row">
-                <div style="flex:1; display:flex; align-items:center; gap:12px; min-width:0; cursor:pointer;" onclick="mdOpenPreview(${idx})">
+                <div style="flex:1; display:flex; align-items:center; gap:12px; min-width:0; cursor:pointer;" onclick="mdOpenPreviewByUrl(this)" data-md-url="${mergeEscape(f.url)}">
                     ${icon}
                     <div class="item-info" style="min-width:0;">
                         <h4 style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${f.name}</h4>
@@ -3858,6 +3999,18 @@ window.addEventListener('DOMContentLoaded', () => {
         else mergeAddResultItem(f);
     }
 
+    // Looks the file up by its (stable) URL rather than its position in the
+    // results array — the array gets fully replaced on every keystroke as
+    // the search re-runs live, so a position captured at render time can
+    // point at the wrong item (or nothing) by the time it's tapped.
+    function mdOpenPreviewByUrl(el) {
+        const url = el.getAttribute('data-md-url');
+        const f = mdCurrentResults.find(r => r.url === url) || mergeItems.find(i => i.url === url);
+        if (!f) { alert("Couldn't open that file — please search again and try tapping it once more."); return; }
+        if (f.ext === 'pdf') openPdf(f.url, f.name);
+        else mdPreviewImage(f.url, f.name);
+    }
+
     function mdOpenPreview(idx) {
         const f = mdCurrentResults[idx];
         if (!f) return;
@@ -3867,25 +4020,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Previews a remote image (fetched on demand) using the same img-preview
     // overlay used for locally-picked / queued photos.
-    async function mdPreviewImage(url, name) {
-        window.history.pushState({ type: 'imgpreview' }, '');
-        document.getElementById('img-preview-overlay').classList.remove('hidden');
-        document.getElementById('img-preview-title').textContent = name;
-        const box = document.getElementById('img-preview-box');
-        box.innerHTML = `<div style="padding:100px 0; text-align:center; color:var(--accent); font-weight:800;">LOADING...</div>`;
-        try {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            currentPreviewImageUrl = URL.createObjectURL(blob);
-            box.innerHTML = `<img src="${currentPreviewImageUrl}" alt="${mergeEscape(name)}" />`;
-        } catch (e) {
-            box.innerHTML = 'Error loading image.';
-        }
-    }
-
-
-    // Previews a remote image (fetched on demand) using the same img-preview
-    // overlay the Documents Merger uses for locally-picked photos.
     async function mdPreviewImage(url, name) {
         window.history.pushState({ type: 'imgpreview' }, '');
         document.getElementById('img-preview-overlay').classList.remove('hidden');
@@ -4164,7 +4298,11 @@ function populateCompanyList(){
   });
   dl.appendChild(frag);
 }
-populateCompanyList();
+// NOTE: deliberately not calling populateCompanyList() here anymore — it
+// builds thousands of <option> elements from a ~116KB customer list, which
+// used to happen unconditionally on every page load even though most visits
+// never touch the Off Hire Note tab at all. It's now triggered lazily from
+// applyTabStyles() the first time that tab is actually opened.
 
 let itemCount = 0;
 
