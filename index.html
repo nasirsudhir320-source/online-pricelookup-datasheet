@@ -21,25 +21,25 @@
 
 :root {
     /* Refined, muted premium palette */
-    --accent: #4f46e5;
-    --accent-2: #0ea5e9;
-    --accent-dim: rgba(79, 70, 229, 0.08);
+    --accent: #4338ca;
+    --accent-2: #0284c7;
+    --accent-dim: rgba(67, 56, 202, 0.13);
 
-    --bg: #f6f7f9;
+    --bg: #eceef2;
     --card: #ffffff;
-    --card-2: #f4f5f8;
+    --card-2: #eef0f4;
 
     --ink: #0f172a;
-    --border: rgba(15, 23, 42, 0.07);
-    --border-strong: rgba(15, 23, 42, 0.12);
-    --text-dim: #64748b;
-    --text-faint: #94a3b8;
+    --border: rgba(15, 23, 42, 0.14);
+    --border-strong: rgba(15, 23, 42, 0.24);
+    --text-dim: #435069;
+    --text-faint: #64748b;
 
     --success: #16a34a;
     --wa: #16a34a;
 
-    --glass: rgba(255, 255, 255, 0.78);
-    --shadow-hard: rgba(15, 23, 42, 0.10);
+    --glass: rgba(255, 255, 255, 0.85);
+    --shadow-hard: rgba(15, 23, 42, 0.18);
 
     --mono: 'JetBrains Mono', 'Space Grotesk', monospace;
     --radius: 14px;
@@ -47,10 +47,10 @@
     --safe-top: env(safe-area-inset-top);
 
     /* soft, layered premium shadow tokens */
-    --sh-sm: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.05);
-    --sh-md: 0 4px 12px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
-    --sh-lg: 0 12px 28px rgba(15,23,42,0.08), 0 4px 10px rgba(15,23,42,0.05);
-    --sh-xl: 0 24px 56px rgba(15,23,42,0.12), 0 8px 20px rgba(15,23,42,0.06);
+    --sh-sm: 0 1px 2px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.10);
+    --sh-md: 0 4px 12px rgba(15,23,42,0.12), 0 2px 4px rgba(15,23,42,0.08);
+    --sh-lg: 0 12px 28px rgba(15,23,42,0.16), 0 4px 10px rgba(15,23,42,0.10);
+    --sh-xl: 0 24px 56px rgba(15,23,42,0.22), 0 8px 20px rgba(15,23,42,0.12);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'Manrope', sans-serif; }
@@ -64,10 +64,10 @@ body {
     display: flex; flex-direction: column;
     /* Subtle, calm backdrop — barely-there grid + faint accent glow */
     background-image:
-        linear-gradient(rgba(15,23,42,0.018) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15,23,42,0.018) 1px, transparent 1px),
-        radial-gradient(circle at 10% -5%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 45%),
-        radial-gradient(circle at 105% 12%, color-mix(in srgb, var(--accent-2) 7%, transparent), transparent 40%);
+        linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px),
+        radial-gradient(circle at 10% -5%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
+        radial-gradient(circle at 105% 12%, color-mix(in srgb, var(--accent-2) 9%, transparent), transparent 40%);
     background-size: 40px 40px, 40px 40px, auto, auto;
     transition: background 0.3s ease;
     -webkit-font-smoothing: antialiased;
@@ -796,11 +796,11 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
         <nav>
             <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>Back</span></button>
             <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><div class="nav-icon-badge" style="background:#64748b;"><i data-lucide="home" size="15"></i></div><span>Home</span></button>
-            <button class="nav-tab" id="btn-rates" onclick="navigateToTab('rates')"><div class="nav-icon-badge" style="background:#f59e0b;"><i data-lucide="tag" size="15"></i></div><span>Rental Rates</span></button>
-            <button class="nav-tab" id="btn-docs" onclick="navigateToTab('docs')"><div class="nav-icon-badge" style="background:#22d3ee;"><i data-lucide="file-text" size="15"></i></div><span>Machine Datasheets</span></button>
-            <button class="nav-tab" id="btn-photos" onclick="navigateToTab('photos')"><div class="nav-icon-badge" style="background:#f472b6;"><i data-lucide="image" size="15"></i></div><span>Machine Photos</span></button>
-            <button class="nav-tab" id="btn-machine-docs" onclick="navigateToTab('machine-docs')"><div class="nav-icon-badge" style="background:#fb7185;"><i data-lucide="hard-drive" size="15"></i></div><span>Machine Documents</span></button>
-            <button class="nav-tab" id="btn-offhire" onclick="navigateToTab('offhire')"><div class="nav-icon-badge" style="background:#818cf8;"><i data-lucide="file-minus-2" size="15"></i></div><span>Offhire Note</span></button>
+            <button class="nav-tab" id="btn-rates" onclick="navigateToTab('rates')"><div class="nav-icon-badge" style="background:#d97706;"><i data-lucide="tag" size="15"></i></div><span>Rental Rates</span></button>
+            <button class="nav-tab" id="btn-docs" onclick="navigateToTab('docs')"><div class="nav-icon-badge" style="background:#0891b2;"><i data-lucide="file-text" size="15"></i></div><span>Machine Datasheets</span></button>
+            <button class="nav-tab" id="btn-photos" onclick="navigateToTab('photos')"><div class="nav-icon-badge" style="background:#db2777;"><i data-lucide="image" size="15"></i></div><span>Machine Photos</span></button>
+            <button class="nav-tab" id="btn-machine-docs" onclick="navigateToTab('machine-docs')"><div class="nav-icon-badge" style="background:#e11d48;"><i data-lucide="hard-drive" size="15"></i></div><span>Machine Documents</span></button>
+            <button class="nav-tab" id="btn-offhire" onclick="navigateToTab('offhire')"><div class="nav-icon-badge" style="background:#4338ca;"><i data-lucide="file-minus-2" size="15"></i></div><span>Offhire Note</span></button>
             <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><div class="nav-icon-badge" style="background:#34d399;"><i data-lucide="map" size="15"></i></div><span>Yards Location</span></button>
             <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><div class="nav-icon-badge" style="background:#a78bfa;"><i data-lucide="users" size="15"></i></div><span>Team Contacts</span></button>
         </nav>
@@ -828,11 +828,11 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
         <div id="tab-home" class="view-section">
             <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
-                <div class="dash-card" style="--tint:#f59e0b" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#f59e0b; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
-                <div class="dash-card" style="--tint:#22d3ee" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:#22d3ee; color:#fff;"><i data-lucide="file-text"></i></div><span>MACHINE<br>DATASHEETS</span></div>
-                <div class="dash-card" style="--tint:#f472b6" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#f472b6; color:#fff;"><i data-lucide="camera"></i></div><span>MACHINE<br>PHOTOS</span></div>
-                <div class="dash-card" style="--tint:#fb7185" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#fb7185; color:#fff;"><i data-lucide="hard-drive"></i></div><span>MACHINE<br>DOCUMENTS</span></div>
-                <div class="dash-card" style="--tint:#818cf8" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:#818cf8; color:#fff;"><i data-lucide="file-minus-2"></i></div><span>OFFHIRE<br>NOTE</span></div>
+                <div class="dash-card" style="--tint:#d97706" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#d97706; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
+                <div class="dash-card" style="--tint:#0891b2" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:#0891b2; color:#fff;"><i data-lucide="file-text"></i></div><span>MACHINE<br>DATASHEETS</span></div>
+                <div class="dash-card" style="--tint:#db2777" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#db2777; color:#fff;"><i data-lucide="camera"></i></div><span>MACHINE<br>PHOTOS</span></div>
+                <div class="dash-card" style="--tint:#e11d48" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#e11d48; color:#fff;"><i data-lucide="hard-drive"></i></div><span>MACHINE<br>DOCUMENTS</span></div>
+                <div class="dash-card" style="--tint:#4338ca" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:#4338ca; color:#fff;"><i data-lucide="file-minus-2"></i></div><span>OFFHIRE<br>NOTE</span></div>
             </div>
             <h3 class="group-title">NOTIFICATIONS</h3>
             <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
@@ -1890,7 +1890,7 @@ document.addEventListener('visibilitychange', () => {
     // ---- Category icon mapping: picks a fitting lucide icon + color based on
     // keywords found in a folder/category name, for both Tech Specs and Rates tabs ----
     const CATEGORY_ICON_RULES = [
-        { k: ['genset', 'generator', 'diesel', 'dg set', 'dg-set'], icon: 'zap', color: '#f59e0b' },
+        { k: ['genset', 'generator', 'diesel', 'dg set', 'dg-set'], icon: 'zap', color: '#d97706' },
         { k: ['crane', 'crawler', 'boom truck'], icon: 'construction', color: '#ef4444' },
         { k: ['scissor'], icon: 'arrow-up-down', color: '#3b82f6' },
         { k: ['boom lift', 'boomlift', 'manlift', 'man lift'], icon: 'ladder', color: '#2563eb' },
@@ -1906,8 +1906,8 @@ document.addEventListener('visibilitychange', () => {
         { k: ['tool'], icon: 'wrench', color: '#94a3b8' },
         { k: ['safety', 'ppe', 'helmet'], icon: 'hard-hat', color: '#facc15' },
         { k: ['battery', 'electric'], icon: 'battery-charging', color: '#10b981' },
-        { k: ['container', 'cabin', 'porta'], icon: 'container', color: '#f472b6' },
-        { k: ['fuel', 'tank'], icon: 'fuel', color: '#fb7185' }
+        { k: ['container', 'cabin', 'porta'], icon: 'container', color: '#db2777' },
+        { k: ['fuel', 'tank'], icon: 'fuel', color: '#e11d48' }
     ];
     function getCategoryVisual(name, fallbackIcon) {
         const n = (name || '').toLowerCase();
@@ -2037,7 +2037,23 @@ document.addEventListener('visibilitychange', () => {
         // If already signed in recently, skip the PIN screen and stay on the
         // branded sync screen until data is ready, then go straight into the app.
         autoLoginPending = hasValidSession();
-        if (autoLoginPending) {
+        const hasCachedData = hydrateFromAppCache();
+
+        if (autoLoginPending && hasCachedData) {
+            // Reload with a remembered session AND cached data on hand: skip
+            // the sync screen entirely and show what we already have, then
+            // let initSync() quietly refresh it underneath. This is what
+            // makes a background-tab reload feel like "resuming" instead of
+            // starting over from a blank sync screen every time.
+            isDataReady = true;
+            document.querySelectorAll('.status-dot').forEach(d => d.classList.add('ready'));
+            document.getElementById('sync-overlay').classList.add('hidden');
+            document.getElementById('auth-screen').classList.add('hidden');
+            enterApp();
+            renderGrids();
+            document.getElementById('notif-text').innerText = db.notif;
+            document.getElementById('home-sync-text').innerText = 'ONLINE';
+        } else if (autoLoginPending) {
             document.getElementById('sync-overlay').classList.remove('hidden');
             document.getElementById('auth-screen').classList.add('hidden');
         } else {
@@ -2093,6 +2109,47 @@ document.addEventListener('visibilitychange', () => {
         } finally {
             clearTimeout(timer);
         }
+    }
+
+    // App-data cache: mirrors the same pattern already used for Machine
+    // Documents (mdReadCache/mdWriteCache) below, but for the core Rates +
+    // Tech Specs data that used to force every reload through a full
+    // network fetch before anything appeared. Backgrounded tabs on mobile
+    // get discarded by the OS after a while and reload from scratch — with
+    // this cache, a reload shows the last-known data instantly instead of
+    // sitting on the sync screen again, then quietly refreshes underneath.
+    const APP_CACHE_KEY = 'sudhirpro_appDataCache_v1';
+
+    function readAppCache() {
+        try {
+            const raw = localStorage.getItem(APP_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (!parsed || typeof parsed !== 'object') return null;
+            return parsed;
+        } catch (e) { return null; }
+    }
+
+    function writeAppCache() {
+        try {
+            localStorage.setItem(APP_CACHE_KEY, JSON.stringify({
+                rates: db.rates,
+                notif: db.notif,
+                docsRoot: db.docsRoot,
+                savedAt: Date.now()
+            }));
+        } catch (e) { /* storage full/blocked — fine, just skip caching */ }
+    }
+
+    // Hydrates `db` from the cache written above, if any exists. Returns
+    // true when there was usable cached data to show immediately.
+    function hydrateFromAppCache() {
+        const cached = readAppCache();
+        if (!cached || !cached.rates || !Object.keys(cached.rates).length) return false;
+        db.rates = cached.rates;
+        if (cached.notif) db.notif = cached.notif;
+        if (cached.docsRoot) db.docsRoot = cached.docsRoot;
+        return true;
     }
 
     async function initSync() {
@@ -2171,6 +2228,7 @@ document.addEventListener('visibilitychange', () => {
             if(names[i] === "Notifications") db.notif = vr.values ? vr.values[0][0] : db.notif;
             else if(vr.values) db.rates[names[i]] = vr.values;
         });
+        writeAppCache();
     }
 
     async function loadDocs() {
@@ -2190,6 +2248,7 @@ document.addEventListener('visibilitychange', () => {
             });
             node.files.push({ name: fileName, url: `https://raw.githubusercontent.com/${CONFIG.GH.user}/${CONFIG.GH.repo}/main/${encodedPath}` });
         });
+        writeAppCache();
     }
 
     // Loads the Machine-Documents repo (CONFIG.GH2) as a flat, searchable list
