@@ -3859,12 +3859,19 @@ document.addEventListener('visibilitychange', () => {
     function mergeOpenQrLink(id) {
         const item = mergeItems.find(i => i.id === id);
         if (!item || !item.qrText) return;
-        // Use a synthetic anchor click only. window.open() is unreliable
-        // inside installed PWAs / mobile webviews — in some of them it
-        // opens the tab but STILL returns null, so the old code's
-        // "if (win) return;" check would wrongly run the anchor-click
-        // fallback too, opening a second tab for the same URL. The
-        // anchor click alone works reliably everywhere.
+        // Installed / "Add to Home Screen" PWAs (iOS standalone mode, and
+        // some Android WebAPKs) can't spawn a real browser tab from
+        // window.open() or an anchor with target="_blank" — it opens a
+        // blank native window and the OS closes it again almost instantly,
+        // which looks like "nothing happened". Navigating the current
+        // window works reliably in that mode, so detect standalone and use
+        // it there; otherwise keep the normal new-tab behavior.
+        const isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+            || window.navigator.standalone === true;
+        if (isStandalone) {
+            window.location.href = item.qrText;
+            return;
+        }
         const a = document.createElement('a');
         a.href = item.qrText;
         a.target = '_blank';
