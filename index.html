@@ -248,7 +248,7 @@ nav::-webkit-scrollbar { display: none; }
 .doc-qr-badge { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
 .doc-qr-tag { font-size: 9px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 6px; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 4px; text-transform: uppercase; }
 .doc-qr-actions { display: flex; flex-direction: column; gap: 5px; }
-.doc-qr-chip { font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--card-2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 4px; text-align: center; }
+.doc-qr-chip { display: inline-block; font-size: 9.5px; font-weight: 800; color: var(--ink); background: var(--card-2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 4px; text-align: center; text-decoration: none; }
 .doc-qr-scanning { font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
 
 .merge-empty { text-align: center; color: var(--text-faint); font-size: 12px; padding: 24px 0; }
@@ -3781,6 +3781,14 @@ document.addEventListener('visibilitychange', () => {
         mergeRenderList(); // refresh "#N" index pills
     }
 
+    function mergeAttrEscape(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
     function mergeItemRowHtml(item, idx, total) {
         const thumbInner = item.type === 'image'
             ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
@@ -3795,7 +3803,7 @@ document.addEventListener('visibilitychange', () => {
                 <div class="doc-qr-badge">
                     <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
                     <div class="doc-qr-actions">
-                        ${linky ? `<button class="doc-qr-chip" onclick="mergeOpenQrLink('${item.id}')">Open Link</button>` : ''}
+                        ${linky ? `<a class="doc-qr-chip" href="${mergeAttrEscape(item.qrText)}" target="_blank" rel="noopener noreferrer">Open Link</a>` : ''}
                     </div>
                 </div>`;
         } else if (item.qrStatus === 'none') {
@@ -3853,12 +3861,6 @@ document.addEventListener('visibilitychange', () => {
         mergeQrQueue = [];
         document.getElementById('merge-status').textContent = '';
         mergeRenderList();
-    }
-
-    function mergeOpenQrLink(id) {
-        const item = mergeItems.find(i => i.id === id);
-        if (!item || !item.qrText) return;
-        window.open(item.qrText, '_blank');
     }
 
     async function mergeDownloadOriginal(id) {
