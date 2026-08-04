@@ -3789,6 +3789,16 @@ document.addEventListener('visibilitychange', () => {
             .replace(/>/g, '&gt;');
     }
 
+    // Our app is served over HTTPS (GitHub Pages). Navigating from a secure
+    // page to a plain http:// link is unreliable across mobile browsers —
+    // it can silently open-then-close the tab instead of loading, especially
+    // on repeat visits. QR-encoded links (e.g. from inspection stickers) are
+    // often still http://, so upgrade to https:// before opening — same
+    // domain/path, just the secure scheme, and it avoids that failure mode.
+    function mergeToHttps(url) {
+        return String(url).replace(/^http:\/\//i, 'https://');
+    }
+
     function mergeItemRowHtml(item, idx, total) {
         const thumbInner = item.type === 'image'
             ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
@@ -3803,7 +3813,7 @@ document.addEventListener('visibilitychange', () => {
                 <div class="doc-qr-badge">
                     <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
                     <div class="doc-qr-actions">
-                        ${linky ? `<a class="doc-qr-chip" href="${mergeAttrEscape(item.qrText)}" target="_blank" rel="noopener noreferrer">Open Link</a>` : ''}
+                        ${linky ? `<a class="doc-qr-chip" href="${mergeAttrEscape(mergeToHttps(item.qrText))}" target="_blank" rel="noopener noreferrer">Open Link</a>` : ''}
                     </div>
                 </div>`;
         } else if (item.qrStatus === 'none') {
