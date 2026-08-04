@@ -3796,7 +3796,6 @@ document.addEventListener('visibilitychange', () => {
                     <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
                     <div class="doc-qr-actions">
                         ${linky ? `<button class="doc-qr-chip" onclick="mergeOpenQrLink('${item.id}')">Open Link</button>` : ''}
-                        <button class="doc-qr-chip" onclick="mergeDownloadOriginal('${item.id}')">Download</button>
                     </div>
                 </div>`;
         } else if (item.qrStatus === 'none') {
@@ -3859,26 +3858,7 @@ document.addEventListener('visibilitychange', () => {
     function mergeOpenQrLink(id) {
         const item = mergeItems.find(i => i.id === id);
         if (!item || !item.qrText) return;
-        // Installed / "Add to Home Screen" PWAs (iOS standalone mode, and
-        // some Android WebAPKs) can't spawn a real browser tab from
-        // window.open() or an anchor with target="_blank" — it opens a
-        // blank native window and the OS closes it again almost instantly,
-        // which looks like "nothing happened". Navigating the current
-        // window works reliably in that mode, so detect standalone and use
-        // it there; otherwise keep the normal new-tab behavior.
-        const isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
-            || window.navigator.standalone === true;
-        if (isStandalone) {
-            window.location.href = item.qrText;
-            return;
-        }
-        const a = document.createElement('a');
-        a.href = item.qrText;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        window.open(item.qrText, '_blank');
     }
 
     async function mergeDownloadOriginal(id) {
