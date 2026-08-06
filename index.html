@@ -20,20 +20,20 @@
    ============================================================ */
 
 :root {
-    /* Refined, muted premium palette */
-    --accent: #4338ca;
-    --accent-2: #0284c7;
-    --accent-dim: rgba(67, 56, 202, 0.13);
+    /* Bright blue/white corporate palette */
+    --accent: #2563eb;
+    --accent-2: #1d4ed8;
+    --accent-dim: rgba(37, 99, 235, 0.10);
 
-    --bg: #eceef2;
+    --bg: #f2f5fb;
     --card: #ffffff;
-    --card-2: #eef0f4;
+    --card-2: #f4f7fc;
 
     --ink: #0f172a;
-    --border: rgba(15, 23, 42, 0.14);
-    --border-strong: rgba(15, 23, 42, 0.24);
-    --text-dim: #435069;
-    --text-faint: #64748b;
+    --border: rgba(15, 23, 42, 0.08);
+    --border-strong: rgba(15, 23, 42, 0.16);
+    --text-dim: #5b6b83;
+    --text-faint: #8896ab;
 
     --success: #16a34a;
     --wa: #16a34a;
@@ -62,13 +62,11 @@ body {
     color: var(--ink);
     height: 100vh; height: 100dvh; width: 100vw; overflow: hidden;
     display: flex; flex-direction: column;
-    /* Subtle, calm backdrop — barely-there grid + faint accent glow */
+    /* Flat, bright corporate backdrop */
     background-image:
-        linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px),
-        radial-gradient(circle at 10% -5%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
-        radial-gradient(circle at 105% 12%, color-mix(in srgb, var(--accent-2) 9%, transparent), transparent 40%);
-    background-size: 40px 40px, 40px 40px, auto, auto;
+        radial-gradient(circle at 10% -5%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 45%),
+        radial-gradient(circle at 105% 12%, color-mix(in srgb, var(--accent-2) 4%, transparent), transparent 40%);
+    background-size: auto, auto;
     transition: background 0.3s ease;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -88,18 +86,24 @@ tbody tr:active { background-color: var(--accent-dim) !important; }
 .rate-search { width: 100%; padding: 13px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--ink); font-size: 14px; font-weight: 600; margin-bottom: 14px; outline: none; box-shadow: var(--sh-sm); transition: border-color 0.2s, box-shadow 0.2s; }
 .rate-search:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); }
 .rate-search::placeholder { color: var(--text-faint); }
-.rate-cards { display: flex; flex-direction: column; gap: 12px; }
-.rate-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; border-left: 4px solid var(--accent); box-shadow: var(--sh-md); transition: box-shadow 0.2s, transform 0.15s; }
+.home-search-row { display: flex; gap: 12px; align-items: stretch; margin-bottom: 14px; }
+.home-search-row .rate-search { margin-bottom: 0; flex: 1; }
+.home-search-btn { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 0 22px; font-weight: 800; font-size: 13px; font-family: 'Space Grotesk', sans-serif; box-shadow: var(--sh-sm); transition: transform 0.12s, background 0.15s; }
+.home-search-btn:hover { background: var(--accent-2); }
+.home-search-btn:active { transform: scale(0.97); }
+.rate-cards { display: flex; flex-direction: column; gap: 14px; }
+.rate-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; border-left: 4px solid var(--accent); box-shadow: var(--sh-sm); transition: box-shadow 0.2s, transform 0.15s; }
 .rate-card:active { transform: scale(0.99); }
-.rate-card.rate-card-electric { border-left-color: #10b981; background: linear-gradient(90deg, rgba(16,185,129,0.05), var(--card) 40%); }
+.rate-card.rate-card-electric { border-left-color: #10b981; }
 .rate-card.rate-card-electric .rate-value { color: #10b981; }
 .electric-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; color: #fff; background: #10b981; padding: 3px 8px; border-radius: 8px; letter-spacing: 0.4px; vertical-align: middle; margin-left: 8px; text-transform: uppercase; }
-.rate-item-name { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 14px; line-height: 1.3; letter-spacing: -0.2px; }
-.rate-pills { display: flex; flex-wrap: wrap; gap: 10px; }
-.rate-pill { background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 9px 14px; min-width: 92px; flex: 1 1 auto; }
-.rate-label { display: block; font-size: 10px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; letter-spacing: 0.6px; margin-bottom: 4px; }
-.rate-value { display: block; font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: -0.3px; }
+.rate-item-name { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 12px; line-height: 1.3; letter-spacing: -0.2px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; }
+.rate-pills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.rate-pill { background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
+.rate-label { display: block; font-size: 9.5px; text-transform: uppercase; color: var(--text-faint); font-weight: 700; letter-spacing: 0.6px; margin-bottom: 4px; }
+.rate-value { display: block; font-size: 15px; font-weight: 800; color: var(--accent); letter-spacing: -0.2px; font-family: var(--mono); text-transform: uppercase; }
 .rate-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 30px 0; }
+@media (min-width: 780px) { .rate-pills { grid-template-columns: repeat(4, 1fr); } }
 
 /* ---------- Sync / status ---------- */
 .sync-pill { display: flex; align-items: center; gap: 8px; background: var(--card); padding: 7px 12px; border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--sh-sm); }
@@ -127,8 +131,10 @@ tbody tr:active { background-color: var(--accent-dim) !important; }
 /* ---------- App shell ---------- */
 #app-shell { display: flex; flex-direction: column; height: 100%; width: 100%; position: relative; }
 header { padding: calc(var(--safe-top) + 14px) 22px 14px; border-bottom: 1px solid var(--border); background: var(--glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); display: flex; align-items: center; position: relative; flex-wrap: wrap; gap: 14px; row-gap: 10px; }
-.logo { flex-shrink: 0; font-weight: 700; font-size: 15px; letter-spacing: -0.2px; color: var(--ink); font-family: var(--mono); white-space: nowrap; }
+.logo { flex-shrink: 0; font-weight: 800; font-size: 15px; letter-spacing: -0.2px; color: var(--ink); font-family: 'Space Grotesk', sans-serif; white-space: nowrap; line-height: 1.2; }
 .logo span { color: var(--accent); }
+.logo .logo-sub { display: block; font-size: 8px; font-weight: 700; letter-spacing: 0.6px; color: var(--text-faint); text-transform: uppercase; font-family: 'Manrope', sans-serif; margin-top: 1px; }
+@media (max-width: 640px) { .logo .logo-sub { display: none; } }
 .clock-weather-group { display: flex; gap: 6px; }
 .clock-chip { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 5px 9px; box-shadow: var(--sh-sm); }
 .clock-chip .flag { font-size: 14px; line-height: 1; }
@@ -143,6 +149,7 @@ header { padding: calc(var(--safe-top) + 14px) 22px 14px; border-bottom: 1px sol
 }
 
 main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.app-footer { text-align: center; font-size: 11.5px; color: var(--text-faint); font-weight: 600; padding: 22px 16px 28px; }
 .view-section { padding: 16px; animation: slideUp 0.3s ease-out; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -150,21 +157,35 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 /* ---------- Hero banner ---------- */
 
 /* ---------- Dashboard bento ---------- */
-.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.dash-grid .dash-card:first-child { grid-column: span 2; flex-direction: row; align-items: center; }
-.dash-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.15s ease; box-shadow: var(--sh-md); }
-.dash-card:active { transform: scale(0.97) translateY(-1px); box-shadow: var(--sh-lg); border-color: var(--tint, var(--accent)); background: color-mix(in srgb, var(--tint, var(--accent)) 14%, var(--card)); }
+.dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.dash-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; display: flex; flex-direction: row; align-items: center; gap: 14px; transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.15s ease; box-shadow: var(--sh-sm); }
+.dash-card:active { transform: scale(0.98); box-shadow: var(--sh-md); border-color: var(--tint, var(--accent)); }
 .dash-card:active .dash-icon-badge { transform: scale(1.08); }
-.dash-card:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); border-color: var(--tint, var(--accent)); background: color-mix(in srgb, var(--tint, var(--accent)) 8%, var(--card)); }
-.dash-card:hover .dash-icon-badge { transform: scale(1.08); }
+.dash-card:hover { transform: translateY(-2px); box-shadow: var(--sh-md); border-color: color-mix(in srgb, var(--tint, var(--accent)) 45%, var(--border)); }
+.dash-card:hover .dash-icon-badge { transform: scale(1.06); }
 .dash-card i { color: var(--accent); }
+.dash-card-text { flex: 1; min-width: 0; }
+.dash-card-title { font-size: 12.5px; font-weight: 800; line-height: 1.3; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.2px; text-transform: uppercase; color: var(--ink); }
+.dash-card-desc { font-size: 12px; font-weight: 500; color: var(--text-dim); margin-top: 3px; line-height: 1.35; }
+.dash-card-arrow { color: var(--tint, var(--accent)); flex-shrink: 0; }
 .dash-card span { font-size: 11.5px; font-weight: 700; line-height: 1.35; font-family: var(--mono); letter-spacing: 0.3px; text-transform: uppercase; color: var(--ink); }
-.dash-icon-badge { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--card-2); border: 1px solid var(--border); color: #fff; flex-shrink: 0; box-shadow: var(--sh-sm); transition: transform 0.15s ease; }
+.dash-icon-badge { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: var(--card-2); border: 1px solid var(--border); color: #fff; flex-shrink: 0; box-shadow: var(--sh-sm); transition: transform 0.15s ease; }
 .dash-icon-badge i { color: inherit; stroke-width: 2.2; }
+@media (min-width: 780px) { .dash-grid { grid-template-columns: repeat(5, 1fr); } }
+
+/* ---------- Hero / welcome banner ---------- */
+.hero-banner { background: linear-gradient(120deg, #ffffff 0%, #f4f8ff 100%); border: 1px solid var(--border); border-radius: 20px; padding: 30px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; box-shadow: var(--sh-sm); overflow: hidden; position: relative; }
+.hero-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+.hero-title { font-size: 30px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-sub { font-size: 13.5px; color: var(--text-dim); font-weight: 600; max-width: 420px; line-height: 1.5; }
+.hero-illustration { display: none; align-items: flex-end; gap: 14px; flex-shrink: 0; }
+.hero-ico { width: 74px; height: 74px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: var(--sh-md); }
+.hero-ico:nth-child(2) { width: 90px; height: 90px; }
+@media (min-width: 720px) { .hero-illustration { display: flex; } }
+@media (max-width: 640px) { .hero-banner { padding: 24px 20px; border-radius: 16px; } .hero-title { font-size: 24px; } }
 
 /* ---------- Group titles & item cards ---------- */
-.group-title { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin: 28px 0 14px 0; letter-spacing: 2px; font-family: var(--mono); }
-.group-title::before { content: ''; width: 3px; height: 14px; background: linear-gradient(180deg, var(--accent), var(--accent-2)); border-radius: 2px; flex-shrink: 0; }
+.group-title { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin: 26px 0 12px 0; letter-spacing: 1.2px; font-family: 'Manrope', sans-serif; }
 
 /* ---------- ERP-style summary header (stat cards + filter bar) ---------- */
 .erp-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
@@ -213,22 +234,57 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 /* ---------- Top ribbon nav (now docked inline in the header, next to the logo) ---------- */
 nav { flex: 1 1 auto; min-width: 0; order: 0; position: static; background: none; border: none; box-shadow: none; display: flex; align-items: flex-start; gap: 0; padding: 0; z-index: 500; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 nav::-webkit-scrollbar { display: none; }
-.nav-tab { flex: 0 0 auto; min-width: 54px; display: flex; flex-direction: column; align-items: center; gap: 5px; color: #1e3a5f; border: none; background: none; cursor: pointer; padding: 6px 9px 4px; border-radius: 12px; transition: 0.15s ease; position: relative; }
-.nav-tab.active { color: var(--accent); }
-.nav-tab span { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; font-family: var(--mono); }
-.nav-tab:hover { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
-.nav-icon-badge { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(30,58,95,0.18); opacity: 0.62; transform: scale(0.94); transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; }
-.nav-tab.active .nav-icon-badge, .nav-tab:hover .nav-icon-badge { opacity: 1; transform: scale(1); box-shadow: 0 3px 8px rgba(30,58,95,0.28); }
+.nav-tab { flex: 0 0 auto; min-width: 40px; display: flex; flex-direction: column; align-items: center; gap: 3px; color: #64748b; border: none; background: none; cursor: pointer; padding: 5px 7px 4px; border-radius: 11px; transition: 0.15s ease; position: relative; }
+.nav-tab.active { color: var(--accent); background: var(--accent-dim); }
+.nav-tab span { font-size: 7.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2px; font-family: var(--mono); }
+.nav-tab:hover { background: var(--card-2); transform: translateY(-1px); }
+.nav-icon-badge { width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(30,58,95,0.14); opacity: 0.9; transform: scale(0.94); transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease; }
+.nav-tab.active .nav-icon-badge, .nav-tab:hover .nav-icon-badge { opacity: 1; transform: scale(1); box-shadow: 0 3px 8px rgba(30,58,95,0.22); }
 .nav-tab.active i { color: #fff; }
 .nav-tab.active span { color: var(--accent); }
+#btn-home .nav-icon-badge { background: #64748b !important; }
+
+/* ---------- Mobile layout (placed after the base nav/header rules above so
+   these overrides actually win the cascade at equal selector specificity) ---------- */
+@media (max-width: 640px) {
+    header { padding: calc(var(--safe-top) + 10px) 10px 8px; gap: 6px; }
+    .logo { font-size: 12.5px; }
+    .sync-pill, .act-btn { flex-shrink: 0; }
+    nav {
+        order: 3; flex-basis: 100%; width: 100%;
+        flex-wrap: wrap; justify-content: center;
+        overflow-x: hidden !important; overflow-y: visible;
+        gap: 1px 2px;
+    }
+    .nav-tab { flex: 1 1 18%; max-width: 20%; min-width: 0; padding: 4px 2px 3px; gap: 2px; }
+    .nav-icon-badge { width: 19px; height: 19px; border-radius: 6px; }
+    .nav-tab span { font-size: 6.5px; letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .clock-weather-group { display: none; }
+    .sync-pill { padding: 5px 9px; }
+    .sync-text { font-size: 8.5px; }
+    main { padding-bottom: 8px; }
+    .view-section { padding: 10px; }
+    .dash-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .dash-card { padding: 12px; gap: 10px; }
+    .dash-icon-badge { width: 36px; height: 36px; }
+    .home-search-row { flex-direction: column; }
+    .home-search-btn { padding: 12px; }
+    .erp-stats { grid-template-columns: repeat(2, 1fr); }
+    .md-merge-toprow { flex-direction: column; }
+}
 
 /* ---------- Overlays ---------- */
 .overlay-view { position: fixed; inset: 0; background: var(--bg); z-index: 2200; display: flex; flex-direction: column; }
 .overlay-header { padding: calc(var(--safe-top) + 12px) 16px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--card); }
 .scroll-area { flex: 1; overflow-y: auto; padding: 16px; }
 
-#notif-bar { margin: 16px 0; background: var(--accent-dim); border: 1px solid var(--border); padding: 13px 16px; border-radius: 14px; border-left: 4px solid var(--accent); }
-#notif-text { font-size: 12px; color: var(--ink); font-weight: 600; }
+#notif-bar { margin: 16px 0; background: var(--card); border: 1px solid var(--border); padding: 14px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--sh-sm); }
+.notif-icon-badge { width: 38px; height: 38px; border-radius: 12px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--sh-sm); }
+.notif-body { flex: 1; min-width: 0; }
+.notif-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.8px; color: var(--accent); text-transform: uppercase; margin-bottom: 3px; }
+#notif-text { font-size: 13.5px; color: var(--ink); font-weight: 700; }
+.notif-time { flex-shrink: 0; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-faint); }
+.notif-time .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.18); }
 
 /* ---------- Dropzone & merge ---------- */
 .md-dropzone { border: 2px dashed var(--border-strong); border-radius: 18px; padding: 32px 16px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card-2); }
@@ -262,7 +318,7 @@ nav::-webkit-scrollbar { display: none; }
 @keyframes qrspin { to { transform: rotate(360deg); } }
 
 /* ---------- COC generator ---------- */
-.coc-gen-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; margin-top: 14px; box-shadow: var(--sh-sm); }
+.coc-gen-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 10px; margin-top: 8px; box-shadow: var(--sh-sm); }
 .coc-gen-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .coc-gen-head .dash-icon-badge { width: 34px; height: 34px; border-radius: 11px; }
 .coc-gen-head h4 { font-size: 13.5px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; color: var(--ink); }
@@ -273,9 +329,9 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .coc-field { display: flex; flex-direction: column; gap: 4px; }
 .coc-field.coc-field-wide { grid-column: 1 / -1; }
 .coc-field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; color: var(--text-dim); }
-.coc-field input { padding: 11px 12px; border-radius: 11px; background: var(--card-2); border: 1px solid var(--border); color: var(--ink); font-size: 13px; font-weight: 600; outline: none; width: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
+.coc-field input { padding: 8px 10px; border-radius: 9px; background: var(--card-2); border: 1px solid var(--border); color: var(--ink); font-size: 11.5px; font-weight: 600; outline: none; width: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
 .coc-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); background: var(--card); }
-#coc-add-btn { width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; color: #fff; font-weight: 800; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; box-shadow: 0 6px 16px rgba(79,70,229,0.22); transition: transform 0.12s; }
+#coc-add-btn { width: 100%; padding: 11px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; color: #fff; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; box-shadow: 0 6px 16px rgba(79,70,229,0.22); transition: transform 0.12s; }
 #coc-add-btn:active { transform: scale(0.98); }
 #coc-add-btn:disabled { background: var(--card-2); color: var(--text-faint); box-shadow: none; }
 #coc-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
@@ -283,23 +339,23 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 /* ---------- Machine docs chips & actions ---------- */
 .md-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-dim); color: var(--accent); font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; margin: 0 6px 6px 0; }
 .md-chip i { cursor: pointer; }
-.md-btn-row { display: flex; gap: 10px; }
-.md-action-btn { flex: 1; padding: 14px; border-radius: 14px; border: 1px solid transparent; font-weight: 800; font-size: 12.5px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.12s; }
+.md-btn-row { display: flex; gap: 8px; }
+.md-action-btn { flex: 1; padding: 10px; border-radius: 11px; border: 1px solid transparent; font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.12s; }
 .md-action-btn:active { transform: scale(0.98); }
 .md-action-btn:disabled { background: var(--card-2) !important; color: var(--text-faint) !important; border-color: var(--border) !important; }
 .md-action-btn.save { background: var(--accent-dim); color: var(--accent); }
 .md-action-btn.whatsapp { background: rgba(22,163,74,0.10); color: var(--wa); }
 
 /* ---------- Machine docs layout ---------- */
-.md-layout { display: grid; grid-template-columns: 1fr; gap: 18px; grid-template-areas: "merge" "find" "coc" "preview"; }
+.md-layout { display: grid; grid-template-columns: 1fr; gap: 14px; grid-template-areas: "merge" "find" "preview"; }
 .md-col { min-width: 0; }
-.md-col-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 22px; box-shadow: var(--sh-md); height: 100%; display: flex; flex-direction: column; }
-.md-col-head { margin-bottom: 18px; }
-.md-col-head h4 { font-size: 17px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); margin-bottom: 3px; letter-spacing: -0.3px; }
-.md-col-head p { font-size: 12px; color: var(--text-dim); font-weight: 600; }
-.md-col-head-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 10px; }
-.md-col-head-row h4 { font-size: 17px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); margin-bottom: 3px; letter-spacing: -0.3px; }
-.md-col-head-row p { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+.md-col-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; box-shadow: var(--sh-md); height: 100%; display: flex; flex-direction: column; }
+.md-col-head { margin-bottom: 10px; }
+.md-col-head h4 { font-size: 13.5px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); margin-bottom: 2px; letter-spacing: -0.2px; }
+.md-col-head p { font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
+.md-col-head-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; gap: 8px; }
+.md-col-head-row h4 { font-size: 13.5px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--ink); margin-bottom: 2px; letter-spacing: -0.2px; }
+.md-col-head-row p { font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
 .md-clear-all { flex-shrink: 0; display: flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 800; color: #dc2626; background: none; border: none; padding: 6px 0; }
 
 .md-quick-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; margin-top: 14px; border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
@@ -309,16 +365,16 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .md-quick-text h5 { font-size: 13px; font-weight: 800; color: var(--ink); }
 .md-quick-text p { font-size: 11px; color: var(--text-dim); font-weight: 600; }
 .md-quick-arrow { flex-shrink: 0; color: var(--text-faint); }
-.md-col-coc .coc-gen-card { box-shadow: none; border: none; background: none; padding: 0; margin-top: 0; }
-.md-col-coc .coc-gen-card #coc-add-btn { margin-top: 14px; }
+#md-subtab-coc .coc-gen-card { box-shadow: none; border: none; background: none; padding: 0; margin-top: 0; }
+#md-subtab-coc .coc-gen-card #coc-add-btn { margin-top: 10px; }
 
-.md-search-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+.md-search-row { display: flex; gap: 7px; align-items: center; margin-bottom: 10px; }
 .md-search-input-wrap { flex: 1; position: relative; }
 .md-search-input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-faint); }
-.md-search-input-wrap input { width: 100%; background: var(--card-2); border: 1px solid var(--border); border-radius: 13px; padding: 13px 14px 13px 40px; color: var(--ink); font-size: 13.5px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+.md-search-input-wrap input { width: 100%; background: var(--card-2); border: 1px solid var(--border); border-radius: 11px; padding: 10px 10px 10px 34px; color: var(--ink); font-size: 12px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
 .md-search-input-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); background: var(--card); }
-.md-search-go { flex-shrink: 0; width: 46px; height: 46px; border-radius: 13px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
-.md-view-all-btn { margin-top: 14px; width: 100%; padding: 13px; border-radius: 13px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 12.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.md-search-go { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+.md-view-all-btn { margin-top: 10px; width: 100%; padding: 10px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
 .md-col-find #md-results { flex: 1; max-height: 420px; overflow-y: auto; }
 .md-result-row { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; transition: background 0.15s; }
@@ -337,7 +393,7 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .merge-empty-state p { font-size: 12px; color: var(--text-dim); font-weight: 600; line-height: 1.5; max-width: 220px; margin: 0 auto; }
 
 .md-panel-merge { grid-area: merge; }
-.md-panel-merge .md-col-card { padding: 16px 18px 14px; }
+.md-panel-merge .md-col-card { padding: 12px 14px 10px; }
 .md-panel-merge .md-col-head-row { margin-bottom: 2px; }
 .md-panel-merge .md-col-head-row h4 { font-size: 14.5px; }
 .md-panel-merge .md-col-head-row p { display: none; }
@@ -388,17 +444,21 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .md-merge-actions .md-btn-row { flex: 1.4; min-width: 220px; }
 .md-merge-actions #merge-status { flex-basis: 100%; }
 
-.md-panel-coc { grid-area: coc; }
 .md-panel-find { grid-area: find; }
+
+/* ---------- Switchable Find Documents / Generate COC sub-tabs ---------- */
+.md-subtabs { display: flex; gap: 6px; margin-bottom: 12px; background: var(--card-2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+.md-subtab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 6px; border-radius: 8px; border: none; background: none; color: var(--text-dim); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.2px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.md-subtab.active { background: var(--card); color: var(--accent); box-shadow: var(--sh-sm); }
+.md-subtab-panel.hidden { display: none; }
 
 @media (min-width: 900px) {
     .md-layout {
         grid-template-columns: 1.3fr 1fr;
         grid-template-areas:
             "merge merge"
-            "preview find"
-            "preview coc";
-        gap: 22px;
+            "preview find";
+        gap: 18px;
     }
     .md-panel-preview .md-col-card { height: 100%; }
 }
@@ -792,17 +852,17 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 
 <div id="app-shell" class="hidden">
     <header>
-        <div class="logo">SUDHIR<span> RENTALS</span></div>
+        <div class="logo">SUDHIR<span> RENTALS</span><span class="logo-sub">Rental Solutions. Reliable Partners.</span></div>
         <nav>
-            <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left"></i><span>Back</span></button>
-            <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><div class="nav-icon-badge" style="background:#64748b;"><i data-lucide="home" size="15"></i></div><span>Home</span></button>
-            <button class="nav-tab" id="btn-rates" onclick="navigateToTab('rates')"><div class="nav-icon-badge" style="background:#d97706;"><i data-lucide="tag" size="15"></i></div><span>Rental Rates</span></button>
-            <button class="nav-tab" id="btn-docs" onclick="navigateToTab('docs')"><div class="nav-icon-badge" style="background:#0891b2;"><i data-lucide="file-text" size="15"></i></div><span>Machine Datasheets</span></button>
-            <button class="nav-tab" id="btn-photos" onclick="navigateToTab('photos')"><div class="nav-icon-badge" style="background:#db2777;"><i data-lucide="image" size="15"></i></div><span>Machine Photos</span></button>
-            <button class="nav-tab" id="btn-machine-docs" onclick="navigateToTab('machine-docs')"><div class="nav-icon-badge" style="background:#e11d48;"><i data-lucide="hard-drive" size="15"></i></div><span>Machine Documents</span></button>
-            <button class="nav-tab" id="btn-offhire" onclick="navigateToTab('offhire')"><div class="nav-icon-badge" style="background:#4338ca;"><i data-lucide="file-minus-2" size="15"></i></div><span>Offhire Note</span></button>
-            <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><div class="nav-icon-badge" style="background:#34d399;"><i data-lucide="map" size="15"></i></div><span>Yards Location</span></button>
-            <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><div class="nav-icon-badge" style="background:#a78bfa;"><i data-lucide="users" size="15"></i></div><span>Team Contacts</span></button>
+            <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left" size="13"></i><span>Back</span></button>
+            <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><div class="nav-icon-badge" style="background:#64748b;"><i data-lucide="home" size="12"></i></div><span>Home</span></button>
+            <button class="nav-tab" id="btn-rates" onclick="navigateToTab('rates')"><div class="nav-icon-badge" style="background:#d97706;"><i data-lucide="tag" size="12"></i></div><span>Rates</span></button>
+            <button class="nav-tab" id="btn-docs" onclick="navigateToTab('docs')"><div class="nav-icon-badge" style="background:#0891b2;"><i data-lucide="file-text" size="12"></i></div><span>Specs</span></button>
+            <button class="nav-tab" id="btn-photos" onclick="navigateToTab('photos')"><div class="nav-icon-badge" style="background:#db2777;"><i data-lucide="image" size="12"></i></div><span>Photos</span></button>
+            <button class="nav-tab" id="btn-machine-docs" onclick="navigateToTab('machine-docs')"><div class="nav-icon-badge" style="background:#e11d48;"><i data-lucide="hard-drive" size="12"></i></div><span>Docs</span></button>
+            <button class="nav-tab" id="btn-offhire" onclick="navigateToTab('offhire')"><div class="nav-icon-badge" style="background:#4338ca;"><i data-lucide="file-minus-2" size="12"></i></div><span>Offhire</span></button>
+            <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><div class="nav-icon-badge" style="background:#34d399;"><i data-lucide="map" size="12"></i></div><span>Yards</span></button>
+            <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><div class="nav-icon-badge" style="background:#a78bfa;"><i data-lucide="users" size="12"></i></div><span>Team</span></button>
         </nav>
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
             <div class="clock-weather-group">
@@ -826,19 +886,19 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 
     <main id="main-content">
         <div id="tab-home" class="view-section">
-            <h3 class="group-title">COMMAND CENTER</h3>
             <div class="dash-grid">
-                <div class="dash-card" style="--tint:#d97706" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#d97706; color:#fff;"><i data-lucide="tag"></i></div><span>RENTAL<br>RATES</span></div>
-                <div class="dash-card" style="--tint:#0891b2" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:#0891b2; color:#fff;"><i data-lucide="file-text"></i></div><span>MACHINE<br>DATASHEETS</span></div>
-                <div class="dash-card" style="--tint:#db2777" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#db2777; color:#fff;"><i data-lucide="camera"></i></div><span>MACHINE<br>PHOTOS</span></div>
-                <div class="dash-card" style="--tint:#e11d48" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#e11d48; color:#fff;"><i data-lucide="hard-drive"></i></div><span>MACHINE<br>DOCUMENTS</span></div>
-                <div class="dash-card" style="--tint:#4338ca" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:#4338ca; color:#fff;"><i data-lucide="file-minus-2"></i></div><span>OFFHIRE<br>NOTE</span></div>
+                <div class="dash-card" style="--tint:#2563eb" onclick="navigateToTab('rates')"><div class="dash-icon-badge" style="background:#2563eb; color:#fff;"><i data-lucide="tag"></i></div><div class="dash-card-text"><div class="dash-card-title">Rental Rates</div><div class="dash-card-desc">View latest rental rates</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                <div class="dash-card" style="--tint:#db2777" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:#db2777; color:#fff;"><i data-lucide="camera"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Photos</div><div class="dash-card-desc">Browse machine photos</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                <div class="dash-card" style="--tint:#0891b2" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:#0891b2; color:#fff;"><i data-lucide="file-text"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Datasets</div><div class="dash-card-desc">Technical specs &amp; datasheets</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                <div class="dash-card" style="--tint:#d97706" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:#d97706; color:#fff;"><i data-lucide="briefcase"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Documents</div><div class="dash-card-desc">Documents &amp; certifications</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                <div class="dash-card" style="--tint:#7c3aed" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:#7c3aed; color:#fff;"><i data-lucide="file-minus-2"></i></div><div class="dash-card-text"><div class="dash-card-title">Offhire Note</div><div class="dash-card-desc">Create &amp; view offhire notes</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
             </div>
-            <h3 class="group-title">NOTIFICATIONS</h3>
-            <div id="notif-bar"><div id="notif-text">Loading updates...</div></div>
 
-            <h3 class="group-title">SEARCH RENTAL EQUIPMENT</h3>
-            <input type="text" id="home-rate-search" class="rate-search" placeholder="Search rental equipment..." oninput="searchHomeRates(this.value)" />
+            <h3 class="group-title">Search Rental Equipment</h3>
+            <div class="home-search-row">
+                <input type="text" id="home-rate-search" class="rate-search" placeholder="Search by equipment type, size, or capacity..." oninput="searchHomeRates(this.value)" />
+                <button class="home-search-btn" onclick="searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="15"></i> Search</button>
+            </div>
             <div class="rate-cards" id="home-rate-results"></div>
         </div>
 
@@ -941,42 +1001,38 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
                     </div>
                 </div>
 
-                <!-- Right column, top: Find Documents -->
+                <!-- Right column: Find Documents / Generate COC, as switchable sub-tabs -->
                 <div class="md-col md-col-find md-panel-find" id="md-pane-find">
                     <div class="md-col-card">
-                        <div class="md-col-head">
-                            <h4>Find Documents</h4>
-                            <p>Search and filter machine documents</p>
+                        <div class="md-subtabs">
+                            <button class="md-subtab active" id="md-subtab-find-btn" onclick="mdSwitchSubtab('find')"><i data-lucide="search" size="13"></i> Find Documents</button>
+                            <button class="md-subtab" id="md-subtab-coc-btn" onclick="mdSwitchSubtab('coc')"><i data-lucide="file-plus-2" size="13"></i> Generate COC</button>
                         </div>
-                        <div class="md-search-row">
-                            <div class="md-search-input-wrap">
-                                <i data-lucide="search" size="16"></i>
-                                <input type="text" id="md-search" placeholder="Search documents, machine ID..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" />
-                            </div>
-                            <button id="md-search-btn" class="md-search-go" onclick="mdTriggerSearch()" title="Search"><i data-lucide="search" size="17"></i></button>
-                        </div>
-                        <div id="md-results" class="rate-empty">Type to search Machine Documents...</div>
-                        <button class="md-view-all-btn" onclick="mdShowAllDocuments()">View All Documents <i data-lucide="arrow-right" size="15"></i></button>
-                    </div>
-                </div>
 
-                <!-- Right column, below Find Documents: Generate COC Certificate -->
-                <div class="md-col md-col-coc md-panel-coc" id="md-pane-coc">
-                    <div class="md-col-card">
-                        <div class="md-col-head">
-                            <h4>Generate COC Certificate</h4>
-                            <p>Create a certificate for a machine, then add it to the queue above</p>
-                        </div>
-                        <div class="coc-gen-card">
-                            <div class="coc-field coc-field-wide">
-                                <label>Machine Type</label>
-                                <select id="coc-type" class="rate-search" onchange="cocRenderFields()">
-                                    <option value="">-- Select machine category --</option>
-                                </select>
+                        <div class="md-subtab-panel" id="md-subtab-find">
+                            <div class="md-search-row">
+                                <div class="md-search-input-wrap">
+                                    <i data-lucide="search" size="14"></i>
+                                    <input type="text" id="md-search" placeholder="Search documents, machine ID..." onkeydown="if(event.key==='Enter'){event.preventDefault(); mdTriggerSearch();}" />
+                                </div>
+                                <button id="md-search-btn" class="md-search-go" onclick="mdTriggerSearch()" title="Search"><i data-lucide="search" size="15"></i></button>
                             </div>
-                            <div id="coc-fields" class="hidden"></div>
-                            <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="16"></i> Add to Queue</button>
-                            <div id="coc-status"></div>
+                            <div id="md-results" class="rate-empty">Type to search Machine Documents...</div>
+                            <button class="md-view-all-btn" onclick="mdShowAllDocuments()">View All Documents <i data-lucide="arrow-right" size="13"></i></button>
+                        </div>
+
+                        <div class="md-subtab-panel hidden" id="md-subtab-coc">
+                            <div class="coc-gen-card">
+                                <div class="coc-field coc-field-wide">
+                                    <label>Machine Type</label>
+                                    <select id="coc-type" class="rate-search" onchange="cocRenderFields()">
+                                        <option value="">-- Select machine category --</option>
+                                    </select>
+                                </div>
+                                <div id="coc-fields" class="hidden"></div>
+                                <button id="coc-add-btn" disabled onclick="cocGenerateAndAdd()"><i data-lucide="file-plus-2" size="14"></i> Add to Queue</button>
+                                <div id="coc-status"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1208,6 +1264,7 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 </div>
             </div>
         </div>
+        <div class="app-footer">© 2026 Sudhir Rentals. All rights reserved.</div>
     </main>
 </div>
 
@@ -2051,7 +2108,7 @@ document.addEventListener('visibilitychange', () => {
             document.getElementById('auth-screen').classList.add('hidden');
             enterApp();
             renderGrids();
-            document.getElementById('notif-text').innerText = db.notif;
+            const notifTextEl = document.getElementById('notif-text'); if (notifTextEl) notifTextEl.innerText = db.notif;
             document.getElementById('home-sync-text').innerText = 'ONLINE';
         } else if (autoLoginPending) {
             document.getElementById('sync-overlay').classList.remove('hidden');
@@ -2189,7 +2246,7 @@ document.addEventListener('visibilitychange', () => {
             loginBtn.style.background = 'var(--accent)';
             loginBtn.style.color = '#000';
             renderGrids();
-            document.getElementById('notif-text').innerText = db.notif;
+            const notifTextEl = document.getElementById('notif-text'); if (notifTextEl) notifTextEl.innerText = db.notif;
             updateSyncProgress(100, "READY");
 
             // If a valid session already existed, go straight in — no PIN needed.
@@ -2591,7 +2648,7 @@ document.addEventListener('visibilitychange', () => {
                 pills += `<div class="rate-pill"><span class="rate-label">${label}</span><span class="rate-value">${val}</span></div>`;
             }
             const tag = isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '';
-            return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}" onclick="navigateToTab('rates'); viewRates('${m.cat.replace(/'/g, "\\'")}');"><h4 class="rate-item-name">${itemName}${tag}</h4><p style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:0.4px; margin:-8px 0 12px;">${m.cat}</p><div class="rate-pills">${pills}</div></div>`;
+            return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}"><h4 class="rate-item-name">${itemName}${tag}</h4><p style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:0.4px; margin:-8px 0 12px;">${m.cat}</p><div class="rate-pills">${pills}</div></div>`;
         }).join('');
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
@@ -3049,6 +3106,14 @@ document.addEventListener('visibilitychange', () => {
         return 'folder';
     }
 
+    // Photo folders reuse the same colored-icon logic as Rates/Tech Specs
+    // categories (getCategoryVisual) so the Photos tab looks as colorful and
+    // consistent as the rest of the app instead of one flat accent color.
+    function photoGetVisual(name) {
+        const v = getCategoryVisual(name, photoGetIcon(name));
+        return { icon: v.icon, color: v.color || '#2563eb' };
+    }
+
     function photoCountUnder(folderPath) {
         const prefix = folderPath + '/';
         return photoRawData.filter(i => i.type === 'file' && i.path.startsWith(prefix)).length;
@@ -3202,7 +3267,9 @@ document.addEventListener('visibilitychange', () => {
             let innerHtml = '';
             if (item.type === 'folder') {
                 const count = photoCountUnder(item.path);
-                innerHtml += '<div class="folder-icon-badge"><i data-lucide="' + photoGetIcon(item.name) + '" size="22"></i></div>' +
+                const vis = photoGetVisual(item.name);
+                card.style.borderLeft = '4px solid ' + vis.color;
+                innerHtml += '<div class="folder-icon-badge" style="background:' + vis.color + ';"><i data-lucide="' + vis.icon + '" size="22"></i></div>' +
                              '<div class="label">' + item.name + '</div>' +
                              '<div class="sub-count">' + count + (count === 1 ? ' photo' : ' photos') + '</div>';
             } else {
@@ -4262,6 +4329,20 @@ window.addEventListener('DOMContentLoaded', () => {
        middle "Add Files" column and the QR/preview/reorder code all use. */
     const MD_VISIBLE_EXT = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
     let mdCurrentResults = [];
+
+    // Switches between the "Find Documents" and "Generate COC" sub-tabs
+    // inside the merged right-hand panel of the Machine Documents tab.
+    function mdSwitchSubtab(which) {
+        const findPanel = document.getElementById('md-subtab-find');
+        const cocPanel = document.getElementById('md-subtab-coc');
+        const findBtn = document.getElementById('md-subtab-find-btn');
+        const cocBtn = document.getElementById('md-subtab-coc-btn');
+        const showFind = which === 'find';
+        findPanel.classList.toggle('hidden', !showFind);
+        cocPanel.classList.toggle('hidden', showFind);
+        findBtn.classList.toggle('active', showFind);
+        cocBtn.classList.toggle('active', !showFind);
+    }
 
     // Sole entry point for Machine Documents — the search button and Enter
     // key both call this. Typing alone does nothing; nothing is fetched or
