@@ -154,17 +154,18 @@ header { padding: calc(var(--safe-top) + 14px) 22px 14px; border-bottom: 1px sol
 main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .app-footer { text-align: center; font-size: 11.5px; color: var(--text-faint); font-weight: 600; padding: 22px 16px 28px; }
 .view-section { padding: 16px; animation: slideUp 0.3s ease-out; }
-.res-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 15px; margin-bottom: 10px; box-shadow: var(--sh-sm); border-left: 3px solid var(--accent); }
-.res-item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
-.res-item-top h4 { font-size: 14px; font-weight: 800; color: var(--ink); font-family: var(--mono); letter-spacing: -0.2px; }
-.res-item-meta { font-size: 11px; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 2px; }
+.res-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 9px 10px; margin-bottom: 6px; box-shadow: var(--sh-sm); }
+.res-row-main { display: flex; align-items: center; gap: 6px; overflow-x: auto; white-space: nowrap; font-size: 11.5px; flex: 1; min-width: 0; scrollbar-width: none; }
+.res-row-main::-webkit-scrollbar { display: none; }
+.res-row-asset { font-family: var(--mono); font-weight: 800; color: var(--ink); }
+.res-row-sales, .res-row-date, .res-row-days { color: var(--text-dim); font-weight: 600; }
+.res-row-sep { color: var(--border-strong); }
+.res-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.res-row-edit { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--card-2); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; color: var(--text-dim); }
 .res-badge { font-size: 9.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
 .res-badge.active { background: rgba(22,163,74,0.14); color: #16a34a; }
 .res-badge.expired { background: rgba(239,68,68,0.14); color: #ef4444; }
 .res-badge.pending { background: rgba(217,119,6,0.14); color: #d97706; }
-.res-badge.cancelled { background: rgba(100,116,139,0.14); color: #64748b; }
-.res-item-remark { font-size: 11.5px; color: var(--text-dim); margin-top: 6px; font-style: italic; }
-.res-item-actions { display: flex; gap: 6px; margin-top: 10px; justify-content: flex-end; }
 .res-add-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; border: none; border-radius: 9px; padding: 10px 14px; font-size: 12.5px; font-weight: 800; letter-spacing: 0.3px; box-shadow: var(--sh-sm); flex: 1 1 100%; cursor: pointer; }
 .res-empty { text-align: center; padding: 40px 20px; color: var(--text-faint); font-size: 13px; }
 .res-empty i { display: block; margin: 0 auto 10px; opacity: 0.5; }
@@ -241,6 +242,9 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .erp-stat.c-blue  { background: linear-gradient(135deg, #2f6fd6, #234f9c); }
 .erp-stat.c-red   { background: linear-gradient(135deg, #ef4444, #c62828); }
 .erp-stat.c-teal  { background: linear-gradient(135deg, #14b8c4, #0e8891); }
+.erp-stat.res-tab { cursor: pointer; border: 2px solid transparent; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+.erp-stat.res-tab:active { transform: scale(0.97); }
+.erp-stat.res-tab.res-tab-selected { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.35), var(--sh-md); }
 
 .erp-toolbar { display: flex; gap: 8px; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 8px; box-shadow: var(--sh-sm); margin-bottom: 18px; flex-wrap: wrap; }
 .erp-toolbar input[type="date"], .erp-toolbar input[type="text"] { flex: 1 1 110px; min-width: 0; border: 1px solid var(--border-strong); border-radius: 9px; padding: 9px 10px; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--card-2); outline: none; font-family: var(--mono); }
@@ -1355,19 +1359,7 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
         <div class="res-field">
           <label>Reservation Date</label>
           <input type="date" id="res-date" />
-        </div>
-        <div class="res-field">
-          <label>Days</label>
-          <input type="number" id="res-days" min="0" placeholder="0" />
-        </div>
-        <div class="res-field">
-          <label>Status</label>
-          <select id="res-status">
-            <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
-            <option value="Expired">Expired</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
+          <div style="font-size:10.5px; color:var(--text-dim); margin-top:5px;">Status &amp; days left are calculated automatically from this date.</div>
         </div>
         <div class="res-field">
           <label>Client</label>
@@ -2696,64 +2688,97 @@ document.addEventListener('visibilitychange', () => {
             });
     }
 
-    function resStatusClass(status) {
-        const s = (status || '').toLowerCase();
-        if (s === 'active') return 'active';
-        if (s === 'expired') return 'expired';
-        if (s === 'cancelled') return 'cancelled';
-        return 'pending';
+    let currentReservationFilter = 'all'; // all | reserved | pending | expired
+
+    // Mirrors these exact spreadsheet rules, based on the Reservation Date:
+    //   Days   =IF(date="","",MAX(date+2-TODAY(),0))
+    //   Status =IF(date="","",IF(TODAY()<=date+1,"Reserved",IF(TODAY()<=date+2,"Pending","Expired")))
+    function computeReservationStatus(dateStr) {
+        if (!dateStr) return { status: 'Reserved', days: 0, key: 'reserved' };
+        const resDate = new Date(dateStr + 'T00:00:00');
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        if (isNaN(resDate)) return { status: 'Reserved', days: 0, key: 'reserved' };
+        const diffDays = Math.round((today - resDate) / 86400000);
+        const daysLeft = Math.max(2 - diffDays, 0);
+        let status, key;
+        if (diffDays <= 1) { status = 'Reserved'; key = 'reserved'; }
+        else if (diffDays <= 2) { status = 'Pending'; key = 'pending'; }
+        else { status = 'Expired'; key = 'expired'; }
+        return { status, days: daysLeft, key };
+    }
+
+    function resStatusClass(key) {
+        if (key === 'reserved') return 'active';
+        if (key === 'pending') return 'pending';
+        return 'expired';
     }
 
     function fmtResDate(d) {
         if (!d) return '—';
         const dt = new Date(d + 'T00:00:00');
         if (isNaN(dt)) return d;
-        return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+    }
+
+    function setReservationFilter(key) {
+        currentReservationFilter = key;
+        renderReservations();
     }
 
     function renderReservations() {
-        const total = RESERVATIONS.length;
-        const active = RESERVATIONS.filter(r => (r.status || '').toLowerCase() === 'active').length;
-        const expired = RESERVATIONS.filter(r => (r.status || '').toLowerCase() === 'expired').length;
-        const pending = RESERVATIONS.filter(r => (r.status || '').toLowerCase() === 'pending').length;
-        document.getElementById('reservation-stats').innerHTML =
-            erpStatCard('c-blue', 'clipboard-list', total, 'Total Reservations') +
-            erpStatCard('c-green', 'check-circle', active, 'Active') +
-            erpStatCard('c-red', 'x-circle', expired, 'Expired') +
-            erpStatCard('c-teal', 'clock', pending, 'Pending');
+        const computed = RESERVATIONS.map(r => ({ r, c: computeReservationStatus(r.date) }));
+        const total = computed.length;
+        const reservedCount = computed.filter(x => x.c.key === 'reserved').length;
+        const pendingCount = computed.filter(x => x.c.key === 'pending').length;
+        const expiredCount = computed.filter(x => x.c.key === 'expired').length;
 
+        const sel = k => currentReservationFilter === k ? ' res-tab-selected' : '';
+        document.getElementById('reservation-stats').innerHTML =
+            `<div class="erp-stat c-blue res-tab${sel('all')}" onclick="setReservationFilter('all')"><i data-lucide="clipboard-list" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${total}</span><span class="erp-stat-label">Total Reservations</span></div>` +
+            `<div class="erp-stat c-green res-tab${sel('reserved')}" onclick="setReservationFilter('reserved')"><i data-lucide="check-circle" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${reservedCount}</span><span class="erp-stat-label">Active</span></div>` +
+            `<div class="erp-stat c-teal res-tab${sel('pending')}" onclick="setReservationFilter('pending')"><i data-lucide="clock" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${pendingCount}</span><span class="erp-stat-label">Last Day</span></div>` +
+            `<div class="erp-stat c-red res-tab${sel('expired')}" onclick="setReservationFilter('expired')"><i data-lucide="x-circle" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${expiredCount}</span><span class="erp-stat-label">Expired</span></div>`;
+
+        renderReservationRows(computed);
+        (typeof lucide !== 'undefined' && lucide.createIcons());
+    }
+
+    function renderReservationRows(computed) {
+        const searchVal = (document.getElementById('reservation-search').value || '').toLowerCase();
+        const filtered = computed.filter(({ r, c }) => {
+            if (currentReservationFilter !== 'all' && c.key !== currentReservationFilter) return false;
+            if (searchVal) {
+                const hay = [r.asset, r.sales, r.client].join(' ').toLowerCase();
+                if (!hay.includes(searchVal)) return false;
+            }
+            return true;
+        });
         const list = document.getElementById('reservation-list');
-        if (!total) {
-            list.innerHTML = `<div class="res-empty"><i data-lucide="calendar-check" size="34"></i>No reservations yet. Tap "Add Reservation" to create the first one.</div>`;
+        if (!filtered.length) {
+            list.innerHTML = `<div class="res-empty"><i data-lucide="calendar-check" size="34"></i>${RESERVATIONS.length ? 'No reservations match this view.' : 'No reservations yet. Tap "Add Reservation" to create the first one.'}</div>`;
         } else {
-            list.innerHTML = RESERVATIONS.map(r => {
-                const search = [r.asset, r.sales, r.client, r.status].join(' ').toLowerCase();
-                return `<div class="res-item" data-search="${search}" data-id="${r.id}">
-                    <div class="res-item-top">
-                        <h4>${r.asset || '—'}</h4>
-                        <span class="res-badge ${resStatusClass(r.status)}">${r.status || 'Pending'}</span>
-                    </div>
-                    <div class="res-item-meta">
-                        <span><i data-lucide="user" size="11"></i> ${r.sales || '—'}</span>
-                        <span><i data-lucide="calendar" size="11"></i> ${fmtResDate(r.date)}</span>
-                        <span><i data-lucide="hourglass" size="11"></i> ${r.days ?? 0} day${(r.days == 1) ? '' : 's'}</span>
-                        ${r.client ? `<span><i data-lucide="briefcase" size="11"></i> ${r.client}</span>` : ''}
-                    </div>
-                    ${r.remark ? `<div class="res-item-remark">${r.remark}</div>` : ''}
-                    <div class="res-item-actions">
-                        <button class="act-btn" onclick="openReservationModal('${r.id}')"><i data-lucide="pencil" size="14"></i></button>
-                    </div>
-                </div>`;
-            }).join('');
+            list.innerHTML = filtered.map(({ r, c }) => `<div class="res-row" data-id="${r.id}" ${r.remark ? `title="${r.remark.replace(/"/g, '&quot;')}"` : ''}>
+                <div class="res-row-main">
+                    <span class="res-row-asset">${r.asset || '—'}</span>
+                    <span class="res-row-sep">•</span>
+                    <span class="res-row-sales">${r.sales || '—'}</span>
+                    <span class="res-row-sep">•</span>
+                    <span class="res-row-date">${fmtResDate(r.date)}</span>
+                    <span class="res-row-sep">•</span>
+                    <span class="res-row-days">${c.days}d left</span>
+                    ${r.client ? `<span class="res-row-sep">•</span><span class="res-row-sales">${r.client}</span>` : ''}
+                </div>
+                <div class="res-row-right">
+                    <span class="res-badge ${resStatusClass(c.key)}">${c.status}</span>
+                    <button class="res-row-edit" onclick="openReservationModal('${r.id}')"><i data-lucide="pencil" size="13"></i></button>
+                </div>
+            </div>`).join('');
         }
         (typeof lucide !== 'undefined' && lucide.createIcons());
     }
 
-    function filterReservations(q) {
-        q = (q || '').toLowerCase();
-        document.querySelectorAll('#reservation-list .res-item').forEach(el => {
-            el.style.display = el.dataset.search.includes(q) ? '' : 'none';
-        });
+    function filterReservations() {
+        renderReservationRows(RESERVATIONS.map(r => ({ r, c: computeReservationStatus(r.date) })));
     }
 
     function initReservationsTab() {
@@ -2772,8 +2797,6 @@ document.addEventListener('visibilitychange', () => {
         document.getElementById('res-asset').value = r ? (r.asset || '') : '';
         document.getElementById('res-sales').value = r ? (r.sales || '') : '';
         document.getElementById('res-date').value = r ? (r.date || '') : '';
-        document.getElementById('res-days').value = r ? (r.days ?? '') : '';
-        document.getElementById('res-status').value = r ? (r.status || 'Active') : 'Active';
         document.getElementById('res-client').value = r ? (r.client || '') : '';
         document.getElementById('res-remark').value = r ? (r.remark || '') : '';
         document.getElementById('res-delete-btn').classList.toggle('hidden', !r);
@@ -2793,8 +2816,6 @@ document.addEventListener('visibilitychange', () => {
             asset,
             sales: document.getElementById('res-sales').value.trim(),
             date: document.getElementById('res-date').value,
-            days: Number(document.getElementById('res-days').value) || 0,
-            status: document.getElementById('res-status').value,
             client: document.getElementById('res-client').value.trim(),
             remark: document.getElementById('res-remark').value.trim()
         };
@@ -2808,8 +2829,6 @@ document.addEventListener('visibilitychange', () => {
                 await col.add(data);
             }
             closeReservationModal();
-            const q = document.getElementById('reservation-search');
-            if (q && q.value) filterReservations(q.value);
         } catch (e) {
             alert('Could not save: ' + e.message);
         }
