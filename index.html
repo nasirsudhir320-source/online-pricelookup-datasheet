@@ -13,6 +13,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <!-- Free AI (Puter.js) — no API key required, powers the AI Assistant, AI Search and AI Suggest features -->
+    <script src="https://js.puter.com/v2/"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
     <style>
 /* ============================================================
@@ -872,6 +874,59 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
     #offhire-wrap #note { border: none; box-shadow: none; margin: 0; }
 }
 
+
+/* ============================================================
+   AI FEATURES — Free AI Assistant (Puter.js, no API key)
+   ============================================================ */
+.ai-fab {
+    position: fixed; right: 20px; bottom: 24px; z-index: 2600;
+    width: 56px; height: 56px; border-radius: 50%; border: none;
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--sh-xl); cursor: pointer; transition: transform 0.15s;
+}
+.ai-fab:active { transform: scale(0.92); }
+.ai-fab-pulse { position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0.6; animation: aiPulse 2.2s ease-out infinite; }
+@keyframes aiPulse { 0% { transform: scale(0.9); opacity: 0.6; } 100% { transform: scale(1.35); opacity: 0; } }
+
+#ai-chat-overlay { position: fixed; inset: 0; z-index: 3500; background: rgba(15,23,42,0.45); backdrop-filter: blur(3px); display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 640px) { #ai-chat-overlay { align-items: center; } }
+#ai-chat-panel { background: var(--bg); width: 100%; max-width: 460px; height: 82vh; max-height: 640px; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; box-shadow: var(--sh-xl); overflow: hidden; }
+@media (min-width: 640px) { #ai-chat-panel { border-radius: 20px; } }
+.ai-chat-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; background: var(--card); border-bottom: 1px solid var(--border); }
+.ai-chat-head-icon { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), #7c3aed); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.ai-chat-head-text { flex: 1; }
+.ai-chat-head-text .t1 { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 14px; color: var(--ink); }
+.ai-chat-head-text .t2 { font-size: 10.5px; color: var(--text-faint); font-weight: 600; }
+.ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; -webkit-overflow-scrolling: touch; }
+.ai-msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; }
+.ai-msg.user { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.ai-msg.bot { align-self: flex-start; background: var(--card); border: 1px solid var(--border); color: var(--ink); border-bottom-left-radius: 4px; white-space: pre-wrap; }
+.ai-msg.bot.typing { display: flex; gap: 4px; align-items: center; padding: 14px; }
+.ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); animation: aiDot 1.2s infinite ease-in-out; }
+.ai-dot:nth-child(2) { animation-delay: 0.15s; } .ai-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes aiDot { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+.ai-chat-suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 12px; }
+.ai-chip { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); border-radius: 20px; padding: 7px 13px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+.ai-chat-inputrow { display: flex; gap: 10px; padding: 12px 14px; background: var(--card); border-top: 1px solid var(--border); align-items: center; }
+#ai-chat-input { flex: 1; border: 1px solid var(--border); background: var(--card-2); border-radius: 22px; padding: 11px 16px; font-size: 13.5px; outline: none; color: var(--ink); }
+#ai-chat-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.ai-send-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ai-send-btn:active { transform: scale(0.92); }
+.ai-close-btn { width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border); background: var(--card-2); color: var(--text-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* AI search assist (Home tab) */
+.ai-search-btn { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, var(--accent), #7c3aed); color: #fff; border: none; border-radius: 12px; padding: 0 16px; font-weight: 800; font-size: 12px; font-family: 'Space Grotesk', sans-serif; box-shadow: var(--sh-sm); }
+.ai-search-btn:active { transform: scale(0.97); }
+.ai-search-answer { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; font-size: 13px; line-height: 1.55; color: var(--ink); display: flex; gap: 10px; }
+.ai-search-answer .ai-badge { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #7c3aed); color: #fff; display: flex; align-items: center; justify-content: center; }
+.ai-search-answer.loading { color: var(--text-dim); font-style: italic; }
+
+/* AI Suggest button (Off Hire remarks) */
+.ai-suggest-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 11.5px; font-weight: 800; cursor: pointer; margin-top: 8px; font-family: 'Space Grotesk', sans-serif; }
+.ai-suggest-btn:disabled { opacity: 0.6; }
+.ai-suggest-spin { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); border-top-color: transparent; animation: aiSpin 0.7s linear infinite; display: inline-block; }
+@keyframes aiSpin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -945,9 +1000,11 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 
             <h3 class="group-title">Search Rental Equipment</h3>
             <div class="home-search-row">
-                <input type="text" id="home-rate-search" class="rate-search" placeholder="Search by equipment type, size, or capacity..." oninput="searchHomeRates(this.value)" />
+                <input type="text" id="home-rate-search" class="rate-search" placeholder="Search by equipment type, size, or capacity..." oninput="searchHomeRates(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); aiSmartSearch();}" />
                 <button class="home-search-btn" onclick="searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="15"></i> Search</button>
+                <button class="ai-search-btn" onclick="aiSmartSearch()" title="Ask AI to interpret this request in plain language"><i data-lucide="sparkles" size="15"></i> Ask AI</button>
             </div>
+            <div id="ai-search-answer-wrap"></div>
             <div class="rate-cards" id="home-rate-results"></div>
         </div>
 
@@ -1228,6 +1285,7 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
     <div class="field">
       <label>Remarks</label>
       <textarea id="remarks" rows="2"></textarea>
+      <button type="button" class="ai-suggest-btn" id="ai-remarks-btn" onclick="aiSuggestRemarks()"><i data-lucide="sparkles" size="13"></i> AI Suggest Remarks</button>
     </div>
 
     <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
@@ -1490,6 +1548,35 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
   </div>
 </div>
 
+    </div>
+
+    <!-- ============ FREE AI ASSISTANT (Puter.js — no API key needed) ============ -->
+    <button class="ai-fab" id="ai-fab-btn" onclick="aiOpenChat()" title="AI Assistant">
+        <span class="ai-fab-pulse"></span>
+        <i data-lucide="sparkles" size="24"></i>
+    </button>
+
+    <div id="ai-chat-overlay" class="hidden" onclick="if(event.target===this) aiCloseChat()">
+        <div id="ai-chat-panel">
+            <div class="ai-chat-head">
+                <div class="ai-chat-head-icon"><i data-lucide="sparkles" size="17"></i></div>
+                <div class="ai-chat-head-text">
+                    <div class="t1">SUDHIR AI Assistant</div>
+                    <div class="t2">Free AI · ask about rates, equipment &amp; more</div>
+                </div>
+                <button class="ai-close-btn" onclick="aiCloseChat()"><i data-lucide="x" size="16"></i></button>
+            </div>
+            <div class="ai-chat-messages" id="ai-chat-messages"></div>
+            <div class="ai-chat-suggestions" id="ai-chat-suggestions">
+                <button class="ai-chip" onclick="aiSendSuggested('What equipment do you have for concrete work?')">Concrete equipment?</button>
+                <button class="ai-chip" onclick="aiSendSuggested('How do I create an off hire note?')">Create an off hire note</button>
+                <button class="ai-chip" onclick="aiSendSuggested('What yards do you operate in?')">Operational yards?</button>
+            </div>
+            <div class="ai-chat-inputrow">
+                <input type="text" id="ai-chat-input" placeholder="Ask me anything about SUDHIR RENTALS..." onkeydown="if(event.key==='Enter') aiSendMessage();" />
+                <button class="ai-send-btn" onclick="aiSendMessage()"><i data-lucide="send" size="16"></i></button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -5117,6 +5204,262 @@ window.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error(err);
             statusEl.textContent = 'Could not generate the certificate. Please try again.';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+            (typeof lucide!=='undefined'&&lucide.createIcons());
+        }
+    }
+
+    /* ============================================================
+       FREE AI ASSISTANT — powered by Puter.js (puter.com)
+       No API key, no backend, no cost. Runs entirely client-side.
+       Provides: 1) floating chat assistant, 2) natural-language
+       "Ask AI" search on Home, 3) AI-drafted Off Hire remarks.
+       ============================================================ */
+
+    // Builds a compact text summary of the rates database so the AI has
+    // real context about what equipment SUDHIR RENTALS actually offers,
+    // instead of hallucinating. Capped to keep prompts fast & cheap.
+    function aiBuildRatesContext(maxItems) {
+        maxItems = maxItems || 220;
+        const lines = [];
+        Object.keys(db.rates || {}).forEach(cat => {
+            const rows = db.rates[cat];
+            if (!rows || rows.length < 2) return;
+            const headers = rows[0];
+            rows.slice(1).forEach(r => {
+                if (lines.length >= maxItems) return;
+                const name = r[0] || '';
+                const bits = [];
+                for (let i = 1; i < headers.length; i++) {
+                    if (r[i] !== undefined && r[i] !== '') bits.push(`${headers[i]}: ${r[i]}`);
+                }
+                lines.push(`- [${cat}] ${name}${bits.length ? ' (' + bits.join(', ') + ')' : ''}`);
+            });
+        });
+        return lines.join('\n');
+    }
+
+    function aiBuildYardsContext() {
+        try {
+            if (typeof YARDS === 'undefined' || !Array.isArray(YARDS)) return '';
+            return YARDS.slice(0, 40).map(y => y.n || '').filter(Boolean).join(', ');
+        } catch (e) { return ''; }
+    }
+
+    const AI_SYSTEM_PROMPT = () => `You are the AI Assistant embedded inside "SUDHIR RENTALS" — a mobile app used by staff at a heavy equipment rental company in Saudi Arabia. You help staff quickly find rental equipment, rates, and understand app features (Rates, Specs/Datasheets, Photos, Machine Docs, Off Hire Note, Yards, Team, Reservations).
+Be concise, friendly and practical — answers should be short (2-6 sentences or a short bullet list), suitable for a small mobile chat bubble.
+If asked about specific equipment or rates, use ONLY the data below; if something isn't listed, say you don't have that in the current rate sheet rather than inventing numbers.
+If asked how to do something in the app (e.g. "how do I create an off hire note"), give brief numbered steps referencing the app's tabs by name (Home, Rates, Specs, Photos, Docs, Offhire, Yards, Team, Reserve).
+
+RATE SHEET DATA (sample):
+${aiBuildRatesContext()}
+
+OPERATIONAL YARDS: ${aiBuildYardsContext() || 'Not loaded yet.'}`;
+
+    // Puter.js is loaded via a <script> tag in <head>. On a flaky connection,
+    // a blocked CDN, or a strict preview sandbox, that request can fail
+    // silently while the rest of the app keeps working fine. This retries
+    // loading it on demand (up to a few times) instead of giving up after
+    // a single check, and gives a clearer error if it truly can't load.
+    let puterLoadPromise = null;
+    function ensurePuterLoaded() {
+        if (typeof puter !== 'undefined' && puter.ai && puter.ai.chat) return Promise.resolve();
+        if (puterLoadPromise) return puterLoadPromise;
+        puterLoadPromise = new Promise((resolve, reject) => {
+            let attempts = 0;
+            const tryLoad = () => {
+                attempts++;
+                if (typeof puter !== 'undefined' && puter.ai && puter.ai.chat) { resolve(); return; }
+                const existing = document.querySelector('script[data-puter-loader]');
+                if (existing) existing.remove();
+                const s = document.createElement('script');
+                s.src = 'https://js.puter.com/v2/';
+                s.setAttribute('data-puter-loader', '1');
+                s.onload = () => {
+                    // Give the SDK a beat to initialize window.puter after firing onload
+                    setTimeout(() => {
+                        if (typeof puter !== 'undefined' && puter.ai && puter.ai.chat) resolve();
+                        else if (attempts < 3) setTimeout(tryLoad, 800);
+                        else reject(new Error('AI engine loaded but did not initialize. Please reload the page.'));
+                    }, 300);
+                };
+                s.onerror = () => {
+                    if (attempts < 3) setTimeout(tryLoad, 800);
+                    else reject(new Error('Could not reach the AI service (js.puter.com). Check your internet connection, or note that some sandboxed previews block third-party scripts — try opening this file directly in a browser.'));
+                };
+                document.head.appendChild(s);
+            };
+            tryLoad();
+        }).finally(() => { /* allow future calls to re-check quickly next time */ });
+        return puterLoadPromise;
+    }
+
+    // Thin wrapper around Puter.js's free ai.chat() so the rest of the code
+    // doesn't need to know about its exact response shape.
+    async function aiCallFree(messages) {
+        await ensurePuterLoaded();
+        if (typeof puter === 'undefined' || !puter.ai || !puter.ai.chat) {
+            throw new Error('AI engine failed to load. Check your internet connection and reload the app.');
+        }
+        const res = await puter.ai.chat(messages);
+        if (typeof res === 'string') return res;
+        if (res && res.message && res.message.content) {
+            const c = res.message.content;
+            if (typeof c === 'string') return c;
+            if (Array.isArray(c)) return c.map(b => b.text || '').join('').trim();
+        }
+        if (res && typeof res.toString === 'function') {
+            const s = res.toString();
+            if (s && s !== '[object Object]') return s;
+        }
+        return JSON.stringify(res);
+    }
+
+    /* ---------------- 1) Floating AI Chat Assistant ---------------- */
+    let aiChatHistory = [];
+    let aiChatBusy = false;
+
+    function aiOpenChat() {
+        const overlay = document.getElementById('ai-chat-overlay');
+        overlay.classList.remove('hidden');
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+        const msgs = document.getElementById('ai-chat-messages');
+        if (!msgs.children.length) {
+            aiAppendMessage('bot', "Hi! I'm your SUDHIR RENTALS AI assistant. Ask me about equipment, rates, yards, or how to use any part of the app.");
+        }
+        setTimeout(() => document.getElementById('ai-chat-input').focus(), 150);
+    }
+    function aiCloseChat() {
+        document.getElementById('ai-chat-overlay').classList.add('hidden');
+    }
+    function aiAppendMessage(who, text) {
+        const msgs = document.getElementById('ai-chat-messages');
+        const div = document.createElement('div');
+        div.className = 'ai-msg ' + who;
+        div.textContent = text;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return div;
+    }
+    function aiShowTyping() {
+        const msgs = document.getElementById('ai-chat-messages');
+        const div = document.createElement('div');
+        div.className = 'ai-msg bot typing';
+        div.id = 'ai-typing-indicator';
+        div.innerHTML = '<span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>';
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+    function aiHideTyping() {
+        const el = document.getElementById('ai-typing-indicator');
+        if (el) el.remove();
+    }
+    function aiSendSuggested(text) {
+        document.getElementById('ai-chat-input').value = text;
+        aiSendMessage();
+    }
+    async function aiSendMessage() {
+        if (aiChatBusy) return;
+        const input = document.getElementById('ai-chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        const suggestions = document.getElementById('ai-chat-suggestions');
+        if (suggestions) suggestions.classList.add('hidden');
+        aiAppendMessage('user', text);
+        aiChatHistory.push({ role: 'user', content: text });
+        aiChatBusy = true;
+        aiShowTyping();
+        try {
+            const messages = [{ role: 'system', content: AI_SYSTEM_PROMPT() }, ...aiChatHistory.slice(-10)];
+            const reply = await aiCallFree(messages);
+            aiHideTyping();
+            aiAppendMessage('bot', reply || "Sorry, I didn't get a response — please try again.");
+            aiChatHistory.push({ role: 'assistant', content: reply });
+        } catch (err) {
+            aiHideTyping();
+            aiAppendMessage('bot', '⚠️ ' + (err.message || 'Something went wrong reaching the AI. Please try again.'));
+        } finally {
+            aiChatBusy = false;
+        }
+    }
+
+    /* ---------------- 2) AI Smart Search on Home tab ---------------- */
+    async function aiSmartSearch() {
+        const input = document.getElementById('home-rate-search');
+        const query = (input.value || '').trim();
+        const wrap = document.getElementById('ai-search-answer-wrap');
+        if (!query) { input.focus(); return; }
+
+        wrap.innerHTML = `<div class="ai-search-answer loading"><div class="ai-badge"><i data-lucide="sparkles" size="14"></i></div><div>Thinking about "${query}"...</div></div>`;
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+
+        try {
+            const messages = [
+                { role: 'system', content: `You help match a plain-language equipment request to items in a rental company's rate sheet. Given the person's request and the rate sheet below, reply with TWO parts separated by "|||":
+1) A short (max 2 sentence) friendly recommendation naming the best-matching equipment/category.
+2) A single best search keyword (1-3 words, from the item names/categories) to filter the list with — no punctuation.
+Rate sheet:
+${aiBuildRatesContext()}` },
+                { role: 'user', content: query }
+            ];
+            const raw = await aiCallFree(messages);
+            const parts = raw.split('|||');
+            const answer = (parts[0] || raw).trim();
+            const keyword = (parts[1] || query).trim();
+
+            wrap.innerHTML = `<div class="ai-search-answer"><div class="ai-badge"><i data-lucide="sparkles" size="14"></i></div><div>${answer}</div></div>`;
+            (typeof lucide!=='undefined'&&lucide.createIcons());
+
+            // Reuse the existing keyword search to actually filter/render results
+            input.value = keyword;
+            searchHomeRates(keyword);
+        } catch (err) {
+            wrap.innerHTML = `<div class="ai-search-answer"><div class="ai-badge"><i data-lucide="alert-triangle" size="14"></i></div><div>${err.message || 'AI search failed — please try a regular keyword search instead.'}</div></div>`;
+            (typeof lucide!=='undefined'&&lucide.createIcons());
+        }
+    }
+
+    /* ---------------- 3) AI Suggest — Off Hire Note remarks ---------------- */
+    async function aiSuggestRemarks() {
+        const btn = document.getElementById('ai-remarks-btn');
+        const remarksEl = document.getElementById('remarks');
+        if (!btn || !remarksEl) return;
+        const origHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="ai-suggest-spin"></span> Thinking...';
+
+        try {
+            const blocks = document.querySelectorAll('.items-block');
+            const items = Array.from(blocks).map(b => {
+                const desc = b.querySelector('.i-desc')?.value || '';
+                const propNo = b.querySelector('.i-propNo')?.value || '';
+                return [desc, propNo].filter(Boolean).join(' / ');
+            }).filter(Boolean).join('; ');
+
+            const reason = document.getElementById('reason')?.value || '';
+            const returnedStatus = document.getElementById('returnedStatus')?.value || '';
+            const damageCharges = document.getElementById('damageCharges')?.value || '';
+            const damageChargedTo = document.getElementById('damageChargedTo')?.value || '';
+            const demobCharges = document.getElementById('demobCharges')?.value || '';
+
+            const messages = [
+                { role: 'system', content: `You write short, professional remarks (1-2 sentences, max ~35 words) for an equipment rental company's "Off Hire Note" — an internal document recording equipment being returned from a client site. Reply with ONLY the remarks text, no quotes, no preamble.` },
+                { role: 'user', content: `Equipment/accessories: ${items || 'not specified'}
+Reason for return: ${reason || 'not specified'}
+Equipment returned status: ${returnedStatus || 'not specified'}
+Damage charges: ${damageCharges || '0.00'} (charged to: ${damageChargedTo || 'n/a'})
+Demobilization charges: ${demobCharges || '0.00'}
+
+Write the Remarks field for this off hire note.` }
+            ];
+            const reply = await aiCallFree(messages);
+            remarksEl.value = (reply || '').trim();
+            if (typeof renderNote === 'function') renderNote();
+        } catch (err) {
+            alert(err.message || 'Could not generate AI remarks. Please try again.');
         } finally {
             btn.disabled = false;
             btn.innerHTML = origHtml;
