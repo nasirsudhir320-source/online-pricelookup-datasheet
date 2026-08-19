@@ -775,7 +775,7 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 #price-editor-panel .modal-overlay.show { display: flex; }
 #price-editor-panel .modal { background: var(--panel); border: 1px solid var(--border-strong); border-radius: 22px; padding: 24px; width: 280px; box-shadow: var(--sh-xl); border-top: 4px solid var(--amber); }
 #price-editor-panel .modal h3 { margin: 0 0 12px; font-size: 14px; font-family: var(--display); font-weight: 600; }
-#price-editor-panel .modal input { width: 100%; background: var(--card-2); border: 1px solid var(--border-strong); color: var(--amber); font-family: var(--display); font-size: 16px; letter-spacing: 0.2em; padding: 12px; border-radius: 14px; text-align: center; margin-bottom: 12px; }
+#price-editor-panel .modal input { width: 100%; background: var(--card-2); border: 1px solid var(--border-strong); color: var(--amber); font-family: var(--display); font-size: 16px; letter-spacing: 0.2em; padding: 12px; border-radius: 14px; text-align: center; margin-bottom: 12px; -webkit-text-security: disc; text-security: disc; }
 #price-editor-panel .modal input:focus { outline: none; border-color: var(--amber); }
 #price-editor-panel .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
 #price-editor-panel .modal-err { color: var(--bad); font-family: var(--mono); font-size: 11px; margin: -6px 0 10px; display: none; }
@@ -1502,7 +1502,7 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h3>Enter password to edit</h3>
-    <input type="password" id="pwInput" maxlength="8" inputmode="numeric">
+    <input type="text" id="pwInput" maxlength="8" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <div class="modal-err" id="pwErr">Incorrect password</div>
     <div class="modal-actions">
       <button id="pwCancel">Cancel</button>
