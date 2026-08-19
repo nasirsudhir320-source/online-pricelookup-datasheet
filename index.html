@@ -902,8 +902,10 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
     <div class="auth-card">
         <div class="logo" style="font-size: 20px;">SUDHIR<span> RENTALS</span></div>
         <p style="color:var(--text-dim); font-size:12px; margin: 15px 0 25px;">Employee Terminal</p>
+        <form id="login-form" autocomplete="on" onsubmit="return false;">
         <input type="password" id="pin" class="pin-box" maxlength="4" inputmode="numeric" placeholder="••••" onkeyup="if(event.key==='Enter') doAuth(); if(this.value.length===4) doAuth();" />
-        <button id="login-btn" style="width:100%; padding:18px; border-radius:12px; background:var(--border); font-weight:800; border:none; color:var(--text-dim); transition: 0.3s; font-family:var(--mono); letter-spacing:1px;" onclick="doAuth()">LOGIN</button>
+        <button id="login-btn" type="submit" style="width:100%; padding:18px; border-radius:12px; background:var(--border); font-weight:800; border:none; color:var(--text-dim); transition: 0.3s; font-family:var(--mono); letter-spacing:1px;" onclick="doAuth()">LOGIN</button>
+        </form>
     </div>
 </div>
 
@@ -3435,6 +3437,7 @@ document.addEventListener('visibilitychange', () => {
             return;
         }
         saveSession();
+        document.getElementById('pin').value = '';
         enterApp();
     }
 
