@@ -85,6 +85,10 @@ body {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
+@media (min-width: 900px) {
+    html { zoom: 0.9; height: 100%; }
+    body { width: 100% !important; height: 100% !important; }
+}
 .hidden { display: none !important; }
 
 /* ---------- Tables ---------- */
@@ -123,6 +127,9 @@ tbody tr:active { background-color: var(--accent-dim) !important; }
 .rate-card.rate-card-electric { border-left-color: var(--green); }
 .rate-card.rate-card-electric .rate-value { color: var(--green); }
 .electric-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; color: #fff; background: var(--green); padding: 3px 8px; border-radius: 8px; letter-spacing: 0.4px; vertical-align: middle; margin-left: 8px; text-transform: uppercase; }
+.rate-card.rate-card-aramco { border-left-color: var(--purple); }
+.rate-card.rate-card-aramco .rate-value { color: var(--purple); }
+.aramco-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; color: #fff; background: var(--purple); padding: 3px 8px; border-radius: 8px; letter-spacing: 0.4px; vertical-align: middle; margin-left: 8px; text-transform: uppercase; }
 .rate-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .rate-item-name { font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.3; letter-spacing: -0.2px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; }
 .rate-item-cat { font-size: 12px; color: var(--text-dim); font-weight: 700; margin-top: 7px; text-transform: uppercase; letter-spacing: 0.3px; }
@@ -333,7 +340,8 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .act-btn:active { transform: scale(0.93); }
 .act-btn.wa { color: var(--wa); }
 .act-btn.success { color: var(--success); }
-.act-btn.primary { color: var(--accent); }
+.act-btn.primary { color: #ffffff; }
+.act-btn.primary i { color: #ffffff; }
 
 /* ---------- Top ribbon nav (now docked inline in the header, next to the logo) ---------- */
 nav { flex: 1 1 auto; min-width: 0; order: 0; position: static; background: none; border: none; box-shadow: none; display: flex; align-items: flex-start; gap: 0; padding: 0; z-index: 500; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -686,7 +694,7 @@ body.merge-drag-over-all::after {
 .multi-select-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-color: transparent; box-shadow: var(--sh-md); }
 .multi-select-btn.active span { color: #fff; }
 .grid.folder-view { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-.grid.photo-view { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+.grid.photo-view { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
 @media (min-width: 768px) {
     .grid.folder-view { grid-template-columns: repeat(4, 1fr) !important; gap: 16px !important; }
     .grid.photo-view { grid-template-columns: repeat(6, 1fr) !important; gap: 14px !important; }
@@ -738,12 +746,13 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(3, 1fr) !impo
 .lb-arrow.down { bottom: 6px; }
 .lb-arrow.hidden { opacity: 0; pointer-events: none; }
 .lb-hint { font-size: 10px; font-weight: 700; letter-spacing: 0.3px; color: var(--text-faint); margin-top: 6px; text-transform: uppercase; text-align: center; }
-.lb-counter { margin-top: 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim); }
+.lb-counter { margin-top: 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-dim); text-align: center; }
 #lb-fav-btn.is-fav { color: var(--accent); }
 #lb-fav-btn.is-fav i { fill: var(--accent); }
 .gal-empty-state { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 60px 20px; color: var(--text-faint); text-align: center; }
 .gal-empty-state .t { font-size: 13px; font-weight: 700; color: var(--text-dim); }
-.action-bar { display: flex; gap: 10px; margin-top: 25px; }
+.action-bar { display: flex; gap: 10px; margin: 25px auto 0; width: 100%; max-width: 420px; }
+.action-bar .act-btn { width: auto; height: auto; flex: 1; padding: 13px 18px; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.3px; white-space: nowrap; }
 
 /* ===================== PRICE EDITOR (scoped) ===================== */
 #price-editor-panel {
@@ -1093,7 +1102,7 @@ h5, .md-quick-text h5 { font-size: var(--fs-md); line-height: var(--lh-snug); le
 
 /* ---- Labels (uppercase eyebrows) ---- */
 .group-title, .genset-banner .group-title-dark, .notif-label, .merge-count, .merge-clear,
-.coc-field label, .md-clear-all, .md-subtab, .res-badge, .electric-tag,
+.coc-field label, .md-clear-all, .md-subtab, .res-badge, .electric-tag, .aramco-tag,
 .erp-stat .erp-stat-label, #price-editor-panel .tab, #price-editor-panel thead th, th {
     font-size: var(--fs-label); line-height: var(--lh-snug); letter-spacing: var(--tr-label); font-weight: 800;
 }
@@ -1255,7 +1264,7 @@ tbody tr:hover { background-color: #f7faff; }
     transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
 }
 .erp-stat:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
-.res-badge, .electric-tag { box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset; letter-spacing: 0.06em; }
+.res-badge, .electric-tag, .aramco-tag { box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset; letter-spacing: 0.06em; }
 
 /* ---------- Overlays & modals ---------- */
 .res-modal-overlay { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: rgba(15, 23, 42, 0.36); }
@@ -1400,24 +1409,20 @@ main::-webkit-scrollbar-track { background: transparent; }
 
 
         <div id="tab-yards" class="view-section hidden">
-            <div class="erp-stats" id="yards-stats"></div>
             <div class="erp-toolbar"><input type="text" id="yards-search" placeholder="Search yard name..." oninput="filterYards(this.value)" /><button class="erp-btn-show" onclick="filterYards(document.getElementById('yards-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <h3 class="group-title">Operational Yards</h3>
             <div id="yard-list"></div>
         </div>
         <div id="tab-team" class="view-section hidden">
-            <div class="erp-stats" id="team-stats"></div>
             <div class="erp-toolbar"><input type="text" id="team-search" placeholder="Search name or role..." oninput="filterTeam(this.value)" /><button class="erp-btn-show" onclick="filterTeam(document.getElementById('team-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <div id="contact-list"></div>
         </div>
         <div id="tab-rates" class="view-section hidden">
-            <div class="erp-stats" id="rates-stats"></div>
             <div class="erp-toolbar"><input type="text" id="rates-search" placeholder="Search category..." oninput="filterCategoryGrid('rates', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <h3 class="group-title">Rates</h3>
             <div id="rates-grid" class="dash-grid"></div>
         </div>
         <div id="tab-docs" class="view-section hidden">
-            <div class="erp-stats" id="docs-stats"></div>
             <div class="erp-toolbar"><input type="text" id="docs-search" placeholder="Search category..." oninput="filterCategoryGrid('docs', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('docs', document.getElementById('docs-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <h3 class="group-title">Datasheets</h3>
             <div id="docs-grid" class="dash-grid"></div>
@@ -1538,21 +1543,6 @@ main::-webkit-scrollbar-track { background: transparent; }
 
 
         <div id="tab-photos" class="view-section hidden" style="padding:0;">
-            <div class="search-container">
-                <div class="search-bar-wrap">
-                    <i data-lucide="search" size="16"></i>
-                    <input type="text" id="photo-q" class="search-bar" placeholder="SEARCH MACHINE PHOTOS..." oninput="photoSearch()">
-                </div>
-                <div class="quick-tools-row">
-                    <button id="fav-filter-btn" class="quick-tool-btn" onclick="togglePhotoFavFilter()" title="Show favorites">
-                        <i data-lucide="heart" size="15"></i> FAVORITES
-                    </button>
-                    <button id="density-btn" class="quick-tool-btn" onclick="togglePhotoGridDensity()" title="Grid density">
-                        <i data-lucide="grid-3x3" size="15"></i> COMPACT
-                    </button>
-                </div>
-            </div>
-
             <div class="breadcrumb-wrap" id="photo-breadcrumbs"></div>
             <div class="stats-line" id="photo-stats" style="padding:0 0 10px 2px;">Loading…</div>
 
@@ -3023,11 +3013,6 @@ document.addEventListener('visibilitychange', () => {
     }
 
     function renderYards() {
-        document.getElementById('yards-stats').innerHTML =
-            erpStatCard('c-green', 'map-pin', YARDS.length, 'Total Yards') +
-            erpStatCard('c-blue', 'check-circle', YARDS.length, 'Active Locations') +
-            erpStatCard('c-red', 'navigation', '—', 'Nearest Yard') +
-            erpStatCard('c-teal', 'globe', YARDS.length, 'Regions Covered');
         document.getElementById('yard-list').innerHTML = YARDS.map(y => `<div class="item-card" data-search="${y.n.toLowerCase()}"><div class="item-info"><h4>${y.n}</h4><p>Yard Location</p></div><div style="display:flex; gap:8px;"><button class="act-btn" onclick="copyText('${y.u}')"><i data-lucide="copy" size="16"></i></button><button class="act-btn wa" onclick="window.open('https://wa.me/?text=${encodeURIComponent(y.n + ': ' + y.u)}')"><i data-lucide="message-square" size="16"></i></button><button class="act-btn primary" onclick="window.open('${y.u}')"><i data-lucide="navigation" size="16"></i></button></div></div>`).join('');
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
@@ -3049,11 +3034,6 @@ document.addEventListener('visibilitychange', () => {
                 html += `<div class="item-card" data-search="${(m.n+' '+m.d).toLowerCase()}"><div class="item-info"><h4>${m.n}</h4><p>${m.d}</p></div><div style="display:flex; gap:8px;"><button class="act-btn" onclick="copyText('${m.p}')"><i data-lucide="copy" size="16"></i></button><button class="act-btn wa" onclick="window.open('https://wa.me/${m.p}')"><i data-lucide="message-square" size="16"></i></button><a href="tel:+${m.p}" class="act-btn success"><i data-lucide="phone" size="16"></i></a></div></div>`;
             });
         });
-        document.getElementById('team-stats').innerHTML =
-            erpStatCard('c-green', 'users', total, 'Team Members') +
-            erpStatCard('c-blue', 'layers', TEAM_GROUPS.length, 'Departments') +
-            erpStatCard('c-red', 'phone', total, 'Direct Lines') +
-            erpStatCard('c-teal', 'message-square', total, 'WhatsApp Ready');
         document.getElementById('contact-list').innerHTML = html;
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
@@ -3310,16 +3290,6 @@ document.addEventListener('visibilitychange', () => {
     function renderGrids() {
         const rateCats = Object.keys(db.rates);
         const docCats = sortSpecNames(Object.keys(db.docsRoot.folders));
-        document.getElementById('rates-stats').innerHTML =
-            erpStatCard('c-green', 'tag', rateCats.length, 'Rate Categories') +
-            erpStatCard('c-blue', 'check-circle', rateCats.length, 'Published') +
-            erpStatCard('c-red', 'star', 0, 'Pending Review') +
-            erpStatCard('c-teal', 'database', rateCats.length, 'Total Listed');
-        document.getElementById('docs-stats').innerHTML =
-            erpStatCard('c-green', 'folder', docCats.length, 'Doc Categories') +
-            erpStatCard('c-blue', 'file-text', docCats.length, 'Available') +
-            erpStatCard('c-red', 'alert-circle', 0, 'Missing Sheets') +
-            erpStatCard('c-teal', 'archive', docCats.length, 'Total Listed');
         document.getElementById('rates-grid').innerHTML = rateCats.map(cat => categoryCardHtml(cat, cat, 'viewRates', 'tag')).join('');
         document.getElementById('docs-grid').innerHTML = docCats.map(cat => categoryCardHtml(cat, cat, 'viewDocs', 'folder')).join('');
         (typeof lucide!=='undefined'&&lucide.createIcons());
@@ -3382,15 +3352,19 @@ document.addEventListener('visibilitychange', () => {
         if(!dataRows.length) { list.innerHTML = `<div class="rate-empty">No matching items.</div>`; return; }
         list.innerHTML = dataRows.map(r => {
             const itemName = r[0] || '';
-            const isElectric = /electric/i.test(itemName);
+            const rowText = r.join(' ');
+            const isElectric = /electric/i.test(rowText);
+            const isAramco = /aramco/i.test(rowText);
             let pills = '';
             for(let i = 1; i < headers.length; i++) {
                 const label = headers[i] || '';
                 const val = (r[i] !== undefined && r[i] !== '') ? r[i] : '-';
                 pills += `<div class="rate-pill"><span class="rate-label">${label}</span><span class="rate-value">${val}</span></div>`;
             }
-            const tag = isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '';
-            return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}"><div class="rate-card-head"><h4 class="rate-item-name">${itemName}${tag}</h4><div class="machine-placeholder">${categoryEmoji(currentRateCat)}</div></div><div class="rate-pills">${pills}</div></div>`;
+            const tag = (isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '') +
+                (isAramco ? `<span class="aramco-tag"><i data-lucide="shield-check" size="11"></i> Aramco</span>` : '');
+            const cardClass = (isElectric ? ' rate-card-electric' : '') + (isAramco ? ' rate-card-aramco' : '');
+            return `<div class="rate-card${cardClass}"><div class="rate-card-head"><h4 class="rate-item-name">${itemName}${tag}</h4><div class="machine-placeholder">${categoryEmoji(currentRateCat)}</div></div><div class="rate-pills">${pills}</div></div>`;
         }).join('');
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
@@ -3471,15 +3445,19 @@ document.addEventListener('visibilitychange', () => {
 
         list.innerHTML = matches.slice(0, 40).map(m => {
             const itemName = m.row[0] || '';
-            const isElectric = /electric/i.test(itemName);
+            const rowText = m.row.join(' ');
+            const isElectric = /electric/i.test(rowText);
+            const isAramco = /aramco/i.test(rowText);
             let pills = '';
             for (let i = 1; i < m.headers.length; i++) {
                 const label = m.headers[i] || '';
                 const val = (m.row[i] !== undefined && m.row[i] !== '') ? m.row[i] : '-';
                 pills += `<div class="rate-pill"><span class="rate-label">${label}</span><span class="rate-value">${val}</span></div>`;
             }
-            const tag = isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '';
-            return `<div class="rate-card${isElectric ? ' rate-card-electric' : ''}"><div class="rate-card-head"><div><h4 class="rate-item-name">${itemName}${tag}</h4><p class="rate-item-cat">${m.cat}</p></div><div class="machine-placeholder">${categoryEmoji(m.cat)}</div></div><div class="rate-pills">${pills}</div></div>`;
+            const tag = (isElectric ? `<span class="electric-tag"><i data-lucide="battery-charging" size="11"></i> Electric</span>` : '') +
+                (isAramco ? `<span class="aramco-tag"><i data-lucide="shield-check" size="11"></i> Aramco</span>` : '');
+            const cardClass = (isElectric ? ' rate-card-electric' : '') + (isAramco ? ' rate-card-aramco' : '');
+            return `<div class="rate-card${cardClass}"><div class="rate-card-head"><div><h4 class="rate-item-name">${itemName}${tag}</h4><p class="rate-item-cat">${m.cat}</p></div><div class="machine-placeholder">${categoryEmoji(m.cat)}</div></div><div class="rate-pills">${pills}</div></div>`;
         }).join('');
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
@@ -4020,16 +3998,6 @@ document.addEventListener('visibilitychange', () => {
         if (photoFavSet.has(path)) photoFavSet.delete(path); else photoFavSet.add(path);
         savePhotoFavorites();
     }
-    function togglePhotoFavFilter() {
-        photoFavMode = !photoFavMode;
-        document.getElementById('fav-filter-btn').classList.toggle('active', photoFavMode);
-        if (photoFavMode) {
-            document.getElementById('photo-q').value = '';
-            renderPhotoGrid(photoRawData.filter(i => i.type === 'file' && isPhotoFavorite(i.path)));
-        } else {
-            renderPhotoGrid();
-        }
-    }
     function togglePhotoFavActive() {
         const item = photoGalleryItems[photoIndex];
         if (!item) return;
@@ -4259,17 +4227,6 @@ document.addEventListener('visibilitychange', () => {
             grid.appendChild(card);
         });
         if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
-    }
-
-    function photoSearch() {
-        const val = document.getElementById('photo-q').value.toLowerCase();
-        if (photoFavMode && val.length > 0) {
-            photoFavMode = false;
-            document.getElementById('fav-filter-btn').classList.remove('active');
-        }
-        if (val.length > 1) {
-            renderPhotoGrid(photoRawData.filter(i => i.name.toLowerCase().includes(val) && i.type === 'file'));
-        } else { renderPhotoGrid(); }
     }
 
     function resetPhotoZoom() {
