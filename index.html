@@ -143,6 +143,48 @@ tbody tr:active { background-color: var(--accent-dim) !important; }
 
 /* ---------- Sync / status ---------- */
 .sync-pill { display: flex; align-items: center; gap: 8px; background: var(--card); padding: 7px 12px; border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--sh-sm); }
+
+/* ---------- Premium cursor: glass ring + glowing core ---------- */
+#cursorRing, #cursorCore {
+    position: fixed;
+    top: 0; left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    will-change: transform;
+    display: none;
+}
+#cursorRing {
+    width: 36px; height: 36px;
+    transform: translate(-50%, -50%);
+    border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+    backdrop-filter: blur(2px) saturate(160%);
+    -webkit-backdrop-filter: blur(2px) saturate(160%);
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.5) inset,
+        0 6px 18px rgba(20,86,217,0.14);
+    transition: width 0.25s cubic-bezier(.16,1,.3,1), height 0.25s cubic-bezier(.16,1,.3,1),
+                border-color 0.25s ease, background 0.25s ease, opacity 0.2s ease;
+}
+#cursorCore {
+    width: 6px; height: 6px;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 10px 2px color-mix(in srgb, var(--accent) 55%, transparent);
+    transition: width 0.25s cubic-bezier(.16,1,.3,1), height 0.25s cubic-bezier(.16,1,.3,1), opacity 0.2s ease;
+}
+#cursorRing.is-active, #cursorCore.is-active {
+    width: 56px; height: 56px;
+    border-color: color-mix(in srgb, var(--accent) 80%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+#cursorCore.is-active { width: 10px; height: 10px; }
+#cursorRing.is-down { width: 28px; height: 28px; }
+@media (hover: hover) and (pointer: fine) {
+    #cursorRing, #cursorCore { display: block; }
+    html, body, a, button, input, select, textarea, .rate-card, .home-search-btn, [onclick] { cursor: auto !important; }
+}
 .status-dot { width: 7px; height: 7px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 0 3px rgba(239,68,68,0.18); transition: 0.3s; }
 .status-dot.ready { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.18); }
 .sync-text { font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 0.6px; text-transform: uppercase; font-family: var(--mono); }
@@ -1294,6 +1336,8 @@ main::-webkit-scrollbar-track { background: transparent; }
     </style>
 </head>
 <body>
+<div id="cursorRing"></div>
+<div id="cursorCore"></div>
 
 <div id="sync-overlay">
     <div class="sync-circle-box">
@@ -5909,6 +5953,86 @@ function shareWhatsApp(){
 addItem({propNo:'SAC-500-295', qty:'1', desc:'500 CFM Air Compressor', plate:'SAC-500-295', brand:'ATLAS COPCO', model:'XAS500-175', capacity:'500 CFM', operator:'', serial:'PE2460941'});
 document.getElementById('offHireDate').value = new Date().toISOString().slice(0,10);
 renderNote();
+
+// ---------- Premium cursor: glass ring + glowing core ----------
+(function(){
+  const ring = document.getElementById('cursorRing');
+  const core = document.getElementById('cursorCore');
+  if (!ring || !core) return;
+
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+  let coreX = mouseX, coreY = mouseY;
+  let shown = false;
+
+  const showCursor = () => {
+    if (shown) return;
+    shown = true;
+    ring.style.opacity = '1';
+    core.style.opacity = '1';
+  };
+  const hideCursor = () => {
+    shown = false;
+    ring.style.opacity = '0';
+    core.style.opacity = '0';
+  };
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    showCursor();
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', hideCursor);
+  document.addEventListener('mouseenter', showCursor);
+
+  window.addEventListener('mousedown', () => ring.classList.add('is-down'));
+  window.addEventListener('mouseup', () => ring.classList.remove('is-down'));
+
+  const interactiveSelector = 'a, button, input, select, textarea, .rate-card, .home-search-btn, [onclick], [role="button"]';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest && e.target.closest(interactiveSelector)) {
+      ring.classList.add('is-active');
+      core.classList.add('is-active');
+    }
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest && e.target.closest(interactiveSelector)) {
+      ring.classList.remove('is-active');
+      core.classList.remove('is-active');
+    }
+  });
+
+  // The page applies CSS `zoom` on wider screens (see @media min-width:900px),
+  // which rescales rendered pixels but NOT MouseEvent.clientX/clientY. Without
+  // compensating, the custom cursor drifts away from the real pointer as the
+  // zoom factor moves away from 1. We read the effective zoom and counter-scale.
+  function getZoom(){
+    const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+    return (!z || isNaN(z)) ? 1 : z;
+  }
+  let zoom = getZoom();
+  window.addEventListener('resize', () => { zoom = getZoom(); }, { passive: true });
+
+  function animate(){
+    zoom = getZoom();
+    // core: near-instant, tight follow
+    coreX += (mouseX - coreX) * 0.9;
+    coreY += (mouseY - coreY) * 0.9;
+    // ring: fast, slight smoothing trail
+    ringX += (mouseX - ringX) * 0.45;
+    ringY += (mouseY - ringY) * 0.45;
+
+    core.style.transform = `translate(${coreX / zoom}px, ${coreY / zoom}px) translate(-50%, -50%)`;
+    ring.style.transform = `translate(${ringX / zoom}px, ${ringY / zoom}px) translate(-50%, -50%)`;
+    requestAnimationFrame(animate);
+  }
+  ring.style.opacity = '0';
+  core.style.opacity = '0';
+  ring.style.transition += ', opacity 0.2s ease';
+  core.style.transition += ', opacity 0.2s ease';
+  requestAnimationFrame(animate);
+})();
 
 </script>
 </body>
