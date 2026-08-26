@@ -514,7 +514,13 @@ nav::-webkit-scrollbar { display: none; }
 #merge-btn { width: 100%; padding: 16px; border-radius: 14px; background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 80%, var(--accent-2))); border: none; color: #fff; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--sh-md); transition: transform 0.12s; }
 #merge-btn:active { transform: scale(0.98); }
 #merge-btn:disabled { background: var(--card-2); color: var(--text-faint); box-shadow: none; }
-#merge-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; }
+#merge-status { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; font-weight: 700; min-height: 0; transition: min-height 0.15s; }
+#merge-status:empty { margin-top: 0; }
+#merge-status .merge-status-pill { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+#merge-status .merge-status-pill.is-progress { background: var(--accent-dim); color: var(--accent); }
+#merge-status .merge-status-pill.is-success { background: #dcfce7; color: #16a34a; }
+#merge-status .merge-status-pill.is-error { background: #fef2f2; color: #dc2626; }
+#merge-status .merge-status-pill i { flex-shrink: 0; }
 .merge-spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; display: inline-block; animation: qrspin 0.7s linear infinite; }
 .qr-spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent-dim); border-top-color: var(--accent); display: inline-block; animation: qrspin 0.7s linear infinite; }
 @keyframes qrspin { to { transform: rotate(360deg); } }
@@ -578,7 +584,7 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .md-search-go { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
 .md-view-all-btn { margin-top: 10px; width: 100%; padding: 10px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
-.md-col-find #md-results { flex: 1; max-height: 420px; overflow-y: auto; }
+.md-col-find #md-results { flex: 1; min-height: 260px; max-height: 640px; overflow-y: auto; }
 .md-result-row { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; transition: background 0.15s; }
 .md-result-row:active { background: var(--accent-dim); }
 .md-result-icon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; overflow: hidden; background: #6366f1; }
@@ -635,18 +641,21 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .doc-preview-trigger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding-top: 26px; }
 .doc-thumb-wrap { position: relative; }
 .doc-thumb { width: 100%; height: 104px; border-radius: 12px; object-fit: cover; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+.doc-thumb-pdf-tag { position: absolute; top: 5px; left: 5px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.3px; background: rgba(15,23,42,0.72); color: #fff; padding: 2px 6px; border-radius: 6px; backdrop-filter: blur(4px); }
 .doc-eye-badge { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; border-radius: 7px; background: rgba(15,23,42,0.6); color: #fff; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 .doc-meta { min-width: 0; text-align: left; }
 .doc-meta h4 { font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
 .doc-meta p { font-size: 9px; color: var(--text-faint); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .doc-drag-placeholder { flex: 0 0 164px; width: 164px; border: 2px dashed var(--accent); border-radius: 16px; background: var(--accent-dim); opacity: 0.6; }
 .md-panel-merge .merge-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; min-height: 148px; padding: 10px; }
-.md-merge-actions { display: flex; gap: 14px; align-items: center; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--border); }
-.md-merge-actions .rate-search { margin-bottom: 0; flex: 1; min-width: 160px; }
-.md-merge-actions .md-btn-row { flex: 1.4; min-width: 220px; }
+.md-merge-actions { display: flex; gap: 12px; align-items: center; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.md-merge-actions .rate-search { margin-bottom: 0; flex: 1.6; min-width: 220px; }
+.md-merge-actions .md-btn-row { flex: 1; min-width: 240px; }
 .md-merge-actions #merge-status { flex-basis: 100%; }
 
 .md-panel-find { grid-area: find; }
+.md-panel-find .md-col-card { height: 100%; }
+.md-subtab-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
 /* ---------- Switchable Find Documents / Generate COC sub-tabs ---------- */
 .md-subtabs { display: flex; gap: 6px; margin-bottom: 12px; background: var(--card-2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
@@ -656,17 +665,21 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 
 @media (min-width: 900px) {
     .md-layout {
-        grid-template-columns: 1.3fr 1fr;
+        grid-template-columns: 1.1fr 1fr;
         grid-template-areas:
             "merge merge"
             "preview find";
         gap: 18px;
+        align-items: stretch;
     }
     .md-panel-preview .md-col-card { height: 100%; }
+    .md-col-find #md-results { max-height: 720px; }
 }
 @media (max-width: 640px) {
     .md-merge-toprow { flex-direction: column; }
     .md-merge-toprow .md-dropzone { flex: none; }
+}
+@media (max-width: 480px) {
     .md-merge-actions { flex-direction: column; align-items: stretch; }
     .md-merge-actions .rate-search, .md-merge-actions .md-btn-row { min-width: 0; }
 }
@@ -1514,7 +1527,7 @@ main::-webkit-scrollbar-track { background: transparent; }
                         </div>
 
                         <div class="md-merge-actions">
-                            <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" />
+                            <input type="text" id="merge-filename" class="rate-search" placeholder="File name (e.g. Invoice-July-2026)" oninput="mergeFilenameEdited = true;" />
                             <div class="md-btn-row">
                                 <button id="merge-btn" class="md-action-btn save" disabled onclick="mergeAndDownload()"><i data-lucide="save" size="15"></i> Merge &amp; Save</button>
                                 <button id="merge-wa-btn" class="md-action-btn whatsapp" disabled onclick="mergeShareToWhatsApp()"><i data-lucide="message-square" size="15"></i> Share / WhatsApp</button>
@@ -4498,6 +4511,11 @@ document.addEventListener('visibilitychange', () => {
        gets the option to open the QR's link or download that original photo. */
 
     let mergeItems = [];
+    // Tracks whether the person has typed their own text into the merge
+    // filename field. Once they have, we stop overwriting it with the
+    // auto-generated "<search term> merged" name so we never clobber a
+    // deliberate choice.
+    let mergeFilenameEdited = false;
     let mergeLibReady = typeof Html5Qrcode !== 'undefined';
     let mergeQrScanners = []; // pool of scanner instances, for concurrent scanning
     const MERGE_QR_CONCURRENCY = 3;
@@ -4514,6 +4532,38 @@ document.addEventListener('visibilitychange', () => {
             return await res.blob();
         }
         return null;
+    }
+
+    // Renders a small preview of a PDF's first page so PDFs in the merge
+    // queue show an actual thumbnail instead of just a generic file icon —
+    // matching the real photo thumbnails already shown for image items.
+    // Runs in the background after the item is added; the generic icon
+    // stays in place until (unless) this succeeds, so a slow/failed render
+    // never blocks adding files.
+    async function mergeGeneratePdfThumb(item) {
+        try {
+            await ensurePdfJsLoaded();
+            const blob = await mergeFetchItemBlob(item);
+            const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+            const page = await pdf.getPage(1);
+            const baseViewport = page.getViewport({ scale: 1 });
+            const scale = 240 / baseViewport.width;
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+            const thumbBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            if (!thumbBlob) return;
+            // The item may have been removed from the queue while this was
+            // rendering — skip creating a thumb nobody will ever see.
+            if (!mergeItems.includes(item)) return;
+            item.thumbUrl = URL.createObjectURL(thumbBlob);
+            mergeRenderList();
+        } catch (e) {
+            // Not worth surfacing an error for a nice-to-have preview — the
+            // generic file icon remains as the fallback.
+        }
     }
 
     function mergeEnsureLibrary() {
@@ -4570,6 +4620,7 @@ document.addEventListener('visibilitychange', () => {
             };
             mergeItems.push(item);
             if (isImage) mergeEnqueueQrScan(item);
+            if (isPdf) mergeGeneratePdfThumb(item);
         });
         mergeRenderList();
         const statusEl = document.getElementById('merge-status');
@@ -4594,6 +4645,7 @@ document.addEventListener('visibilitychange', () => {
         };
         mergeItems.push(item);
         if (!isPdf) mergeEnqueueQrScan(item);
+        else mergeGeneratePdfThumb(item);
         mergeRenderList();
         return item;
     }
@@ -4827,8 +4879,8 @@ document.addEventListener('visibilitychange', () => {
     }
 
     function mergeItemRowHtml(item, idx, total) {
-        const thumbInner = item.type === 'image'
-            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />`
+        const thumbInner = item.thumbUrl
+            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />${item.type === 'pdf' ? '<span class="doc-thumb-pdf-tag">PDF</span>' : ''}`
             : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
 
         let badge = '';
@@ -4896,7 +4948,9 @@ document.addEventListener('visibilitychange', () => {
         mergeItems.forEach(i => { if (i.thumbUrl) URL.revokeObjectURL(i.thumbUrl); });
         mergeItems = [];
         mergeQrQueue = [];
-        document.getElementById('merge-status').textContent = '';
+        mergeFilenameEdited = false;
+        document.getElementById('merge-filename').value = '';
+        mergeSetStatus('');
         mergeRenderList();
     }
 
@@ -5028,6 +5082,21 @@ document.addEventListener('visibilitychange', () => {
         });
     }
 
+    // Renders the merge status line as a clearly color-coded pill instead of
+    // plain text, so it's obvious at a glance whether a merge is in
+    // progress, finished successfully, or failed — rather than a small
+    // gray line that's easy to miss next to the big blue button.
+    function mergeSetStatus(text, kind) {
+        const status = document.getElementById('merge-status');
+        if (!status) return;
+        if (!text) { status.innerHTML = ''; return; }
+        const icon = kind === 'success' ? 'check-circle-2' : kind === 'error' ? 'alert-circle' : null;
+        const spinner = kind === 'progress' ? '<span class="merge-spinner" style="border-color: rgba(0,0,0,0.15); border-top-color: var(--accent);"></span>' : '';
+        const iconHtml = icon ? `<i data-lucide="${icon}" size="14"></i>` : spinner;
+        status.innerHTML = `<span class="merge-status-pill is-${kind || 'progress'}">${iconHtml}${mergeEscape(text)}</span>`;
+        (typeof lucide !== 'undefined' && lucide.createIcons());
+    }
+
     function mergeCleanFilename() {
         let rawName = document.getElementById('merge-filename').value.trim() || 'merged-document';
         rawName = rawName.replace(/[\\/:*?"<>|]/g, '-'); // strip characters invalid in filenames
@@ -5122,7 +5191,6 @@ document.addEventListener('visibilitychange', () => {
     async function mergeAndDownload() {
         if (!mergeItems.length) return;
         const btn = document.getElementById('merge-btn');
-        const status = document.getElementById('merge-status');
         const rawName = mergeCleanFilename();
 
         // Desktop (Chrome/Edge): ask where to save FIRST, while the click's
@@ -5138,25 +5206,25 @@ document.addEventListener('visibilitychange', () => {
                 });
             } catch (err) {
                 if (err && err.name === 'AbortError') return; // person cancelled the save dialog
-                status.textContent = 'Could not open the save dialog. Please try again.';
+                mergeSetStatus('Could not open the save dialog. Please try again.', 'error');
                 return;
             }
         }
 
         btn.disabled = true;
         btn.innerHTML = `<span class="merge-spinner"></span> Merging...`;
-        status.textContent = '';
+        mergeSetStatus(`Merging ${mergeItems.length} file${mergeItems.length === 1 ? '' : 's'}...`, 'progress');
         try {
             const mergedBytes = await mergeBuildMergedPdfBytes((i, total, name) => {
-                status.textContent = `Adding ${i + 1} of ${total}: ${name}`;
+                mergeSetStatus(`Merging — adding ${i + 1} of ${total}: ${name}`, 'progress');
             });
 
             if (fileHandle) {
-                status.textContent = 'Saving...';
+                mergeSetStatus('Saving...', 'progress');
                 const writable = await fileHandle.createWritable();
                 await writable.write(mergedBytes);
                 await writable.close();
-                status.textContent = `Done — saved as ${fileHandle.name}.`;
+                mergeSetStatus(`Merge complete — saved as ${fileHandle.name}`, 'success');
             } else {
                 // Mobile / Safari / Firefox: no Save-dialog API, so trigger a
                 // normal browser download instead — this still works fine on
@@ -5169,10 +5237,10 @@ document.addEventListener('visibilitychange', () => {
                 a.click();
                 a.remove();
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
-                status.textContent = `Done — downloaded as ${rawName}.`;
+                mergeSetStatus(`Merge complete — downloaded as ${rawName}`, 'success');
             }
         } catch (err) {
-            status.textContent = (err && err.message) ? err.message : 'Something went wrong while merging. Please try again.';
+            mergeSetStatus((err && err.message) ? err.message : 'Something went wrong while merging. Please try again.', 'error');
             console.error(err);
         } finally {
             btn.disabled = mergeItems.length === 0;
@@ -5187,25 +5255,32 @@ document.addEventListener('visibilitychange', () => {
     // browsers need.
     async function mergeShareToWhatsApp() {
         if (!mergeItems.length) return;
-        const status = document.getElementById('merge-status');
+        const btn = document.getElementById('merge-wa-btn');
         const rawName = mergeCleanFilename();
 
-        status.textContent = 'Preparing file...';
+        if (btn) { btn.disabled = true; btn.innerHTML = `<span class="merge-spinner"></span> Preparing...`; }
+        mergeSetStatus('Merging — preparing file to share...', 'progress');
         try {
             const bytes = await mergeBuildMergedPdfBytes((i, total, name) => {
-                status.textContent = `Adding ${i + 1} of ${total}: ${name}`;
+                mergeSetStatus(`Merging — adding ${i + 1} of ${total}: ${name}`, 'progress');
             });
             const file = new File([bytes], rawName, { type: 'application/pdf' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], title: rawName });
-                status.textContent = '';
+                mergeSetStatus('Merge complete — ready to share', 'success');
             } else {
-                status.textContent = "Sharing files isn't supported on this browser — use Merge & Save, then share the saved file manually.";
+                mergeSetStatus("Sharing files isn't supported on this browser — use Merge & Save, then share the saved file manually.", 'error');
             }
         } catch (err) {
-            if (err && err.name === 'AbortError') { status.textContent = ''; return; } // person cancelled the share sheet
+            if (err && err.name === 'AbortError') { mergeSetStatus('', null); return; } // person cancelled the share sheet
             console.error(err);
-            status.textContent = 'Something went wrong while preparing the file.';
+            mergeSetStatus('Something went wrong while preparing the file.', 'error');
+        } finally {
+            if (btn) {
+                btn.disabled = mergeItems.length === 0;
+                btn.innerHTML = `<i data-lucide="message-square" size="15"></i> Share / WhatsApp`;
+                (typeof lucide!=='undefined'&&lucide.createIcons());
+            }
         }
     }
 
@@ -5367,10 +5442,22 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function mdRunSearch(query) {
-        const q = query.trim().toLowerCase();
+        const qOriginal = query.trim();
+        const q = qOriginal.toLowerCase();
         mdCurrentResults = q
             ? mdRankResults((db.machineDocsFiles || []).filter(f => MD_VISIBLE_EXT.includes(f.ext) && f.name.toLowerCase().includes(q)), q).slice(0, 60)
             : [];
+
+        // Carry the searched asset/document number straight over into the
+        // merge filename field on the left, e.g. searching "SAC-435-080"
+        // fills it in as "SAC-435-080 merged" — so the two panels stay in
+        // sync without extra typing. Skipped once the person has typed
+        // their own filename, so we never overwrite a deliberate choice.
+        if (qOriginal && !mergeFilenameEdited) {
+            const fnInput = document.getElementById('merge-filename');
+            if (fnInput) fnInput.value = `${qOriginal} merged`;
+        }
+
         const box = document.getElementById('md-results');
         if (mdLoadError) { box.innerHTML = `<div class="rate-empty">Couldn't load Machine Documents: ${mdLoadError}</div>`; return; }
         if (!q) { box.innerHTML = `<div class="rate-empty">Type to search Machine Documents...</div>`; return; }
