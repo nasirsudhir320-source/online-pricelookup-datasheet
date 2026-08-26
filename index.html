@@ -632,7 +632,9 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 #merge-list { display: flex; flex-direction: row; gap: 14px; overflow-x: auto; overflow-y: visible; padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; flex: 1; align-items: flex-start; }
 #merge-list::-webkit-scrollbar { height: 6px; }
 #merge-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-.doc-item { position: relative; flex: 0 0 164px; width: 164px; scroll-snap-align: start; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: var(--sh-sm); transition: box-shadow 0.18s; }
+.doc-item { position: relative; flex: 0 0 164px; width: 164px; scroll-snap-align: start; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 10px; box-shadow: var(--sh-sm); transition: box-shadow 0.18s; touch-action: pan-y; -webkit-user-drag: none; user-select: none; }
+.doc-item img, .doc-item .doc-thumb { -webkit-user-drag: none; user-select: none; pointer-events: none; }
+.doc-item .doc-remove, .doc-item .doc-preview-trigger, .doc-item .doc-qr-chip, .doc-item a, .doc-item button { pointer-events: auto; }
 .doc-item.doc-dragging { opacity: 0.92; box-shadow: var(--sh-xl); border-color: var(--accent); cursor: grabbing; z-index: 5; }
 .doc-drag-handle { position: absolute; top: 6px; left: 6px; width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: rgba(255,255,255,0.92); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; z-index: 3; }
 .doc-drag-handle:active { cursor: grabbing; color: var(--accent); }
@@ -4783,20 +4785,99 @@ document.addEventListener('visibilitychange', () => {
     }
 
     /* ---- Drag-to-reorder (mouse + touch, via Pointer Events) ----
-       Press and hold the grip handle, drag up/down; the list reflows live and
-       mergeItems is resynced to the new DOM order on release. Pointer Events
-       unify mouse and touch so this works the same on desktop and mobile. */
+       Press and hold anywhere on a card (not just the grip handle) and drag
+       left/right; the list reflows live and mergeItems is resynced to the
+       new DOM order on release. Pointer Events unify mouse and touch so
+       this works the same on desktop and mobile.
+
+       Grabbing the dedicated grip handle starts dragging immediately, since
+       that's its whole purpose. Grabbing anywhere else on the card (the
+       thumbnail, the name, empty padding) starts a "candidate" drag that
+       only turns into an actual reorder once the pointer has moved past a
+       small threshold — below that threshold, the pointerup is treated as
+       a plain tap, so clicking the card to open the preview still works
+       normally. Remove buttons and QR action links/buttons are excluded
+       entirely so their own clicks aren't hijacked into a drag. */
     let mergeDrag = null;
+    let mergeDragCandidate = null;
+    const MERGE_DRAG_THRESHOLD = 8; // px of movement before a tap becomes a drag
 
     function initMergeDragHandles() {
-        document.querySelectorAll('#merge-list .doc-drag-handle').forEach(handle => {
-            handle.addEventListener('pointerdown', onMergeDragStart);
+        document.querySelectorAll('#merge-list .doc-item').forEach(row => {
+            row.addEventListener('pointerdown', onMergeCardPointerDown);
+            // Belt-and-braces: some browsers still start a native
+            // image/element drag on mousedown+move regardless of the
+            // draggable/-webkit-user-drag settings, which was hijacking our
+            // reorder gesture and, worse, letting the dragged thumbnail get
+            // dropped back onto the upload zone as if it were a new file.
+            // Block that native drag outright — our own pointer-based
+            // reorder handles everything instead.
+            row.addEventListener('dragstart', e => e.preventDefault());
         });
     }
 
-    function onMergeDragStart(e) {
+    function onMergeCardPointerDown(e) {
+        if (e.button !== undefined && e.button !== 0) return; // primary button/touch only
+        const row = e.currentTarget;
+        const isHandle = !!e.target.closest('.doc-drag-handle');
+        // Let the remove button and QR action links/buttons handle their own
+        // clicks untouched — don't intercept those into a drag at all.
+        if (!isHandle && e.target.closest('.doc-remove, .doc-qr-chip, a, button')) return;
+
+        if (isHandle) {
+            e.preventDefault();
+            beginMergeDrag(row, e.clientX);
+            document.addEventListener('pointermove', onMergeDragMove);
+            document.addEventListener('pointerup', onMergeDragEnd);
+            document.addEventListener('pointercancel', onMergeDragEnd);
+            return;
+        }
+
+        // Anywhere else on the card: wait for real movement before treating
+        // this as a drag, so a simple tap still opens the preview.
+        mergeDragCandidate = { row, startX: e.clientX, startY: e.clientY };
+        document.addEventListener('pointermove', onMergeCandidateMove);
+        document.addEventListener('pointerup', onMergeCandidateUp);
+        document.addEventListener('pointercancel', onMergeCandidateUp);
+    }
+
+    function onMergeCandidateMove(e) {
+        if (!mergeDragCandidate) return;
+        const dx = e.clientX - mergeDragCandidate.startX;
+        const dy = e.clientY - mergeDragCandidate.startY;
+        if (Math.hypot(dx, dy) < MERGE_DRAG_THRESHOLD) return;
+
+        // Threshold cleared — promote this into a real drag, and swallow the
+        // click that would otherwise fire on release (which would have
+        // opened the preview even though the person meant to reorder).
+        const { row, startX } = mergeDragCandidate;
+        cleanupMergeCandidateListeners();
+        mergeDragCandidate = null;
+        document.addEventListener('click', mergeSuppressNextClick, true);
+        beginMergeDrag(row, startX);
+        document.addEventListener('pointermove', onMergeDragMove);
+        document.addEventListener('pointerup', onMergeDragEnd);
+        document.addEventListener('pointercancel', onMergeDragEnd);
+    }
+
+    function onMergeCandidateUp() {
+        mergeDragCandidate = null;
+        cleanupMergeCandidateListeners();
+    }
+
+    function cleanupMergeCandidateListeners() {
+        document.removeEventListener('pointermove', onMergeCandidateMove);
+        document.removeEventListener('pointerup', onMergeCandidateUp);
+        document.removeEventListener('pointercancel', onMergeCandidateUp);
+    }
+
+    function mergeSuppressNextClick(e) {
         e.preventDefault();
-        const row = e.currentTarget.closest('.doc-item');
+        e.stopPropagation();
+        document.removeEventListener('click', mergeSuppressNextClick, true);
+    }
+
+    function beginMergeDrag(row, startX) {
         const list = document.getElementById('merge-list');
         if (!row || !list) return;
         const rect = row.getBoundingClientRect();
@@ -4809,10 +4890,7 @@ document.addEventListener('visibilitychange', () => {
         row.style.position = 'relative';
         row.classList.add('doc-dragging');
 
-        mergeDrag = { row, list, placeholder, startX: e.clientX, lastDx: 0 };
-        document.addEventListener('pointermove', onMergeDragMove);
-        document.addEventListener('pointerup', onMergeDragEnd);
-        document.addEventListener('pointercancel', onMergeDragEnd);
+        mergeDrag = { row, list, placeholder, startX, lastDx: 0 };
     }
 
     function onMergeDragMove(e) {
@@ -4880,7 +4958,7 @@ document.addEventListener('visibilitychange', () => {
 
     function mergeItemRowHtml(item, idx, total) {
         const thumbInner = item.thumbUrl
-            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" />${item.type === 'pdf' ? '<span class="doc-thumb-pdf-tag">PDF</span>' : ''}`
+            ? `<img class="doc-thumb" src="${item.thumbUrl}" alt="" draggable="false" />${item.type === 'pdf' ? '<span class="doc-thumb-pdf-tag">PDF</span>' : ''}`
             : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
 
         let badge = '';
@@ -4906,7 +4984,7 @@ document.addEventListener('visibilitychange', () => {
         }
 
         return `
-            <div class="doc-item" data-id="${item.id}">
+            <div class="doc-item" data-id="${item.id}" draggable="false">
                 <div class="doc-drag-handle" title="Drag to reorder"><i data-lucide="grip-vertical" size="14"></i></div>
                 <button class="doc-remove" onclick="mergeRemoveItem('${item.id}')"><i data-lucide="x" size="13"></i></button>
                 <div class="doc-preview-trigger" onclick="mergePreviewItem('${item.id}')">
