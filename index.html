@@ -5628,17 +5628,25 @@ window.addEventListener('DOMContentLoaded', () => {
         year: 'Manufacturing Year',
         engineNo: 'Engine Number',
         altSerial: 'Alternate Serial Number',
-        rating: 'Rating'
+        rating: 'Rating',
+        capacity: 'Capacity'
     };
 
     const COC_MACHINES = {
-        manlift:       { label: 'Manlift (Boom Lift)', equipment: 'AWP',            fields: ['brand','assetId','model','serial','workingHeight','type','year'] },
-        scissorlift:   { label: 'Scissor Lift',         equipment: 'Scissor lift',   fields: ['brand','assetId','model','serial','workingHeight','type','year'] },
-        generator:     { label: 'Generator',            equipment: 'Generator',      fields: ['brand','assetId','model','serial','engineNo','altSerial','year'] },
-        forklift:      { label: 'Forklift',             equipment: 'Forklift',       fields: ['brand','assetId','model','serial','engineNo','year'] },
-        telehandler:   { label: 'Telehandler',          equipment: 'Telehandler',    fields: ['brand','assetId','model','serial','year'] },
-        towerlight:    { label: 'Tower Light',          equipment: 'Tower Light',    fields: ['brand','assetId','model','serial','rating','year'] },
-        aircompressor: { label: 'Air Compressor',       equipment: 'Air Compressor', fields: ['brand','assetId','model','serial','engineNo','rating','year'] }
+        manlift:        { label: 'Manlift',                       equipment: 'AWP',                           fields: ['brand','assetId','model','serial','workingHeight','type','year'] },
+        scissorlift:    { label: 'Scissorlift',                   equipment: 'Scissorlift',                   fields: ['brand','assetId','model','serial','workingHeight','type','year'] },
+        generator:      { label: 'Generator',                     equipment: 'Diesel Generator',              fields: ['brand','assetId','model','serial','engineNo','altSerial','year'] },
+        forklift:       { label: 'Forklift',                      equipment: 'Forklift',                      fields: ['brand','assetId','model','serial','engineNo','capacity','year'] },
+        spiderlift:     { label: 'Spiderlift',                    equipment: 'Spiderlift',                    fields: ['brand','assetId','model','serial','workingHeight','type','year'] },
+        towerlight:     { label: 'Tower Light',                   equipment: 'Tower Light',                   fields: ['brand','assetId','model','serial','rating','year'], defaults: { rating: '1600 W' } },
+        telehandler:    { label: 'Telehandler',                   equipment: 'Telehandler',                   fields: ['brand','assetId','model','serial','capacity','year'], defaults: { capacity: '4.5 Ton 17.1 Meter' } },
+        aircompressor:  { label: 'Air Compressor',                equipment: 'Air Compressor',                fields: ['brand','assetId','model','serial','engineNo','rating','year'] },
+        crane:          { label: 'Crane',                         equipment: 'Crane',                         fields: ['brand','assetId','model','serial','capacity','type','year'] },
+        skidloader:     { label: 'Skid Loader',                   equipment: 'SKID LOADER',                   fields: ['brand','assetId','model','serial','engineNo','type','year'] },
+        excavator:      { label: 'Excavator',                     equipment: 'Excavator',                     fields: ['brand','assetId','model','serial','capacity','year'] },
+        boomtruck:      { label: 'Boom Truck / Dump Truck',       equipment: 'BOOM TRUCK / DUMP TRUCK',       fields: ['brand','assetId','model','serial','capacity','year'] },
+        wheelloader:    { label: 'Wheel Loader / Backhoe Loader', equipment: 'WHEEL LOADER / BACKHOE LOADER', fields: ['brand','assetId','model','serial','year'] },
+        weldingmachine: { label: 'Welding Machine',               equipment: 'WELDING MACHINE',               fields: ['brand','assetId','model','serial','engineNo','altSerial','year'] }
     };
 
     function cocPopulateTypeSelect() {
@@ -5675,7 +5683,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         const machine = COC_MACHINES[type];
         let html = cocFieldRowHtml('equipment', 'Equipment', machine.equipment, true, suffix);
-        machine.fields.forEach(f => { html += cocFieldRowHtml(f, COC_FIELD_LABELS[f], '', false, suffix); });
+        machine.fields.forEach(f => { html += cocFieldRowHtml(f, COC_FIELD_LABELS[f], (machine.defaults && machine.defaults[f]) || '', false, suffix); });
         box.innerHTML = html;
         box.classList.remove('hidden');
         addBtn.disabled = false;
