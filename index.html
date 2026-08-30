@@ -8,6 +8,7 @@
     <title>SUDHIR PRO MOBILE</title>
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js" defer></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -4588,6 +4589,7 @@ document.addEventListener('visibilitychange', () => {
                 name: file.name,
                 sizeLabel: mergeFormatSize(file.size),
                 thumbUrl: isImage ? URL.createObjectURL(file) : null,
+                // PDFs aren't scanned for a QR code — only photos are.
                 qrStatus: isImage ? 'queued' : 'none',
                 qrText: null
             };
@@ -4613,12 +4615,13 @@ document.addEventListener('visibilitychange', () => {
             name: f.name + (f.ext ? '.' + f.ext : ''),
             sizeLabel: '',
             thumbUrl: isPdf ? null : f.url,
+            // PDFs aren't scanned for a QR code — only photos are.
             qrStatus: isPdf ? 'none' : 'queued',
             qrText: null
         };
         mergeItems.push(item);
         if (!isPdf) mergeEnqueueQrScan(item);
-        else mergeGeneratePdfThumb(item);
+        if (isPdf) mergeGeneratePdfThumb(item);
         mergeRenderList();
         return item;
     }
@@ -4631,17 +4634,33 @@ document.addEventListener('visibilitychange', () => {
     // Lazily builds a small pool of Html5Qrcode instances (each needs its own
     // hidden container) so several photos can be scanned in parallel instead
     // of strictly one-at-a-time — this is most of the "performance improvement".
+    // Each pool slot is actually a *pair* of decoders: the browser's native
+    // BarcodeDetector (when available) and the library's bundled pure-JS
+    // decoder. Neither one wins outright on every real-world photo — glare,
+    // small/embossed codes, and busy backgrounds can flip which of the two
+    // actually finds it — so every variant gets tried against both instead
+    // of picking one engine up front and hoping.
     function mergeGetScannerPool() {
         if (mergeQrScanners.length) return mergeQrScanners;
         for (let i = 0; i < MERGE_QR_CONCURRENCY; i++) {
-            let div = document.getElementById('merge-hidden-reader-' + i);
-            if (!div) {
-                div = document.createElement('div');
-                div.id = 'merge-hidden-reader-' + i;
-                div.style.display = 'none';
-                document.body.appendChild(div);
+            let divA = document.getElementById('merge-hidden-reader-' + i + 'a');
+            let divB = document.getElementById('merge-hidden-reader-' + i + 'b');
+            if (!divA) {
+                divA = document.createElement('div');
+                divA.id = 'merge-hidden-reader-' + i + 'a';
+                divA.style.display = 'none';
+                document.body.appendChild(divA);
             }
-            mergeQrScanners.push(new Html5Qrcode(div.id, { useBarCodeDetectorIfSupported: true, verbose: false }));
+            if (!divB) {
+                divB = document.createElement('div');
+                divB.id = 'merge-hidden-reader-' + i + 'b';
+                divB.style.display = 'none';
+                document.body.appendChild(divB);
+            }
+            mergeQrScanners.push({
+                native: new Html5Qrcode(divA.id, { useBarCodeDetectorIfSupported: true, verbose: false }),
+                js: new Html5Qrcode(divB.id, { useBarCodeDetectorIfSupported: false, verbose: false })
+            });
         }
         return mergeQrScanners;
     }
@@ -4665,7 +4684,9 @@ document.addEventListener('visibilitychange', () => {
     // One worker pulls items off the shared queue until it's empty — with
     // MERGE_QR_CONCURRENCY workers running this same loop, several photos get
     // scanned at once instead of waiting in a strict single-file line.
-    async function mergeQrWorker(scanner) {
+    // PDFs are never enqueued here (see mergeAddFiles/mergeAddResultItem) —
+    // only photos reach this worker.
+    async function mergeQrWorker(scannerPair) {
         while (mergeQrQueue.length) {
             const item = mergeQrQueue.shift();
             if (!item) return;
@@ -4682,7 +4703,7 @@ document.addEventListener('visibilitychange', () => {
                 // into a File first fixes that.
                 const file = blob instanceof File ? blob
                     : new File([blob], (item.name || 'image'), { type: blob.type || 'image/jpeg' });
-                item.qrText = await mergeScanImageForQr(scanner, file);
+                item.qrText = await mergeScanImageForQr(scannerPair, file);
             } catch (e) {
                 item.qrText = null;
             }
@@ -4691,13 +4712,94 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
+    // Direct jsQR pass over the *whole* photo at a handful of scales (1x,
+    // 1.5x, 2x, 3x) — no cropping, no other decoders. This mirrors a known-
+    // working standalone scanner: draw the image to a canvas at each scale
+    // and hand the raw pixels straight to jsQR with
+    // inversionAttempts:'attemptBoth'. Tried first, before the heavier
+    // ZBar/crop-tile pipeline below, since it's the cheapest check and
+    // already handles plenty of real photos on its own.
+    //
+    // The scale factors are meant to zoom into an already-small crop (like a
+    // sticker photo cropped tight) — applying them to a full-resolution
+    // modern phone photo (often 3000-4000px+ per side) would blow the
+    // scaled canvas up to 100+ million pixels, and getImageData() on a
+    // canvas that size is exactly what was freezing the tab. MAX_PIXELS caps
+    // every attempt to a sane budget: scales are only used to *zoom in* on
+    // photos that start out small, and are clamped back down (never enlarged
+    // past that budget) for anything already large. A tiny per-scale yield
+    // also keeps the tab responsive instead of blocking the main thread for
+    // the whole loop at once.
+    const MERGE_QUICK_SCAN_MAX_PIXELS = 3000 * 3000; // ~9MP canvas ceiling per attempt
+    function mergeJsQRWholeImageScales(file) {
+        return new Promise((resolve) => {
+            if (typeof jsQR === 'undefined') { resolve(null); return; }
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = async () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const scales = [1, 1.5, 2, 3];
+                let found = null;
+                const triedDims = new Set(); // skip a scale that clamps to the same size as one already tried
+                for (const scale of scales) {
+                    try {
+                        let w = Math.round(img.naturalWidth * scale);
+                        let h = Math.round(img.naturalHeight * scale);
+                        if (!w || !h) continue;
+                        if (w * h > MERGE_QUICK_SCAN_MAX_PIXELS) {
+                            const clamp = Math.sqrt(MERGE_QUICK_SCAN_MAX_PIXELS / (w * h));
+                            w = Math.max(1, Math.round(w * clamp));
+                            h = Math.max(1, Math.round(h * clamp));
+                        }
+                        const dimKey = w + 'x' + h;
+                        if (triedDims.has(dimKey)) continue;
+                        triedDims.add(dimKey);
+                        canvas.width = w;
+                        canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        const imageData = ctx.getImageData(0, 0, w, h);
+                        const code = jsQR(imageData.data, w, h, { inversionAttempts: 'attemptBoth' });
+                        if (code && code.data) { found = code.data; break; }
+                    } catch (e) { /* this scale failed — try the next */ }
+                    // Yield to the main thread between attempts so a batch of
+                    // large photos scanning concurrently doesn't lock up the UI.
+                    await new Promise(r => setTimeout(r, 0));
+                }
+                URL.revokeObjectURL(url);
+                resolve(found);
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+            img.src = url;
+        });
+    }
+
     // Tries several variants of the same photo — original, a couple of resized
     // scales (both down and up), and a contrast-boosted grayscale pass — and
     // stops at the first one that decodes. A single fixed size/format is what
     // was causing real-world misses: QR codes that are very small in a big
     // photo, washed out by glare, or slightly blurry each respond to a
     // different variant, so trying several catches far more of them.
-    async function mergeScanImageForQr(scanner, file) {
+    async function mergeScanImageForQr(scannerPair, file) {
+        // Fast path first — proven to decode plenty of real photos on its own.
+        const quick = await mergeJsQRWholeImageScales(file);
+        if (quick) return quick;
+        const quadrants = [
+            { x: 0.25, y: 0.25, w: 0.5, h: 0.5 },
+            { x: 0, y: 0, w: 0.6, h: 0.6 },
+            { x: 0.4, y: 0, w: 0.6, h: 0.6 },
+            { x: 0, y: 0.4, w: 0.6, h: 0.6 },
+            { x: 0.4, y: 0.4, w: 0.6, h: 0.6 },
+            // Tighter corner/edge tiles: a code that's small AND off toward
+            // one edge (common on a sticker photographed at an angle, where
+            // the code sits in a top corner rather than filling a quadrant)
+            // still ends up small even inside a half-frame quadrant crop.
+            // These give it more room to fill the frame after upscaling.
+            { x: 0.55, y: 0, w: 0.45, h: 0.45 },
+            { x: 0, y: 0, w: 0.45, h: 0.45 },
+            { x: 0.55, y: 0.55, w: 0.45, h: 0.45 },
+            { x: 0, y: 0.55, w: 0.45, h: 0.45 }
+        ];
         const variants = [
             () => file,
             () => mergeResizeImageFile(file, 1600),
@@ -4710,22 +4812,108 @@ document.addEventListener('visibilitychange', () => {
             // upscaling the *whole* photo doesn't add real detail. Cropping
             // to just a region first and THEN upscaling effectively zooms
             // into the code instead, which is what actually recovers these.
-            // Center + four overlapping quadrants covers a code anywhere in
-            // frame without knowing its position ahead of time.
-            () => mergeCropAndScaleImageFile(file, { x: 0.25, y: 0.25, w: 0.5, h: 0.5 }, 1400),
-            () => mergeCropAndScaleImageFile(file, { x: 0, y: 0, w: 0.6, h: 0.6 }, 1400),
-            () => mergeCropAndScaleImageFile(file, { x: 0.4, y: 0, w: 0.6, h: 0.6 }, 1400),
-            () => mergeCropAndScaleImageFile(file, { x: 0, y: 0.4, w: 0.6, h: 0.6 }, 1400),
-            () => mergeCropAndScaleImageFile(file, { x: 0.4, y: 0.4, w: 0.6, h: 0.6 }, 1400)
+            // Center + overlapping quadrants + tighter corner tiles covers
+            // a code anywhere in frame without knowing its position ahead
+            // of time. Sharp (nearest-neighbor) crops are tried before the
+            // smoothed ones — testing against a real sticker photo showed
+            // smooth upscaling can blur a QR's module edges just enough to
+            // break the decode, where a sharp/blocky upscale of the exact
+            // same crop still reads fine.
+            ...quadrants.map(rect => () => mergeCropAndScaleImageFile(file, rect, 1400, true)),
+            ...quadrants.map(rect => () => mergeCropAndScaleImageFile(file, rect, 1400, false)),
+            // Crop + grayscale/contrast combined: a code that's both small
+            // in-frame AND low-contrast (glare, dim lighting, a busy blue
+            // background like a sticker) needs both fixes at once — either
+            // one alone can still leave it undecodable. Tried last since
+            // it's the most expensive pass.
+            ...quadrants.map(rect => () => mergeCropAndScaleImageFile(file, rect, 1400, true).then(f => mergeEnhanceImageFile(f, 1400)))
         ];
+        const candidates = [];
         for (const makeVariant of variants) {
-            try {
-                const candidate = await makeVariant();
-                const decoded = await scanner.scanFile(candidate, false);
-                if (decoded) return decoded;
-            } catch (e) { /* this variant didn't decode — try the next one */ }
+            try { candidates.push(await makeVariant()); } catch (e) { /* this variant couldn't be built — skip it */ }
+        }
+        // ZBar (via WASM) is tried first on every variant. In testing against
+        // real sticker photos, the decoders bundled with html5-qrcode — the
+        // browser's native BarcodeDetector and its own pure-JS fallback —
+        // both missed codes that are small, glare-affected, or embossed on a
+        // busy background, while ZBar (the same engine used by most dedicated
+        // barcode-scanning apps) read them without trouble. It's tried per
+        // variant rather than once on the raw photo for the same reason the
+        // crop/enhance variants exist at all: even the stronger decoder still
+        // benefits from a code that's been zoomed into and cleaned up first.
+        try {
+            const zbar = await mergeEnsureZbarWasm();
+            if (zbar) {
+                for (const candidate of candidates) {
+                    try {
+                        const imageData = await mergeFileToImageData(candidate);
+                        const symbols = await zbar.scanImageData(imageData);
+                        if (symbols && symbols.length) return symbols[0].decode();
+                    } catch (e) { /* this variant didn't decode — try the next one */ }
+                }
+            }
+        } catch (e) { /* ZBar failed to load (offline/blocked CDN) — fall through to html5-qrcode below */ }
+        // jsQR is a third, independent decoder (different binarization/finder-
+        // pattern logic than both ZBar and zxing). No single engine wins on
+        // every real-world photo — a code one engine misses (glare, low
+        // native resolution, JPEG blockiness) sometimes decodes fine on
+        // another, so it's worth trying every candidate here too before
+        // giving up on this photo entirely.
+        if (typeof jsQR !== 'undefined') {
+            for (const candidate of candidates) {
+                try {
+                    const imageData = await mergeFileToImageData(candidate);
+                    const result = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+                    if (result && result.data) return result.data;
+                } catch (e) { /* this variant didn't decode — try the next one */ }
+            }
+        }
+        // Fallback: html5-qrcode's two decoders, tried against every variant
+        // in turn. Kept as a safety net for whenever ZBar itself can't load.
+        for (const scanner of [scannerPair.native, scannerPair.js]) {
+            for (const candidate of candidates) {
+                try {
+                    const decoded = await scanner.scanFile(candidate, false);
+                    if (decoded) return decoded;
+                } catch (e) { /* this decoder couldn't read this variant — try the next */ }
+            }
         }
         return null;
+    }
+
+    // Loads the ZBar WASM decoder on first use (mirrors the lazy-load
+    // pattern used for pdf.js and Html5Qrcode elsewhere in this file) and
+    // caches the module so later scans don't re-fetch it.
+    let mergeZbarWasmPromise = null;
+    function mergeEnsureZbarWasm() {
+        if (!mergeZbarWasmPromise) {
+            mergeZbarWasmPromise = import('https://unpkg.com/@undecaf/zbar-wasm@0.11.0/dist/index.js')
+                .catch(e => { mergeZbarWasmPromise = null; throw e; });
+        }
+        return mergeZbarWasmPromise;
+    }
+
+    // Converts any File/Blob image into a canvas ImageData object — the
+    // pixel format ZBar's scanImageData() (and the browser's own decoders)
+    // both expect.
+    function mergeFileToImageData(file) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                URL.revokeObjectURL(url);
+                try {
+                    resolve(ctx.getImageData(0, 0, canvas.width, canvas.height));
+                } catch (e) { reject(e); }
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image-load-failed')); };
+            img.src = url;
+        });
     }
 
     function mergeRenderList() {
@@ -4933,7 +5121,27 @@ document.addEventListener('visibilitychange', () => {
             : `<div class="doc-thumb"><i data-lucide="file-text" size="22"></i></div>`;
 
         let badge = '';
-        if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
+        if (item.type === 'pdf') {
+            // PDFs are never scanned for a QR code — only the "Enter manually"
+            // option applies, and only once they've been through it.
+            if (item.qrStatus === 'found') {
+                const linky = mergeIsUrl(item.qrText);
+                badge = `
+                    <div class="doc-qr-badge">
+                        <span class="doc-qr-tag"><i data-lucide="qr-code" size="10"></i> QR found</span>
+                        <div class="doc-qr-actions">
+                            ${linky ? `<a class="doc-qr-chip" href="${mergeAttrEscape(mergeToHttps(item.qrText))}" target="_blank" rel="noopener noreferrer">Open Link</a>` : ''}
+                        </div>
+                    </div>`;
+            } else {
+                badge = `
+                    <div class="doc-qr-badge">
+                        <div class="doc-qr-actions">
+                            <button class="doc-qr-chip" onclick="mergeEnterQrManually('${item.id}')">Enter QR manually</button>
+                        </div>
+                    </div>`;
+            }
+        } else if (item.qrStatus === 'scanning' || item.qrStatus === 'queued') {
             badge = `<div class="doc-qr-scanning"><span class="qr-spinner"></span> Checking QR...</div>`;
         } else if (item.qrStatus === 'found') {
             const linky = mergeIsUrl(item.qrText);
@@ -4950,6 +5158,7 @@ document.addEventListener('visibilitychange', () => {
                     <span style="font-size:9px; color:var(--text-dim); font-weight:700; text-align:center;">No QR detected</span>
                     <div class="doc-qr-actions">
                         <button class="doc-qr-chip" onclick="mergeRetryQrScan('${item.id}')">Retry scan</button>
+                        <button class="doc-qr-chip" onclick="mergeEnterQrManually('${item.id}')">Enter manually</button>
                     </div>
                 </div>`;
         }
@@ -4979,6 +5188,24 @@ document.addEventListener('visibilitychange', () => {
         item.qrStatus = 'queued';
         item.qrText = null;
         mergeEnqueueQrScan(item);
+        mergeRenderList();
+    }
+
+    // Fallback for photos where the QR patch itself is too degraded (low
+    // native resolution, heavy JPEG blockiness, glare) for any in-browser
+    // decoder to read, no matter how it's cropped/enhanced. Rather than
+    // leaving the item permanently stuck on "No QR detected", the person
+    // can type in the code's content by hand — it then behaves exactly like
+    // an auto-found QR (Open Link, etc.).
+    function mergeEnterQrManually(id) {
+        const item = mergeItems.find(i => i.id === id);
+        if (!item) return;
+        const value = prompt('Enter the QR code\'s content (e.g. the link on the sticker):', item.qrText || '');
+        if (value === null) return; // cancelled
+        const trimmed = value.trim();
+        if (!trimmed) return;
+        item.qrText = trimmed;
+        item.qrStatus = 'found';
         mergeRenderList();
     }
 
@@ -5100,7 +5327,15 @@ document.addEventListener('visibilitychange', () => {
     // Used to "zoom into" a small QR code that's only a small part of a
     // larger photo — see the comment in mergeScanImageForQr for why this
     // catches cases plain resizing misses.
-    function mergeCropAndScaleImageFile(file, rectFrac, maxDim) {
+    // sharp=true disables smoothing (nearest-neighbor upscale) instead of the
+    // browser's default smooth interpolation. This matters specifically for
+    // QR decoding: smooth upscaling blurs the hard black/white module edges
+    // a decoder relies on, and testing against a real scanned sticker showed
+    // that blur alone was enough to turn a perfectly decodable crop into an
+    // undecodable one. Nearest-neighbor keeps those edges crisp, at the cost
+    // of looking blocky — irrelevant here since these crops are never shown
+    // to the user, only fed to the decoder.
+    function mergeCropAndScaleImageFile(file, rectFrac, maxDim, sharp) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             const url = URL.createObjectURL(file);
@@ -5117,8 +5352,12 @@ document.addEventListener('visibilitychange', () => {
                 canvas.width = cw;
                 canvas.height = ch;
                 const ctx = canvas.getContext('2d');
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
+                if (sharp) {
+                    ctx.imageSmoothingEnabled = false;
+                } else {
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                }
                 ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
                 canvas.toBlob(blob => {
                     URL.revokeObjectURL(url);
