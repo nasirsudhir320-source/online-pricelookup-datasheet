@@ -5513,6 +5513,15 @@ window.addEventListener('DOMContentLoaded', () => {
         mdRenderResults();
     }
 
+    // Formats a file's modified date for display, e.g. "12 May 2026".
+    // Falls back to a neutral label when no date is available.
+    function mdFormatDate(modified) {
+        if (!modified) return '';
+        const d = new Date(modified);
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
     function mdRenderResults() {
         const box = document.getElementById('md-results');
         if (!mdCurrentResults.length) {
@@ -5522,7 +5531,8 @@ window.addEventListener('DOMContentLoaded', () => {
         box.innerHTML = mdCurrentResults.map((f, idx) => {
             const isPdf = f.ext === 'pdf';
             const added = mergeItems.some(i => i.url === f.url);
-            const sizeLabel = f.folder ? f.folder : (isPdf ? 'PDF Document' : 'Photo');
+            const dateLabel = mdFormatDate(f.modified);
+            const sizeLabel = dateLabel ? `Modified ${dateLabel}` : (isPdf ? 'PDF Document' : 'Photo');
             const icon = isPdf
                 ? `<div class="md-result-icon"><i data-lucide="file-text" size="18"></i><span class="md-ext-label">PDF</span></div>`
                 : `<div class="md-result-icon"><img src="${f.url}" loading="lazy" alt="" /></div>`;
