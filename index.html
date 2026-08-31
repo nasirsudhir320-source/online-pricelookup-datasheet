@@ -585,6 +585,27 @@ select.rate-search { -webkit-appearance: none; appearance: none; background-imag
 .md-preview-box { flex: 1; overflow-y: auto; border-radius: 12px; }
 .md-preview-box img { width: 100%; border-radius: 12px; object-fit: contain; }
 .md-preview-box canvas { width: 100%; border-radius: 10px; margin-bottom: 10px; display: block; }
+
+/* ---------- PDF pages: canvas image + a real, selectable text layer on top ---------- */
+.pdf-page-wrap { position: relative; margin: 0 auto 10px; line-height: 0; }
+.pdf-page-wrap canvas { display: block; border-radius: 10px; }
+.textLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    line-height: 1;
+    z-index: 2;
+}
+.textLayer span, .textLayer br {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+.textLayer ::selection { background: rgba(20,86,217,0.35); }
+.textLayer ::-moz-selection { background: rgba(20,86,217,0.35); }
 .md-preview-title { font-size: 13px; font-weight: 800; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 .md-preview-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 .md-preview-actions button { flex: 1; padding: 10px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 11.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
@@ -1377,14 +1398,6 @@ main::-webkit-scrollbar-track { background: transparent; }
 
     <main id="main-content">
         <div id="tab-home" class="view-section">
-            <div id="notif-bar">
-                <div class="notif-icon-badge"><i data-lucide="bell" size="17"></i></div>
-                <div class="notif-body">
-                    <div class="notif-label">Notice</div>
-                    <div id="notif-text">Connected.</div>
-                </div>
-                <div class="notif-time"><span class="dot"></span> Live</div>
-            </div>
             <div class="rates-hero" onclick="navigateToTab('rates')">
                 <div class="rates-hero-icon"><i data-lucide="tag" size="24"></i></div>
                 <div class="rates-hero-text">
@@ -3722,10 +3735,37 @@ document.addEventListener('visibilitychange', () => {
                 const viewport = page.getViewport({ scale: s });
                 const canvas = document.createElement('canvas');
                 canvas.width = viewport.width; canvas.height = viewport.height;
-                canvas.style.width = "100%"; canvas.style.display = "block"; canvas.style.marginBottom = "10px";
+                // Deliberately NOT stretched via CSS (no width:100%) — the
+                // canvas is rendered at exactly the pixel size we want it
+                // displayed at (chosen via the `scale` callback below), so
+                // its on-screen size always matches viewport.width/height
+                // exactly. That 1:1 match is what lets the text layer sit
+                // perfectly on top without any extra re-scaling step.
+                canvas.style.display = "block";
                 await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-                if (wrapper.isConnected) wrapper.replaceWith(canvas);
-                wrappers[i - 1] = canvas;
+
+                const pageWrap = document.createElement('div');
+                pageWrap.className = 'pdf-page-wrap';
+                pageWrap.appendChild(canvas);
+                if (wrapper.isConnected) wrapper.replaceWith(pageWrap);
+                wrappers[i - 1] = pageWrap;
+
+                // Selectable text layer, aligned exactly on top of the canvas
+                // image so the PDF's real text can be highlighted and copied
+                // instead of the preview only being a flat picture of the page.
+                try {
+                    const textContent = await page.getTextContent();
+                    const textLayerDiv = document.createElement('div');
+                    textLayerDiv.className = 'textLayer';
+                    // pdf.js sizes/positions the text layer internally using
+                    // calc(var(--scale-factor) * ...); without this variable
+                    // defined, the layer collapses to zero size and every
+                    // span piles up in the corner instead of sitting over its
+                    // actual word, which made the text unselectable.
+                    textLayerDiv.style.setProperty('--scale-factor', s);
+                    pageWrap.appendChild(textLayerDiv);
+                    pdfjsLib.renderTextLayer({ textContentSource: textContent, container: textLayerDiv, viewport: viewport });
+                } catch (e) { /* text layer is a nice-to-have; the page image still renders fine without it */ }
             } catch (e) {
                 wrapper.textContent = `Error rendering page ${i}`;
             }
@@ -3769,7 +3809,12 @@ document.addEventListener('visibilitychange', () => {
             const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
             box.style.overflow = "auto";
             box.style.padding = "16px";
-            renderPdfPagesLazy(pdf, box, 1.2);
+            // Render each page sized to the box's actual width (minus its
+            // own padding) instead of a fixed zoom factor, so the canvas
+            // never needs to be shrunk back down via CSS afterwards — that
+            // extra scaling step is what was throwing the selectable text
+            // layer out of alignment with the page image.
+            renderPdfPagesLazy(pdf, box, (baseViewport) => Math.max(0.3, (box.clientWidth - 32) / baseViewport.width));
         } catch(e) { box.innerHTML = (e && e.message) ? e.message : "Error loading file."; }
     }
 
