@@ -703,6 +703,8 @@ body.merge-drag-over-all::after {
 .crumb-sep { color: var(--text-faint); font-size: 11px; flex-shrink: 0; }
 .nav-controls { display: flex; gap: 10px; padding: 0 0 12px; }
 .nav-btn { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 13px; padding: 12px; color: var(--ink); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: var(--sh-sm); transition: transform 0.15s ease, border-color 0.2s; }
+.nav-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-color: transparent; box-shadow: var(--sh-md); }
+.nav-btn.active i { color: #fff; }
 .nav-btn:active { transform: scale(0.97); }
 .nav-btn i { color: var(--accent); width: 16px; height: 16px; }
 .action-toggle-container { padding: 0 0 15px; }
@@ -1375,6 +1377,14 @@ main::-webkit-scrollbar-track { background: transparent; }
 
     <main id="main-content">
         <div id="tab-home" class="view-section">
+            <div id="notif-bar">
+                <div class="notif-icon-badge"><i data-lucide="bell" size="17"></i></div>
+                <div class="notif-body">
+                    <div class="notif-label">Notice</div>
+                    <div id="notif-text">Connected.</div>
+                </div>
+                <div class="notif-time"><span class="dot"></span> Live</div>
+            </div>
             <div class="rates-hero" onclick="navigateToTab('rates')">
                 <div class="rates-hero-icon"><i data-lucide="tag" size="24"></i></div>
                 <div class="rates-hero-text">
@@ -1565,6 +1575,8 @@ main::-webkit-scrollbar-track { background: transparent; }
             <div class="nav-controls">
                 <button class="nav-btn" onclick="goBack()"><i data-lucide="chevron-left"></i> BACK</button>
                 <button class="nav-btn" onclick="goHomePhotos()"><i data-lucide="home"></i> HOME</button>
+                <button class="nav-btn" id="fav-filter-btn" onclick="togglePhotoFavMode()"><i data-lucide="heart"></i> FAVORITES</button>
+                <button class="nav-btn" id="density-btn" onclick="togglePhotoGridDensity()"><i data-lucide="grid-3x3" size="15"></i> COMPACT</button>
             </div>
 
             <div id="photo-toggle-area" class="action-toggle-container">
@@ -2481,14 +2493,26 @@ document.addEventListener('visibilitychange', () => {
 
 
 <script>
-    // Keep-alive: Prevents tab sleep
-    setInterval(() => { console.log("System Heartbeat"); }, 30000);
-
-    if (typeof pdfjsLib !== 'undefined') {
-        ensurePdfWorkerConfigured();
-    } else {
-        console.warn('pdf.js failed to load from CDN — will retry on demand when a PDF is opened.');
+    // Screen Wake Lock: keeps the device from auto-locking/dimming while the
+    // app is open and visible (e.g. while someone's mid-scan or filling out
+    // an off-hire note). A plain setInterval()/console.log() loop — what was
+    // here before — does NOT actually prevent tab sleep or screen dimming on
+    // any modern browser, so that "keep-alive" never did anything. The real
+    // mechanism for this is the Wake Lock API; it's silently skipped on
+    // browsers that don't support it (Safari < 16.4, some older WebViews)
+    // rather than breaking anything.
+    let wakeLockHandle = null;
+    async function requestWakeLock() {
+        if (!('wakeLock' in navigator)) return;
+        try {
+            wakeLockHandle = await navigator.wakeLock.request('screen');
+            wakeLockHandle.addEventListener('release', () => { wakeLockHandle = null; });
+        } catch (e) { /* denied or unsupported in this context — fine, just skip */ }
     }
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !wakeLockHandle) requestWakeLock();
+    });
+    requestWakeLock();
 
     const CONFIG = {
         SHEET: '1yn96hq69kWn_MdrFwY_OgUBfhqu-NtJz_LADBxjVrZQ',
@@ -2730,6 +2754,7 @@ document.addEventListener('visibilitychange', () => {
         document.getElementById('pdf-overlay').classList.add('hidden');
         if (currentPdfObjectUrl) { try { URL.revokeObjectURL(currentPdfObjectUrl); } catch(e){} currentPdfObjectUrl = null; }
         document.getElementById('img-preview-overlay').classList.add('hidden');
+        if (typeof currentPreviewImageUrl !== 'undefined' && currentPreviewImageUrl) { try { URL.revokeObjectURL(currentPreviewImageUrl); } catch(e){} currentPreviewImageUrl = null; }
         document.getElementById('photo-lightbox').classList.add('hidden');
         if (state.type === 'tab') {
             document.getElementById('detail-layer').classList.add('hidden');
@@ -3748,7 +3773,15 @@ document.addEventListener('visibilitychange', () => {
         } catch(e) { box.innerHTML = (e && e.message) ? e.message : "Error loading file."; }
     }
 
-    function downloadPdf() { if(currentPdf.blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(currentPdf.blob); a.download = `${currentPdf.name}.pdf`; a.click(); } }
+    function downloadPdf() {
+        if (!currentPdf.blob) return;
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(currentPdf.blob);
+        a.href = url;
+        a.download = `${currentPdf.name}.pdf`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
 
     // Opens the current PDF as a normal top-level browser tab instead of
     // inside our embedded iframe viewer. Some valid PDFs — usually due to
@@ -3888,16 +3921,23 @@ document.addEventListener('visibilitychange', () => {
             try { const res = await fetchWithTimeout(url); blob = await res.blob(); } catch (e) { /* fall through to url */ }
         }
         const a = document.createElement('a');
-        a.href = blob ? URL.createObjectURL(blob) : url;
+        const objectUrl = blob ? URL.createObjectURL(blob) : null;
+        a.href = objectUrl || url;
         a.download = filename;
         a.click();
+        if (objectUrl) setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
     }
 
     function mdPreviewOpenNewTab() {
         if (!mdPreviewCurrent) return;
         const { blob, url } = mdPreviewCurrent;
-        if (blob) window.open(URL.createObjectURL(blob), '_blank');
-        else if (url) window.open(url, '_blank');
+        if (blob) {
+            const objectUrl = URL.createObjectURL(blob);
+            window.open(objectUrl, '_blank');
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
+        } else if (url) {
+            window.open(url, '_blank');
+        }
     }
 
     function navigateToTab(tab) {
@@ -4077,6 +4117,16 @@ document.addEventListener('visibilitychange', () => {
     function togglePhotoFavorite(path) {
         if (photoFavSet.has(path)) photoFavSet.delete(path); else photoFavSet.add(path);
         savePhotoFavorites();
+    }
+    // Lets the person filter the current view down to just their starred
+    // photos. The heart button on each card already marks favorites (see
+    // togglePhotoFavorite above) and renderPhotoGrid already knows how to
+    // filter by photoFavMode — this is the missing toggle that turns it on.
+    function togglePhotoFavMode() {
+        photoFavMode = !photoFavMode;
+        const favBtn = document.getElementById('fav-filter-btn');
+        if (favBtn) favBtn.classList.toggle('active', photoFavMode);
+        renderPhotoGrid();
     }
     function togglePhotoFavActive() {
         const item = photoGalleryItems[photoIndex];
@@ -5004,6 +5054,7 @@ document.addEventListener('visibilitychange', () => {
        entirely so their own clicks aren't hijacked into a drag. */
     let mergeDrag = null;
     let mergeDragCandidate = null;
+    let mergeSuppressClickActive = false;
     const MERGE_DRAG_THRESHOLD = 8; // px of movement before a tap becomes a drag
 
     function initMergeDragHandles() {
@@ -5058,6 +5109,7 @@ document.addEventListener('visibilitychange', () => {
         cleanupMergeCandidateListeners();
         mergeDragCandidate = null;
         document.addEventListener('click', mergeSuppressNextClick, true);
+        mergeSuppressClickActive = true;
         beginMergeDrag(row, startX);
         document.addEventListener('pointermove', onMergeDragMove);
         document.addEventListener('pointerup', onMergeDragEnd);
@@ -5079,6 +5131,7 @@ document.addEventListener('visibilitychange', () => {
         e.preventDefault();
         e.stopPropagation();
         document.removeEventListener('click', mergeSuppressNextClick, true);
+        mergeSuppressClickActive = false;
     }
 
     function beginMergeDrag(row, startX) {
@@ -5140,6 +5193,23 @@ document.addEventListener('visibilitychange', () => {
         document.removeEventListener('pointercancel', onMergeDragEnd);
         mergeDrag = null;
         mergeRenderList(); // refresh "#N" index pills
+
+        // Safety net: the click-suppressor above is normally removed by the
+        // very next click (the one this drag-release would otherwise have
+        // triggered). But pointerup doesn't always guarantee a following
+        // click event (e.g. pointercancel, or releasing outside the
+        // window) — if that happens the capture-phase listener would stay
+        // attached forever and silently eat the next unrelated tap
+        // anywhere in the app. Clear it out shortly after the drag ends if
+        // nothing has claimed it yet.
+        if (mergeSuppressClickActive) {
+            setTimeout(() => {
+                if (mergeSuppressClickActive) {
+                    document.removeEventListener('click', mergeSuppressNextClick, true);
+                    mergeSuppressClickActive = false;
+                }
+            }, 400);
+        }
     }
 
     function mergeAttrEscape(str) {
