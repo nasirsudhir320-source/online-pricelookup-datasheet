@@ -2625,6 +2625,13 @@ document.addEventListener('visibilitychange', () => {
         document.getElementById('sync-overlay').classList.add('hidden');
         document.getElementById('auth-screen').classList.add('hidden');
         document.getElementById('app-shell').classList.remove('hidden');
+        // Warm up the PDF viewer library (and its worker) in the background as
+        // soon as the person is in the app, instead of only starting this
+        // download the moment they tap a document. By the time they've
+        // navigated to Specs / Machine Documents and picked a file, the
+        // library is already loaded, so opening a PDF feels instant instead
+        // of stalling on a first-time CDN fetch.
+        if (typeof ensurePdfJsLoaded === 'function') ensurePdfJsLoaded().catch(() => {});
     }
 
     // Live KSA (Riyadh) & India (New Delhi) clocks — pure JS, no API needed.
@@ -3658,6 +3665,68 @@ document.addEventListener('visibilitychange', () => {
         } catch(e) { box.innerHTML = (e && e.message) ? e.message : "Error loading file."; }
     }
 
+    // Lazily renders a pdf.js document into `box`: only the first couple of
+    // pages are drawn immediately, and the rest render on demand as they
+    // scroll into view (via IntersectionObserver), instead of blocking on
+    // every single page up front. For a long multi-page datasheet this is
+    // the difference between "opens instantly, page 1 visible right away"
+    // and "waits for all 20+ pages to render before you can read anything".
+    // `scale` is either a fixed number, or a function(baseViewport) -> number
+    // for callers that need to fit the container width.
+    function renderPdfPagesLazy(pdf, box, scale) {
+        box.innerHTML = "";
+        const wrappers = [];
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const wrapper = document.createElement('div');
+            wrapper.dataset.page = i;
+            wrapper.style.cssText = 'min-height:280px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:var(--text-faint); font-size:12px; font-weight:700; border:1px dashed var(--border); border-radius:8px;';
+            wrapper.textContent = `Page ${i}`;
+            box.appendChild(wrapper);
+            wrappers.push(wrapper);
+        }
+
+        const rendered = new Set();
+        async function renderPage(i) {
+            if (rendered.has(i)) return;
+            rendered.add(i);
+            const wrapper = wrappers[i - 1];
+            try {
+                const page = await pdf.getPage(i);
+                const baseViewport = page.getViewport({ scale: 1 });
+                const s = (typeof scale === 'function') ? scale(baseViewport) : scale;
+                const viewport = page.getViewport({ scale: s });
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                canvas.style.width = "100%"; canvas.style.display = "block"; canvas.style.marginBottom = "10px";
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                if (wrapper.isConnected) wrapper.replaceWith(canvas);
+                wrappers[i - 1] = canvas;
+            } catch (e) {
+                wrapper.textContent = `Error rendering page ${i}`;
+            }
+        }
+
+        // Show the first page (and the next one) right away so the document
+        // feels open immediately; the rest fill in as the person scrolls.
+        renderPage(1);
+        if (pdf.numPages > 1) renderPage(2);
+
+        if (typeof IntersectionObserver === 'function') {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        observer.unobserve(entry.target);
+                        renderPage(parseInt(entry.target.dataset.page, 10));
+                    }
+                });
+            }, { root: box, rootMargin: '600px 0px' });
+            wrappers.forEach(w => observer.observe(w));
+        } else {
+            // No IntersectionObserver support — fall back to rendering the rest in order.
+            (async () => { for (let i = 3; i <= pdf.numPages; i++) await renderPage(i); })();
+        }
+    }
+
     // Renders an already-in-hand PDF Blob (e.g. a local file picked for the
     // merger) straight into the pdf-overlay, without needing a network fetch.
     // Uses pdf.js to draw each page to a <canvas> — this is more reliable
@@ -3673,18 +3742,9 @@ document.addEventListener('visibilitychange', () => {
             if (currentPdfObjectUrl) { try { URL.revokeObjectURL(currentPdfObjectUrl); } catch(e){} }
             currentPdfObjectUrl = URL.createObjectURL(blob);
             const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
-            box.innerHTML = "";
             box.style.overflow = "auto";
             box.style.padding = "16px";
-            for(let i=1; i<=pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const canvas = document.createElement('canvas');
-                const viewport = page.getViewport({ scale: 1.2 });
-                canvas.width = viewport.width; canvas.height = viewport.height;
-                canvas.style.width = "100%"; canvas.style.marginBottom = "10px";
-                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-                box.appendChild(canvas);
-            }
+            renderPdfPagesLazy(pdf, box, 1.2);
         } catch(e) { box.innerHTML = (e && e.message) ? e.message : "Error loading file."; }
     }
 
@@ -3800,19 +3860,8 @@ document.addEventListener('visibilitychange', () => {
                 }
                 mdPreviewCurrent.blob = b;
                 const pdf = await pdfjsLib.getDocument({ data: await b.arrayBuffer() }).promise;
-                box.innerHTML = '';
                 const containerWidth = box.clientWidth || 300;
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const baseViewport = page.getViewport({ scale: 1 });
-                    const scale = containerWidth / baseViewport.width;
-                    const viewport = page.getViewport({ scale });
-                    const canvas = document.createElement('canvas');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-                    box.appendChild(canvas);
-                }
+                renderPdfPagesLazy(pdf, box, (baseViewport) => containerWidth / baseViewport.width);
             } catch (e) {
                 box.innerHTML = (e && e.message) ? mergeEscape(e.message) : 'Error loading file.';
             }
@@ -4424,7 +4473,7 @@ document.addEventListener('visibilitychange', () => {
             const blob = await response.blob();
             const file = new File([blob], item.name, { type: blob.type });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: 'Sudhir Pro Photo' });
+                await navigator.share({ files: [file] });
             }
         } catch (err) { console.error(err); }
     }
@@ -4441,11 +4490,7 @@ document.addEventListener('visibilitychange', () => {
                 filesArray.push(file);
             }
             if (navigator.canShare && navigator.canShare({ files: filesArray })) {
-                await navigator.share({
-                    files: filesArray,
-                    title: 'Sudhir Pro Portfolio Share',
-                    text: 'Shared items from machine database portal.'
-                });
+                await navigator.share({ files: filesArray });
             } else {
                 alert("Your browser or device context doesn't support sharing multiple files directly.");
             }
