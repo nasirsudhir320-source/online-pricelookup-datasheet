@@ -893,6 +893,10 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #price-editor-panel .skel { height: 12px; border-radius: 4px; background: linear-gradient(90deg, var(--panel-2) 0%, #e9ecf2 50%, var(--panel-2) 100%); background-size: 200% 100%; animation: shimmer 1.3s infinite; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 #price-editor-panel .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--panel); border: 1px solid var(--border-strong); padding: 10px 18px; border-radius: 10px; font-family: var(--mono); font-size: 12px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 60; box-shadow: var(--sh-lg); }
+/* Global, page-independent toast — replaces blocking alert()/confirm() popups that
+   require an extra OK tap. Auto-dismisses on its own after ~1.8s. */
+.gtoast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #14213d; color: #fff; padding: 12px 22px; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 9999; box-shadow: 0 8px 22px rgba(20,33,61,0.28); }
+.gtoast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #price-editor-panel .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #price-editor-panel .toast.err { border-color: var(--bad); color: var(--bad); }
 #price-editor-panel .toast.ok { border-color: var(--good); color: var(--good); }
@@ -1334,6 +1338,7 @@ main::-webkit-scrollbar-track { background: transparent; }
     </style>
 </head>
 <body>
+<div class="gtoast" id="gtoast"></div>
 <div id="sync-overlay">
     <div class="sync-circle-box">
         <svg class="sync-svg"><circle class="sync-bg" cx="60" cy="60" r="54"></circle><circle id="sync-bar" class="sync-bar" cx="60" cy="60" r="54"></circle></svg>
@@ -2506,6 +2511,17 @@ document.addEventListener('visibilitychange', () => {
 
 
 <script>
+    // Simple global toast — used instead of alert()/confirm() in a few spots
+    // (e.g. "Copied!") so the person doesn't have to tap OK to dismiss it.
+    function gToast(msg){
+        const el = document.getElementById('gtoast');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.remove('show'), 1800);
+    }
+
     // Screen Wake Lock: keeps the device from auto-locking/dimming while the
     // app is open and visible (e.g. while someone's mid-scan or filling out
     // an off-hire note). A plain setInterval()/console.log() loop — what was
@@ -4038,7 +4054,7 @@ document.addEventListener('visibilitychange', () => {
         enterApp();
     }
 
-    function copyText(t) { navigator.clipboard.writeText(t); alert("Copied!"); }
+    function copyText(t) { navigator.clipboard.writeText(t); gToast("Copied!"); }
     /* ===================== PHOTOS (in-app gallery) =====================
        Images + a small data.json manifest are hosted on the separate
        Machine-Photos GitHub Pages site (kept there so this app's repo stays
@@ -5392,11 +5408,11 @@ document.addEventListener('visibilitychange', () => {
 
     function mergeClearAll() {
         if (!mergeItems.length) return;
-        if (!confirm('Remove all added files?')) return;
         mergeItems.forEach(i => { if (i.thumbUrl) URL.revokeObjectURL(i.thumbUrl); });
         mergeItems = [];
         mergeQrQueue = [];
         mergeFilenameEdited = false;
+        gToast("Cleared");
         document.getElementById('merge-filename').value = '';
         mergeSetStatus('');
         mergeRenderList();
