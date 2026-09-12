@@ -3643,6 +3643,30 @@ document.addEventListener('visibilitychange', () => {
       (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
+    // Auto-clear the two home-tab search boxes 30s after the person stops
+    // typing — clears the input value and whatever results it produced.
+    (function () {
+        const AUTO_CLEAR_MS = 30000;
+        const timers = {};
+
+        function armAutoClear(inputId, onClear) {
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            const reset = () => {
+                if (timers[inputId]) clearTimeout(timers[inputId]);
+                if (!el.value) return; // nothing to clear, no timer needed
+                timers[inputId] = setTimeout(() => {
+                    el.value = '';
+                    onClear();
+                }, AUTO_CLEAR_MS);
+            };
+            el.addEventListener('input', reset);
+        }
+
+        armAutoClear('home-rate-search', () => searchHomeRates(''));
+        armAutoClear('genset-kva-search', () => searchGensetCable(''));
+    })();
+
     function viewDocs(path) {
         window.history.pushState({ type: 'detail', target: path, subType: 'docs' }, '');
         document.getElementById('detail-layer').classList.remove('hidden');
