@@ -2710,7 +2710,7 @@ document.addEventListener('visibilitychange', () => {
         const fg = '#fff';
         const escapedClick = String(clickValue).replace(/'/g, "\\'");
         const escapedLabel = String(label).replace(/</g, '&lt;');
-        const photoIcon = categoryPhotoIcon(label);
+        const photoIcon = categoryPhotoIcon(label) || categoryPhotoIcon(clickValue);
         const badge = photoIcon
             ? `<div class="dash-icon-badge has-photo">${photoIcon}</div>`
             : `<div class="dash-icon-badge" style="background:${bg}; color:${fg};"><i data-lucide="${v.icon}"></i></div>`;
@@ -4523,7 +4523,7 @@ document.addEventListener('visibilitychange', () => {
             if (item.type === 'folder') {
                 const count = photoCountUnder(item.path);
                 const vis = photoGetVisual(item.name);
-                const photoIcon = categoryPhotoIcon(item.name);
+                const photoIcon = categoryPhotoIcon(item.name) || categoryPhotoIcon(item.path);
                 card.style.borderLeft = '4px solid ' + vis.color;
                 innerHtml += (photoIcon
                                 ? '<div class="folder-icon-badge has-photo">' + photoIcon + '</div>'
