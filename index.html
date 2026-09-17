@@ -278,14 +278,60 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .search-panel { background: var(--card-2); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px 24px; margin-top: 26px; }
 .search-panel .rate-cards:empty { display: none; }
 
-/* ---------- Genset dark banner ---------- */
-.genset-banner { background: linear-gradient(105deg, var(--blue-deep), #073d9e, #0b4bb8); border-radius: 17px; padding: 20px 30px; margin-top: 26px; box-shadow: 0 7px 20px rgba(6,46,125,0.13); }
-.genset-banner .group-title-dark { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 13px; font-family: 'Manrope', sans-serif; }
-.genset-banner .home-search-row { margin-bottom: 0; }
-.genset-banner .rate-search { height: 48px; padding: 0 17px; border-radius: 11px; background: #fff; border: none; font-size: 14px; }
-.genset-banner .home-search-btn { height: 48px; width: 150px; border-radius: 11px; background: #fff; color: var(--blue-dark); }
-.genset-banner .home-search-btn:hover { background: #eef2ff; }
+/* ---------- Home layout: left pane (rates + quick links) + main content ---------- */
+.home-layout { display: flex; align-items: flex-start; gap: 22px; }
+.home-sidebar { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 0; }
+.home-main { flex: 1; min-width: 0; }
+.home-main .search-panel:first-child, .home-main .genset-banner:first-child { margin-top: 0; }
+.home-sidebar .rates-hero { min-height: auto; padding: 16px 18px; gap: 12px; border-radius: 14px; margin-bottom: 0; }
+.home-sidebar .rates-hero-icon { width: 42px; height: 42px; border-radius: 11px; }
+.home-sidebar .rates-hero-icon svg { width: 20px; height: 20px; }
+.home-sidebar .rates-hero-title { font-size: 12.5px; }
+.home-sidebar .rates-hero-desc { font-size: 11px; margin-top: 2px; }
+.home-sidebar .rates-hero-arrow { width: 32px; height: 32px; }
+.home-sidebar .rates-hero-arrow svg { width: 15px; height: 15px; }
+.home-dash-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 0; }
+.home-dash-grid .dash-card { min-height: 0; padding: 12px 14px; border-radius: 12px; }
+.home-dash-grid .dash-icon-badge { width: 38px; height: 38px; flex-shrink: 0; }
+@media (max-width: 900px) {
+    .home-layout { flex-direction: column; }
+    .home-sidebar { width: 100%; position: static; flex-direction: row; flex-wrap: wrap; }
+    .home-sidebar .rates-hero { flex: 1 1 100%; }
+    .home-dash-grid { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
+    .home-dash-grid .dash-card { flex: 1 1 calc(50% - 8px); }
+}
+
+/* ---------- Search hero panels (Search Rental Equipment / Genset / Spec Sheets) ---------- */
+.search-hero-panel { position: relative; overflow: hidden; border-radius: 20px; padding: 22px 26px 26px; margin-top: 20px; background: var(--hero-bg); border: 1px solid var(--hero-border); }
+.home-main > .search-hero-panel:first-child { margin-top: 0; }
+.search-hero-panel::after { content: ''; position: absolute; right: -40px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0)); pointer-events: none; }
+.search-hero-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 18px; position: relative; z-index: 1; }
+.search-hero-icon { width: 54px; height: 54px; border-radius: 15px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--hero-icon-bg); color: var(--hero-icon-fg); box-shadow: var(--sh-sm); }
+.search-hero-title { font-size: 19px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--hero-title); letter-spacing: -0.2px; }
+.search-hero-desc { font-size: 13px; font-weight: 500; color: var(--hero-desc); margin-top: 4px; }
+.search-hero-row { display: flex; gap: 14px; align-items: stretch; position: relative; z-index: 1; }
+.search-hero-input-wrap { flex: 1; min-width: 0; position: relative; display: flex; align-items: center; background: #fff; border: 1px solid var(--hero-input-border); border-radius: 14px; box-shadow: var(--sh-sm); }
+.search-hero-input-wrap .shi-search-ico { display: flex; align-items: center; justify-content: center; color: var(--hero-icon-fg); padding-left: 18px; flex-shrink: 0; }
+.search-hero-input { flex: 1; min-width: 0; height: 56px; padding: 0 16px; border: none; background: transparent; outline: none; font-size: 15px; font-weight: 600; color: var(--ink); font-family: 'Manrope', sans-serif; }
+.search-hero-input::placeholder { color: var(--text-faint); font-weight: 500; }
+.search-hero-input-wrap .shi-filter-ico { display: flex; align-items: center; justify-content: center; gap: 12px; padding-right: 18px; flex-shrink: 0; color: var(--text-faint); }
+.search-hero-input-wrap .shi-filter-ico::before { content: ''; width: 1px; height: 26px; background: var(--border); }
+.search-hero-btn { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 9px; height: 56px; padding: 0 28px; border: none; border-radius: 14px; background: var(--hero-btn); color: #fff; font-weight: 800; font-size: 15px; font-family: 'Space Grotesk', sans-serif; box-shadow: var(--hero-btn-shadow); cursor: pointer; transition: transform 0.12s ease, filter 0.15s ease; }
+.search-hero-btn:hover { filter: brightness(1.05); }
+.search-hero-btn:active { transform: scale(0.97); }
+.search-hero-panel.tint-blue { --hero-bg: linear-gradient(120deg, #eaf3ff, #f5f9ff); --hero-border: #d7e6fb; --hero-icon-bg: linear-gradient(135deg, #cfe3ff, #a7c9fb); --hero-icon-fg: #1456d9; --hero-title: #0d2c63; --hero-desc: #5c7396; --hero-input-border: #dbe8fb; --hero-btn: linear-gradient(135deg, #2b73f0, #0d46b6); --hero-btn-shadow: 0 10px 22px rgba(20,86,217,0.28); }
+.search-hero-panel.tint-green { --hero-bg: linear-gradient(120deg, #e8f8ee, #f3fbf6); --hero-border: #cdeed9; --hero-icon-bg: linear-gradient(135deg, #bdeccb, #7fd39c); --hero-icon-fg: #0f7a41; --hero-title: #0c3d22; --hero-desc: #4f7a63; --hero-input-border: #d6f0e0; --hero-btn: linear-gradient(135deg, #1fa35a, #0f7a41); --hero-btn-shadow: 0 10px 22px rgba(15,122,65,0.26); }
+.search-hero-panel.tint-purple { --hero-bg: linear-gradient(120deg, #eeecfc, #f6f5fd); --hero-border: #dcd8f7; --hero-icon-bg: linear-gradient(135deg, #cfc7f7, #a99bef); --hero-icon-fg: #5b3fd6; --hero-title: #2a1c63; --hero-desc: #6a629a; --hero-input-border: #e2dcfa; --hero-btn: linear-gradient(135deg, #7c62e8, #5b3fd6); --hero-btn-shadow: 0 10px 22px rgba(91,63,214,0.26); }
 #genset-cable-results:not(:empty) { margin-top: 14px; }
+@media (max-width: 640px) {
+    .search-hero-panel { padding: 16px 16px 18px; border-radius: 16px; margin-top: 14px; }
+    .search-hero-icon { width: 44px; height: 44px; border-radius: 12px; }
+    .search-hero-title { font-size: 15px; }
+    .search-hero-desc { font-size: 11px; }
+    .search-hero-row { flex-direction: column; gap: 10px; }
+    .search-hero-input { height: 52px; font-size: 14px; }
+    .search-hero-btn { height: 46px; width: 100%; }
+}
 
 /* ---------- Hero / welcome banner ---------- */
 .hero-banner { background: linear-gradient(120deg, #ffffff 0%, #f4f8ff 100%); border: 1px solid var(--border); border-radius: 20px; padding: 30px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; box-shadow: var(--sh-sm); overflow: hidden; position: relative; }
@@ -688,21 +734,21 @@ body.merge-drag-over-all::after {
     nav { justify-content: center; }
     .nav-tab { padding: 8px 14px 6px; }
     .nav-tab span { font-size: 10.5px; letter-spacing: 0.3px; }
-    main { padding: 28px 38px 48px; max-width: 1180px; margin: 0 auto; width: 100%; }
+    main { padding: 28px 38px 48px; width: 100%; box-sizing: border-box; }
     .view-section { padding: 0; }
     .dash-grid { grid-template-columns: repeat(5, 1fr); }
     .rate-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .overlay-header { padding: 18px 30px; }
-    .scroll-area { max-width: 1180px; margin: 0 auto; width: 100%; }
+    .scroll-area { width: 100%; box-sizing: border-box; }
 }
 @media (min-width: 1300px) {
     .nav-tab span { font-size: 11px; }
-    main, .scroll-area { max-width: 1400px; padding-left: 46px; padding-right: 46px; }
+    main, .scroll-area { padding-left: 46px; padding-right: 46px; }
     .dash-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
     .rate-cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
 }
 @media (min-width: 1700px) {
-    main, .scroll-area { max-width: 1680px; padding-left: 56px; padding-right: 56px; }
+    main, .scroll-area { padding-left: 56px; padding-right: 56px; }
     .dash-grid { grid-template-columns: repeat(5, 1fr); }
     .rate-cards { grid-template-columns: repeat(3, 1fr); }
     .md-layout { gap: 30px; }
@@ -1442,39 +1488,84 @@ main::-webkit-scrollbar-track { background: transparent; }
 
     <main id="main-content">
         <div id="tab-home" class="view-section">
-            <div class="rates-hero" onclick="navigateToTab('rates')">
-                <div class="rates-hero-icon"><i data-lucide="tag" size="24"></i></div>
-                <div class="rates-hero-text">
-                    <div class="rates-hero-title">Rental Rates</div>
-                    <div class="rates-hero-desc">View latest rental rates</div>
-                </div>
-                <div class="rates-hero-arrow"><i data-lucide="chevron-right" size="18"></i></div>
-            </div>
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="rates-hero" onclick="navigateToTab('rates')">
+                        <div class="rates-hero-icon"><i data-lucide="tag" size="24"></i></div>
+                        <div class="rates-hero-text">
+                            <div class="rates-hero-title">Rental Rates</div>
+                            <div class="rates-hero-desc">View latest rental rates</div>
+                        </div>
+                        <div class="rates-hero-arrow"><i data-lucide="chevron-right" size="18"></i></div>
+                    </div>
 
-            <div class="dash-grid">
-                <div class="dash-card" style="--tint:var(--pink)" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:var(--pink); color:#fff;"><i data-lucide="camera"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Photos</div><div class="dash-card-desc">Browse machine photos</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                <div class="dash-card" style="--tint:var(--teal)" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:var(--teal); color:#fff;"><i data-lucide="file-text"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Datasets</div><div class="dash-card-desc">Technical specs &amp; datasheets</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                <div class="dash-card" style="--tint:var(--orange)" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:var(--orange); color:#fff;"><i data-lucide="briefcase"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Documents</div><div class="dash-card-desc">Documents &amp; certifications</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                <div class="dash-card" style="--tint:var(--purple)" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:var(--purple); color:#fff;"><i data-lucide="file-minus-2"></i></div><div class="dash-card-text"><div class="dash-card-title">Offhire Note</div><div class="dash-card-desc">Create &amp; view offhire notes</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                <div class="dash-card" style="--tint:var(--red-orange)" onclick="navigateToTab('reservation')"><div class="dash-icon-badge" style="background:var(--red-orange); color:#fff;"><i data-lucide="calendar-check"></i></div><div class="dash-card-text"><div class="dash-card-title">Reservation Tracker</div><div class="dash-card-desc">View &amp; update reservations</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-            </div>
+                    <div class="dash-grid home-dash-grid">
+                        <div class="dash-card" style="--tint:var(--pink)" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:var(--pink); color:#fff;"><i data-lucide="camera"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Photos</div><div class="dash-card-desc">Browse machine photos</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                        <div class="dash-card" style="--tint:var(--teal)" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:var(--teal); color:#fff;"><i data-lucide="file-text"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Datasets</div><div class="dash-card-desc">Technical specs &amp; datasheets</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                        <div class="dash-card" style="--tint:var(--orange)" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:var(--orange); color:#fff;"><i data-lucide="briefcase"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Documents</div><div class="dash-card-desc">Documents &amp; certifications</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                        <div class="dash-card" style="--tint:var(--purple)" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:var(--purple); color:#fff;"><i data-lucide="file-minus-2"></i></div><div class="dash-card-text"><div class="dash-card-title">Offhire Note</div><div class="dash-card-desc">Create &amp; view offhire notes</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                        <div class="dash-card" style="--tint:var(--red-orange)" onclick="navigateToTab('reservation')"><div class="dash-icon-badge" style="background:var(--red-orange); color:#fff;"><i data-lucide="calendar-check"></i></div><div class="dash-card-text"><div class="dash-card-title">Reservation Tracker</div><div class="dash-card-desc">View &amp; update reservations</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                    </div>
+                </aside>
 
-            <div class="search-panel">
-                <h3 class="group-title" style="margin-top:0;">Search Rental Equipment</h3>
-                <div class="home-search-row">
-                    <input type="text" id="home-rate-search" class="rate-search" placeholder="Search by equipment type, size, or capacity..." oninput="searchHomeRates(this.value)" />
-                    <button class="home-search-btn" onclick="searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="15"></i> Search</button>
-                </div>
-                <div class="rate-cards" id="home-rate-results"></div>
-            </div>
+                <div class="home-main">
+                    <div class="search-hero-panel tint-blue">
+                        <div class="search-hero-head">
+                            <div class="search-hero-icon"><i data-lucide="truck" size="24"></i></div>
+                            <div>
+                                <div class="search-hero-title">Search Rental Equipment</div>
+                                <div class="search-hero-desc">Enter equipment type, size, or capacity...</div>
+                            </div>
+                        </div>
+                        <div class="search-hero-row">
+                            <div class="search-hero-input-wrap">
+                                <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                <input type="text" id="home-rate-search" class="search-hero-input" placeholder="e.g. Scissor Lift, 32m, Generator, etc." oninput="searchHomeRates(this.value)" />
+                                <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                            </div>
+                            <button class="search-hero-btn" onclick="searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                        </div>
+                        <div class="rate-cards" id="home-rate-results"></div>
+                    </div>
 
-            <div class="genset-banner">
-                <h3 class="group-title-dark"><i data-lucide="cable" size="15"></i> Genset Cable &amp; MTS Recommendation</h3>
-                <div class="home-search-row">
-                    <input type="number" id="genset-kva-search" class="rate-search" placeholder="Enter genset kVA (e.g. 250)" oninput="searchGensetCable(this.value)" onwheel="this.blur()" />
-                    <button class="home-search-btn" onclick="searchGensetCable(document.getElementById('genset-kva-search').value)"><i data-lucide="cable" size="15"></i> Search</button>
+                    <div class="search-hero-panel tint-green">
+                        <div class="search-hero-head">
+                            <div class="search-hero-icon"><i data-lucide="zap" size="24"></i></div>
+                            <div>
+                                <div class="search-hero-title">Genset Cable &amp; MTS Recommendation</div>
+                                <div class="search-hero-desc">Enter genset kVA (e.g. 250) or related details...</div>
+                            </div>
+                        </div>
+                        <div class="search-hero-row">
+                            <div class="search-hero-input-wrap">
+                                <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                <input type="number" id="genset-kva-search" class="search-hero-input" placeholder="Enter genset kVA (e.g. 250)" oninput="searchGensetCable(this.value)" onwheel="this.blur()" />
+                                <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                            </div>
+                            <button class="search-hero-btn" onclick="searchGensetCable(document.getElementById('genset-kva-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                        </div>
+                        <div id="genset-cable-results"></div>
+                    </div>
+
+                    <div class="search-hero-panel tint-purple">
+                        <div class="search-hero-head">
+                            <div class="search-hero-icon"><i data-lucide="file-text" size="24"></i></div>
+                            <div>
+                                <div class="search-hero-title">Search Spec Sheets</div>
+                                <div class="search-hero-desc">Search datasheets by machine name...</div>
+                            </div>
+                        </div>
+                        <div class="search-hero-row">
+                            <div class="search-hero-input-wrap">
+                                <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                <input type="text" id="home-specsheet-search" class="search-hero-input" placeholder="Search datasheets by machine name..." oninput="searchHomeSpecSheets(this.value)" />
+                                <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                            </div>
+                            <button class="search-hero-btn" onclick="searchHomeSpecSheets(document.getElementById('home-specsheet-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                        </div>
+                        <div id="home-specsheet-results"></div>
+                    </div>
                 </div>
-                <div id="genset-cable-results"></div>
             </div>
         </div>
 
@@ -3655,6 +3746,36 @@ document.addEventListener('visibilitychange', () => {
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
+    // Recursively collects every file entry under a docs-tree node, tagging
+    // each with the folder path it lives in (for display/context).
+    function collectDocsFiles(node, path, out) {
+        if (!node) return out;
+        (node.files || []).forEach(f => out.push({ name: f.name, url: f.url, path }));
+        Object.keys(node.folders || {}).forEach(folder => {
+            collectDocsFiles(node.folders[folder], path ? `${path}/${folder}` : folder, out);
+        });
+        return out;
+    }
+
+    // Single search box on the Home tab — searches spec sheet (datasheet)
+    // file names across the whole Machine Datasets tree at once, so the
+    // person doesn't need to drill down through folders first. Only renders
+    // once the person actually types something.
+    function searchHomeSpecSheets(query) {
+        const list = document.getElementById('home-specsheet-results');
+        if (!list) return;
+        const q = query.trim().toLowerCase();
+        if (!q) { list.innerHTML = ''; return; }
+
+        const allFiles = collectDocsFiles(db.docsRoot, '', []);
+        const matches = allFiles.filter(f => nameMatchesQuery(f.name, q));
+
+        if (!matches.length) { list.innerHTML = `<div class="rate-empty">No matching spec sheets found.</div>`; return; }
+
+        list.innerHTML = matches.slice(0, 40).map(f => `<div class="item-card" onclick="openPdf('${f.url}', '${f.name.replace(/'/g, "\\'")}')"><div class="item-info"><h4>${f.name}</h4><p>${f.path || 'Spec sheet'}</p></div><i data-lucide="eye" style="color:var(--accent)"></i></div>`).join('');
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+    }
+
     // ---- Genset Cable & MTS Recommendation (home tab) ----
     // Reference table: recommended copper flexible cable per genset kVA per
     // voltage, plus MTS/ATS/panel rating = full-load current + 30% margin.
@@ -3744,10 +3865,10 @@ document.addEventListener('visibilitychange', () => {
       (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
-    // Auto-clear the two home-tab search boxes 30s after the person stops
+    // Auto-clear the two home-tab search boxes 2 mins after the person stops
     // typing — clears the input value and whatever results it produced.
     (function () {
-        const AUTO_CLEAR_MS = 30000;
+        const AUTO_CLEAR_MS = 120000;
         const timers = {};
 
         function armAutoClear(inputId, onClear) {
@@ -3766,6 +3887,7 @@ document.addEventListener('visibilitychange', () => {
 
         armAutoClear('home-rate-search', () => searchHomeRates(''));
         armAutoClear('genset-kva-search', () => searchGensetCable(''));
+        armAutoClear('home-specsheet-search', () => searchHomeSpecSheets(''));
     })();
 
     function viewDocs(path) {
