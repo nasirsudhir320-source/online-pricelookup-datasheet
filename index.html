@@ -426,6 +426,8 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .item-card:active { box-shadow: var(--sh-md); }
 .item-info h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; color: var(--ink); letter-spacing: -0.2px; }
 .item-info p { font-size: 11px; color: var(--text-dim); }
+#hiredesk-list .item-info { min-width: 0; padding-right: 10px; }
+#hiredesk-list .item-info p { overflow-wrap: anywhere; }
 
 .act-btn { background: var(--card); border: 1px solid #dfe6ef; width: 42px; height: 42px; border-radius: 12px; color: #44536b; display: flex; align-items: center; justify-content: center; box-shadow: var(--sh-sm); transition: border-color 0.15s, color 0.15s, transform 0.12s; }
 .act-btn:active { transform: scale(0.93); }
@@ -460,7 +462,7 @@ nav::-webkit-scrollbar { display: none; }
         overflow-x: hidden !important; overflow-y: visible;
         gap: 1px 2px;
     }
-    .nav-tab { flex: 1 1 18%; max-width: 20%; min-width: 0; padding: 4px 2px 3px; gap: 2px; }
+    .nav-tab { flex: 1 1 15%; max-width: calc((100% - 10px) / 6); min-width: 0; padding: 4px 2px 3px; gap: 2px; }
     .nav-icon-badge { width: 19px; height: 19px; border-radius: 6px; }
     .nav-tab span { font-size: 6.5px; letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .clock-weather-group { display: none; }
@@ -1504,6 +1506,7 @@ main::-webkit-scrollbar-track { background: transparent; }
             <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><div class="nav-icon-badge" style="color:#34d399;"><i data-lucide="map" size="12"></i></div><span>Yards</span></button>
             <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><div class="nav-icon-badge" style="color:#a78bfa;"><i data-lucide="users" size="12"></i></div><span>Team</span></button>
             <button class="nav-tab" id="btn-reservation" onclick="navigateToTab('reservation')"><div class="nav-icon-badge" style="color:#ea580c;"><i data-lucide="calendar-check" size="12"></i></div><span>Reserve</span></button>
+            <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge" style="color:#65a30d;"><i data-lucide="mail" size="12"></i></div><span>Hire Desk</span></button>
         </nav>
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
             <div class="clock-weather-group">
@@ -1638,6 +1641,11 @@ main::-webkit-scrollbar-track { background: transparent; }
         <div id="tab-team" class="view-section hidden">
             <div class="erp-toolbar"><input type="text" id="team-search" placeholder="Search name or role..." oninput="filterTeam(this.value)" /><button class="erp-btn-show" onclick="filterTeam(document.getElementById('team-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <div id="contact-list"></div>
+        </div>
+        <div id="tab-hiredesk" class="view-section hidden">
+            <div class="erp-toolbar"><input type="text" id="hiredesk-search" placeholder="Search name or email..." oninput="filterHireDesk(this.value)" /><button class="erp-btn-show" onclick="filterHireDesk(document.getElementById('hiredesk-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
+            <h3 class="group-title">Hire Desk</h3>
+            <div id="hiredesk-list"></div>
         </div>
         <div id="tab-rates" class="view-section hidden">
             <div class="erp-toolbar"><input type="text" id="rates-search" placeholder="Search category..." oninput="filterCategoryGrid('rates', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
@@ -2749,6 +2757,21 @@ document.addEventListener('visibilitychange', () => {
     ];
 
     const EMAILS = [ { r: "Eastern", e: "service@sudhirrentals.com" }, { r: "Central", e: "serviceriyadh@sudhirrentals.com" }, { r: "Western", e: "servicejeddah@sudhirrentals.com" }, { r: "Tabuk", e: "servicetabuk@sudhirrentals.com" } ];
+    // Hire Desk team shown in the top "Hire Desk" tab. Add/edit people here only.
+    const HIRE_DESK = [
+        { n: "Nasir Shaik", e: "hiredesk2@sudhirrentals.com" },
+        { n: "Shuaib Ahmed", e: "hiredesk@sudhirrentals.com" },
+        { n: "Zain Ul Abiddin", e: "hiredesk3@sudhirrentals.com" },
+        { n: "Alfaz Hamad", e: "hiredesk8@sudhirrentals.com" },
+        { n: "Sahil Khan", e: "hiredesk1@sudhirrentals.com" },
+        { n: "Yousuf", e: "hiredesk4@sudhirrentals.com" },
+        { n: "Anas Abdul Rahman", e: "salessupport@sudhirrentals.com" },
+        { n: "Abizar", e: "hiredesk6@sudhirrentals.com" },
+        { n: "Mohammad Azeem", e: "salessupportexecutive@sudhirrentals.com" },
+        { n: "Mohammad Ifaaz", e: "salessupport1@sudhirrentals.com" },
+        { n: "Sawad", e: "salessupport2@sudhirrentals.com" },
+        { n: "Hassan Tahir", e: "hiredesk5@sudhirrentals.com" }
+    ];
 
     let db = { rates: {}, docs: {}, docsRoot: { folders: {}, files: [] }, machineDocsFiles: [], notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
@@ -2956,6 +2979,7 @@ document.addEventListener('visibilitychange', () => {
         updateOfflineBanner();
         renderYards();
         renderTeam();
+        renderHireDesk();
         renderDmmTransport();
         startHeaderClockWeather();
         // If already signed in recently, skip the PIN screen and stay on the
@@ -3386,6 +3410,20 @@ document.addEventListener('visibilitychange', () => {
         });
         document.getElementById('contact-list').innerHTML = html;
         (typeof lucide!=='undefined'&&lucide.createIcons());
+    }
+
+    function renderHireDesk() {
+        const el = document.getElementById('hiredesk-list');
+        if (!el) return;
+        el.innerHTML = HIRE_DESK.map(m => `<div class="item-card" data-search="${(m.n + ' ' + m.e).toLowerCase()}"><div class="item-info"><h4>${m.n}</h4><p>${m.e}</p></div><div style="display:flex; gap:8px;"><button class="act-btn" title="Copy email" onclick="copyText('${m.e}')"><i data-lucide="copy" size="16"></i></button><a href="mailto:${m.e}" class="act-btn" title="Send email" style="color:var(--accent);"><i data-lucide="mail" size="16"></i></a></div></div>`).join('');
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+    }
+
+    function filterHireDesk(q) {
+        q = (q||'').toLowerCase().trim();
+        document.querySelectorAll('#hiredesk-list .item-card').forEach(el => {
+            el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+        });
     }
 
     function filterTeam(q) {
