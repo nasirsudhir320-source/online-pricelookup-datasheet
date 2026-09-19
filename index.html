@@ -281,8 +281,17 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 /* ---------- Home layout: left pane (rates + quick links) + main content ---------- */
 .home-layout { display: flex; align-items: flex-start; gap: 22px; }
 .home-sidebar { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 0; }
-.home-main { flex: 1; min-width: 0; }
+.home-main { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); grid-template-rows: auto auto; gap: 22px; align-items: start; }
 .home-main .search-panel:first-child, .home-main .genset-banner:first-child { margin-top: 0; }
+.home-main .search-hero-panel.tint-blue { grid-column: 1; grid-row: 1 / span 2; margin-top: 0; height: 100%; }
+.home-main .search-hero-panel.tint-green { grid-column: 2; grid-row: 1; margin-top: 0; }
+.home-main .search-hero-panel.tint-purple { grid-column: 2; grid-row: 2; margin-top: 0; }
+@media (max-width: 1100px) {
+    .home-main { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .home-main .search-hero-panel.tint-blue,
+    .home-main .search-hero-panel.tint-green,
+    .home-main .search-hero-panel.tint-purple { grid-column: 1; grid-row: auto; }
+}
 .home-sidebar .rates-hero { min-height: auto; padding: 16px 18px; gap: 12px; border-radius: 14px; margin-bottom: 0; }
 .home-sidebar .rates-hero-icon { width: 42px; height: 42px; border-radius: 11px; }
 .home-sidebar .rates-hero-icon svg { width: 20px; height: 20px; }
@@ -346,6 +355,36 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
 /* ---------- Group titles & item cards ---------- */
 .group-title { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin: 26px 0 12px 0; letter-spacing: 1.2px; font-family: 'Manrope', sans-serif; }
+.dmm-group:first-child .group-title { margin-top: 0; }
+.dmm-group-count { color: var(--text-faint); font-weight: 700; text-transform: none; letter-spacing: 0; }
+.dmm-poster-header { text-align: center; padding: 6px 10px 20px; }
+.dmm-poster-title { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: 0.4px; color: var(--ink); text-transform: uppercase; }
+.dmm-poster-sub { font-size: 12.5px; color: var(--text-dim); font-weight: 600; margin-top: 4px; letter-spacing: 0.2px; }
+.dmm-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+.dmm-col { border-radius: 16px; overflow: hidden; border: 1px solid var(--dmm-c-border, var(--border)); box-shadow: var(--sh-sm); background: var(--card); }
+.dmm-col-head { display: flex; align-items: center; gap: 8px; padding: 13px 16px; background: var(--dmm-c); color: #fff; font-weight: 800; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.3px; font-family: 'Space Grotesk', sans-serif; }
+.dmm-col-count { margin-left: auto; font-weight: 700; opacity: 0.85; font-size: 11px; font-family: var(--mono); text-transform: none; letter-spacing: 0; }
+.dmm-col-table-wrap { max-height: 620px; overflow-y: auto; }
+.dmm-poster-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: var(--card); }
+.dmm-poster-table thead th { background: var(--dmm-c-soft); color: var(--dmm-c); font-size: 9.5px; text-transform: uppercase; padding: 9px 10px; text-align: left; font-weight: 800; letter-spacing: 0.3px; position: sticky; top: 0; z-index: 1; border-bottom: 1px solid var(--dmm-c-border); }
+.dmm-poster-table th:last-child, .dmm-poster-table td.dmm-price { text-align: right; }
+.dmm-poster-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--ink); white-space: nowrap; }
+.dmm-poster-table td.dmm-sr { color: var(--text-faint); font-weight: 700; width: 26px; font-family: var(--mono); font-size: 11px; }
+.dmm-poster-table td.dmm-from { color: var(--text-dim); }
+.dmm-poster-table tbody tr:nth-child(even) { background: var(--dmm-c-soft); }
+.dmm-poster-table td.dmm-price { font-family: var(--mono); font-weight: 800; color: var(--dmm-c); }
+.dmm-poster-table td.dmm-na { color: var(--text-faint); font-style: italic; font-weight: 500; }
+.dmm-poster-table tbody tr.dmm-hide { display: none; }
+@media (max-width: 1000px) {
+    .dmm-cols { grid-template-columns: 1fr; }
+    .dmm-col-table-wrap { max-height: 420px; }
+}
+@media (max-width: 640px) {
+    .dmm-poster-title { font-size: 17px; }
+    .dmm-poster-table { font-size: 12px; }
+    .dmm-poster-table td, .dmm-poster-table th { padding: 7px 8px; }
+}
+
 
 /* ---------- ERP-style summary header (stat cards + filter bar) ---------- */
 .erp-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
@@ -1505,6 +1544,7 @@ main::-webkit-scrollbar-track { background: transparent; }
                         <div class="dash-card" style="--tint:var(--orange)" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:var(--orange); color:#fff;"><i data-lucide="briefcase"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Documents</div><div class="dash-card-desc">Documents &amp; certifications</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
                         <div class="dash-card" style="--tint:var(--purple)" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:var(--purple); color:#fff;"><i data-lucide="file-minus-2"></i></div><div class="dash-card-text"><div class="dash-card-title">Offhire Note</div><div class="dash-card-desc">Create &amp; view offhire notes</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
                         <div class="dash-card" style="--tint:var(--red-orange)" onclick="navigateToTab('reservation')"><div class="dash-icon-badge" style="background:var(--red-orange); color:#fff;"><i data-lucide="calendar-check"></i></div><div class="dash-card-text"><div class="dash-card-title">Reservation Tracker</div><div class="dash-card-desc">View &amp; update reservations</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                        <div class="dash-card" style="--tint:#2b73f0" onclick="navigateToTab('dmm-transport')"><div class="dash-icon-badge" style="background:#2b73f0; color:#fff;"><i data-lucide="truck"></i></div><div class="dash-card-text"><div class="dash-card-title">Dammam Transport Cost</div><div class="dash-card-desc">Boom truck, flatbed &amp; lowbed rates</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
                     </div>
                 </aside>
 
@@ -1586,6 +1626,14 @@ main::-webkit-scrollbar-track { background: transparent; }
             <div class="erp-toolbar"><input type="text" id="yards-search" placeholder="Search yard name..." oninput="filterYards(this.value)" /><button class="erp-btn-show" onclick="filterYards(document.getElementById('yards-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <h3 class="group-title">Operational Yards</h3>
             <div id="yard-list"></div>
+        </div>
+        <div id="tab-dmm-transport" class="view-section hidden">
+            <div class="erp-toolbar"><input type="text" id="dmm-transport-search" placeholder="Search destination..." oninput="filterDmmTransport(this.value)" /><button class="erp-btn-show" onclick="filterDmmTransport(document.getElementById('dmm-transport-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
+            <div class="dmm-poster-header">
+                <div class="dmm-poster-title">Consolidated Transportation Rates 2026</div>
+                <div class="dmm-poster-sub">Boom Truck, Flatbed &amp; Lowbed — Dammam Routes</div>
+            </div>
+            <div id="dmm-transport-groups" class="dmm-cols"></div>
         </div>
         <div id="tab-team" class="view-section hidden">
             <div class="erp-toolbar"><input type="text" id="team-search" placeholder="Search name or role..." oninput="filterTeam(this.value)" /><button class="erp-btn-show" onclick="filterTeam(document.getElementById('team-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
@@ -2687,6 +2735,12 @@ document.addEventListener('visibilitychange', () => {
         { n: "Dammam Yard", u: "https://www.google.com/maps?q=26.2841975,49.9625954" }
     ];
 
+    const DMM_TRANSPORT = [
+        { title: "Boom Truck (10, 12 & 14 Ton)", icon: "truck", color: "#2b73f0", rows: [["Dammam, 2nd Industrial ,Khober",800],["Dammam 3rd Industrial",1100],["Spark city",1400],["Jubail",1500],["Ras Tanurah",1400],["Kursaniya/ Fadli",1800],["Riyadh",2500],["Riyadh Sulai",2200],["Al Kharj",2500],["Wadi Al Dawasir",3000],["Jeddah",6000],["Yanbu",6000],["Rabigh",6000],["Umluj",7500],["Madeenah",6000],["Makkah",6000],["Qassim",5000],["Jizan",8500],["Turaif",7000],["Hafar Al Batin",3500],["Arar",6500],["Sharma/ Gayal",8000],["Najran",7500],["Buqayq",1400],["Shedgum",1400],["Aindar",1300],["Al Hassa",1500],["Al Jafurah",1800],["Hawiyah",1700],["Uthmaniya/ Udailiya",1800],["Uqair/salwa jaffura 2",2000],["Gazal",null],["Khurais",2000],["Ras Al Khair",1800],["Ras Al Khair RC",1800],["Safaniya/ Marjan/ Tanajib",1800],["MMGP (Dhalm/ Al Humiyat)",null],["Sakaka/ Al Jouf",null],["Nariyah",1800],["Khafjhi",1800]] },
+        { title: "Flatbed", icon: "truck", color: "#0f9d4e", rows: [["Dammam, 2nd Industrial",800],["Khober",1000],["Abqaiq",1400],["Dammam 3rd Industrial",1000],["Jubail",1500],["Ras Tanurah",1200],["Kursaniya/ Fadli",1500],["Riyadh",2200],["Al Kharj",2700],["aljouf",5000],["Wadi Al Dawasir",4000],["al ula",6000],["Jeddah",4500],["Yanbu",5000],["Rabigh",5000],["Umluj",5500],["AL WAJH",5500],["Madeenah",5000],["Makkah",4500],["Qassim",3000],["Jizan",6500],["Turaif",5000],["Hafar Al Batin",4000],["Arar",6000],["Sharma/ Gayal",6500],["Najran",6200],["Shedgum",1500],["Al Hassa",1400],["Haradh",2000],["Al Jafurah 1",2000],["JAFFURAH /SALWA",2200],["Hawiyah",1700],["Uthmaniya/ Udailiya",2000],["Gazal",null],["Khurais",2000],["Ras Al Khair",1800],["Ras Al Khair RC",1800],["Safaniya/ Marjan/ Tanajib",2000],["MMGP (Dhalm/ Al Humiyat)",null],["Sakaka/ Al Jouf",4500],["Nariyah",1800],["Khafjhi",2000],["al rass",4000],["ANDER",1500],["DALIM",null],["BATHA SHYBA",5000]] },
+        { title: "Lowbed", icon: "truck", color: "#7c3aed", rows: [["DAMMAM ,2nd",800],["khober",1000],["SPRAK city",1500],["3rd Industrial",1500],["Aindar",1400],["Al Hassa",1600],["Al Jafurah1",2000],["JAFURAH 2/SALWA",2800],["Al Kharj",3000],["Arar",6000],["Buqayq",1500],["Al Batha",5500],["Hafar Al Batin",4000],["Haradh",3000],["Hawiyah",2500],["Jeddah",5000],["Jizan",8000],["Jubail",1700],["Jubail RC",2000],["Khafjhi",2500],["Khurais",2500],["Kursaniya/ Fadli",2000],["Madeenah",6000],["Madeenah",6000],["Majmah",4000],["Makkah",6000],["Najran",7500],["Nariyah",2500],["NEOM",7500],["Qassim",4500],["al rass",4500],["Rabigh",6000],["Ras Al Khair RC",2500],["Ras Tanurah",1400],["Riyadh",2500],["Safaniya/ Marjan/ Tanajib",2500],["Sakaka/ Al Jouf",5500],["Shedgum",1500],["Turaif",7000],["Umluj",7500],["Uthmaniya/ Udailiya",2000],["Wadi Al Dawasir",4500],["Yanbu",7500],["hail",5000],["BATHA SHYBA",5000]] }
+    ];
+
     const TEAM_GROUPS = [
         { title: "Machine Readiness", members: [ { n: "Althaf (Genset)", d: "Dammam", p: "966581569900" }, { n: "Rajan (AWP)", d: "Dammam", p: "966550026247" }, { n: "Aslam (Genset)", d: "Riyadh", p: "966554402641" }, { n: "Marish (AWP)", d: "Riyadh", p: "966503332535" }, { n: "Abrar (Genset)", d: "Jeddah", p: "966533315751" }, { n: "Jitin (AWP)", d: "Jeddah", p: "966558821376" }, { n: "Rajesh Rajaram", d: "Tabuk (Genset)", p: "966555286534" }, { n: "Mukesh (AWP)", d: "Tabuk", p: "966552767809" } ] },
         { title: "Breakdown Coordinators", members: [ { n: "Nakul (Genset)", d: "Eastern Region", p: "966509993274" }, { n: "Ashish (AWP)", d: "Eastern Region", p: "966554412746" }, { n: "Talha", d: "Central Region", p: "966556665163" }, { n: "Hamza (Genset)", d: "Western Region", p: "966509993358" }, { n: "Jitin (AWP)", d: "Western Region", p: "966558821376" }, { n: "Noor", d: "Tabuk Region", p: "966533306398" } ] },
@@ -2902,6 +2956,7 @@ document.addEventListener('visibilitychange', () => {
         updateOfflineBanner();
         renderYards();
         renderTeam();
+        renderDmmTransport();
         startHeaderClockWeather();
         // If already signed in recently, skip the PIN screen and stay on the
         // branded sync screen until data is ready, then go straight into the app.
@@ -3273,6 +3328,49 @@ document.addEventListener('visibilitychange', () => {
         q = (q||'').toLowerCase();
         document.querySelectorAll('#yard-list .item-card').forEach(el => {
             el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+        });
+    }
+
+    function dmmHexToRgba(hex, alpha) {
+        const h = hex.replace('#', '');
+        const r = parseInt(h.substring(0,2), 16), g = parseInt(h.substring(2,4), 16), b = parseInt(h.substring(4,6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function renderDmmTransport() {
+        const box = document.getElementById('dmm-transport-groups');
+        if (!box) return;
+        box.innerHTML = DMM_TRANSPORT.map((group) => {
+            const soft = dmmHexToRgba(group.color, 0.1);
+            const border = dmmHexToRgba(group.color, 0.3);
+            const rows = group.rows.map(([to, price], i) => {
+                const priceCell = price !== null ? `<td class="dmm-price">${Number(price).toLocaleString()} SAR</td>` : `<td class="dmm-price dmm-na">N/A</td>`;
+                return `<tr data-search="${to.toLowerCase()}"><td class="dmm-sr">${i + 1}</td><td class="dmm-from">Dammam</td><td>${to}</td>${priceCell}</tr>`;
+            }).join('');
+            return `<div class="dmm-col" style="--dmm-c:${group.color}; --dmm-c-soft:${soft}; --dmm-c-border:${border};">
+                <div class="dmm-col-head"><i data-lucide="${group.icon}" size="15"></i> <span>${group.title}</span><span class="dmm-col-count">${group.rows.length} routes</span></div>
+                <div class="table-container dmm-col-table-wrap">
+                    <table class="dmm-poster-table">
+                        <thead><tr><th>Sr.</th><th>From</th><th>To</th><th>Price</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>`;
+        }).join('');
+        (typeof lucide!=='undefined'&&lucide.createIcons());
+    }
+
+    function filterDmmTransport(q) {
+        q = (q||'').trim().toLowerCase();
+        document.querySelectorAll('#dmm-transport-groups .dmm-col').forEach(col => {
+            let visibleCount = 0;
+            col.querySelectorAll('tbody tr').forEach(tr => {
+                const show = !q || tr.dataset.search.includes(q);
+                tr.classList.toggle('dmm-hide', !show);
+                if (show) visibleCount++;
+            });
+            const countEl = col.querySelector('.dmm-col-count');
+            if (countEl) countEl.textContent = visibleCount + ' route' + (visibleCount === 1 ? '' : 's');
         });
     }
 
