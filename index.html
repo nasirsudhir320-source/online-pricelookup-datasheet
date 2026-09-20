@@ -278,37 +278,7 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .search-panel { background: var(--card-2); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px 24px; margin-top: 26px; }
 .search-panel .rate-cards:empty { display: none; }
 
-/* ---------- Home layout: left pane (rates + quick links) + main content ---------- */
-.home-layout { display: flex; align-items: flex-start; gap: 22px; }
-.home-sidebar { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 0; }
-.home-main { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); grid-template-rows: auto auto; gap: 22px; align-items: start; }
-.home-main .search-panel:first-child, .home-main .genset-banner:first-child { margin-top: 0; }
-.home-main .search-hero-panel.tint-blue { grid-column: 1; grid-row: 1 / span 2; margin-top: 0; height: 100%; }
-.home-main .search-hero-panel.tint-green { grid-column: 2; grid-row: 1; margin-top: 0; }
-.home-main .search-hero-panel.tint-purple { grid-column: 2; grid-row: 2; margin-top: 0; }
-@media (max-width: 1100px) {
-    .home-main { grid-template-columns: 1fr; grid-template-rows: auto; }
-    .home-main .search-hero-panel.tint-blue,
-    .home-main .search-hero-panel.tint-green,
-    .home-main .search-hero-panel.tint-purple { grid-column: 1; grid-row: auto; }
-}
-.home-sidebar .rates-hero { min-height: auto; padding: 16px 18px; gap: 12px; border-radius: 14px; margin-bottom: 0; }
-.home-sidebar .rates-hero-icon { width: 42px; height: 42px; border-radius: 11px; }
-.home-sidebar .rates-hero-icon svg { width: 20px; height: 20px; }
-.home-sidebar .rates-hero-title { font-size: 12.5px; }
-.home-sidebar .rates-hero-desc { font-size: 11px; margin-top: 2px; }
-.home-sidebar .rates-hero-arrow { width: 32px; height: 32px; }
-.home-sidebar .rates-hero-arrow svg { width: 15px; height: 15px; }
-.home-dash-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 0; }
-.home-dash-grid .dash-card { min-height: 0; padding: 12px 14px; border-radius: 12px; }
-.home-dash-grid .dash-icon-badge { width: 38px; height: 38px; flex-shrink: 0; }
-@media (max-width: 900px) {
-    .home-layout { flex-direction: column; }
-    .home-sidebar { width: 100%; position: static; flex-direction: row; flex-wrap: wrap; }
-    .home-sidebar .rates-hero { flex: 1 1 100%; }
-    .home-dash-grid { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
-    .home-dash-grid .dash-card { flex: 1 1 calc(50% - 8px); }
-}
+/* (home layout rules now live in the "DASHBOARD v2" block at the end of this stylesheet) */
 
 /* ---------- Search hero panels (Search Rental Equipment / Genset / Spec Sheets) ---------- */
 .search-hero-panel { position: relative; overflow: hidden; border-radius: 20px; padding: 22px 26px 26px; margin-top: 20px; background: var(--hero-bg); border: 1px solid var(--hero-border); }
@@ -426,8 +396,6 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .item-card:active { box-shadow: var(--sh-md); }
 .item-info h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; color: var(--ink); letter-spacing: -0.2px; }
 .item-info p { font-size: 11px; color: var(--text-dim); }
-#hiredesk-list .item-info { min-width: 0; padding-right: 10px; }
-#hiredesk-list .item-info p { overflow-wrap: anywhere; }
 
 .act-btn { background: var(--card); border: 1px solid #dfe6ef; width: 42px; height: 42px; border-radius: 12px; color: #44536b; display: flex; align-items: center; justify-content: center; box-shadow: var(--sh-sm); transition: border-color 0.15s, color 0.15s, transform 0.12s; }
 .act-btn:active { transform: scale(0.93); }
@@ -1461,9 +1429,429 @@ main::-webkit-scrollbar-track { background: transparent; }
 
 /* auth card accent bar follows the card radius */
 .auth-card::before { height: 4px; border-radius: 20px 20px 0 0; }
+/* =====================================================================
+   DASHBOARD v2 — compact layout matching the new reference design.
+   Appended last on purpose so it wins over the earlier blocks.
+   To scale the whole desktop UI, change --ui-zoom only
+   (0.82 = compact, 0.9 = the previous size).
+   ===================================================================== */
+:root {
+    --ui-zoom: 0.82;
+    --ink-blue: #0b2a63;
+    --line-blue: #e1eaf7;
+}
+@media (min-width: 900px) {
+    html { zoom: var(--ui-zoom); }
+    /* 100vh ignores zoom, which left the app ~18% short of the window bottom; % of body fills it exactly */
+    #app-shell { height: 100%; }
+}
+
+/* ---------- Header ---------- */
+header { position: relative; z-index: 30; }
+header .logo { display: flex; align-items: center; gap: 10px; }
+header .logo-mark { width: 38px; height: 32px; flex: none; display: block; }
+header .logo-text { display: flex; flex-direction: column; min-width: 0; }
+header .logo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 22px; line-height: 1; letter-spacing: -0.01em; color: var(--ink-blue); white-space: nowrap; }
+header .logo-name em { font-style: normal; color: #1f63e8; }
+header .logo .logo-sub { display: block; font-size: 8.5px; line-height: 1.2; font-weight: 800; letter-spacing: 0.09em; color: #1d4fbf; margin-top: 4px; text-transform: uppercase; white-space: nowrap; }
+
+.hdr-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto; }
+.clock-weather-group { display: flex; gap: 8px; }
+.hchip { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; background: #fff; border: 1px solid var(--line-blue); border-radius: 12px; box-shadow: 0 3px 10px -6px rgba(20, 60, 140, 0.32); }
+.hchip svg { width: 19px; height: 19px; flex: none; stroke-width: 2; }
+.hchip-weather svg { color: #f59e0b; }
+.hchip-time svg { color: #7c5cf0; }
+.hchip b { display: block; font-size: 13px; font-weight: 800; line-height: 1.1; color: var(--ink-blue); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.hchip small { display: block; font-size: 9.5px; font-weight: 600; line-height: 1.2; color: #6b7c99; margin-top: 1px; letter-spacing: 0; white-space: nowrap; }
+.hchip .flag { font-size: 9px; font-weight: 800; color: #fff; background: var(--ink-blue); border-radius: 5px; padding: 2px 5px; letter-spacing: 0.04em; }
+.hchip-in b { font-size: 12px; }
+header .sync-pill.online-pill { height: 40px; padding: 0 14px; border-radius: 12px; gap: 8px; background: #fff; border: 1px solid var(--line-blue); box-shadow: 0 3px 10px -6px rgba(20, 60, 140, 0.32); }
+header .sync-pill.online-pill .sync-text { font-family: 'Manrope', sans-serif; font-size: 11.5px; font-weight: 800; color: var(--ink-blue); letter-spacing: 0.04em; }
+header .sync-pill.online-pill .status-dot { width: 9px; height: 9px; }
+.hdr-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line-blue); background: #fff; color: #1d4fbf; box-shadow: 0 3px 10px -6px rgba(20, 60, 140, 0.32); }
+.hdr-btn svg { width: 17px; height: 17px; }
+
+/* ---------- Home layout: dark sidebar + dashboard ---------- */
+.home-layout { display: flex; align-items: stretch; gap: 0; flex: 1 1 auto; min-height: 0; }
+.home-sidebar { width: 262px; flex: 0 0 262px; display: flex; flex-direction: column; gap: 0; position: relative; padding: 14px 12px 0;
+    background:
+        radial-gradient(280px 220px at 15% 0%, rgba(96, 164, 255, 0.34), transparent 70%),
+        linear-gradient(180deg, #0b52c8 0%, #0a44a8 38%, #073585 72%, #052a70 100%); }
+.home-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 16px 22px 24px; }
+
+.side-nav { display: flex; flex-direction: column; }
+.side-item { position: relative; display: flex; align-items: center; gap: 11px; width: 100%; padding: 9px 10px; border-radius: 12px; border: 1px solid transparent; background: none; color: #fff; text-align: left; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease; }
+.side-item + .side-item::before { content: ''; position: absolute; top: 0; left: 10px; right: 10px; height: 1px; background: rgba(255, 255, 255, 0.09); }
+.side-item:hover { background: rgba(255, 255, 255, 0.08); }
+.side-item:focus-visible { outline: 2px solid #9cc6ff; outline-offset: 1px; }
+.side-item.active { background: linear-gradient(180deg, rgba(64, 140, 255, 0.55), rgba(28, 92, 224, 0.42)); border-color: rgba(150, 196, 255, 0.55); box-shadow: 0 10px 20px -12px rgba(0, 10, 60, 0.7); }
+.side-item.active::before, .side-item.active + .side-item::before { display: none; }
+.side-ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; background: linear-gradient(145deg, var(--c1), var(--c2)); box-shadow: 0 6px 12px -6px rgba(0, 10, 50, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+.side-ico svg { width: 18px; height: 18px; color: #fff; stroke-width: 2.2; }
+.side-txt { min-width: 0; }
+.side-txt b { display: block; font-size: 13.5px; font-weight: 700; line-height: 1.2; color: #fff; letter-spacing: 0; }
+.side-txt small { display: block; font-size: 11px; font-weight: 500; line-height: 1.3; color: #a9c6f5; margin-top: 2px; letter-spacing: 0; }
+.side-chev { margin-left: auto; width: 15px; height: 15px; flex: none; color: #cfe0ff; opacity: 0.85; }
+
+/* faint illustration pinned to the bottom of the sidebar */
+.side-art { position: sticky; bottom: 0; margin: auto -12px 0; height: 230px; overflow: hidden; pointer-events: none; }
+.side-art .side-waves { position: absolute; inset: 0; width: 100%; height: 100%; }
+.side-art .side-lift { position: absolute; left: 6px; bottom: 6px; width: 230px; height: auto; opacity: 0.16; }
+
+/* ---------- Home: hero + right-hand search panels ---------- */
+.home-top { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr); gap: 16px; align-items: stretch; }
+.hero-main { position: relative; overflow: hidden; margin-top: 0; padding: 20px 26px 24px; min-height: 236px; border-radius: 18px; border: 1px solid #cfe0f8;
+    background:
+        radial-gradient(70px 20px at 66% 20%, rgba(255, 255, 255, 0.75), transparent 72%),
+        radial-gradient(90px 24px at 90% 34%, rgba(255, 255, 255, 0.6), transparent 72%),
+        radial-gradient(460px 240px at 78% 6%, rgba(255, 255, 255, 0.9), transparent 70%),
+        linear-gradient(115deg, #cde2fb 0%, #e2eeff 50%, #cbe0fa 100%);
+    box-shadow: 0 16px 32px -24px rgba(20, 80, 200, 0.55); }
+.hero-main::after { display: none; }
+.hero-art { position: absolute; inset: 0; pointer-events: none; }
+.hero-art .hero-waves { position: absolute; left: 0; bottom: 0; width: 100%; height: 44%; }
+.hero-art .hero-lift { position: absolute; right: 0; bottom: 0; width: 56%; height: 100%; }
+.hero-copy, .hero-main .search-hero-row, .hero-main .rate-cards { position: relative; z-index: 1; }
+.hero-kicker { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #1d3f86; }
+.hero-h { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 27px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink-blue); margin: 5px 0 6px; }
+.hero-p { font-size: 13px; font-weight: 500; line-height: 1.45; color: #284b86; max-width: 62%; }
+.hero-main .search-hero-row { margin-top: 18px; max-width: 74%; gap: 10px; }
+.hero-main .search-hero-input-wrap { border-radius: 12px; border-color: #d4e3fa; box-shadow: 0 6px 16px -10px rgba(20, 80, 200, 0.4); }
+.hero-main .search-hero-input { height: 44px; font-size: 13px; padding: 0 12px; }
+.hero-main .search-hero-btn { height: 44px; padding: 0 22px; border-radius: 12px; font-size: 13px; }
+.hero-main .rate-cards { margin-top: 14px; }
+
+.home-side-stack { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.home-side-stack .search-hero-panel { flex: 1 1 auto; margin-top: 0; padding: 12px 14px 14px; border-radius: 16px; }
+.home-side-stack .search-hero-panel::after { display: none; }
+.home-side-stack .search-hero-head { align-items: center; gap: 11px; margin-bottom: 10px; }
+.home-side-stack .search-hero-icon { width: 38px; height: 38px; border-radius: 11px; box-shadow: 0 6px 12px -6px rgba(0, 20, 60, 0.45); color: #fff; }
+.home-side-stack .search-hero-icon svg { width: 20px; height: 20px; }
+.home-side-stack .tint-green .search-hero-icon { background: linear-gradient(145deg, #2ac06f, #0b7a3e); }
+.home-side-stack .tint-purple .search-hero-icon { background: linear-gradient(145deg, #9a7bf5, #5b3fd6); }
+.home-side-stack .search-hero-title { font-size: 14.5px; line-height: 1.2; }
+.home-side-stack .search-hero-desc { font-size: 11px; margin-top: 2px; }
+.home-side-stack .search-hero-row { gap: 8px; }
+.home-side-stack .search-hero-input-wrap { border-radius: 10px; }
+.home-side-stack .search-hero-input { height: 38px; font-size: 12.5px; padding: 0 10px; }
+.home-side-stack .shi-search-ico { padding-left: 12px; }
+.home-side-stack .shi-filter-ico { padding-right: 12px; }
+.home-side-stack .search-hero-btn { height: 38px; padding: 0 18px; border-radius: 10px; font-size: 12.5px; gap: 7px; }
+.shp-go { margin-left: auto; flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: #fff; border: 1px solid rgba(20, 40, 90, 0.08); color: var(--ink-blue); box-shadow: 0 3px 8px -4px rgba(20, 40, 90, 0.3); cursor: pointer; }
+.shp-go svg { width: 15px; height: 15px; }
+
+/* ---------- Home: transportation rates card ---------- */
+.home-transport { background: #fff; border: 1px solid var(--line-blue); border-radius: 18px; padding: 14px 16px 16px; box-shadow: 0 14px 30px -24px rgba(20, 60, 140, 0.45); }
+.ht-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ht-icon { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none; background: #e6f0ff; color: #2563eb; }
+.ht-icon svg { width: 20px; height: 20px; }
+.ht-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; color: var(--ink-blue); }
+.ht-sub { font-size: 11px; font-weight: 500; color: #5c7396; margin-top: 2px; }
+.ht-viewall { margin-left: auto; flex: none; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 10px; background: #fff; border: 1px solid #d3e2f8; color: #1d4ed8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.01em; box-shadow: 0 3px 8px -5px rgba(20, 60, 140, 0.4); cursor: pointer; }
+.ht-viewall svg { width: 15px; height: 15px; }
+.ht-viewall:hover { background: #f3f8ff; }
+
+/* transport tables (home card + the full "View all records" tab) */
+.dmm-cols { gap: 14px; }
+.dmm-col { border-radius: 14px; border: 1px solid var(--dmm-c-border, var(--border)); box-shadow: 0 10px 22px -18px var(--dmm-c, #2563eb); }
+.dmm-col-head { padding: 10px 14px; gap: 9px; font-size: 12px; background: linear-gradient(90deg, var(--dmm-c), color-mix(in srgb, var(--dmm-c) 80%, #fff)); }
+.dmm-col-head svg { width: 18px; height: 18px; flex: none; }
+.dmm-col-count { padding: 3px 10px; border-radius: 99px; background: rgba(255, 255, 255, 0.22); opacity: 1; font-size: 10.5px; font-weight: 700; text-transform: capitalize; }
+.dmm-poster-table thead th { padding: 6px 9px; font-size: 9.5px; letter-spacing: 0.04em; background: color-mix(in srgb, var(--dmm-c) 9%, #fff); }
+.dmm-poster-table td { padding: 3.5px 9px; font-size: 11.5px; line-height: 1.35; }
+.dmm-poster-table td.dmm-sr { font-size: 10.5px; }
+.dmm-poster-table td:first-child, .dmm-poster-table th:first-child { background: transparent; position: static; border-right: 1px solid color-mix(in srgb, var(--dmm-c) 14%, #fff); }
+.dmm-poster-table thead th:first-child { position: sticky; background: color-mix(in srgb, var(--dmm-c) 9%, #fff); }
+.dmm-poster-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--dmm-c) 6%, #fff); }
+/* the card stretches to the bottom of the window; each table scrolls inside it */
+.home-transport { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.home-transport .dmm-cols { flex: 1 1 auto; align-items: stretch; min-height: 0; }
+.home-transport .dmm-col { display: flex; flex-direction: column; min-height: 0; }
+.home-transport .dmm-col-table-wrap { flex: 1 1 0; min-height: 300px; max-height: none; }
+main[data-tab="home"] .app-footer { display: none; }
+
+/* ---------- Home: responsive ---------- */
+@media (max-width: 1100px) {
+    .home-top { grid-template-columns: 1fr; }
+    .home-side-stack { display: grid; grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+    .home-side-stack { grid-template-columns: 1fr; }
+}
+@media (max-width: 899px) {
+    main[data-tab="home"] { padding: 0; }
+    .home-layout { flex-direction: column; }
+    .home-sidebar { width: auto; flex: none; margin: 10px 10px 0; padding: 8px; border-radius: 16px; }
+    .side-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .side-item { padding: 8px; gap: 9px; }
+    .side-item::before { display: none !important; }
+    .side-ico { width: 30px; height: 30px; border-radius: 9px; }
+    .side-ico svg { width: 16px; height: 16px; }
+    .side-txt b { font-size: 11.5px; }
+    .side-txt small { font-size: 9.5px; }
+    .side-chev, .side-art { display: none; }
+    .home-main { padding: 10px; gap: 12px; }
+    .hero-main { padding: 16px 16px 18px; min-height: 0; border-radius: 16px; }
+    .hero-h { font-size: 20px; }
+    .hero-p { font-size: 12px; }
+    .hero-main .search-hero-row { max-width: 100%; margin-top: 14px; }
+    .hero-art .hero-lift { width: 70%; opacity: 0.4; }
+    .home-transport { padding: 12px; border-radius: 16px; }
+    .ht-viewall span { display: none; }
+    .ht-viewall { padding: 0 10px; }
+    .dmm-col-table-wrap { max-height: 300px; }
+}
+@media (max-width: 640px) {
+    .clock-weather-group { display: none; }
+    .nav-tab span { font-size: 8.5px; letter-spacing: 0.02em; }
+    .hero-art .hero-lift { display: none; }
+    header .logo-mark { width: 26px; height: 23px; }
+    header .logo-name { font-size: 14px; }
+    header .logo .logo-sub { display: none; }
+    .hdr-btn { width: 34px; height: 34px; border-radius: 10px; }
+    header .sync-pill.online-pill { height: 34px; padding: 0 10px; border-radius: 10px; }
+    .side-item { padding: 7px; }
+}
+
+/* ---------- Desktop compaction (everything a notch smaller) ---------- */
+@media (min-width: 900px) {
+    header { flex-wrap: nowrap; padding: calc(var(--safe-top) + 8px) 16px 8px 18px; gap: 12px; border-bottom: 0; border-radius: 0 0 18px 18px; background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 10px 30px -18px rgba(12, 50, 130, 0.4); }
+    nav { flex: 1 1 auto; justify-content: center; align-items: center; gap: 2px; }
+    .nav-tab { min-width: 54px; padding: 6px 11px 8px; gap: 4px; border-radius: 12px; }
+    .nav-tab svg { width: 19px; height: 19px; stroke-width: 2; }
+    .nav-tab span { font-family: 'Manrope', sans-serif; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; }
+    .nav-tab.active { background: #eaf2ff; box-shadow: none; }
+    .nav-tab.active::after { content: ''; position: absolute; left: 24%; right: 24%; bottom: 2px; height: 2px; border-radius: 2px; background: #2563eb; }
+    #btn-home.active .nav-icon-badge { color: #2563eb !important; }
+
+    main { padding: 18px 26px 32px; }
+    main[data-tab="home"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="home"] > #tab-home { flex: 1 0 auto; display: flex; flex-direction: column; }
+    main[data-tab="home"] > #tab-home.hidden { display: none; }
+    .home-sidebar { padding-top: 32px; }
+    .home-main { padding-top: 34px; }
+
+    .erp-toolbar { padding: 6px; gap: 6px; margin-bottom: 12px; border-radius: 11px; }
+    .erp-toolbar input[type="text"], .erp-toolbar input[type="date"] { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+    .erp-btn-show { padding: 7px 12px; font-size: 11px; border-radius: 8px; }
+    .rate-search { height: 42px; font-size: 13px; padding: 0 14px; border-radius: 10px; margin-bottom: 10px; }
+    .home-search-btn { height: 42px; min-width: 110px; font-size: 12.5px; padding: 0 18px; border-radius: 10px; }
+    .search-bar { padding: 10px 12px 10px 36px; font-size: 12.5px; border-radius: 10px; }
+    .group-title { margin: 16px 0 8px; font-size: 10.5px; }
+    .item-card { padding: 10px 12px; margin-bottom: 7px; border-radius: 11px; }
+    .item-info h4 { font-size: 13px; }
+    .item-info p { font-size: 10.5px; }
+    .act-btn { width: 34px; height: 34px; border-radius: 10px; }
+    .hdr-btn { width: 40px; height: 40px; border-radius: 12px; }
+    .dash-card { min-height: 84px; padding: 14px; gap: 12px; border-radius: 13px; }
+    .dash-icon-badge { width: 52px; height: 52px; min-width: 52px; }
+    .dash-card-title { font-size: 11.5px; }
+    .dash-card-desc { font-size: 11.5px; margin-top: 3px; }
+    .rate-card { padding: 14px; min-height: 0; border-radius: 13px; }
+    .rate-item-name { font-size: 13.5px; }
+    .rate-item-cat { font-size: 10.5px; margin-top: 4px; }
+    .machine-placeholder { width: 60px; min-width: 60px; height: 56px; }
+    .rate-pills { margin-top: 12px; gap: 8px; }
+    .rate-pill { padding: 9px; border-radius: 10px; }
+    .rate-value { font-size: 12.5px; margin-top: 6px; }
+    th { padding: 9px 11px; }
+    td { padding: 9px 11px; font-size: 12px; }
+}
+
+/* narrower desktops: give the nav room */
+@media (min-width: 900px) and (max-width: 1300px) { .hchip-in { display: none; } }
+@media (min-width: 900px) and (max-width: 1120px) { .hchip-time small, .hchip-weather small { display: none; } .nav-tab { padding-left: 8px; padding-right: 8px; min-width: 46px; } }
+
+
+/* narrow desktops: keep the nav and the Price column visible */
+.dmm-col-count { white-space: nowrap; }
+.dmm-col-head > span:nth-of-type(1) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 900px) and (max-width: 1150px) {
+    .clock-weather-group { display: none; }
+    header .logo .logo-sub { display: none; }
+    .home-transport .dmm-poster-table th:nth-child(2), .home-transport .dmm-poster-table td:nth-child(2) { display: none; }
+    .home-transport .dmm-poster-table td:nth-child(3) { white-space: normal; overflow-wrap: anywhere; }
+    .home-transport .dmm-poster-table td.dmm-price { white-space: nowrap; }
+}
+
+/* =====================================================================
+   HIRE DESK tab — sidebar + "Our Team" banner + avatar rows
+   (re-uses the .home-layout / .home-sidebar / .side-item styles above)
+   ===================================================================== */
+@media (max-width: 899px) {
+    main[data-tab="hiredesk"] { padding: 0; }
+}
+@media (min-width: 900px) {
+    main[data-tab="hiredesk"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="hiredesk"] > #tab-hiredesk { flex: 1 0 auto; display: flex; flex-direction: column; }
+    main[data-tab="hiredesk"] > #tab-hiredesk.hidden { display: none; }
+}
+main[data-tab="hiredesk"] .app-footer { display: none; }
+
+.hd-banner { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 16px 20px; min-height: 92px; border-radius: 18px; border: 1px solid #cfe0f8;
+    background:
+        radial-gradient(420px 200px at 62% 0%, rgba(255, 255, 255, 0.85), transparent 70%),
+        linear-gradient(115deg, #d3e5fc 0%, #e5f0ff 55%, #d1e4fb 100%);
+    box-shadow: 0 14px 30px -24px rgba(20, 80, 200, 0.5); }
+.hd-badge { position: relative; z-index: 1; flex: none; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: #fff; color: #1d63e8; box-shadow: 0 8px 18px -10px rgba(20, 80, 200, 0.6); }
+.hd-badge svg { width: 26px; height: 26px; }
+.hd-titles { position: relative; z-index: 1; min-width: 0; }
+.hd-kicker { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #2563eb; }
+.hd-title { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink-blue); margin: 3px 0 4px; }
+.hd-sub { font-size: 12.5px; font-weight: 500; color: #4a6591; }
+.hd-art { position: absolute; left: 46%; top: 50%; transform: translateY(-50%); width: 300px; height: 110px; pointer-events: none; }
+.hd-search { position: relative; z-index: 1; margin-left: auto; display: flex; align-items: center; gap: 9px; width: min(380px, 40%); height: 42px; padding: 0 14px; background: #fff; border: 1px solid #d4e3fa; border-radius: 12px; box-shadow: 0 6px 16px -10px rgba(20, 80, 200, 0.45); }
+.hd-search:focus-within { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.hd-search svg { width: 17px; height: 17px; flex: none; color: #2563eb; }
+.hd-search input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; box-shadow: none; font-size: 13px; }
+.hd-search input:focus { border: 0; box-shadow: none; }
+
+.hd-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr)); gap: 8px 12px; }
+.hd-list.hd-list-edit { grid-template-columns: 1fr; }
+.hd-list .hd-empty { grid-column: 1 / -1; }
+.hd-row { display: flex; align-items: center; gap: 14px; padding: 8px 16px 8px 14px; background: #fff; border: 1px solid #e4ecf8; border-radius: 14px; box-shadow: 0 6px 16px -14px rgba(20, 60, 140, 0.5); transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+.hd-row:hover { background: #f2f7ff; border-color: #bcd3f7; box-shadow: 0 10px 22px -14px rgba(37, 99, 235, 0.5); }
+.hd-avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, var(--a1), var(--a2)); color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 800; letter-spacing: 0.02em; box-shadow: 0 6px 12px -6px var(--a2); }
+.hd-info { flex: 1; min-width: 0; }
+.hd-name { font-size: 14px; font-weight: 800; line-height: 1.2; color: var(--ink-blue); }
+.hd-mail { display: flex; align-items: center; gap: 7px; margin-top: 3px; font-size: 11.5px; font-weight: 500; color: #5c7396; }
+.hd-mail svg { width: 13px; height: 13px; flex: none; color: #6f8ab5; }
+.hd-mail span { min-width: 0; overflow-wrap: anywhere; }
+.hd-actions { flex: none; display: flex; gap: 10px; }
+.hd-btn { width: 36px; height: 36px; padding: 0; border-radius: 11px; border: 1px solid #d6e3f8; background: #fff; color: #1d4fbf; display: grid; place-items: center; cursor: pointer; text-decoration: none; box-shadow: 0 3px 8px -5px rgba(20, 60, 140, 0.4); transition: background 0.15s ease; }
+.hd-btn:hover { background: #eaf2ff; }
+.hd-btn svg { width: 16px; height: 16px; }
+.hd-empty { padding: 26px; text-align: center; font-size: 13px; color: #5c7396; background: #fff; border: 1px dashed #cfe0f8; border-radius: 14px; }
+
+@media (max-width: 899px) {
+    .hd-banner { flex-wrap: wrap; padding: 14px; gap: 12px; border-radius: 16px; }
+    .hd-art { display: none; }
+    .hd-title { font-size: 21px; }
+    .hd-titles { flex: 1 1 0; }
+    .hd-search { width: 100%; margin-left: 0; }
+    .hd-row { padding: 8px 10px; gap: 10px; }
+    .hd-actions { gap: 6px; }
+    .hd-btn { width: 34px; height: 34px; }
+}
+
+/* =====================================================================
+   EDITING — Hire Desk + Transport Rates (only adds controls; the normal
+   view keeps its existing sizes)
+   ===================================================================== */
+.hd-edit { position: relative; z-index: 1; margin-left: auto; flex: none; display: flex; align-items: center; gap: 7px; height: 42px; padding: 0 14px; border-radius: 12px; background: #fff; border: 1px solid #d4e3fa; color: #1d4fbf; font-size: 12px; font-weight: 800; box-shadow: 0 6px 16px -10px rgba(20, 80, 200, 0.45); cursor: pointer; }
+.hd-edit svg { width: 15px; height: 15px; }
+.hd-edit:hover { background: #f3f8ff; }
+.hd-edit + .hd-search { margin-left: 0; }
+.hd-edit.hidden + .hd-search { margin-left: auto; }
+.erp-btn-edit { background: #fff; color: #1d4fbf; border: 1px solid #cfe0f8; box-shadow: none; }
+
+.edit-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 12px; background: #fff8e6; border: 1px solid #f3d9a0; border-radius: 12px; position: sticky; top: 24px; z-index: 6; box-shadow: 0 8px 18px -14px rgba(120, 80, 0, 0.5); }
+.edit-bar-msg { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #8a5a00; }
+.edit-bar-msg svg { width: 14px; height: 14px; flex: none; }
+.edit-bar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.eb-btn { display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #d6e3f8; background: #fff; color: #1d4fbf; font-size: 12px; font-weight: 800; cursor: pointer; }
+.eb-btn svg { width: 14px; height: 14px; }
+.eb-btn:hover { background: #f3f8ff; }
+.eb-btn.primary { background: linear-gradient(180deg, #2f7cf6, #1d5fe0); color: #fff; border-color: #1d5fe0; }
+.eb-btn.primary:hover { filter: brightness(1.06); }
+.eb-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* Hire Desk edit rows */
+.hd-fields { display: flex; gap: 10px; flex-wrap: wrap; }
+.hd-input { flex: 1 1 200px; min-width: 0; height: 34px; padding: 0 10px; font-size: 12.5px; font-weight: 600; border: 1px solid #cfe0f8; border-radius: 9px; background: #fff; color: var(--ink-blue); box-shadow: none; }
+.hd-input:focus, .dmm-in:focus { outline: 0; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.hd-input.hd-invalid, .dmm-in.hd-invalid { border-color: #e11d48; background: #fff5f7; }
+.hd-del { color: #e11d48; border-color: #f6cdd6; }
+.hd-del:hover { background: #fff1f3; }
+.hd-row.hd-editing:hover { background: #fff; border-color: #e4ecf8; box-shadow: 0 6px 16px -14px rgba(20, 60, 140, 0.5); }
+
+/* Transport edit cells */
+.dmm-in { width: 100%; min-width: 0; height: 26px; padding: 0 7px; font-size: 11.5px; font-weight: 600; font-family: inherit; border: 1px solid #cfe0f8; border-radius: 7px; background: #fff; color: #10264f; box-shadow: none; }
+.dmm-in-price { text-align: right; font-family: 'JetBrains Mono', monospace; max-width: 96px; }
+.dmm-poster-table td.dmm-del-cell { width: 30px; text-align: center; padding-left: 2px; padding-right: 6px; }
+.dmm-del { width: 22px; height: 22px; padding: 0; display: inline-grid; place-items: center; border-radius: 7px; border: 1px solid #f6cdd6; background: #fff; color: #e11d48; cursor: pointer; }
+.dmm-del:hover { background: #fff1f3; }
+.dmm-del svg { width: 12px; height: 12px; }
+.dmm-add { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 32px; padding: 0; border: 0; border-top: 1px dashed color-mix(in srgb, var(--dmm-c) 40%, #fff); background: color-mix(in srgb, var(--dmm-c) 6%, #fff); color: var(--dmm-c); font-size: 11.5px; font-weight: 800; cursor: pointer; }
+.dmm-add svg { width: 13px; height: 13px; }
+.dmm-add:hover { background: color-mix(in srgb, var(--dmm-c) 12%, #fff); }
+
+/* password prompt */
+.eg-overlay { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(8, 28, 70, 0.5); backdrop-filter: blur(3px); }
+.eg-card { width: min(340px, 100%); background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 30px 70px -20px rgba(0, 20, 80, 0.6); }
+.eg-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink-blue); }
+.eg-sub { font-size: 12px; color: #5c7396; margin: 4px 0 12px; }
+.eg-input { width: 100%; height: 40px; padding: 0 12px; font-size: 16px; letter-spacing: 0.3em; text-align: center; border: 1px solid #cfe0f8; border-radius: 10px; background: #fff; box-shadow: none; }
+.eg-input:focus { outline: 0; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.eg-err { color: #e11d48; font-size: 12px; font-weight: 700; margin-top: 8px; }
+.eg-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+@media (max-width: 899px) {
+    .edit-bar { top: 8px; }
+    .erp-btn-edit { flex: 1 1 100%; }
+    .dmm-poster-table.dmm-editing th:nth-child(2), .dmm-poster-table.dmm-editing td:nth-child(2) { display: none; }
+}
+.erp-btn-edit svg { width: 15px; height: 15px; }
+
+/* Transport Rates: keep each column a comfortable width so prices sit close to their destination */
+@media (min-width: 1001px) {
+    #dmm-transport-groups.dmm-cols { grid-template-columns: repeat(3, minmax(0, 480px)); justify-content: center; }
+}
+#dmm-transport-groups .dmm-poster-table th:nth-child(1), #dmm-transport-groups .dmm-poster-table td:nth-child(1) { width: 38px; }
+#dmm-transport-groups .dmm-poster-table th:nth-child(2), #dmm-transport-groups .dmm-poster-table td:nth-child(2) { width: 84px; }
+#dmm-transport-groups .dmm-poster-table th:nth-child(4), #dmm-transport-groups .dmm-poster-table td:nth-child(4) { width: 96px; }
+#dmm-transport-groups .dmm-poster-table.dmm-editing th:nth-child(4), #dmm-transport-groups .dmm-poster-table.dmm-editing td:nth-child(4) { width: 104px; }
+
+/* tiny version label so you can tell which copy of the app you are looking at */
+.side-build { position: absolute; right: 12px; bottom: 8px; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.5); }
+
+/* Edit Rates (price list): transport-style table — blue header bar, compact striped rows,
+   columns sized to their content and centred instead of stretched across the screen */
+#price-editor-panel .table-scroll { width: fit-content; min-width: min(560px, 100%); max-width: 100%; margin: 0 auto; border-radius: 14px; border: 1px solid rgba(43, 115, 240, 0.3); box-shadow: 0 10px 22px -18px #2b73f0; background: #fff; }
+#price-editor-panel .pe-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; background: linear-gradient(90deg, #2b73f0, #5b95f4); }
+#price-editor-panel .pe-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#price-editor-panel .pe-count { margin-left: auto; flex: none; padding: 3px 10px; border-radius: 99px; background: rgba(255, 255, 255, 0.22); font-size: 10.5px; font-weight: 700; text-transform: none; letter-spacing: 0; }
+#price-editor-panel table { width: 100%; min-width: 0; }
+#price-editor-panel thead th { padding: 6px 12px; font-size: 9.5px; letter-spacing: 0.04em; background: color-mix(in srgb, #2b73f0 9%, #fff); color: #2b73f0; white-space: nowrap; }
+#price-editor-panel tbody tr:nth-child(even) { background: color-mix(in srgb, #2b73f0 6%, #fff); }
+#price-editor-panel tbody td { padding: 3px 12px; font-size: 12px; }
+#price-editor-panel .label-cell { font-weight: 700; white-space: nowrap; min-width: 110px; border-right: 1px solid color-mix(in srgb, #2b73f0 14%, #fff); }
+#price-editor-panel td.sub-cell { min-width: 190px; }
+#price-editor-panel td.num { width: 120px; }
+#price-editor-panel td.bool { width: 70px; }
+#price-editor-panel input.field { padding: 4px 8px; font-size: 12px; min-width: 0; }
+#price-editor-panel input.field.num { text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11.5px; color: #2b73f0; }
+#price-editor-panel textarea.field { min-width: 260px; font-size: 12px; padding: 4px 8px; }
+
+/* Phones only: the Home transport card was too narrow to show the Price column, so hide the "From" column (always Dammam) */
+@media (max-width: 640px) {
+    .home-transport .dmm-poster-table th:nth-child(2), .home-transport .dmm-poster-table td:nth-child(2) { display: none; }
+    .home-transport .dmm-poster-table td:nth-child(3) { white-space: normal; overflow-wrap: anywhere; }
+    .home-transport .dmm-poster-table td.dmm-price { white-space: nowrap; }
+}
+
+/* Home: "Transportation" show/hide button */
+.ht-toggle-row { display: flex; }
+.ht-toggle { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 11px; background: #fff; border: 1px solid #d3e2f8; color: #1d4ed8; font-size: 12.5px; font-weight: 800; box-shadow: 0 3px 8px -5px rgba(20, 60, 140, 0.4); cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+.ht-toggle svg { width: 16px; height: 16px; flex: none; }
+.ht-toggle:hover { background: #f3f8ff; }
+.ht-toggle .ht-chev { margin-left: 2px; transition: transform 0.2s ease; }
+.ht-toggle.open { background: linear-gradient(180deg, #2f7cf6, #1d5fe0); color: #fff; border-color: #1d5fe0; }
+.ht-toggle.open:hover { filter: brightness(1.06); }
+.ht-toggle.open .ht-chev { transform: rotate(180deg); }
+
     </style>
 </head>
 <body>
+<div class="eg-overlay hidden" id="edit-gate" onclick="if(event.target===this)closeEditGate()">
+    <div class="eg-card">
+        <div class="eg-title">Enter edit password</div>
+        <div class="eg-sub">Same password as the rates editor.</div>
+        <input type="password" id="edit-gate-input" class="eg-input" inputmode="numeric" autocomplete="off" onkeydown="if(event.key==='Enter')submitEditGate()">
+        <div class="eg-err hidden" id="edit-gate-err">Incorrect password.</div>
+        <div class="eg-actions"><button class="eb-btn" onclick="closeEditGate()">Cancel</button><button class="eb-btn primary" onclick="submitEditGate()">Unlock</button></div>
+    </div>
+</div>
 <div class="gtoast" id="gtoast"></div>
 <div id="sync-overlay">
     <div class="sync-circle-box">
@@ -1493,8 +1881,50 @@ main::-webkit-scrollbar-track { background: transparent; }
         <i data-lucide="wifi-off" size="13"></i>
         <span>You're offline — showing the last saved data. It'll refresh automatically once you're back online.</span>
     </div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="art-lift" viewBox="0 0 420 270">
+  <ellipse cx="292" cy="250" rx="138" ry="8" fill="#16327a" opacity=".16"/>
+  <!-- lattice crane boom (right) -->
+  <g stroke="#4f86e6" stroke-linecap="round" fill="none">
+    <line x1="300" y1="176" x2="392" y2="46" stroke-width="3.2"/>
+    <line x1="312" y1="182" x2="402" y2="54" stroke-width="3.2"/>
+    <path d="M304 178 L318 174 L312 164 L328 160 L322 148 L338 144 L332 132 L348 128 L342 116 L358 112 L352 100 L368 96 L362 84 L378 80 L372 68 L388 64 L382 52" stroke-width="1.6" opacity=".8"/>
+    <line x1="392" y1="46" x2="392" y2="112" stroke="#16327a" stroke-width="1.8"/>
+    <path d="M392 112 q-7 3 -6 10 q2 6 8 4" stroke="#16327a" stroke-width="2.4"/>
+  </g>
+  <!-- articulated lift boom -->
+  <line x1="262" y1="192" x2="176" y2="98" stroke="#9db4dd" stroke-width="5.5" stroke-linecap="round"/>
+  <line x1="262" y1="192" x2="176" y2="98" stroke="#e3ecfa" stroke-width="2" stroke-linecap="round"/>
+  <line x1="250" y1="180" x2="152" y2="72" stroke="#1c56c4" stroke-width="17" stroke-linecap="round"/>
+  <line x1="250" y1="180" x2="152" y2="72" stroke="#2f7cf6" stroke-width="13" stroke-linecap="round"/>
+  <line x1="247" y1="176" x2="155" y2="75" stroke="#8dbafc" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+  <line x1="152" y1="72" x2="122" y2="34" stroke="#1c56c4" stroke-width="12" stroke-linecap="round"/>
+  <line x1="152" y1="72" x2="122" y2="34" stroke="#2f7cf6" stroke-width="8.5" stroke-linecap="round"/>
+  <circle cx="152" cy="72" r="10" fill="#1c56c4"/><circle cx="152" cy="72" r="4" fill="#cfe0ff"/>
+  <!-- basket -->
+  <rect x="100" y="30" width="40" height="7" rx="1.5" fill="#16327a"/>
+  <path d="M102 30 V10 H138 V30 M114 30 V10 M126 30 V10 M102 20 H138" fill="none" stroke="#16327a" stroke-width="2.4" stroke-linejoin="round"/>
+  <!-- turret -->
+  <rect x="230" y="170" width="46" height="24" rx="5" fill="#1c56c4"/>
+  <rect x="236" y="174" width="34" height="6" rx="3" fill="#5f9bfa"/>
+  <!-- truck -->
+  <rect x="194" y="196" width="194" height="18" rx="4" fill="#26375f"/>
+  <rect x="198" y="182" width="120" height="18" rx="3" fill="#eef3fc"/>
+  <rect x="198" y="192" width="120" height="5" fill="#2f7cf6"/>
+  <path d="M322 214 V174 Q322 167 329 167 H357 Q366 167 371 175 L385 197 Q388 201 388 206 V214 Z" fill="#f6f9ff"/>
+  <path d="M331 174 H355 Q360 174 363 179 L371 195 H331 Z" fill="#9cc4fb"/>
+  <rect x="322" y="201" width="66" height="6" fill="#2f7cf6"/>
+  <circle cx="383" cy="207" r="2.6" fill="#ffd36b"/>
+  <g fill="#1d2b4d"><circle cx="240" cy="220" r="19"/><circle cx="284" cy="220" r="19"/><circle cx="352" cy="220" r="19"/></g>
+  <g fill="#b9c9e6"><circle cx="240" cy="220" r="8"/><circle cx="284" cy="220" r="8"/><circle cx="352" cy="220" r="8"/></g>
+  <g fill="#1d2b4d"><circle cx="240" cy="220" r="3"/><circle cx="284" cy="220" r="3"/><circle cx="352" cy="220" r="3"/></g>
+</symbol>
+    </defs></svg>
     <header>
-        <div class="logo">SUDHIR<span> RENTALS</span><span class="logo-sub">Rental Solutions. Reliable Partners.</span></div>
+        <div class="logo">
+            <svg class="logo-mark" viewBox="0 0 46 38" aria-hidden="true"><path d="M1 3H15L30 19 15 35H1L16 19Z" fill="#1544b8"/><path d="M17 3H31L45 19 31 35H17L31 19Z" fill="#2f7cf6"/></svg>
+            <div class="logo-text"><div class="logo-name">SUDHIR<em> RENTALS</em></div><div class="logo-sub">Rental Solutions. Reliable Partners.</div></div>
+        </div>
         <nav>
             <button class="nav-tab" onclick="goBack()"><i data-lucide="chevron-left" size="13"></i><span>Back</span></button>
             <button class="nav-tab active" id="btn-home" onclick="navigateToTab('home')"><div class="nav-icon-badge" style="color:#64748b;"><i data-lucide="home" size="12"></i></div><span>Home</span></button>
@@ -1508,106 +1938,122 @@ main::-webkit-scrollbar-track { background: transparent; }
             <button class="nav-tab" id="btn-reservation" onclick="navigateToTab('reservation')"><div class="nav-icon-badge" style="color:#ea580c;"><i data-lucide="calendar-check" size="12"></i></div><span>Reserve</span></button>
             <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge" style="color:#65a30d;"><i data-lucide="mail" size="12"></i></div><span>Hire Desk</span></button>
         </nav>
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+        <div class="hdr-right">
             <div class="clock-weather-group">
-                <div class="clock-chip">
-                    <div class="cw-text"><span class="c-time" id="ksa-time">--:--</span><span class="c-temp" id="ksa-temp">--°C</span></div>
-                    <i data-lucide="sun" size="16" style="color:var(--text-faint);"></i>
-                </div>
-                <div class="clock-chip">
-                    <span class="flag">IN</span>
-                    <div class="cw-text"><span class="c-time" id="india-time">--:--</span><span class="c-temp" id="india-temp">--°C</span></div>
-                </div>
+                <div class="hchip hchip-weather"><i data-lucide="sun"></i><div><b id="ksa-temp">--°C</b><small>Riyadh</small></div></div>
+                <div class="hchip hchip-time"><i data-lucide="clock"></i><div><b id="ksa-time">--:--</b><small id="ksa-date">&nbsp;</small></div></div>
+                <div class="hchip hchip-in"><span class="flag">IN</span><div><b id="india-time">--:--</b><small id="india-temp">--°C</small></div></div>
             </div>
             <div class="sync-pill online-pill">
                 <div id="home-dot" class="status-dot"></div>
                 <span id="home-sync-text" class="sync-text">SYNCING</span>
             </div>
-            <button class="act-btn" onclick="openPriceEditor()" style="width:42px; height:42px; border-radius:12px;" title="Edit rates"><i data-lucide="pencil" size="15"></i></button>
-            <button class="act-btn" onclick="logout()" style="width:42px; height:42px; border-radius:12px;" title="Log out"><i data-lucide="log-out" size="15"></i></button>
+            <button class="act-btn hdr-btn" onclick="openPriceEditor()" title="Edit rates"><i data-lucide="pencil" size="15"></i></button>
+            <button class="act-btn hdr-btn" onclick="logout()" title="Log out"><i data-lucide="log-out" size="15"></i></button>
         </div>
     </header>
 
-    <main id="main-content">
+    <main id="main-content" data-tab="home">
         <div id="tab-home" class="view-section">
             <div class="home-layout">
                 <aside class="home-sidebar">
-                    <div class="rates-hero" onclick="navigateToTab('rates')">
-                        <div class="rates-hero-icon"><i data-lucide="tag" size="24"></i></div>
-                        <div class="rates-hero-text">
-                            <div class="rates-hero-title">Rental Rates</div>
-                            <div class="rates-hero-desc">View latest rental rates</div>
-                        </div>
-                        <div class="rates-hero-arrow"><i data-lucide="chevron-right" size="18"></i></div>
+                    <div class="side-nav">
+                        <button class="side-item active" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
-
-                    <div class="dash-grid home-dash-grid">
-                        <div class="dash-card" style="--tint:var(--pink)" onclick="navigateToTab('photos')"><div class="dash-icon-badge" style="background:var(--pink); color:#fff;"><i data-lucide="camera"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Photos</div><div class="dash-card-desc">Browse machine photos</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                        <div class="dash-card" style="--tint:var(--teal)" onclick="navigateToTab('docs')"><div class="dash-icon-badge" style="background:var(--teal); color:#fff;"><i data-lucide="file-text"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Datasets</div><div class="dash-card-desc">Technical specs &amp; datasheets</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                        <div class="dash-card" style="--tint:var(--orange)" onclick="navigateToTab('machine-docs')"><div class="dash-icon-badge" style="background:var(--orange); color:#fff;"><i data-lucide="briefcase"></i></div><div class="dash-card-text"><div class="dash-card-title">Machine Documents</div><div class="dash-card-desc">Documents &amp; certifications</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                        <div class="dash-card" style="--tint:var(--purple)" onclick="navigateToTab('offhire')"><div class="dash-icon-badge" style="background:var(--purple); color:#fff;"><i data-lucide="file-minus-2"></i></div><div class="dash-card-text"><div class="dash-card-title">Offhire Note</div><div class="dash-card-desc">Create &amp; view offhire notes</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                        <div class="dash-card" style="--tint:var(--red-orange)" onclick="navigateToTab('reservation')"><div class="dash-icon-badge" style="background:var(--red-orange); color:#fff;"><i data-lucide="calendar-check"></i></div><div class="dash-card-text"><div class="dash-card-title">Reservation Tracker</div><div class="dash-card-desc">View &amp; update reservations</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
-                        <div class="dash-card" style="--tint:#2b73f0" onclick="navigateToTab('dmm-transport')"><div class="dash-icon-badge" style="background:#2b73f0; color:#fff;"><i data-lucide="truck"></i></div><div class="dash-card-text"><div class="dash-card-title">Dammam Transport Cost</div><div class="dash-card-desc">Boom truck, flatbed &amp; lowbed rates</div></div><i data-lucide="arrow-right" class="dash-card-arrow" size="16"></i></div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v13 · 20 Sep 2026</span>
                     </div>
                 </aside>
 
                 <div class="home-main">
-                    <div class="search-hero-panel tint-blue">
-                        <div class="search-hero-head">
-                            <div class="search-hero-icon"><i data-lucide="truck" size="24"></i></div>
-                            <div>
-                                <div class="search-hero-title">Search Rental Equipment</div>
-                                <div class="search-hero-desc">Enter equipment type, size, or capacity...</div>
+                    <div class="home-top">
+                        <div class="search-hero-panel tint-blue hero-main">
+                            <div class="hero-art" aria-hidden="true">
+                                <svg class="hero-waves" viewBox="0 0 800 120" preserveAspectRatio="none"><path d="M0 70C110 30 220 96 340 66S560 20 800 58V120H0Z" fill="#fff" opacity=".35"/><path d="M0 92C140 60 260 112 400 88S640 56 800 84V120H0Z" fill="#8fbbf2" opacity=".38"/><path d="M0 108C170 90 300 118 460 104S680 86 800 102V120H0Z" fill="#6ea3ec" opacity=".34"/></svg>
+                                <svg class="hero-lift" viewBox="0 0 420 270" preserveAspectRatio="xMaxYMax meet"><use href="#art-lift"/></svg>
+                            </div>
+                            <div class="hero-copy">
+                                <div class="hero-kicker">Welcome to</div>
+                                <h2 class="hero-h">Search Rental Equipment</h2>
+                                <p class="hero-p">Find the right equipment, specifications, and availability — all in one place.</p>
+                            </div>
+                            <div class="search-hero-row">
+                                <div class="search-hero-input-wrap">
+                                    <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                    <input type="text" id="home-rate-search" class="search-hero-input" placeholder="Eg. Scissor Lift, 32m, Generator, etc..." oninput="searchHomeRates(this.value)" />
+                                    <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                                </div>
+                                <button class="search-hero-btn" onclick="searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                            </div>
+                            <div class="rate-cards" id="home-rate-results"></div>
+                        </div>
+
+                        <div class="home-side-stack">
+                            <div class="search-hero-panel tint-green">
+                                <div class="search-hero-head">
+                                    <div class="search-hero-icon"><i data-lucide="zap" size="24"></i></div>
+                                    <div>
+                                        <div class="search-hero-title">GenSet Cable &amp; MTS Recommendation</div>
+                                        <div class="search-hero-desc">Enter genset kVA (e.g. 250) or related details...</div>
+                                    </div>
+                                    <button class="shp-go" title="Go to kVA search" onclick="document.getElementById('genset-kva-search').focus()"><i data-lucide="chevron-right"></i></button>
+                                </div>
+                                <div class="search-hero-row">
+                                    <div class="search-hero-input-wrap">
+                                        <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                        <input type="number" id="genset-kva-search" class="search-hero-input" placeholder="Enter genset kVA (e.g. 250)" oninput="searchGensetCable(this.value)" onwheel="this.blur()" />
+                                        <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                                    </div>
+                                    <button class="search-hero-btn" onclick="searchGensetCable(document.getElementById('genset-kva-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                                </div>
+                                <div id="genset-cable-results"></div>
+                            </div>
+
+                            <div class="search-hero-panel tint-purple">
+                                <div class="search-hero-head">
+                                    <div class="search-hero-icon"><i data-lucide="file-text" size="24"></i></div>
+                                    <div>
+                                        <div class="search-hero-title">Search Spec Sheets</div>
+                                        <div class="search-hero-desc">Search datasheets by machine name...</div>
+                                    </div>
+                                    <button class="shp-go" title="Open Specs" onclick="navigateToTab('docs')"><i data-lucide="chevron-right"></i></button>
+                                </div>
+                                <div class="search-hero-row">
+                                    <div class="search-hero-input-wrap">
+                                        <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                        <input type="text" id="home-specsheet-search" class="search-hero-input" placeholder="Search datasheets by machine name..." oninput="searchHomeSpecSheets(this.value)" />
+                                        <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                                    </div>
+                                    <button class="search-hero-btn" onclick="searchHomeSpecSheets(document.getElementById('home-specsheet-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                                </div>
+                                <div id="home-specsheet-results"></div>
                             </div>
                         </div>
-                        <div class="search-hero-row">
-                            <div class="search-hero-input-wrap">
-                                <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
-                                <input type="text" id="home-rate-search" class="search-hero-input" placeholder="e.g. Scissor Lift, 32m, Generator, etc." oninput="searchHomeRates(this.value)" />
-                                <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
-                            </div>
-                            <button class="search-hero-btn" onclick="searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="16"></i> Search</button>
-                        </div>
-                        <div class="rate-cards" id="home-rate-results"></div>
                     </div>
 
-                    <div class="search-hero-panel tint-green">
-                        <div class="search-hero-head">
-                            <div class="search-hero-icon"><i data-lucide="zap" size="24"></i></div>
-                            <div>
-                                <div class="search-hero-title">Genset Cable &amp; MTS Recommendation</div>
-                                <div class="search-hero-desc">Enter genset kVA (e.g. 250) or related details...</div>
-                            </div>
-                        </div>
-                        <div class="search-hero-row">
-                            <div class="search-hero-input-wrap">
-                                <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
-                                <input type="number" id="genset-kva-search" class="search-hero-input" placeholder="Enter genset kVA (e.g. 250)" oninput="searchGensetCable(this.value)" onwheel="this.blur()" />
-                                <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
-                            </div>
-                            <button class="search-hero-btn" onclick="searchGensetCable(document.getElementById('genset-kva-search').value)"><i data-lucide="search" size="16"></i> Search</button>
-                        </div>
-                        <div id="genset-cable-results"></div>
+                    <div class="ht-toggle-row">
+                        <button class="ht-toggle" id="ht-toggle" type="button" aria-expanded="false" aria-controls="home-transport" onclick="toggleHomeTransport()"><i data-lucide="truck"></i><span>Transportation</span><i data-lucide="chevron-down" class="ht-chev"></i></button>
                     </div>
-
-                    <div class="search-hero-panel tint-purple">
-                        <div class="search-hero-head">
-                            <div class="search-hero-icon"><i data-lucide="file-text" size="24"></i></div>
+                    <section class="home-transport hidden" id="home-transport">
+                        <div class="ht-head">
+                            <div class="ht-icon"><i data-lucide="truck"></i></div>
                             <div>
-                                <div class="search-hero-title">Search Spec Sheets</div>
-                                <div class="search-hero-desc">Search datasheets by machine name...</div>
+                                <div class="ht-title">Consolidated Transportation Rates 2026</div>
+                                <div class="ht-sub">Boom Truck, Flatbed &amp; Lowbed – Dammam Routes</div>
                             </div>
+                            <button class="ht-viewall" onclick="navigateToTab('dmm-transport')"><i data-lucide="list"></i><span>View All Records</span></button>
                         </div>
-                        <div class="search-hero-row">
-                            <div class="search-hero-input-wrap">
-                                <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
-                                <input type="text" id="home-specsheet-search" class="search-hero-input" placeholder="Search datasheets by machine name..." oninput="searchHomeSpecSheets(this.value)" />
-                                <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
-                            </div>
-                            <button class="search-hero-btn" onclick="searchHomeSpecSheets(document.getElementById('home-specsheet-search').value)"><i data-lucide="search" size="16"></i> Search</button>
-                        </div>
-                        <div id="home-specsheet-results"></div>
-                    </div>
+                        <div id="home-dmm-groups" class="dmm-cols"></div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -1631,7 +2077,14 @@ main::-webkit-scrollbar-track { background: transparent; }
             <div id="yard-list"></div>
         </div>
         <div id="tab-dmm-transport" class="view-section hidden">
-            <div class="erp-toolbar"><input type="text" id="dmm-transport-search" placeholder="Search destination..." oninput="filterDmmTransport(this.value)" /><button class="erp-btn-show" onclick="filterDmmTransport(document.getElementById('dmm-transport-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
+            <div class="erp-toolbar"><input type="text" id="dmm-transport-search" placeholder="Search destination..." oninput="filterDmmTransport(this.value)" /><button class="erp-btn-show" onclick="filterDmmTransport(document.getElementById('dmm-transport-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button><button class="erp-btn-show erp-btn-edit" id="dmm-edit-btn" onclick="dmmStartEdit()" title="Edit with nasir.owayne"><i data-lucide="pencil" size="14"></i> EDIT</button></div>
+            <div id="dmm-edit-bar" class="edit-bar hidden" style="margin-bottom:12px;">
+                <span class="edit-bar-msg"><i data-lucide="pencil"></i> Editing — nothing is saved until you press Save. Leave a price blank for N/A.</span>
+                <span class="edit-bar-actions">
+                    <button class="eb-btn" onclick="dmmCancelEdit()">Cancel</button>
+                    <button class="eb-btn primary" id="dmm-save-btn" onclick="dmmSave()"><i data-lucide="check"></i> Save</button>
+                </span>
+            </div>
             <div class="dmm-poster-header">
                 <div class="dmm-poster-title">Consolidated Transportation Rates 2026</div>
                 <div class="dmm-poster-sub">Boom Truck, Flatbed &amp; Lowbed — Dammam Routes</div>
@@ -1643,9 +2096,55 @@ main::-webkit-scrollbar-track { background: transparent; }
             <div id="contact-list"></div>
         </div>
         <div id="tab-hiredesk" class="view-section hidden">
-            <div class="erp-toolbar"><input type="text" id="hiredesk-search" placeholder="Search name or email..." oninput="filterHireDesk(this.value)" /><button class="erp-btn-show" onclick="filterHireDesk(document.getElementById('hiredesk-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
-            <h3 class="group-title">Hire Desk</h3>
-            <div id="hiredesk-list"></div>
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item active" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Hire Desk</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v13 · 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner">
+                        <div class="hd-badge"><i data-lucide="users"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Hire Desk</div>
+                            <h2 class="hd-title">Our Team</h2>
+                            <p class="hd-sub">Connect with our team for any assistance or support.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="204" cy="50" r="12"/><path d="M180 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                        <button class="hd-edit" id="hd-edit-btn" onclick="hdStartEdit()" title="Edit with nasir.owayne"><i data-lucide="pencil"></i><span>Edit</span></button>
+                        <label class="hd-search"><i data-lucide="search"></i><input type="text" id="hiredesk-search" placeholder="Search name or email..." oninput="filterHireDesk(this.value)" autocomplete="off" /></label>
+                    </div>
+                    <div id="hd-edit-bar" class="edit-bar hidden">
+                        <span class="edit-bar-msg"><i data-lucide="pencil"></i> Editing — nothing is saved until you press Save.</span>
+                        <span class="edit-bar-actions">
+                            <button class="eb-btn" onclick="hdAdd()"><i data-lucide="plus"></i> Add person</button>
+                            <button class="eb-btn" onclick="hdCancelEdit()">Cancel</button>
+                            <button class="eb-btn primary" id="hd-save-btn" onclick="hdSave()"><i data-lucide="check"></i> Save</button>
+                        </span>
+                    </div>
+                    <div id="hiredesk-list" class="hd-list"></div>
+                    <div id="hiredesk-empty" class="hd-empty" style="display:none;">No team members match your search.</div>
+                </div>
+            </div>
         </div>
         <div id="tab-rates" class="view-section hidden">
             <div class="erp-toolbar"><input type="text" id="rates-search" placeholder="Search category..." oninput="filterCategoryGrid('rates', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
@@ -2365,6 +2864,11 @@ function renderTable(){
     (i === 0 && currentColumns.length > 1) ? 'label' : detectColType(i, currentRows)
   );
   const query = searchInput.value.trim().toLowerCase();
+  const colWidthCh = colTypes.map((type, ci) => {
+    let m = 0;
+    currentRows.forEach(r => { const v = r.cells[ci]; if (v !== '' && v !== null && v !== undefined) m = Math.max(m, String(v).length); });
+    return type === 'number' ? m + 6 : Math.min(Math.round(m * 1.15) + 3, 46);
+  });
 
   const table = document.createElement('table');
   const thead = document.createElement('thead');
@@ -2410,6 +2914,7 @@ function renderTable(){
         td.className = 'num';
         const input = document.createElement('input');
         input.className = 'field num' + (d ? ' dirty' : '');
+        input.style.minWidth = colWidthCh[ci] + 'ch';
         input.type = 'number';
         input.value = displayVal === '' || displayVal === null ? '' : displayVal;
         input.readOnly = !editMode;
@@ -2458,6 +2963,7 @@ function renderTable(){
         td.className = 'sub-cell';
         const input = document.createElement('input');
         input.className = 'field' + (d ? ' dirty' : '');
+        input.style.minWidth = colWidthCh[ci] + 'ch';
         input.type = 'text';
         input.value = displayVal || '';
         input.readOnly = !editMode;
@@ -2477,6 +2983,13 @@ function renderTable(){
 
   table.appendChild(tbody);
   content.innerHTML = '';
+  const peSheet = sheets.find(sh => sh.gid === currentGid);
+  const peHead = document.createElement('div');
+  peHead.className = 'pe-head';
+  peHead.innerHTML = '<span class="pe-title"></span><span class="pe-count"></span>';
+  peHead.firstChild.textContent = peSheet ? peSheet.name : '';
+  peHead.lastChild.textContent = visibleCount + ' row' + (visibleCount === 1 ? '' : 's');
+  content.appendChild(peHead);
   content.appendChild(table);
 
   if (!visibleCount){
@@ -2699,13 +3212,13 @@ document.addEventListener('visibilitychange', () => {
 <script>
     // Simple global toast — used instead of alert()/confirm() in a few spots
     // (e.g. "Copied!") so the person doesn't have to tap OK to dismiss it.
-    function gToast(msg){
+    function gToast(msg, ms){
         const el = document.getElementById('gtoast');
         if (!el) return;
         el.textContent = msg;
         el.classList.add('show');
         clearTimeout(el._t);
-        el._t = setTimeout(() => el.classList.remove('show'), 1800);
+        el._t = setTimeout(() => el.classList.remove('show'), ms || 1800);
     }
 
     // Screen Wake Lock: keeps the device from auto-locking/dimming while the
@@ -2932,6 +3445,12 @@ document.addEventListener('visibilitychange', () => {
             const ksaEl = document.getElementById('ksa-time');
             const indiaEl = document.getElementById('india-time');
             if (ksaEl) ksaEl.textContent = ksa;
+            const dateEl = document.getElementById('ksa-date');
+            if (dateEl) {
+                const parts = new Intl.DateTimeFormat('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Riyadh' }).formatToParts(new Date());
+                const g = t => (parts.find(p => p.type === t) || {}).value || '';
+                dateEl.textContent = `${g('weekday')}, ${g('day')} ${g('month')} ${g('year')}`;
+            }
             if (indiaEl) indiaEl.textContent = india;
         } catch (e) { /* Intl timeZone not supported — leave placeholders */ }
     }
@@ -2979,8 +3498,10 @@ document.addEventListener('visibilitychange', () => {
         updateOfflineBanner();
         renderYards();
         renderTeam();
+        loadSavedLocal();
         renderHireDesk();
         renderDmmTransport();
+        syncSavedFromRemote();
         startHeaderClockWeather();
         // If already signed in recently, skip the PIN screen and stay on the
         // branded sync screen until data is ready, then go straight into the app.
@@ -3361,26 +3882,58 @@ document.addEventListener('visibilitychange', () => {
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
-    function renderDmmTransport() {
-        const box = document.getElementById('dmm-transport-groups');
-        if (!box) return;
-        box.innerHTML = DMM_TRANSPORT.map((group) => {
+    function toggleHomeTransport() {
+        const card = document.getElementById('home-transport'), btn = document.getElementById('ht-toggle');
+        if (!card || !btn) return;
+        const show = card.classList.contains('hidden');
+        card.classList.toggle('hidden', !show);
+        btn.classList.toggle('open', show);
+        btn.setAttribute('aria-expanded', show ? 'true' : 'false');
+        if (show) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function buildDmmColumns(viewOnly) {
+        const edit = dmmEditing && !viewOnly;
+        return DMM_TRANSPORT.map((group, gi) => {
             const soft = dmmHexToRgba(group.color, 0.1);
             const border = dmmHexToRgba(group.color, 0.3);
-            const rows = group.rows.map(([to, price], i) => {
-                const priceCell = price !== null ? `<td class="dmm-price">${Number(price).toLocaleString()} SAR</td>` : `<td class="dmm-price dmm-na">N/A</td>`;
-                return `<tr data-search="${to.toLowerCase()}"><td class="dmm-sr">${i + 1}</td><td class="dmm-from">Dammam</td><td>${to}</td>${priceCell}</tr>`;
-            }).join('');
+            let rows, count;
+            if (edit) {
+                const list = dmmDraft[gi] || [];
+                count = list.length;
+                rows = list.map(([to, price], ri) => `<tr><td class="dmm-sr">${ri + 1}</td><td class="dmm-from">Dammam</td>` +
+                    `<td><input class="dmm-in" data-g="${gi}" data-r="${ri}" data-f="to" value="${escHtml(to)}" placeholder="Destination" autocomplete="off" oninput="dmmEditCell(${gi},${ri},'to',this.value)"></td>` +
+                    `<td><input class="dmm-in dmm-in-price" data-g="${gi}" data-r="${ri}" data-f="price" value="${escHtml(price)}" placeholder="N/A" inputmode="decimal" autocomplete="off" oninput="dmmEditCell(${gi},${ri},'price',this.value)"></td>` +
+                    `<td class="dmm-del-cell"><button class="dmm-del" title="Remove this route" onclick="dmmRemove(${gi},${ri})"><i data-lucide="x"></i></button></td></tr>`).join('');
+            } else {
+                count = group.rows.length;
+                rows = group.rows.map(([to, price], i) => {
+                    const priceCell = price !== null ? `<td class="dmm-price">${Number(price).toLocaleString()} SAR</td>` : `<td class="dmm-price dmm-na">N/A</td>`;
+                    return `<tr data-search="${escHtml(String(to).toLowerCase())}"><td class="dmm-sr">${i + 1}</td><td class="dmm-from">Dammam</td><td>${escHtml(to)}</td>${priceCell}</tr>`;
+                }).join('');
+            }
             return `<div class="dmm-col" style="--dmm-c:${group.color}; --dmm-c-soft:${soft}; --dmm-c-border:${border};">
-                <div class="dmm-col-head"><i data-lucide="${group.icon}" size="15"></i> <span>${group.title}</span><span class="dmm-col-count">${group.rows.length} routes</span></div>
+                <div class="dmm-col-head"><i data-lucide="${group.icon}"></i> <span>${group.title}</span><span class="dmm-col-count">${count} routes</span></div>
                 <div class="table-container dmm-col-table-wrap">
-                    <table class="dmm-poster-table">
-                        <thead><tr><th>Sr.</th><th>From</th><th>To</th><th>Price</th></tr></thead>
+                    <table class="dmm-poster-table${edit ? ' dmm-editing' : ''}">
+                        <thead><tr><th>Sr.</th><th>From</th><th>To</th><th>Price</th>${edit ? '<th></th>' : ''}</tr></thead>
                         <tbody>${rows}</tbody>
                     </table>
                 </div>
+                ${edit ? `<button class="dmm-add" onclick="dmmAdd(${gi})"><i data-lucide="plus"></i> Add route</button>` : ''}
             </div>`;
         }).join('');
+    }
+
+    function renderDmmTransport() {
+        const box = document.getElementById('dmm-transport-groups');
+        if (box) {
+            const scrolls = [...box.querySelectorAll('.dmm-col-table-wrap')].map(w => w.scrollTop);
+            box.innerHTML = buildDmmColumns();
+            box.querySelectorAll('.dmm-col-table-wrap').forEach((w, i) => { w.scrollTop = scrolls[i] || 0; });
+        }
+        const homeBox = document.getElementById('home-dmm-groups');
+        if (homeBox && !dmmEditing) homeBox.innerHTML = buildDmmColumns(true);
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
@@ -3412,18 +3965,320 @@ document.addEventListener('visibilitychange', () => {
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
+    /* ===================== EDITABLE: HIRE DESK + TRANSPORT RATES =====================
+       Uses the same edit password as the rates editor. Saving writes to Firestore
+       (appData/hireDesk and appData/dmmTransport) so every device sees the change.
+       If the shared database can't be reached, the edit is kept on this device and
+       re-sent automatically the next time the app loads. */
+    const DATA_EDIT_PASSWORD = '9768';
+    const LS_HIREDESK = 'sudhirpro_hiredesk_v1';
+    const LS_DMM = 'sudhirpro_dmm_v1';
+    let editUnlocked = false, editGateCallback = null;
+    let hdEditing = false, hdDraft = [];
+    let dmmEditing = false, dmmDraft = [];
+
+    function escHtml(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // ---------- password gate ----------
+    function requireEditPassword(onOk) {
+        if (editUnlocked) { onOk(); return; }
+        editGateCallback = onOk;
+        const ov = document.getElementById('edit-gate'), inp = document.getElementById('edit-gate-input');
+        document.getElementById('edit-gate-err').classList.add('hidden');
+        inp.value = '';
+        ov.classList.remove('hidden');
+        setTimeout(() => inp.focus(), 30);
+    }
+    function closeEditGate() {
+        document.getElementById('edit-gate').classList.add('hidden');
+        editGateCallback = null;
+    }
+    function submitEditGate() {
+        const inp = document.getElementById('edit-gate-input');
+        if (inp.value === DATA_EDIT_PASSWORD) {
+            editUnlocked = true;
+            const cb = editGateCallback;
+            closeEditGate();
+            if (cb) cb();
+        } else {
+            document.getElementById('edit-gate-err').classList.remove('hidden');
+            inp.select();
+        }
+    }
+
+    // ---------- storage: this device (localStorage) + shared (Firestore) ----------
+    function readLocal(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
+    function writeLocal(key, obj) { try { localStorage.setItem(key, JSON.stringify(obj)); return true; } catch (e) { return false; } }
+    function withTimeout(p, ms) {
+        return new Promise((resolve, reject) => {
+            const t = setTimeout(() => reject(new Error('timeout')), ms);
+            p.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+        });
+    }
+    function sharedDb() { return (typeof resDb !== 'undefined' && resDb) ? resDb : null; }
+    async function remoteSave(docId, payload) {
+        const d = sharedDb();
+        if (!d) throw new Error('shared database not available');
+        const stamp = (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue) ? firebase.firestore.FieldValue.serverTimestamp() : Date.now();
+        await withTimeout(d.collection('appData').doc(docId).set({ ...payload, updatedAt: stamp }), 12000);
+    }
+    async function remoteLoad(docId) {
+        const d = sharedDb();
+        if (!d) return null;
+        const snap = await withTimeout(d.collection('appData').doc(docId).get(), 8000);
+        return snap.exists ? snap.data() : null;
+    }
+
+    const hireDeskPayload = (list) => ({ list: list.map(m => ({ n: m.n, e: m.e })) });
+    const dmmPayload = (groupsRows) => ({ groups: groupsRows.map(rows => ({ rows: rows.map(r => ({ to: r[0], price: r[1] })) })) });
+
+    function applyHireDeskPayload(p) {
+        if (!p || !Array.isArray(p.list)) return false;
+        HIRE_DESK.splice(0, HIRE_DESK.length, ...p.list.filter(x => x && x.n).map(x => ({ n: String(x.n), e: String(x.e || '') })));
+        return true;
+    }
+    function applyDmmPayload(p) {
+        if (!p || !Array.isArray(p.groups) || p.groups.length !== DMM_TRANSPORT.length) return false;
+        p.groups.forEach((g, i) => {
+            DMM_TRANSPORT[i].rows = (Array.isArray(g.rows) ? g.rows : []).filter(r => r && r.to != null)
+                .map(r => [String(r.to), (r.price === null || r.price === undefined || r.price === '') ? null : Number(r.price)]);
+        });
+        return true;
+    }
+
+    const DATA_KINDS = {
+        hiredesk: { key: LS_HIREDESK, doc: 'hireDesk', apply: applyHireDeskPayload, current: () => hireDeskPayload(HIRE_DESK), render: () => { if (!hdEditing) renderHireDesk(); } },
+        dmm:      { key: LS_DMM,      doc: 'dmmTransport', apply: applyDmmPayload, current: () => dmmPayload(DMM_TRANSPORT.map(g => g.rows)), render: () => { if (!dmmEditing) renderDmmTransport(); } }
+    };
+
+    // Called once at start-up, before the first render: show whatever this device last saved.
+    function loadSavedLocal() {
+        Object.values(DATA_KINDS).forEach(k => { const rec = readLocal(k.key); if (rec) k.apply(rec.data); });
+    }
+    // Then, in the background, pick up the shared copy (or re-send an unsent local edit).
+    async function syncSavedFromRemote() {
+        for (const k of Object.values(DATA_KINDS)) {
+            try {
+                const local = readLocal(k.key);
+                if (local && local.pending) {
+                    await remoteSave(k.doc, local.data);
+                    writeLocal(k.key, { data: local.data, pending: false, savedAt: Date.now() });
+                    continue;
+                }
+                const remote = await remoteLoad(k.doc);
+                if (remote && k.apply(remote)) {
+                    writeLocal(k.key, { data: k.current(), pending: false, savedAt: Date.now() });
+                    k.render();
+                }
+            } catch (e) { console.warn('shared data sync skipped:', k.doc, e && e.message); }
+        }
+    }
+    // Returns 'shared' | 'local' | 'failed'
+    async function persistData(kind, payload) {
+        const k = DATA_KINDS[kind];
+        const keptLocally = writeLocal(k.key, { data: payload, pending: true, savedAt: Date.now() });
+        try {
+            await remoteSave(k.doc, payload);
+            writeLocal(k.key, { data: payload, pending: false, savedAt: Date.now() });
+            return 'shared';
+        } catch (e) {
+            console.warn('shared save failed:', e && e.message);
+            return keptLocally ? 'local' : 'failed';
+        }
+    }
+    function saveResultToast(mode) {
+        if (mode === 'shared') gToast('Saved — everyone will see this', 3000);
+        else if (mode === 'local') gToast('Saved on this device only — couldn\'t reach the shared database', 4500);
+        else gToast('Could not save. Please try again.', 3500);
+    }
+    window.addEventListener('beforeunload', (e) => {
+        if (hdEditing || dmmEditing) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    // ---------- HIRE DESK ----------
+    const HD_PALETTE = [['#4d9bff','#1f63e8'], ['#a06bf5','#6d3fe0'], ['#2ddbb5','#0a9b8a'], ['#ffb43d','#f08300'], ['#ff5c9a','#e0175f'], ['#7a6cf5','#4f3fd6'], ['#33c3f0','#0a88c9'], ['#c165f0','#8e2fd6']];
+    function hdInitials(name) {
+        const w = String(name || '').trim().split(/\s+/).filter(Boolean);
+        if (!w.length) return '+';
+        return (w.length > 1 ? w[0][0] + w[w.length - 1][0] : w[0].slice(0, 2)).toUpperCase();
+    }
+
     function renderHireDesk() {
         const el = document.getElementById('hiredesk-list');
         if (!el) return;
-        el.innerHTML = HIRE_DESK.map(m => `<div class="item-card" data-search="${(m.n + ' ' + m.e).toLowerCase()}"><div class="item-info"><h4>${m.n}</h4><p>${m.e}</p></div><div style="display:flex; gap:8px;"><button class="act-btn" title="Copy email" onclick="copyText('${m.e}')"><i data-lucide="copy" size="16"></i></button><a href="mailto:${m.e}" class="act-btn" title="Send email" style="color:var(--accent);"><i data-lucide="mail" size="16"></i></a></div></div>`).join('');
+        const list = hdEditing ? hdDraft : HIRE_DESK;
+        el.classList.toggle('hd-list-edit', hdEditing);
+        if (!list.length) {
+            el.innerHTML = `<div class="hd-empty">${hdEditing ? 'No one here yet — press “Add person”.' : 'No team members yet. Press Edit to add people.'}</div>`;
+        } else if (hdEditing) {
+            el.innerHTML = list.map((m, i) => {
+                const [a1, a2] = HD_PALETTE[i % HD_PALETTE.length];
+                return `<div class="hd-row hd-editing" data-i="${i}"><div class="hd-avatar" style="--a1:${a1};--a2:${a2}">${escHtml(hdInitials(m.n))}</div>` +
+                    `<div class="hd-info hd-fields"><input class="hd-input" data-i="${i}" data-f="n" value="${escHtml(m.n)}" placeholder="Full name" autocomplete="off" oninput="hdEdit(${i},'n',this.value)">` +
+                    `<input class="hd-input" data-i="${i}" data-f="e" value="${escHtml(m.e)}" placeholder="email@sudhirrentals.com" inputmode="email" autocapitalize="off" spellcheck="false" autocomplete="off" oninput="hdEdit(${i},'e',this.value)"></div>` +
+                    `<div class="hd-actions"><button class="hd-btn hd-del" title="Remove this person" onclick="hdRemove(${i})"><i data-lucide="trash-2"></i></button></div></div>`;
+            }).join('');
+        } else {
+            el.innerHTML = list.map((m, i) => {
+                const [a1, a2] = HD_PALETTE[i % HD_PALETTE.length];
+                return `<div class="hd-row" data-search="${escHtml((m.n + ' ' + m.e).toLowerCase())}"><div class="hd-avatar" style="--a1:${a1};--a2:${a2}">${escHtml(hdInitials(m.n))}</div><div class="hd-info"><div class="hd-name">${escHtml(m.n)}</div><div class="hd-mail"><i data-lucide="mail"></i><span>${escHtml(m.e)}</span></div></div><div class="hd-actions"><button class="hd-btn" title="Copy email" data-email="${escHtml(m.e)}" onclick="copyText(this.dataset.email)"><i data-lucide="copy"></i></button><a class="hd-btn" href="mailto:${escHtml(m.e)}" title="Send email"><i data-lucide="mail"></i></a></div></div>`;
+            }).join('');
+        }
+        const empty = document.getElementById('hiredesk-empty');
+        if (empty) empty.style.display = 'none';
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
     function filterHireDesk(q) {
+        if (hdEditing) return;
         q = (q||'').toLowerCase().trim();
-        document.querySelectorAll('#hiredesk-list .item-card').forEach(el => {
-            el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+        let shown = 0;
+        const rows = document.querySelectorAll('#hiredesk-list .hd-row');
+        rows.forEach(el => {
+            const ok = el.dataset.search.includes(q);
+            el.style.display = ok ? '' : 'none';
+            if (ok) shown++;
         });
+        const empty = document.getElementById('hiredesk-empty');
+        if (empty) empty.style.display = (rows.length && !shown) ? '' : 'none';
+    }
+
+    function setHdEditUi(on) {
+        document.getElementById('hd-edit-bar').classList.toggle('hidden', !on);
+        document.getElementById('hd-edit-btn').classList.toggle('hidden', on);
+        const s = document.getElementById('hiredesk-search');
+        if (s) { s.value = ''; s.disabled = on; }
+    }
+    function hdStartEdit() {
+        requireEditPassword(() => {
+            hdDraft = HIRE_DESK.map(m => ({ n: m.n, e: m.e }));
+            hdEditing = true;
+            setHdEditUi(true);
+            renderHireDesk();
+        });
+    }
+    function hdCancelEdit() {
+        const changed = JSON.stringify(hdDraft) !== JSON.stringify(HIRE_DESK);
+        if (changed && !confirm('Discard your changes?')) return;
+        hdEditing = false; hdDraft = [];
+        setHdEditUi(false);
+        renderHireDesk();
+    }
+    function hdEdit(i, field, val) {
+        if (!hdDraft[i]) return;
+        hdDraft[i][field] = val;
+        const row = document.querySelector(`#hiredesk-list .hd-row[data-i="${i}"]`);
+        if (!row) return;
+        const inp = row.querySelector(`[data-f="${field}"]`);
+        if (inp) inp.classList.remove('hd-invalid');
+        if (field === 'n') row.querySelector('.hd-avatar').textContent = hdInitials(val);
+    }
+    function hdAdd() {
+        hdDraft.push({ n: '', e: '' });
+        renderHireDesk();
+        const rows = document.querySelectorAll('#hiredesk-list .hd-row');
+        const last = rows[rows.length - 1];
+        if (last) { last.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = last.querySelector('input'); if (f) f.focus(); }
+    }
+    function hdRemove(i) { hdDraft.splice(i, 1); renderHireDesk(); }
+    async function hdSave() {
+        const emailRe = /^[^\s@'"<>]+@[^\s@'"<>]+\.[^\s@'"<>]+$/;
+        let firstBad = null;
+        document.querySelectorAll('#hiredesk-list .hd-invalid').forEach(x => x.classList.remove('hd-invalid'));
+        hdDraft.forEach((m, i) => {
+            const n = m.n.trim(), e = m.e.trim();
+            if (!n && !e) return;
+            [['n', !!n], ['e', emailRe.test(e)]].forEach(([f, ok]) => {
+                if (ok) return;
+                const inp = document.querySelector(`#hiredesk-list [data-i="${i}"][data-f="${f}"]`);
+                if (inp) { inp.classList.add('hd-invalid'); if (!firstBad) firstBad = inp; }
+            });
+        });
+        if (firstBad) { firstBad.focus(); gToast('Please fix the highlighted fields (name + valid email)', 3000); return; }
+        const list = hdDraft.map(m => ({ n: m.n.trim().replace(/\s+/g, ' '), e: m.e.trim() })).filter(m => m.n);
+        const btn = document.getElementById('hd-save-btn');
+        btn.disabled = true;
+        const mode = await persistData('hiredesk', hireDeskPayload(list));
+        btn.disabled = false;
+        if (mode === 'failed') { saveResultToast(mode); return; }
+        HIRE_DESK.splice(0, HIRE_DESK.length, ...list);
+        hdEditing = false; hdDraft = [];
+        setHdEditUi(false);
+        renderHireDesk();
+        saveResultToast(mode);
+    }
+
+    // ---------- TRANSPORT RATES ----------
+    function setDmmEditUi(on) {
+        document.getElementById('dmm-edit-bar').classList.toggle('hidden', !on);
+        document.getElementById('dmm-edit-btn').classList.toggle('hidden', on);
+        const s = document.getElementById('dmm-transport-search');
+        if (s) { s.value = ''; s.disabled = on; }
+    }
+    function dmmStartEdit() {
+        requireEditPassword(() => {
+            dmmDraft = DMM_TRANSPORT.map(g => g.rows.map(r => [r[0], r[1] === null ? '' : String(r[1])]));
+            dmmEditing = true;
+            setDmmEditUi(true);
+            renderDmmTransport();
+        });
+    }
+    function dmmCancelEdit() {
+        const before = JSON.stringify(DMM_TRANSPORT.map(g => g.rows.map(r => [r[0], r[1] === null ? '' : String(r[1])])));
+        if (JSON.stringify(dmmDraft) !== before && !confirm('Discard your changes?')) return;
+        dmmEditing = false; dmmDraft = [];
+        setDmmEditUi(false);
+        renderDmmTransport();
+    }
+    function dmmEditCell(gi, ri, field, val) {
+        if (!dmmDraft[gi] || !dmmDraft[gi][ri]) return;
+        dmmDraft[gi][ri][field === 'to' ? 0 : 1] = val;
+        const inp = document.querySelector(`#dmm-transport-groups [data-g="${gi}"][data-r="${ri}"][data-f="${field}"]`);
+        if (inp) inp.classList.remove('hd-invalid');
+    }
+    function dmmAdd(gi) {
+        dmmDraft[gi].push(['', '']);
+        renderDmmTransport();
+        const wrap = document.querySelectorAll('#dmm-transport-groups .dmm-col-table-wrap')[gi];
+        if (wrap) {
+            wrap.scrollTop = wrap.scrollHeight;
+            const ins = wrap.querySelectorAll('input[data-f="to"]');
+            if (ins.length) ins[ins.length - 1].focus();
+        }
+    }
+    function dmmRemove(gi, ri) { dmmDraft[gi].splice(ri, 1); renderDmmTransport(); }
+    async function dmmSave() {
+        let firstBad = null;
+        const mark = (gi, ri, f) => {
+            const inp = document.querySelector(`#dmm-transport-groups [data-g="${gi}"][data-r="${ri}"][data-f="${f}"]`);
+            if (inp) { inp.classList.add('hd-invalid'); if (!firstBad) firstBad = inp; }
+        };
+        document.querySelectorAll('#dmm-transport-groups .hd-invalid').forEach(x => x.classList.remove('hd-invalid'));
+        const clean = dmmDraft.map((rows, gi) => {
+            const out = [];
+            rows.forEach(([to, price], ri) => {
+                const t = String(to).trim().replace(/\s+/g, ' '), p = String(price).trim().replace(/,/g, '');
+                if (!t && !p) return;
+                let num = null;
+                if (!t) mark(gi, ri, 'to');
+                if (p) { num = Number(p); if (!isFinite(num) || num < 0) mark(gi, ri, 'price'); }
+                out.push([t, p ? num : null]);
+            });
+            return out;
+        });
+        if (firstBad) { firstBad.scrollIntoView({ block: 'center' }); firstBad.focus(); gToast('Please fix the highlighted cells (destination + a number for price, or leave price blank for N/A)', 3800); return; }
+        const btn = document.getElementById('dmm-save-btn');
+        btn.disabled = true;
+        const mode = await persistData('dmm', dmmPayload(clean));
+        btn.disabled = false;
+        if (mode === 'failed') { saveResultToast(mode); return; }
+        clean.forEach((rows, i) => { DMM_TRANSPORT[i].rows = rows; });
+        dmmEditing = false; dmmDraft = [];
+        setDmmEditUi(false);
+        renderDmmTransport();
+        saveResultToast(mode);
     }
 
     function filterTeam(q) {
@@ -4405,6 +5260,7 @@ document.addEventListener('visibilitychange', () => {
     function applyTabStyles(tab) {
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
+        document.getElementById('main-content').dataset.tab = tab;
         document.querySelectorAll('.nav-tab').forEach(n => n.classList.remove('active'));
         const btn = document.getElementById('btn-'+tab);
         if(btn) btn.classList.add('active');
