@@ -1688,15 +1688,58 @@ main[data-tab="home"] .app-footer { display: none; }
 }
 main[data-tab="hiredesk"] .app-footer { display: none; }
 
-.hd-banner { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 16px 20px; min-height: 92px; border-radius: 18px; border: 1px solid #cfe0f8;
+/* ---------- Same home-layout treatment for Rates, Photos, Specs, Docs,
+   Offhire, Yards, Team & Reserve tabs ---------- */
+@media (max-width: 899px) {
+    main[data-tab="rates"], main[data-tab="photos"], main[data-tab="docs"], main[data-tab="machine-docs"], main[data-tab="offhire"], main[data-tab="yards"], main[data-tab="team"], main[data-tab="reservation"] { padding: 0; }
+}
+@media (min-width: 900px) {
+    main[data-tab="rates"], main[data-tab="photos"], main[data-tab="docs"], main[data-tab="machine-docs"], main[data-tab="offhire"], main[data-tab="yards"], main[data-tab="team"], main[data-tab="reservation"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="rates"] > #tab-rates,
+    main[data-tab="photos"] > #tab-photos,
+    main[data-tab="docs"] > #tab-docs,
+    main[data-tab="machine-docs"] > #tab-machine-docs,
+    main[data-tab="offhire"] > #tab-offhire,
+    main[data-tab="yards"] > #tab-yards,
+    main[data-tab="team"] > #tab-team,
+    main[data-tab="reservation"] > #tab-reservation { flex: 1 0 auto; display: flex; flex-direction: column; }
+    main[data-tab="rates"] > #tab-rates.hidden,
+    main[data-tab="photos"] > #tab-photos.hidden,
+    main[data-tab="docs"] > #tab-docs.hidden,
+    main[data-tab="machine-docs"] > #tab-machine-docs.hidden,
+    main[data-tab="offhire"] > #tab-offhire.hidden,
+    main[data-tab="yards"] > #tab-yards.hidden,
+    main[data-tab="team"] > #tab-team.hidden,
+    main[data-tab="reservation"] > #tab-reservation.hidden { display: none; }
+}
+main[data-tab="rates"] .app-footer,
+main[data-tab="photos"] .app-footer,
+main[data-tab="docs"] .app-footer,
+main[data-tab="machine-docs"] .app-footer,
+main[data-tab="offhire"] .app-footer,
+main[data-tab="yards"] .app-footer,
+main[data-tab="team"] .app-footer,
+main[data-tab="reservation"] .app-footer { display: none; }
+
+.hd-banner { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 16px 20px; min-height: 92px; border-radius: 18px; border: 1px solid var(--hdb-border, #cfe0f8);
     background:
         radial-gradient(420px 200px at 62% 0%, rgba(255, 255, 255, 0.85), transparent 70%),
-        linear-gradient(115deg, #d3e5fc 0%, #e5f0ff 55%, #d1e4fb 100%);
+        linear-gradient(115deg, var(--hdb-1, #d3e5fc) 0%, var(--hdb-2, #e5f0ff) 55%, var(--hdb-3, #d1e4fb) 100%);
     box-shadow: 0 14px 30px -24px rgba(20, 80, 200, 0.5); }
-.hd-badge { position: relative; z-index: 1; flex: none; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: #fff; color: #1d63e8; box-shadow: 0 8px 18px -10px rgba(20, 80, 200, 0.6); }
+.hd-badge { position: relative; z-index: 1; flex: none; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: #fff; color: var(--hdb-fg, #1d63e8); box-shadow: 0 8px 18px -10px rgba(20, 80, 200, 0.6); }
 .hd-badge svg { width: 26px; height: 26px; }
 .hd-titles { position: relative; z-index: 1; min-width: 0; }
-.hd-kicker { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #2563eb; }
+.hd-kicker { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hdb-fg, #2563eb); }
+/* Per-tab tint variants — same banner shape as Hire Desk, colored to match
+   each tab's identity color from the sidebar / bottom nav. */
+.hd-tint-amber   { --hdb-1:#ffe9c7; --hdb-2:#fff6e8; --hdb-3:#ffe3b8; --hdb-border:#f6dcab; --hdb-fg:#b45309; }
+.hd-tint-cyan    { --hdb-1:#cdf3f9; --hdb-2:#e8fbfd; --hdb-3:#c7eef5; --hdb-border:#b9e7ee; --hdb-fg:#0e7490; }
+.hd-tint-pink    { --hdb-1:#ffd9ea; --hdb-2:#fff0f6; --hdb-3:#ffd3e6; --hdb-border:#f7c7dd; --hdb-fg:#be185d; }
+.hd-tint-rose    { --hdb-1:#ffd7df; --hdb-2:#fff0f2; --hdb-3:#ffd0da; --hdb-border:#f7c3cd; --hdb-fg:#be123c; }
+.hd-tint-indigo  { --hdb-1:#dcdcfb; --hdb-2:#eeeefd; --hdb-3:#d7d7fa; --hdb-border:#c9c9f5; --hdb-fg:#3730a3; }
+.hd-tint-emerald { --hdb-1:#c9f5e0; --hdb-2:#e9fdf4; --hdb-3:#c2f2db; --hdb-border:#b7ecd1; --hdb-fg:#047857; }
+.hd-tint-violet  { --hdb-1:#e3dafd; --hdb-2:#f2edfd; --hdb-3:#ddd2fc; --hdb-border:#d2c4f9; --hdb-fg:#6d28d9; }
+.hd-tint-orange  { --hdb-1:#ffdcc2; --hdb-2:#fff3ea; --hdb-3:#ffd4b5; --hdb-border:#f8cba9; --hdb-fg:#c2410c; }
 .hd-title { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink-blue); margin: 3px 0 4px; }
 .hd-sub { font-size: 12.5px; font-weight: 500; color: #4a6591; }
 .hd-art { position: absolute; left: 46%; top: 50%; transform: translateY(-50%); width: 300px; height: 110px; pointer-events: none; }
@@ -1976,6 +2019,8 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory &amp; contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2084,9 +2129,46 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
 
 
         <div id="tab-yards" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-emerald">
+                        <div class="hd-badge"><i data-lucide="map"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Operational Yards</div>
+                            <h2 class="hd-title">Yards</h2>
+                            <p class="hd-sub">All operational yards and locations.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div class="erp-toolbar"><input type="text" id="yards-search" placeholder="Search yard name..." oninput="filterYards(this.value)" /><button class="erp-btn-show" onclick="filterYards(document.getElementById('yards-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
-            <h3 class="group-title">Operational Yards</h3>
-            <div id="yard-list"></div>
+<div id="yard-list"></div>
+        
+                </div>
+            </div>
         </div>
         <div id="tab-dmm-transport" class="view-section hidden">
             <div class="erp-toolbar"><input type="text" id="dmm-transport-search" placeholder="Search destination..." oninput="filterDmmTransport(this.value)" /><button class="erp-btn-show" onclick="filterDmmTransport(document.getElementById('dmm-transport-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button><button class="erp-btn-show erp-btn-edit" id="dmm-edit-btn" onclick="dmmStartEdit()" title="Edit with nasir.owayne"><i data-lucide="pencil" size="14"></i> EDIT</button></div>
@@ -2104,8 +2186,46 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
             <div id="dmm-transport-groups" class="dmm-cols"></div>
         </div>
         <div id="tab-team" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-violet">
+                        <div class="hd-badge"><i data-lucide="users"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Team Directory</div>
+                            <h2 class="hd-title">Team</h2>
+                            <p class="hd-sub">Search team members by name or role.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div class="erp-toolbar"><input type="text" id="team-search" placeholder="Search name or role..." oninput="filterTeam(this.value)" /><button class="erp-btn-show" onclick="filterTeam(document.getElementById('team-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
             <div id="contact-list"></div>
+        
+                </div>
+            </div>
         </div>
         <div id="tab-hiredesk" class="view-section hidden">
             <div class="home-layout">
@@ -2119,6 +2239,8 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory &amp; contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2159,17 +2281,125 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
             </div>
         </div>
         <div id="tab-rates" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-amber">
+                        <div class="hd-badge"><i data-lucide="tag"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Rental Rates</div>
+                            <h2 class="hd-title">Rates</h2>
+                            <p class="hd-sub">Browse current rental rates across every equipment category.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div class="erp-toolbar"><input type="text" id="rates-search" placeholder="Search category..." oninput="filterCategoryGrid('rates', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
-            <h3 class="group-title">Rates</h3>
-            <div id="rates-grid" class="dash-grid"></div>
+<div id="rates-grid" class="dash-grid"></div>
+        
+                </div>
+            </div>
         </div>
         <div id="tab-docs" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-cyan">
+                        <div class="hd-badge"><i data-lucide="file-text"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Machine Datasheets</div>
+                            <h2 class="hd-title">Specs</h2>
+                            <p class="hd-sub">Technical specifications and datasheets for every machine.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div class="erp-toolbar"><input type="text" id="docs-search" placeholder="Search category..." oninput="filterCategoryGrid('docs', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('docs', document.getElementById('docs-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
-            <h3 class="group-title">Datasheets</h3>
-            <div id="docs-grid" class="dash-grid"></div>
+<div id="docs-grid" class="dash-grid"></div>
+        
+                </div>
+            </div>
         </div>
         <div id="tab-machine-docs" class="view-section hidden">
-
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-rose">
+                        <div class="hd-badge"><i data-lucide="folder"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Machine Documents</div>
+                            <h2 class="hd-title">Docs</h2>
+                            <p class="hd-sub">Find, merge, and generate certificates & documents.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div class="md-layout" id="md-layout">
 
                 <!-- BIG, HORIZONTAL: Add & Merge — drop files in, watch them
@@ -2280,10 +2510,48 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
                 </div>
 
             </div>
+        
+                </div>
+            </div>
         </div>
 
 
         <div id="tab-photos" class="view-section hidden" style="padding:0;">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-pink">
+                        <div class="hd-badge"><i data-lucide="image"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Machine Photos</div>
+                            <h2 class="hd-title">Photos</h2>
+                            <p class="hd-sub">Browse machine photos by category and folder.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div class="breadcrumb-wrap" id="photo-breadcrumbs"></div>
             <div class="stats-line" id="photo-stats" style="padding:0 0 10px 2px;">Loading…</div>
 
@@ -2302,8 +2570,46 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
             </div>
 
             <div class="grid" id="gallery"></div>
+        
+                </div>
+            </div>
         </div>
         <div id="tab-reservation" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-orange">
+                        <div class="hd-badge"><i data-lucide="calendar-check"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Reservation Tracker</div>
+                            <h2 class="hd-title">Reserve</h2>
+                            <p class="hd-sub">View and manage equipment reservations.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div id="reservation-auth-gate" class="res-auth-gate">
                 <div class="res-auth-card">
                     <i data-lucide="lock" size="30"></i>
@@ -2330,8 +2636,46 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
                 <h3 class="group-title">Reservations</h3>
                 <div id="reservation-list"></div>
             </div>
+        
+                </div>
+            </div>
         </div>
         <div id="tab-offhire" class="view-section hidden" style="padding:0;">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
+                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-indigo">
+                        <div class="hd-badge"><i data-lucide="file-minus-2"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Offhire Note</div>
+                            <h2 class="hd-title">Offhire</h2>
+                            <p class="hd-sub">Create and manage equipment offhire notes.</p>
+                        </div>
+                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
+                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
+                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
+                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
+                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
+                        </svg>
+                    </div>
             <div id="offhire-wrap">
 <div class="app">
 
@@ -2519,6 +2863,9 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
     </div>
   </div>
 </div>
+            </div>
+        
+                </div>
             </div>
         </div>
         <div class="app-footer">© 2026 Sudhir Rentals. All rights reserved.</div>
