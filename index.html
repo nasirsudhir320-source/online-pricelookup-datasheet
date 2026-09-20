@@ -1840,6 +1840,17 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
 .ht-toggle.open:hover { filter: brightness(1.06); }
 .ht-toggle.open .ht-chev { transform: rotate(180deg); }
 
+/* Home: search box beside the Transportation button */
+.ht-toggle-row { align-items: center; gap: 10px; }
+.ht-search { display: flex; align-items: center; gap: 8px; height: 36px; width: min(300px, 100%); padding: 0 12px; background: #fff; border: 1px solid #d3e2f8; border-radius: 11px; box-shadow: 0 3px 8px -5px rgba(20, 60, 140, 0.4); }
+.ht-search:focus-within { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.ht-search svg { width: 15px; height: 15px; flex: none; color: #2563eb; }
+.ht-search input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; box-shadow: none; font-size: 12.5px; }
+.ht-search input:focus { border: 0; box-shadow: none; }
+.ht-search { min-width: 0; }
+.ht-search input { width: 0; }
+@media (max-width: 640px) { .ht-search { flex: 1 1 0; width: auto; } }
+
     </style>
 </head>
 <body>
@@ -1970,7 +1981,7 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
                         <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
-                        <span class="side-build">Build v13 · 20 Sep 2026</span>
+                        <span class="side-build">Build v14 · 20 Sep 2026</span>
                     </div>
                 </aside>
 
@@ -2042,6 +2053,7 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
 
                     <div class="ht-toggle-row">
                         <button class="ht-toggle" id="ht-toggle" type="button" aria-expanded="false" aria-controls="home-transport" onclick="toggleHomeTransport()"><i data-lucide="truck"></i><span>Transportation</span><i data-lucide="chevron-down" class="ht-chev"></i></button>
+                        <label class="ht-search"><i data-lucide="search"></i><input type="text" id="home-transport-search" placeholder="Search destination..." oninput="filterHomeTransport(this.value)" autocomplete="off" /></label>
                     </div>
                     <section class="home-transport hidden" id="home-transport">
                         <div class="ht-head">
@@ -2112,7 +2124,7 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
                         <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
-                        <span class="side-build">Build v13 · 20 Sep 2026</span>
+                        <span class="side-build">Build v14 · 20 Sep 2026</span>
                     </div>
                 </aside>
                 <div class="home-main">
@@ -3882,14 +3894,17 @@ document.addEventListener('visibilitychange', () => {
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
-    function toggleHomeTransport() {
+    function setHomeTransport(show, scroll) {
         const card = document.getElementById('home-transport'), btn = document.getElementById('ht-toggle');
         if (!card || !btn) return;
-        const show = card.classList.contains('hidden');
         card.classList.toggle('hidden', !show);
         btn.classList.toggle('open', show);
         btn.setAttribute('aria-expanded', show ? 'true' : 'false');
-        if (show) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (show && scroll) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function toggleHomeTransport() {
+        const card = document.getElementById('home-transport');
+        if (card) setHomeTransport(card.classList.contains('hidden'), true);
     }
 
     function buildDmmColumns(viewOnly) {
@@ -3933,13 +3948,25 @@ document.addEventListener('visibilitychange', () => {
             box.querySelectorAll('.dmm-col-table-wrap').forEach((w, i) => { w.scrollTop = scrolls[i] || 0; });
         }
         const homeBox = document.getElementById('home-dmm-groups');
-        if (homeBox && !dmmEditing) homeBox.innerHTML = buildDmmColumns(true);
+        if (homeBox && !dmmEditing) {
+            homeBox.innerHTML = buildDmmColumns(true);
+            const hs = document.getElementById('home-transport-search');
+            if (hs && hs.value.trim()) filterDmmColumns('#home-dmm-groups', hs.value);
+        }
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
-    function filterDmmTransport(q) {
+    function filterDmmTransport(q) { filterDmmColumns('#dmm-transport-groups', q); }
+
+    function filterHomeTransport(q) {
+        const card = document.getElementById('home-transport');
+        if (card && (q || '').trim() && card.classList.contains('hidden')) setHomeTransport(true, true);   // typing reveals the tables
+        filterDmmColumns('#home-dmm-groups', q);
+    }
+
+    function filterDmmColumns(scope, q) {
         q = (q||'').trim().toLowerCase();
-        document.querySelectorAll('#dmm-transport-groups .dmm-col').forEach(col => {
+        document.querySelectorAll(scope + ' .dmm-col').forEach(col => {
             let visibleCount = 0;
             col.querySelectorAll('tbody tr').forEach(tr => {
                 const show = !q || tr.dataset.search.includes(q);
