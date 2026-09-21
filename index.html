@@ -1689,19 +1689,18 @@ main[data-tab="home"] .app-footer { display: none; }
 main[data-tab="hiredesk"] .app-footer { display: none; }
 
 /* ---------- Same home-layout treatment for Rates, Photos, Specs, Docs,
-   Offhire, Yards, Team & Reserve tabs ---------- */
+   Offhire, Yards & Reserve tabs ---------- */
 @media (max-width: 899px) {
-    main[data-tab="rates"], main[data-tab="photos"], main[data-tab="docs"], main[data-tab="machine-docs"], main[data-tab="offhire"], main[data-tab="yards"], main[data-tab="team"], main[data-tab="reservation"] { padding: 0; }
+    main[data-tab="rates"], main[data-tab="photos"], main[data-tab="docs"], main[data-tab="machine-docs"], main[data-tab="offhire"], main[data-tab="yards"], main[data-tab="reservation"] { padding: 0; }
 }
 @media (min-width: 900px) {
-    main[data-tab="rates"], main[data-tab="photos"], main[data-tab="docs"], main[data-tab="machine-docs"], main[data-tab="offhire"], main[data-tab="yards"], main[data-tab="team"], main[data-tab="reservation"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="rates"], main[data-tab="photos"], main[data-tab="docs"], main[data-tab="machine-docs"], main[data-tab="offhire"], main[data-tab="yards"], main[data-tab="reservation"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
     main[data-tab="rates"] > #tab-rates,
     main[data-tab="photos"] > #tab-photos,
     main[data-tab="docs"] > #tab-docs,
     main[data-tab="machine-docs"] > #tab-machine-docs,
     main[data-tab="offhire"] > #tab-offhire,
     main[data-tab="yards"] > #tab-yards,
-    main[data-tab="team"] > #tab-team,
     main[data-tab="reservation"] > #tab-reservation { flex: 1 0 auto; display: flex; flex-direction: column; }
     main[data-tab="rates"] > #tab-rates.hidden,
     main[data-tab="photos"] > #tab-photos.hidden,
@@ -1709,7 +1708,6 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
     main[data-tab="machine-docs"] > #tab-machine-docs.hidden,
     main[data-tab="offhire"] > #tab-offhire.hidden,
     main[data-tab="yards"] > #tab-yards.hidden,
-    main[data-tab="team"] > #tab-team.hidden,
     main[data-tab="reservation"] > #tab-reservation.hidden { display: none; }
 }
 main[data-tab="rates"] .app-footer,
@@ -1718,7 +1716,6 @@ main[data-tab="docs"] .app-footer,
 main[data-tab="machine-docs"] .app-footer,
 main[data-tab="offhire"] .app-footer,
 main[data-tab="yards"] .app-footer,
-main[data-tab="team"] .app-footer,
 main[data-tab="reservation"] .app-footer { display: none; }
 
 .hd-banner { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 16px 20px; min-height: 92px; border-radius: 18px; border: 1px solid var(--hdb-border, #cfe0f8);
@@ -1764,7 +1761,37 @@ main[data-tab="reservation"] .app-footer { display: none; }
 .hd-btn { width: 36px; height: 36px; padding: 0; border-radius: 11px; border: 1px solid #d6e3f8; background: #fff; color: #1d4fbf; display: grid; place-items: center; cursor: pointer; text-decoration: none; box-shadow: 0 3px 8px -5px rgba(20, 60, 140, 0.4); transition: background 0.15s ease; }
 .hd-btn:hover { background: #eaf2ff; }
 .hd-btn svg { width: 16px; height: 16px; }
+.hd-btn-disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; box-shadow: none; }
+.hd-btn.hd-wa { color: #1fa855; }
+.hd-btn.hd-wa:hover { background: #e8f8ee; }
+.wa-svg { display: block; flex: none; }
 .hd-empty { padding: 26px; text-align: center; font-size: 13px; color: #5c7396; background: #fff; border: 1px dashed #cfe0f8; border-radius: 14px; }
+
+/* ---------- Hire Desk: Field & Operations Team (pulled in from Team tab) ---------- */
+.hd-team-section-title { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.hd-team-section-title svg { width: 16px; height: 16px; color: var(--accent); }
+.hd-team-list { display: flex; flex-direction: column; gap: 4px; }
+.hd-team-group-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #5c7396; margin: 14px 2px 6px; }
+.hd-team-group-title:first-child { margin-top: 2px; }
+.hd-row-team .hd-info { display: flex; flex-direction: column; gap: 2px; }
+.hd-team-meta { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; font-weight: 600; color: #5c7396; }
+.hd-team-meta span { display: flex; align-items: center; gap: 5px; }
+.hd-team-meta svg { width: 12px; height: 12px; flex: none; color: #6f8ab5; }
+.hd-row-team .hd-mail { margin-top: 1px; }
+.hd-team-role { font-weight: 600; color: #5c7396; font-size: 11px; text-transform: none; }
+
+/* ---------- Field Team: per-category cards, tabbed & coloured by yard ---------- */
+.ft-cat { margin-top: 16px; padding: 14px 14px 6px; border-radius: 16px; background: #fff; border: 1px solid #e7eef9; box-shadow: 0 10px 24px -22px rgba(20, 60, 140, 0.35); }
+.ft-cat:first-child { margin-top: 0; }
+.ft-cat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.ft-cat-tab { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 999px; font-size: 12.5px; font-weight: 800; color: #fff; background: linear-gradient(120deg, var(--c1), var(--c2)); box-shadow: 0 8px 16px -8px var(--c2); }
+.ft-cat-tab svg { width: 14px; height: 14px; }
+.ft-cat-count { font-size: 11px; font-weight: 800; color: var(--c2); background: #eef3fb; background: color-mix(in srgb, var(--c1) 25%, #fff); padding: 3px 9px; border-radius: 999px; }
+.ft-cat-edit { height: 34px; margin-left: auto; }
+.hd-list .hd-row-team .hd-avatar { background: linear-gradient(135deg, var(--a1, #4d9bff), var(--a2, #1f63e8)); }
+.hd-yard-select { flex: 1 1 160px; min-width: 0; height: 34px; padding: 0 10px; font-size: 12.5px; font-weight: 700; border: 1px solid #cfe0f8; border-radius: 9px; background: #fff; color: var(--ink-blue); }
+.ft-row-del { flex: none; align-self: flex-start; margin-top: 2px; color: #e11d48; }
+.ft-row-del:hover { background: #fff1f2; border-color: #fecdd3; }
 
 @media (max-width: 899px) {
     .hd-banner { flex-wrap: wrap; padding: 14px; gap: 12px; border-radius: 16px; }
@@ -1801,6 +1828,14 @@ main[data-tab="reservation"] .app-footer { display: none; }
 
 /* Hire Desk edit rows */
 .hd-fields { display: flex; gap: 10px; flex-wrap: wrap; }
+/* .hd-row-team .hd-info sets flex-direction:column for the read-only view;
+   without this override that column direction leaks into edit mode too and
+   turns each input's flex-basis into a height instead of a width. Grid
+   sidesteps the conflict entirely and keeps every field a fixed, compact size. */
+.hd-row.hd-editing .hd-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; width: 100%; }
+.hd-row.hd-editing .hd-fields input, .hd-row.hd-editing .hd-fields select { height: 34px; width: 100%; flex: none; }
+.hd-row.hd-editing { align-items: flex-start; padding-top: 10px; padding-bottom: 10px; }
+.hd-row.hd-editing .hd-avatar { margin-top: 2px; }
 .hd-input { flex: 1 1 200px; min-width: 0; height: 34px; padding: 0 10px; font-size: 12.5px; font-weight: 600; border: 1px solid #cfe0f8; border-radius: 9px; background: #fff; color: var(--ink-blue); box-shadow: none; }
 .hd-input:focus, .dmm-in:focus { outline: 0; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
 .hd-input.hd-invalid, .dmm-in.hd-invalid { border-color: #e11d48; background: #fff5f7; }
@@ -1988,9 +2023,8 @@ main[data-tab="reservation"] .app-footer { display: none; }
             <button class="nav-tab" id="btn-machine-docs" onclick="navigateToTab('machine-docs')"><div class="nav-icon-badge" style="color:#e11d48;"><i data-lucide="hard-drive" size="12"></i></div><span>Docs</span></button>
             <button class="nav-tab" id="btn-offhire" onclick="navigateToTab('offhire')"><div class="nav-icon-badge" style="color:#4338ca;"><i data-lucide="file-minus-2" size="12"></i></div><span>Offhire</span></button>
             <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><div class="nav-icon-badge" style="color:#34d399;"><i data-lucide="map" size="12"></i></div><span>Yards</span></button>
-            <button class="nav-tab" id="btn-team" onclick="navigateToTab('team')"><div class="nav-icon-badge" style="color:#a78bfa;"><i data-lucide="users" size="12"></i></div><span>Team</span></button>
             <button class="nav-tab" id="btn-reservation" onclick="navigateToTab('reservation')"><div class="nav-icon-badge" style="color:#ea580c;"><i data-lucide="calendar-check" size="12"></i></div><span>Reserve</span></button>
-            <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge" style="color:#65a30d;"><i data-lucide="mail" size="12"></i></div><span>Hire Desk</span></button>
+            <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge" style="color:#65a30d;"><i data-lucide="mail" size="12"></i></div><span>Teams Connect</span></button>
         </nav>
         <div class="hdr-right">
             <div class="clock-weather-group">
@@ -2020,7 +2054,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory &amp; contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2140,7 +2173,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2185,53 +2217,11 @@ main[data-tab="reservation"] .app-footer { display: none; }
             </div>
             <div id="dmm-transport-groups" class="dmm-cols"></div>
         </div>
-        <div id="tab-team" class="view-section hidden">
-            <div class="home-layout">
-                <aside class="home-sidebar">
-                    <div class="side-nav">
-                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item active" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                    </div>
-                    <div class="side-art" aria-hidden="true">
-                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
-                        <svg class="side-lift" viewBox="0 0 420 270"><use href="#art-lift"/></svg>
-                        <span class="side-build">Build v14 &middot; 20 Sep 2026</span>
-                    </div>
-                </aside>
-                <div class="home-main">
-                    <div class="hd-banner hd-tint-violet">
-                        <div class="hd-badge"><i data-lucide="users"></i></div>
-                        <div class="hd-titles">
-                            <div class="hd-kicker">Team Directory</div>
-                            <h2 class="hd-title">Team</h2>
-                            <p class="hd-sub">Search team members by name or role.</p>
-                        </div>
-                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
-                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
-                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
-                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
-                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
-                        </svg>
-                    </div>
-            <div class="erp-toolbar"><input type="text" id="team-search" placeholder="Search name or role..." oninput="filterTeam(this.value)" /><button class="erp-btn-show" onclick="filterTeam(document.getElementById('team-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
-            <div id="contact-list"></div>
-        
-                </div>
-            </div>
-        </div>
         <div id="tab-hiredesk" class="view-section hidden">
             <div class="home-layout">
                 <aside class="home-sidebar">
                     <div class="side-nav">
-                        <button class="side-item active" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Hire Desk</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Teams Connect</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
@@ -2240,7 +2230,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory &amp; contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2253,7 +2242,7 @@ main[data-tab="reservation"] .app-footer { display: none; }
                     <div class="hd-banner">
                         <div class="hd-badge"><i data-lucide="users"></i></div>
                         <div class="hd-titles">
-                            <div class="hd-kicker">Hire Desk</div>
+                            <div class="hd-kicker">Teams Connect</div>
                             <h2 class="hd-title">Our Team</h2>
                             <p class="hd-sub">Connect with our team for any assistance or support.</p>
                         </div>
@@ -2264,19 +2253,9 @@ main[data-tab="reservation"] .app-footer { display: none; }
                             <g fill="#7db0f8" opacity=".78"><circle cx="204" cy="50" r="12"/><path d="M180 104c0-18 11-28 24-28s24 10 24 28z"/></g>
                             <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
                         </svg>
-                        <button class="hd-edit" id="hd-edit-btn" onclick="hdStartEdit()" title="Edit with nasir.owayne"><i data-lucide="pencil"></i><span>Edit</span></button>
-                        <label class="hd-search"><i data-lucide="search"></i><input type="text" id="hiredesk-search" placeholder="Search name or email..." oninput="filterHireDesk(this.value)" autocomplete="off" /></label>
+                        <label class="hd-search"><i data-lucide="search"></i><input type="text" id="hiredesk-search" placeholder="Search name, title, phone or email..." oninput="filterFieldTeam(this.value)" autocomplete="off" /></label>
                     </div>
-                    <div id="hd-edit-bar" class="edit-bar hidden">
-                        <span class="edit-bar-msg"><i data-lucide="pencil"></i> Editing — nothing is saved until you press Save.</span>
-                        <span class="edit-bar-actions">
-                            <button class="eb-btn" onclick="hdAdd()"><i data-lucide="plus"></i> Add person</button>
-                            <button class="eb-btn" onclick="hdCancelEdit()">Cancel</button>
-                            <button class="eb-btn primary" id="hd-save-btn" onclick="hdSave()"><i data-lucide="check"></i> Save</button>
-                        </span>
-                    </div>
-                    <div id="hiredesk-list" class="hd-list"></div>
-                    <div id="hiredesk-empty" class="hd-empty" style="display:none;">No team members match your search.</div>
+                    <div id="field-team-root"></div>
                 </div>
             </div>
         </div>
@@ -2292,7 +2271,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2334,7 +2312,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2376,7 +2353,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item active" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2528,7 +2504,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2586,7 +2561,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -2652,7 +2626,6 @@ main[data-tab="reservation"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates & documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('team')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="users"></i></span><span class="side-txt"><b>Team</b><small>Directory & contacts</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -3621,6 +3594,7 @@ document.addEventListener('visibilitychange', () => {
         { title: "Lowbed", icon: "truck", color: "#7c3aed", rows: [["DAMMAM ,2nd",800],["khober",1000],["SPRAK city",1500],["3rd Industrial",1500],["Aindar",1400],["Al Hassa",1600],["Al Jafurah1",2000],["JAFURAH 2/SALWA",2800],["Al Kharj",3000],["Arar",6000],["Buqayq",1500],["Al Batha",5500],["Hafar Al Batin",4000],["Haradh",3000],["Hawiyah",2500],["Jeddah",5000],["Jizan",8000],["Jubail",1700],["Jubail RC",2000],["Khafjhi",2500],["Khurais",2500],["Kursaniya/ Fadli",2000],["Madeenah",6000],["Madeenah",6000],["Majmah",4000],["Makkah",6000],["Najran",7500],["Nariyah",2500],["NEOM",7500],["Qassim",4500],["al rass",4500],["Rabigh",6000],["Ras Al Khair RC",2500],["Ras Tanurah",1400],["Riyadh",2500],["Safaniya/ Marjan/ Tanajib",2500],["Sakaka/ Al Jouf",5500],["Shedgum",1500],["Turaif",7000],["Umluj",7500],["Uthmaniya/ Udailiya",2000],["Wadi Al Dawasir",4500],["Yanbu",7500],["hail",5000],["BATHA SHYBA",5000]] }
     ];
 
+    // NOTE: the Team tab was removed — this data is no longer shown anywhere (kept for reference).
     const TEAM_GROUPS = [
         { title: "Machine Readiness", members: [ { n: "Althaf (Genset)", d: "Dammam", p: "966581569900" }, { n: "Rajan (AWP)", d: "Dammam", p: "966550026247" }, { n: "Aslam (Genset)", d: "Riyadh", p: "966554402641" }, { n: "Marish (AWP)", d: "Riyadh", p: "966503332535" }, { n: "Abrar (Genset)", d: "Jeddah", p: "966533315751" }, { n: "Jitin (AWP)", d: "Jeddah", p: "966558821376" }, { n: "Rajesh Rajaram", d: "Tabuk (Genset)", p: "966555286534" }, { n: "Mukesh (AWP)", d: "Tabuk", p: "966552767809" } ] },
         { title: "Breakdown Coordinators", members: [ { n: "Nakul (Genset)", d: "Eastern Region", p: "966509993274" }, { n: "Ashish (AWP)", d: "Eastern Region", p: "966554412746" }, { n: "Talha", d: "Central Region", p: "966556665163" }, { n: "Hamza (Genset)", d: "Western Region", p: "966509993358" }, { n: "Jitin (AWP)", d: "Western Region", p: "966558821376" }, { n: "Noor", d: "Tabuk Region", p: "966533306398" } ] },
@@ -3629,21 +3603,6 @@ document.addEventListener('visibilitychange', () => {
     ];
 
     const EMAILS = [ { r: "Eastern", e: "service@sudhirrentals.com" }, { r: "Central", e: "serviceriyadh@sudhirrentals.com" }, { r: "Western", e: "servicejeddah@sudhirrentals.com" }, { r: "Tabuk", e: "servicetabuk@sudhirrentals.com" } ];
-    // Hire Desk team shown in the top "Hire Desk" tab. Add/edit people here only.
-    const HIRE_DESK = [
-        { n: "Nasir Shaik", e: "hiredesk2@sudhirrentals.com" },
-        { n: "Shuaib Ahmed", e: "hiredesk@sudhirrentals.com" },
-        { n: "Zain Ul Abiddin", e: "hiredesk3@sudhirrentals.com" },
-        { n: "Alfaz Hamad", e: "hiredesk8@sudhirrentals.com" },
-        { n: "Sahil Khan", e: "hiredesk1@sudhirrentals.com" },
-        { n: "Yousuf", e: "hiredesk4@sudhirrentals.com" },
-        { n: "Anas Abdul Rahman", e: "salessupport@sudhirrentals.com" },
-        { n: "Abizar", e: "hiredesk6@sudhirrentals.com" },
-        { n: "Mohammad Azeem", e: "salessupportexecutive@sudhirrentals.com" },
-        { n: "Mohammad Ifaaz", e: "salessupport1@sudhirrentals.com" },
-        { n: "Sawad", e: "salessupport2@sudhirrentals.com" },
-        { n: "Hassan Tahir", e: "hiredesk5@sudhirrentals.com" }
-    ];
 
     let db = { rates: {}, docs: {}, docsRoot: { folders: {}, files: [] }, machineDocsFiles: [], notif: "Connected." };
     let currentPdf = { name: "", blob: null, url: "" };
@@ -3856,9 +3815,8 @@ document.addEventListener('visibilitychange', () => {
         else { console.warn('lucide icons failed to load from CDN — icons will be missing, but the app will still work.'); }
         updateOfflineBanner();
         renderYards();
-        renderTeam();
         loadSavedLocal();
-        renderHireDesk();
+        renderFieldTeam();
         renderDmmTransport();
         syncSavedFromRemote();
         startHeaderClockWeather();
@@ -4325,30 +4283,15 @@ document.addEventListener('visibilitychange', () => {
         });
     }
 
-    function renderTeam() {
-        let html = '';
-        let total = 0;
-        TEAM_GROUPS.forEach(group => {
-            html += `<h3 class="group-title">${group.title}</h3>`;
-            group.members.forEach(m => {
-                total++;
-                html += `<div class="item-card" data-search="${(m.n+' '+m.d).toLowerCase()}"><div class="item-info"><h4>${m.n}</h4><p>${m.d}</p></div><div style="display:flex; gap:8px;"><button class="act-btn" onclick="copyText('${m.p}')"><i data-lucide="copy" size="16"></i></button><button class="act-btn wa" onclick="window.open('https://wa.me/${m.p}')"><i data-lucide="message-square" size="16"></i></button><a href="tel:+${m.p}" class="act-btn success"><i data-lucide="phone" size="16"></i></a></div></div>`;
-            });
-        });
-        document.getElementById('contact-list').innerHTML = html;
-        (typeof lucide!=='undefined'&&lucide.createIcons());
-    }
-
     /* ===================== EDITABLE: HIRE DESK + TRANSPORT RATES =====================
        Uses the same edit password as the rates editor. Saving writes to Firestore
        (appData/hireDesk and appData/dmmTransport) so every device sees the change.
        If the shared database can't be reached, the edit is kept on this device and
        re-sent automatically the next time the app loads. */
     const DATA_EDIT_PASSWORD = '9768';
-    const LS_HIREDESK = 'sudhirpro_hiredesk_v1';
     const LS_DMM = 'sudhirpro_dmm_v1';
+    const LS_FIELDTEAM = 'sudhirpro_fieldteam_v1';
     let editUnlocked = false, editGateCallback = null;
-    let hdEditing = false, hdDraft = [];
     let dmmEditing = false, dmmDraft = [];
 
     function escHtml(v) {
@@ -4405,14 +4348,8 @@ document.addEventListener('visibilitychange', () => {
         return snap.exists ? snap.data() : null;
     }
 
-    const hireDeskPayload = (list) => ({ list: list.map(m => ({ n: m.n, e: m.e })) });
     const dmmPayload = (groupsRows) => ({ groups: groupsRows.map(rows => ({ rows: rows.map(r => ({ to: r[0], price: r[1] })) })) });
 
-    function applyHireDeskPayload(p) {
-        if (!p || !Array.isArray(p.list)) return false;
-        HIRE_DESK.splice(0, HIRE_DESK.length, ...p.list.filter(x => x && x.n).map(x => ({ n: String(x.n), e: String(x.e || '') })));
-        return true;
-    }
     function applyDmmPayload(p) {
         if (!p || !Array.isArray(p.groups) || p.groups.length !== DMM_TRANSPORT.length) return false;
         p.groups.forEach((g, i) => {
@@ -4423,8 +4360,8 @@ document.addEventListener('visibilitychange', () => {
     }
 
     const DATA_KINDS = {
-        hiredesk: { key: LS_HIREDESK, doc: 'hireDesk', apply: applyHireDeskPayload, current: () => hireDeskPayload(HIRE_DESK), render: () => { if (!hdEditing) renderHireDesk(); } },
-        dmm:      { key: LS_DMM,      doc: 'dmmTransport', apply: applyDmmPayload, current: () => dmmPayload(DMM_TRANSPORT.map(g => g.rows)), render: () => { if (!dmmEditing) renderDmmTransport(); } }
+        dmm:      { key: LS_DMM,      doc: 'dmmTransport', apply: applyDmmPayload, current: () => dmmPayload(DMM_TRANSPORT.map(g => g.rows)), render: () => { if (!dmmEditing) renderDmmTransport(); } },
+        fieldTeam:{ key: LS_FIELDTEAM, doc: 'fieldTeam', apply: applyFieldTeamPayload, current: () => fieldTeamPayload(), render: () => { if (!Object.values(ftEditing).some(Boolean)) renderFieldTeam(); } }
     };
 
     // Called once at start-up, before the first render: show whatever this device last saved.
@@ -4468,10 +4405,52 @@ document.addEventListener('visibilitychange', () => {
         else gToast('Could not save. Please try again.', 3500);
     }
     window.addEventListener('beforeunload', (e) => {
-        if (hdEditing || dmmEditing) { e.preventDefault(); e.returnValue = ''; }
+        if (dmmEditing || Object.values(ftEditing).some(Boolean)) { e.preventDefault(); e.returnValue = ''; }
     });
 
-    // ---------- HIRE DESK ----------
+    // ---------- FIELD TEAM DIRECTORY (Hire Desk + Dammam/Riyadh/Jeddah yards) ----------
+    // Single flat roster. Each person has a Name, Job title, Yard, Contact number
+    // and Email — all editable. Grouped into 4 categories for display, each with
+    // its own independent Edit/Add/Delete/Save, and its own colour tab.
+    const FIELD_TEAM = [
+        { n: "Nasir Shaik", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk2@sudhirrentals.com" },
+        { n: "Shuaib Ahmed", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk@sudhirrentals.com" },
+        { n: "Zain Ul Abiddin", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk3@sudhirrentals.com" },
+        { n: "Alfaz Hamad", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk8@sudhirrentals.com" },
+        { n: "Sahil Khan", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk1@sudhirrentals.com" },
+        { n: "Yousuf", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk4@sudhirrentals.com" },
+        { n: "Anas Abdul Rahman", title: "Sales Support", yard: "Hire Desk", p: "", e: "salessupport@sudhirrentals.com" },
+        { n: "Abizar", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk6@sudhirrentals.com" },
+        { n: "Mohammad Azeem", title: "Sales Support Executive", yard: "Hire Desk", p: "", e: "salessupportexecutive@sudhirrentals.com" },
+        { n: "Mohammad Ifaaz", title: "Sales Support", yard: "Hire Desk", p: "", e: "salessupport1@sudhirrentals.com" },
+        { n: "Sawad", title: "Sales Support", yard: "Hire Desk", p: "", e: "salessupport2@sudhirrentals.com" },
+        { n: "Hassan Tahir", title: "Hire Desk Executive", yard: "Hire Desk", p: "", e: "hiredesk5@sudhirrentals.com" },
+        { n: "Althaf", title: "Genset Technician", yard: "Dammam", p: "966581569900", e: "service@sudhirrentals.com" },
+        { n: "Rajan", title: "AWP Technician", yard: "Dammam", p: "966550026247", e: "service@sudhirrentals.com" },
+        { n: "Nakul", title: "Genset Technician", yard: "Dammam", p: "966509993274", e: "service@sudhirrentals.com" },
+        { n: "Ashish", title: "AWP Technician", yard: "Dammam", p: "966554412746", e: "service@sudhirrentals.com" },
+        { n: "Naresh", title: "Transportation", yard: "Dammam", p: "966539599927", e: "service@sudhirrentals.com" },
+        { n: "Kaviraj", title: "Transportation", yard: "Dammam", p: "966509992417", e: "service@sudhirrentals.com" },
+        { n: "Soud", title: "AWP Technician", yard: "Dammam", p: "966565178322", e: "service@sudhirrentals.com" },
+        { n: "Musharraf Hussain", title: "Genset Technician", yard: "Dammam", p: "966565255878", e: "service@sudhirrentals.com" },
+        { n: "Aslam", title: "Genset Technician", yard: "Riyadh", p: "966554402641", e: "serviceriyadh@sudhirrentals.com" },
+        { n: "Marish", title: "AWP Technician", yard: "Riyadh", p: "966503332535", e: "serviceriyadh@sudhirrentals.com" },
+        { n: "Talha", title: "Breakdown Coordinator", yard: "Riyadh", p: "966556665163", e: "serviceriyadh@sudhirrentals.com" },
+        { n: "Sadat", title: "Transportation", yard: "Riyadh", p: "966509992716", e: "serviceriyadh@sudhirrentals.com" },
+        { n: "Rony", title: "Genset Technician", yard: "Riyadh", p: "966530894929", e: "serviceriyadh@sudhirrentals.com" },
+        { n: "Shanto", title: "AWP Technician", yard: "Riyadh", p: "966565130225", e: "serviceriyadh@sudhirrentals.com" },
+        { n: "Abrar", title: "Genset Technician", yard: "Jeddah", p: "966533315751", e: "servicejeddah@sudhirrentals.com" },
+        { n: "Jitin", title: "AWP Technician", yard: "Jeddah", p: "966558821376", e: "servicejeddah@sudhirrentals.com" },
+        { n: "Hamza", title: "Genset Technician", yard: "Jeddah", p: "966509993358", e: "servicejeddah@sudhirrentals.com" },
+        { n: "Shamir", title: "Transportation", yard: "Jeddah", p: "966533326321", e: "servicejeddah@sudhirrentals.com" }
+    ];
+
+    const YARD_DEFS = [
+        { key: 'Hire Desk', label: 'Hire Desk', icon: 'headset', c1: '#4d9bff', c2: '#1f63e8' },
+        { key: 'Dammam',    label: 'Dammam Yard', icon: 'map-pin', c1: '#5eead4', c2: '#0d9488' },
+        { key: 'Riyadh',    label: 'Riyadh Yard', icon: 'map-pin', c1: '#c4b5fd', c2: '#7c3aed' },
+        { key: 'Jeddah',    label: 'Jeddah Yard', icon: 'map-pin', c1: '#f9a8d4', c2: '#db2777' }
+    ];
     const HD_PALETTE = [['#4d9bff','#1f63e8'], ['#a06bf5','#6d3fe0'], ['#2ddbb5','#0a9b8a'], ['#ffb43d','#f08300'], ['#ff5c9a','#e0175f'], ['#7a6cf5','#4f3fd6'], ['#33c3f0','#0a88c9'], ['#c165f0','#8e2fd6']];
     function hdInitials(name) {
         const w = String(name || '').trim().split(/\s+/).filter(Boolean);
@@ -4479,109 +4458,189 @@ document.addEventListener('visibilitychange', () => {
         return (w.length > 1 ? w[0][0] + w[w.length - 1][0] : w[0].slice(0, 2)).toUpperCase();
     }
 
-    function renderHireDesk() {
-        const el = document.getElementById('hiredesk-list');
-        if (!el) return;
-        const list = hdEditing ? hdDraft : HIRE_DESK;
-        el.classList.toggle('hd-list-edit', hdEditing);
-        if (!list.length) {
-            el.innerHTML = `<div class="hd-empty">${hdEditing ? 'No one here yet — press “Add person”.' : 'No team members yet. Press Edit to add people.'}</div>`;
-        } else if (hdEditing) {
-            el.innerHTML = list.map((m, i) => {
-                const [a1, a2] = HD_PALETTE[i % HD_PALETTE.length];
-                return `<div class="hd-row hd-editing" data-i="${i}"><div class="hd-avatar" style="--a1:${a1};--a2:${a2}">${escHtml(hdInitials(m.n))}</div>` +
-                    `<div class="hd-info hd-fields"><input class="hd-input" data-i="${i}" data-f="n" value="${escHtml(m.n)}" placeholder="Full name" autocomplete="off" oninput="hdEdit(${i},'n',this.value)">` +
-                    `<input class="hd-input" data-i="${i}" data-f="e" value="${escHtml(m.e)}" placeholder="email@sudhirrentals.com" inputmode="email" autocapitalize="off" spellcheck="false" autocomplete="off" oninput="hdEdit(${i},'e',this.value)"></div>` +
-                    `<div class="hd-actions"><button class="hd-btn hd-del" title="Remove this person" onclick="hdRemove(${i})"><i data-lucide="trash-2"></i></button></div></div>`;
-            }).join('');
-        } else {
-            el.innerHTML = list.map((m, i) => {
-                const [a1, a2] = HD_PALETTE[i % HD_PALETTE.length];
-                return `<div class="hd-row" data-search="${escHtml((m.n + ' ' + m.e).toLowerCase())}"><div class="hd-avatar" style="--a1:${a1};--a2:${a2}">${escHtml(hdInitials(m.n))}</div><div class="hd-info"><div class="hd-name">${escHtml(m.n)}</div><div class="hd-mail"><i data-lucide="mail"></i><span>${escHtml(m.e)}</span></div></div><div class="hd-actions"><button class="hd-btn" title="Copy email" data-email="${escHtml(m.e)}" onclick="copyText(this.dataset.email)"><i data-lucide="copy"></i></button><a class="hd-btn" href="mailto:${escHtml(m.e)}" title="Send email"><i data-lucide="mail"></i></a></div></div>`;
-            }).join('');
-        }
-        const empty = document.getElementById('hiredesk-empty');
-        if (empty) empty.style.display = 'none';
+    // ---------- Phone helpers: numbers are stored as digits only (966...). Show / copy / dial them with a leading + ----------
+    function hdDigits(p) { return String(p || '').replace(/\D/g, ''); }
+    function hdPhone(p) { const d = hdDigits(p); return d ? '+' + d : ''; }
+    function waIcon(sz) {
+        sz = sz || 16;
+        return '<svg class="wa-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' + sz + '" height="' + sz + '" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+    }
+
+    let ftEditing = {}, ftDraft = {};
+
+    function fieldTeamFor(yard) { return FIELD_TEAM.filter(m => m.yard === yard); }
+
+    function yardSelectHtml(gi, i, current) {
+        return `<select class="hd-input hd-yard-select" data-f="yard" onchange="ftEditField('${gi}',${i},'yard',this.value)">` +
+            YARD_DEFS.map(y => `<option value="${escHtml(y.key)}" ${y.key === current ? 'selected' : ''}>${escHtml(y.label)}</option>`).join('') +
+            `</select>`;
+    }
+
+    function renderFieldTeam() {
+        const root = document.getElementById('field-team-root');
+        if (!root) return;
+        let html = '';
+        YARD_DEFS.forEach(yd => {
+            const editing = !!ftEditing[yd.key];
+            const list = editing ? ftDraft[yd.key] : fieldTeamFor(yd.key);
+            html += `<section class="ft-cat" style="--c1:${yd.c1};--c2:${yd.c2}">` +
+                `<div class="ft-cat-head">` +
+                    `<span class="ft-cat-tab"><i data-lucide="${yd.icon}"></i>${escHtml(yd.label)}</span>` +
+                    `<span class="ft-cat-count">${list.length}</span>` +
+                    (editing ? '' : `<button class="hd-edit ft-cat-edit" onclick="ftStartEdit('${yd.key}')" title="Edit with nasir.owayne"><i data-lucide="pencil"></i><span>Edit</span></button>`) +
+                `</div>`;
+            if (editing) {
+                html += `<div class="edit-bar">` +
+                    `<span class="edit-bar-msg"><i data-lucide="pencil"></i> Editing ${escHtml(yd.label)} — nothing is saved until you press Save.</span>` +
+                    `<span class="edit-bar-actions">` +
+                        `<button class="eb-btn" onclick="ftAdd('${yd.key}')"><i data-lucide="plus"></i> Add person</button>` +
+                        `<button class="eb-btn" onclick="ftCancelEdit('${yd.key}')">Cancel</button>` +
+                        `<button class="eb-btn primary" id="ft-save-btn-${yd.key.replace(/\s+/g,'')}" onclick="ftSave('${yd.key}')"><i data-lucide="check"></i> Save</button>` +
+                    `</span></div>`;
+                html += `<div class="hd-list hd-list-edit">`;
+                if (!list.length) html += `<div class="hd-empty">No one here yet — press "Add person".</div>`;
+                list.forEach((m, i) => {
+                    html += `<div class="hd-row hd-editing hd-row-team" data-yard="${escHtml(yd.key)}" data-i="${i}">` +
+                        `<div class="hd-avatar" style="--a1:${yd.c1};--a2:${yd.c2}">${escHtml(hdInitials(m.n))}</div>` +
+                        `<div class="hd-info hd-fields">` +
+                            `<input class="hd-input" data-f="n" value="${escHtml(m.n)}" placeholder="Full name" autocomplete="off" oninput="ftEditField('${yd.key}',${i},'n',this.value)">` +
+                            `<input class="hd-input" data-f="title" value="${escHtml(m.title)}" placeholder="Job title" autocomplete="off" oninput="ftEditField('${yd.key}',${i},'title',this.value)">` +
+                            `<input class="hd-input" data-f="p" value="${escHtml(m.p)}" placeholder="Contact number" inputmode="tel" autocomplete="off" oninput="ftEditField('${yd.key}',${i},'p',this.value)">` +
+                            `<input class="hd-input" data-f="e" value="${escHtml(m.e)}" placeholder="email@sudhirrentals.com" inputmode="email" autocapitalize="off" spellcheck="false" autocomplete="off" oninput="ftEditField('${yd.key}',${i},'e',this.value)">` +
+                            yardSelectHtml(yd.key, i, m.yard) +
+                        `</div>` +
+                        `<button class="hd-btn ft-row-del" title="Delete" onclick="ftRemove('${yd.key}',${i})"><i data-lucide="trash-2"></i></button>` +
+                    `</div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class="hd-list">`;
+                if (!list.length) html += `<div class="hd-empty">No one in this category yet. Press Edit to add people.</div>`;
+                list.forEach((m, i) => {
+                    const [a1, a2] = HD_PALETTE[i % HD_PALETTE.length];
+                    const search = (m.n + ' ' + m.title + ' ' + m.yard + ' ' + hdPhone(m.p) + ' ' + m.e).toLowerCase();
+                    html += `<div class="hd-row hd-row-team" data-search="${escHtml(search)}">` +
+                        `<div class="hd-avatar" style="--a1:${a1};--a2:${a2}">${escHtml(hdInitials(m.n))}</div>` +
+                        `<div class="hd-info">` +
+                            `<div class="hd-name">${escHtml(m.n)}${m.title ? ` <span class="hd-team-role">${escHtml(m.title)}</span>` : ''}</div>` +
+                            `<div class="hd-team-meta">` +
+                                `<span class="hd-team-loc"><i data-lucide="map-pin"></i>${escHtml(m.yard)}</span>` +
+                                (m.p ? `<span class="hd-team-phone"><i data-lucide="phone"></i>${escHtml(hdPhone(m.p))}</span>` : '') +
+                            `</div>` +
+                            (m.e ? `<div class="hd-mail"><i data-lucide="mail"></i><span>${escHtml(m.e)}</span></div>` : '') +
+                        `</div>` +
+                        `<div class="hd-actions">` +
+                            (m.p
+                                ? `<button class="hd-btn" title="Copy number" onclick="copyText('${hdPhone(m.p)}')"><i data-lucide="copy"></i></button><button class="hd-btn hd-wa" title="WhatsApp" onclick="window.open('https://wa.me/${hdDigits(m.p)}')">${waIcon(16)}</button><a class="hd-btn" href="tel:${hdPhone(m.p)}" title="Call"><i data-lucide="phone"></i></a>`
+                                : `<span class="hd-btn hd-btn-disabled" title="No contact number saved"><i data-lucide="copy"></i></span><span class="hd-btn hd-wa hd-btn-disabled" title="No contact number saved">${waIcon(16)}</span><span class="hd-btn hd-btn-disabled" title="No contact number saved"><i data-lucide="phone"></i></span>`) +
+                            (m.e
+                                ? `<a class="hd-btn" href="mailto:${escHtml(m.e)}" title="Send email"><i data-lucide="mail"></i></a>`
+                                : `<span class="hd-btn hd-btn-disabled" title="No email saved"><i data-lucide="mail"></i></span>`) +
+                        `</div></div>`;
+                });
+                html += `</div>`;
+            }
+            html += `</section>`;
+        });
+        root.innerHTML = html;
         (typeof lucide!=='undefined'&&lucide.createIcons());
     }
 
-    function filterHireDesk(q) {
-        if (hdEditing) return;
-        q = (q||'').toLowerCase().trim();
-        let shown = 0;
-        const rows = document.querySelectorAll('#hiredesk-list .hd-row');
-        rows.forEach(el => {
-            const ok = el.dataset.search.includes(q);
-            el.style.display = ok ? '' : 'none';
-            if (ok) shown++;
+    function filterFieldTeam(q) {
+        q = (q || '').toLowerCase().trim();
+        document.querySelectorAll('#field-team-root .ft-cat').forEach(cat => {
+            if (cat.querySelector('.hd-list-edit')) return; // skip categories being edited
+            let any = false;
+            cat.querySelectorAll('.hd-row-team[data-search]').forEach(el => {
+                const ok = el.dataset.search.includes(q);
+                el.style.display = ok ? '' : 'none';
+                if (ok) any = true;
+            });
+            const empty = cat.querySelector('.hd-empty');
+            if (empty) empty.style.display = (cat.querySelectorAll('.hd-row-team[data-search]').length && !any) ? '' : 'none';
         });
-        const empty = document.getElementById('hiredesk-empty');
-        if (empty) empty.style.display = (rows.length && !shown) ? '' : 'none';
     }
 
-    function setHdEditUi(on) {
-        document.getElementById('hd-edit-bar').classList.toggle('hidden', !on);
-        document.getElementById('hd-edit-btn').classList.toggle('hidden', on);
-        const s = document.getElementById('hiredesk-search');
-        if (s) { s.value = ''; s.disabled = on; }
-    }
-    function hdStartEdit() {
+    function ftStartEdit(yardKey) {
         requireEditPassword(() => {
-            hdDraft = HIRE_DESK.map(m => ({ n: m.n, e: m.e }));
-            hdEditing = true;
-            setHdEditUi(true);
-            renderHireDesk();
+            ftDraft[yardKey] = fieldTeamFor(yardKey).map(m => ({ ...m }));
+            ftEditing[yardKey] = true;
+            renderFieldTeam();
         });
     }
-    function hdCancelEdit() {
-        const changed = JSON.stringify(hdDraft) !== JSON.stringify(HIRE_DESK);
-        if (changed && !confirm('Discard your changes?')) return;
-        hdEditing = false; hdDraft = [];
-        setHdEditUi(false);
-        renderHireDesk();
+    function ftCancelEdit(yardKey) {
+        delete ftEditing[yardKey];
+        delete ftDraft[yardKey];
+        renderFieldTeam();
     }
-    function hdEdit(i, field, val) {
-        if (!hdDraft[i]) return;
-        hdDraft[i][field] = val;
-        const row = document.querySelector(`#hiredesk-list .hd-row[data-i="${i}"]`);
-        if (!row) return;
-        const inp = row.querySelector(`[data-f="${field}"]`);
-        if (inp) inp.classList.remove('hd-invalid');
-        if (field === 'n') row.querySelector('.hd-avatar').textContent = hdInitials(val);
+    function ftEditField(yardKey, i, field, val) {
+        if (!ftDraft[yardKey] || !ftDraft[yardKey][i]) return;
+        ftDraft[yardKey][i][field] = val;
+        const rowEl = document.querySelector(`#field-team-root [data-yard="${yardKey}"][data-i="${i}"] [data-f="${field}"]`);
+        if (rowEl) rowEl.classList.remove('hd-invalid');
     }
-    function hdAdd() {
-        hdDraft.push({ n: '', e: '' });
-        renderHireDesk();
-        const rows = document.querySelectorAll('#hiredesk-list .hd-row');
-        const last = rows[rows.length - 1];
-        if (last) { last.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = last.querySelector('input'); if (f) f.focus(); }
+    function ftAdd(yardKey) {
+        if (!ftDraft[yardKey]) ftDraft[yardKey] = [];
+        ftDraft[yardKey].push({ n: '', title: '', yard: yardKey, p: '', e: '' });
+        renderFieldTeam();
+        const cats = document.querySelectorAll('#field-team-root .ft-cat');
+        const idx = YARD_DEFS.findIndex(y => y.key === yardKey);
+        const cat = cats[idx];
+        if (cat) {
+            const rows = cat.querySelectorAll('.hd-row.hd-editing');
+            const last = rows[rows.length - 1];
+            if (last) { last.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = last.querySelector('input'); if (f) f.focus(); }
+        }
     }
-    function hdRemove(i) { hdDraft.splice(i, 1); renderHireDesk(); }
-    async function hdSave() {
+    function ftRemove(yardKey, i) {
+        if (!ftDraft[yardKey]) return;
+        ftDraft[yardKey].splice(i, 1);
+        renderFieldTeam();
+    }
+    async function ftSave(yardKey) {
         const emailRe = /^[^\s@'"<>]+@[^\s@'"<>]+\.[^\s@'"<>]+$/;
+        const phoneRe = /^\d{7,15}$/;
+        const cleanPhone = (v) => (v || '').trim().replace(/[\s\-()]/g, '').replace(/^\+/, '');
+        const draft = ftDraft[yardKey] || [];
         let firstBad = null;
-        document.querySelectorAll('#hiredesk-list .hd-invalid').forEach(x => x.classList.remove('hd-invalid'));
-        hdDraft.forEach((m, i) => {
-            const n = m.n.trim(), e = m.e.trim();
-            if (!n && !e) return;
-            [['n', !!n], ['e', emailRe.test(e)]].forEach(([f, ok]) => {
+        document.querySelectorAll('#field-team-root .hd-invalid').forEach(x => x.classList.remove('hd-invalid'));
+        draft.forEach((m, i) => {
+            const n = (m.n || '').trim(), p = cleanPhone(m.p), e = (m.e || '').trim();
+            [['n', !!n], ['p', !p || phoneRe.test(p)], ['e', !e || emailRe.test(e)]].forEach(([f, ok]) => {
                 if (ok) return;
-                const inp = document.querySelector(`#hiredesk-list [data-i="${i}"][data-f="${f}"]`);
-                if (inp) { inp.classList.add('hd-invalid'); if (!firstBad) firstBad = inp; }
+                const el = document.querySelector(`#field-team-root [data-yard="${yardKey}"][data-i="${i}"] [data-f="${f}"]`);
+                if (el) { el.classList.add('hd-invalid'); if (!firstBad) firstBad = el; }
             });
         });
-        if (firstBad) { firstBad.focus(); gToast('Please fix the highlighted fields (name + valid email)', 3000); return; }
-        const list = hdDraft.map(m => ({ n: m.n.trim().replace(/\s+/g, ' '), e: m.e.trim() })).filter(m => m.n);
-        const btn = document.getElementById('hd-save-btn');
-        btn.disabled = true;
-        const mode = await persistData('hiredesk', hireDeskPayload(list));
-        btn.disabled = false;
+        if (firstBad) { firstBad.focus(); gToast('Please fix the highlighted fields (name, valid phone + email)', 3000); return; }
+        const cleaned = draft.map(m => ({
+            n: (m.n || '').trim().replace(/\s+/g, ' '),
+            title: (m.title || '').trim(),
+            yard: m.yard || yardKey,
+            p: cleanPhone(m.p),
+            e: (m.e || '').trim()
+        })).filter(m => m.n);
+        const btnId = `ft-save-btn-${yardKey.replace(/\s+/g,'')}`;
+        const btn = document.getElementById(btnId);
+        if (btn) btn.disabled = true;
+        const nextFieldTeam = FIELD_TEAM.filter(m => m.yard !== yardKey).concat(cleaned);
+        const mode = await persistData('fieldTeam', fieldTeamPayload(nextFieldTeam));
+        if (btn) btn.disabled = false;
         if (mode === 'failed') { saveResultToast(mode); return; }
-        HIRE_DESK.splice(0, HIRE_DESK.length, ...list);
-        hdEditing = false; hdDraft = [];
-        setHdEditUi(false);
-        renderHireDesk();
+        FIELD_TEAM.splice(0, FIELD_TEAM.length, ...nextFieldTeam);
+        delete ftEditing[yardKey];
+        delete ftDraft[yardKey];
+        renderFieldTeam();
         saveResultToast(mode);
+    }
+
+    const fieldTeamPayload = (list) => ({ list: (list || FIELD_TEAM).map(m => ({ n: m.n, title: m.title, yard: m.yard, p: m.p, e: m.e })) });
+    function applyFieldTeamPayload(p) {
+        if (!p || !Array.isArray(p.list)) return false;
+        FIELD_TEAM.splice(0, FIELD_TEAM.length, ...p.list.filter(x => x && x.n).map(x => ({
+            n: String(x.n), title: String(x.title || ''), yard: String(x.yard || 'Hire Desk'), p: String(x.p || ''), e: String(x.e || '')
+        })));
+        return true;
     }
 
     // ---------- TRANSPORT RATES ----------
@@ -4653,13 +4712,6 @@ document.addEventListener('visibilitychange', () => {
         setDmmEditUi(false);
         renderDmmTransport();
         saveResultToast(mode);
-    }
-
-    function filterTeam(q) {
-        q = (q||'').toLowerCase();
-        document.querySelectorAll('#contact-list .item-card').forEach(el => {
-            el.style.display = el.dataset.search.includes(q) ? '' : 'none';
-        });
     }
 
     /* ===================== RESERVATION TRACKER (Firebase-backed, private per user) =====================
@@ -5632,6 +5684,7 @@ document.addEventListener('visibilitychange', () => {
 
     let companyListPopulated = false;
     function applyTabStyles(tab) {
+        if (!document.getElementById('tab-'+tab)) tab = 'home';
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
         document.getElementById('tab-'+tab).classList.remove('hidden');
         document.getElementById('main-content').dataset.tab = tab;
