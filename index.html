@@ -1067,11 +1067,11 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #offhire-wrap #note .bottom-box.bb-right { width: 321px; flex: none; }
 #offhire-wrap #note .bottom-box .title { text-decoration: underline; font-weight: 700; height: 18px; line-height: 18px; padding: 0 0 0 7px; margin: 0; border-bottom: 1px dotted #555; }
 #offhire-wrap #note .bottom-box .kv { display: flex; margin: 0; min-height: 21px; align-items: center; }
-#offhire-wrap #note .bottom-box .kv .k { width: 189px; padding-left: 11px; font-weight: 700; border-right: 1px dotted #777; align-self: stretch; display: flex; align-items: center; }
+#offhire-wrap #note .bottom-box .kv .k { width: 189px; padding-left: 11px; font-weight: 700; border-right: 1px dotted #777; align-self: stretch; display: block; line-height: 21px; }
 #offhire-wrap #note .bottom-box .kv .v { flex: 1; padding-left: 9px; font-weight: 400; }
 #offhire-wrap #note .bottom-box.bb-right .kv .k { width: 162px; }
 #offhire-wrap #note .bottom-box .kv.remarks { flex: 1; align-items: flex-start; }
-#offhire-wrap #note .bottom-box .kv.remarks .k { width: 78px; align-items: flex-start; padding-top: 4px; }
+#offhire-wrap #note .bottom-box .kv.remarks .k { width: 78px; line-height: normal; padding-top: 4px; }
 #offhire-wrap #note .bottom-box.bb-right .kv.remarks .k { width: 65px; }
 #offhire-wrap #note .bottom-box .kv.remarks .v { padding-top: 4px; align-self: stretch; }
 #offhire-wrap #note .delivery-row { display: flex; border: 1px solid #1a1a1a; border-radius: 6px; margin: 0 -9px 0 1px; width: 729px; height: 43px; font-size: 10.67px; overflow: hidden; }
@@ -1082,11 +1082,13 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #offhire-wrap #note .delivery-row div:nth-child(4) { width: 186px; }
 #offhire-wrap #note .delivery-row div:nth-child(5) { flex: 1; border-right: none; }
 #offhire-wrap #note .footer { margin: 0 0 0 3px; height: 16px; }
-#offhire-wrap #note .footer .row1 { display: grid; grid-template-columns: 205px 1fr 242px; align-items: center; height: 16px; margin-top: 2px; font-size: 10.67px; font-weight: 700; color: #696969; }
+#offhire-wrap #note .footer .row1 { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 16px; margin-top: 2px; font-size: 10.67px; font-weight: 700; color: #696969; }
 #offhire-wrap #note .footer .row1 span:nth-child(2) { text-align: center; }
+#offhire-wrap #note .footer .row1 span { white-space: nowrap; }
 #offhire-wrap #note .footer .row1 span:nth-child(3) { text-align: right; color: #404040; }
 #offhire-wrap #note .strip { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; line-height: 22px; background: transparent; color: #fff; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight: 400; font-size: 15px; letter-spacing: 0; margin: 0; padding: 0; }
 /* ---- Fixed A4 pages: nothing inside a page may shrink or spill; extra items flow to a new page ---- */
+#offhire-wrap #note, #offhire-wrap #note * { letter-spacing: 0 !important; }   /* fractional spacing garbles text in image export */
 #offhire-wrap #note .note-page > * { flex-shrink: 0; }
 #offhire-wrap #note .note-page > .body-spacer { flex: 1 1 auto; flex-shrink: 1; }
 #offhire-wrap #note .note-page.t-compact table.items > tbody > tr:not(.desc-row) > td { height: 22px; font-size: 10px; }
@@ -8237,6 +8239,7 @@ function renderNote(){
   ohRenderDirty = !visible;                       // hidden tab can't be measured; redo when shown
   const layout = visible ? ohLayout(v, items) : { tier: '', pages: [items.map((_, i) => i)] };
   note.innerHTML = layout.pages.map((idxs, p) => ohPageHTML(v, items, idxs, p, layout.pages.length, layout.tier)).join('');
+  ohQueueBuild();
 }
 
 let ohRaf = null;
@@ -8256,27 +8259,77 @@ function clearAll(){
   renderNote();
 }
 
-function ohCapturePages(){
-  renderNote();
-  const pages = [...document.querySelectorAll('#note .note-page')];
-  return Promise.all(pages.map(pg => html2canvas(pg, { scale: 2, backgroundColor: '#ffffff' })));
-}
+// ---- Image export / share ----
+// Images are rendered in the background after every edit so that the Share tap can call
+// navigator.share() immediately (mobile browsers reject it if it comes after a slow async step).
+const OH_WA_LABEL = 'Share via WhatsApp';
+let ohShare = { html: null, files: null, promise: null, promiseHtml: null };
+let ohBuildTimer = null;
+
 function ohFileName(i, total){
   const base = document.getElementById('noteNo').value || 'offhire_note';
   return base + (total > 1 ? '_p' + (i + 1) : '') + '.png';
 }
 
-function downloadPNG(){
-  ohCapturePages().then(canvases => {
-    canvases.forEach((canvas, i) => {
-      setTimeout(() => {
-        const link = document.createElement('a');
-        link.download = ohFileName(i, canvases.length);
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      }, i * 300);
-    });
+function ohBuildFiles(){
+  const note = document.getElementById('note');
+  const html = note.innerHTML;
+  if (ohShare.files && ohShare.html === html) return Promise.resolve(ohShare.files);
+  if (ohShare.promise && ohShare.promiseHtml === html) return ohShare.promise;
+  if (typeof html2canvas === 'undefined') return Promise.reject(new Error('Image library not loaded (check internet connection)'));
+
+  // render from a private copy pinned to the top-left, so the phone layout / scroll position can't crop or shift it
+  const stage = document.createElement('div');
+  stage.style.cssText = 'position:fixed;left:0;top:0;width:794px;z-index:-1;pointer-events:none;';
+  stage.innerHTML = '<div id="offhire-wrap" style="margin:0;padding:0;width:794px;overflow:visible;background:#fff;"><div id="note" style="display:block;width:794px;">' + html + '</div></div>';
+  document.body.appendChild(stage);
+
+  const p = (async () => {
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const pages = [...stage.querySelectorAll('.note-page')];
+      const files = [];
+      for (let i = 0; i < pages.length; i++) {
+        const canvas = await html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false,
+                                                     scrollX: 0, scrollY: 0, windowWidth: 794 });
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        canvas.width = canvas.height = 0;
+        if (!blob) throw new Error('Could not create image');
+        files.push(new File([blob], ohFileName(i, pages.length), { type: 'image/png' }));
+      }
+      ohShare.files = files; ohShare.html = html;
+      return files;
+    } finally {
+      stage.remove();
+      if (ohShare.promise === p) ohShare.promise = null;
+    }
+  })();
+  ohShare.promise = p; ohShare.promiseHtml = html;
+  return p;
+}
+
+function ohQueueBuild(){
+  clearTimeout(ohBuildTimer);
+  ohBuildTimer = setTimeout(() => {
+    const note = document.getElementById('note');
+    if (note && note.offsetParent !== null) ohBuildFiles().catch(() => {});
+  }, 700);
+}
+
+function ohSaveFiles(files){
+  files.forEach((file, i) => {
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.download = file.name;
+      link.href = URL.createObjectURL(file);
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+    }, i * 300);
   });
+}
+
+function downloadPNG(){
+  ohBuildFiles().then(ohSaveFiles).catch(err => alert('Could not create the image: ' + (err && err.message || err)));
 }
 
 function buildShareText(){
@@ -8292,27 +8345,35 @@ function buildShareText(){
   return lines.join('\n');
 }
 
-function fallbackWhatsAppShare(blobs, shareText){
-  blobs.forEach((blob, i) => {
-    const link = document.createElement('a');
-    link.download = ohFileName(i, blobs.length);
-    link.href = URL.createObjectURL(blob);
-    setTimeout(() => link.click(), i * 300);
-  });
-  window.open('https://wa.me/?text=' + encodeURIComponent(shareText + '\n\n(Image downloaded — attach it to this chat)'), '_blank');
+function ohWaFallback(files, text){
+  ohSaveFiles(files);
+  const url = 'https://wa.me/?text=' + encodeURIComponent(text + '\n\n(Image saved to your device - attach it to this chat)');
+  if (!window.open(url, '_blank')) location.href = url;
+}
+
+function ohDoShare(files, text, btn, waited){
+  btn.disabled = false; btn.textContent = OH_WA_LABEL;
+  const data = { files, title: 'Off Hire Note', text };
+  if (navigator.canShare && navigator.canShare({ files })) {
+    navigator.share(data).catch(err => {
+      if (!err || err.name === 'AbortError') return;
+      if (err.name === 'NotAllowedError' && waited) { btn.textContent = 'Ready - tap again to share'; return; }
+      ohWaFallback(files, text);
+    });
+  } else {
+    ohWaFallback(files, text);
+  }
 }
 
 function shareWhatsApp(){
-  ohCapturePages().then(canvases => Promise.all(canvases.map(c => new Promise(r => c.toBlob(r, 'image/png'))))).then(blobs => {
-    const files = blobs.map((b, i) => new File([b], ohFileName(i, blobs.length), { type: 'image/png' }));
-    const shareText = buildShareText();
-    if (navigator.canShare && navigator.canShare({ files })) {
-      navigator.share({ files, title: 'Off Hire Note', text: shareText }).catch(err => {
-        if (err && err.name !== 'AbortError') fallbackWhatsAppShare(blobs, shareText);
-      });
-    } else {
-      fallbackWhatsAppShare(blobs, shareText);
-    }
+  const btn = document.querySelector('#offhire-wrap .btn-whatsapp');
+  const text = buildShareText();
+  const html = document.getElementById('note').innerHTML;
+  if (ohShare.files && ohShare.html === html) { ohDoShare(ohShare.files, text, btn, false); return; }   // instant path
+  btn.disabled = true; btn.textContent = 'Preparing image...';
+  ohBuildFiles().then(files => ohDoShare(files, text, btn, true)).catch(err => {
+    btn.disabled = false; btn.textContent = OH_WA_LABEL;
+    alert('Could not create the image: ' + (err && err.message || err));
   });
 }
 
