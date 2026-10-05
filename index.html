@@ -8398,7 +8398,7 @@ function ohBuildFiles(manual){
   const note = document.getElementById('note');
   const html = note.innerHTML;
   if (ohShare.files && ohShare.html === html) return Promise.resolve(ohShare.files);
-  if (ohShare.promise && ohShare.promiseHtml === html) return ohShare.promise;
+  if (ohShare.promise && ohShare.promiseHtml === html) { if (manual) ohProgress(Math.max(ohPct, 5), 'Creating image...'); return ohShare.promise; }
   if (typeof html2canvas === 'undefined') return Promise.reject(new Error('Image library not loaded (check internet connection)'));
 
   // render from a private copy pinned to the top-left, so the phone layout / scroll position can't crop or shift it
@@ -8411,6 +8411,7 @@ function ohBuildFiles(manual){
   ohProgress(2, 'Preparing...');
   const p = (async () => {
     try {
+      await ohYield();
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
       const pages = [...stage.querySelectorAll('.note-page')];
       const files = [];
@@ -8418,9 +8419,11 @@ function ohBuildFiles(manual){
         if (ohCancel) throw new Error('Cancelled');
         const base = 5 + (i / pages.length) * 90, span = 90 / pages.length;
         ohProgress(base, pages.length > 1 ? 'Creating page ' + (i + 1) + ' of ' + pages.length + '...' : 'Creating image...');
+        await ohYield();
         const stopCreep = ohCreep(base, base + span * 0.9);
         let canvas;
         try { canvas = await html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false, imageTimeout: 8000,
+                                                     onclone: () => { ohProgress(base + span * 0.5); return ohYield(); },
                                                      ignoreElements: el => el.nodeType === 1 && !el.contains(pages[i]) && !pages[i].contains(el) && !/^(HEAD|STYLE|LINK|META|TITLE|SCRIPT)$/.test(el.tagName),
                                                      scrollX: 0, scrollY: 0, windowWidth: 794 }); } finally { stopCreep(); }
         if (ohCancel) throw new Error('Cancelled');
@@ -8466,6 +8469,8 @@ function ohQueueBuild(){
 }
 
 // ---- Progress chip (floats over every tab), cancel, and 5-minute auto-clear ----
+// let the browser actually paint the bar before the heavy (blocking) step
+const ohYield = () => new Promise(r => { let d = false; const go = () => { if (!d) { d = true; r(); } }; requestAnimationFrame(() => setTimeout(go, 30)); setTimeout(go, 150); });
 let ohChipOn = false, ohCancel = false, ohExpiryTimer = null, ohPct = 0;
 const OH_EXPIRY_MS = 5 * 60 * 1000;
 (function(){
