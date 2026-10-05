@@ -8393,7 +8393,8 @@ function ohFileName(i, total){
   return base + (total > 1 ? '_p' + (i + 1) : '') + '.png';
 }
 
-function ohBuildFiles(){
+function ohBuildFiles(manual){
+  if (manual) ohChipOn = true;
   const note = document.getElementById('note');
   const html = note.innerHTML;
   if (ohShare.files && ohShare.html === html) return Promise.resolve(ohShare.files);
@@ -8406,28 +8407,42 @@ function ohBuildFiles(){
   stage.innerHTML = '<div id="offhire-wrap" style="margin:0;padding:0;width:794px;overflow:visible;background:#fff;"><div id="note" style="display:block;width:794px;">' + html + '</div></div>';
   document.body.appendChild(stage);
 
+  ohCancel = false; clearTimeout(ohExpiryTimer);
+  ohProgress(2, 'Preparing...');
   const p = (async () => {
     try {
       if (document.fonts && document.fonts.ready) await document.fonts.ready;
       const pages = [...stage.querySelectorAll('.note-page')];
       const files = [];
       for (let i = 0; i < pages.length; i++) {
-        const canvas = await html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false,
-                                                     scrollX: 0, scrollY: 0, windowWidth: 794 });
+        if (ohCancel) throw new Error('Cancelled');
+        const base = 5 + (i / pages.length) * 90, span = 90 / pages.length;
+        ohProgress(base, pages.length > 1 ? 'Creating page ' + (i + 1) + ' of ' + pages.length + '...' : 'Creating image...');
+        const stopCreep = ohCreep(base, base + span * 0.9);
+        let canvas;
+        try { canvas = await html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false, imageTimeout: 8000,
+                                                     ignoreElements: el => el.nodeType === 1 && !el.contains(pages[i]) && !pages[i].contains(el) && !/^(HEAD|STYLE|LINK|META|TITLE|SCRIPT)$/.test(el.tagName),
+                                                     scrollX: 0, scrollY: 0, windowWidth: 794 }); } finally { stopCreep(); }
+        if (ohCancel) throw new Error('Cancelled');
+        ohProgress(base + span * 0.95);
         const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
         canvas.width = canvas.height = 0;
         if (!blob) throw new Error('Could not create image');
         files.push(new File([blob], ohFileName(i, pages.length), { type: 'image/png' }));
       }
       ohShare.files = files; ohShare.html = html;
+      ohProgress(100, 'Ready');
+      ohArmExpiry();
       return files;
     } finally {
       stage.remove();
       if (ohShare.promise === p) ohShare.promise = null;
+      if (!ohShare.files || ohShare.html !== html) ohChipHide();
     }
   })();
+  const guarded = Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('Image creation timed out - try again')), 45000))]);
   ohShare.promise = p; ohShare.promiseHtml = html;
-  return p;
+  return guarded;
 }
 
 // Pre-renders the note to PNG so WhatsApp sharing is instant. This is the heavy part
@@ -8444,10 +8459,72 @@ function ohQueueBuild(){
   ohBuildTimer = setTimeout(() => {
     const note = document.getElementById('note');
     if (!note || note.offsetParent === null || !ohHasContent()) return;
+    if (ohShare.promise) { ohQueueBuild(); return; }   // a build is already running - retry later, never overlap
     const run = () => ohBuildFiles().catch(() => {});
     if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 4000 }); else run();
-  }, 2500);
+  }, 4000);
 }
+
+// ---- Progress chip (floats over every tab), cancel, and 5-minute auto-clear ----
+let ohChipOn = false, ohCancel = false, ohExpiryTimer = null, ohPct = 0;
+const OH_EXPIRY_MS = 5 * 60 * 1000;
+(function(){
+  const st = document.createElement('style');
+  st.textContent = '#ohChip{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:6000;background:#0f172a;color:#fff;border-radius:14px;padding:10px 14px;min-width:250px;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.35);font:600 13px "Segoe UI",Arial,sans-serif;display:none}' +
+    '#ohChip.show{display:block}#ohChip .r{display:flex;align-items:center;gap:10px;justify-content:space-between}' +
+    '#ohChip .bar{height:6px;background:rgba(255,255,255,.2);border-radius:4px;margin-top:8px;overflow:hidden}#ohChip .bar i{display:block;height:100%;width:0;background:#38bdf8;transition:width .25s}' +
+    '#ohChip button{border:0;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;margin-left:6px}' +
+    '#ohChip .x{background:transparent;color:#cbd5e1;font-size:16px;padding:0 4px}#ohChip .dl{background:#2e7d32;color:#fff}#ohChip .wa{background:#25D366;color:#fff}#ohChip .note{font-weight:400;font-size:11px;color:#94a3b8;margin-top:6px}';
+  document.head.appendChild(st);
+  const c = document.createElement('div'); c.id = 'ohChip';
+  c.innerHTML = '<div class="r"><span class="t"></span><span class="b"></span></div><div class="bar"><i></i></div><div class="note"></div>';
+  document.body.appendChild(c);
+})();
+function ohChipEl(){ return document.getElementById('ohChip'); }
+function ohChipHide(){ ohChipOn = false; const c = ohChipEl(); if (c) c.classList.remove('show'); }
+function ohProgress(pct, label){
+  ohPct = Math.max(0, Math.min(100, Math.round(pct)));
+  const btn = document.querySelector('#offhire-wrap .btn-whatsapp');
+  if (btn && btn.disabled && ohPct < 100) btn.textContent = 'Preparing image... ' + ohPct + '%';
+  if (!ohChipOn) return;
+  const c = ohChipEl(); if (!c) return;
+  c.classList.add('show');
+  if (label) c.querySelector('.t').textContent = label + (ohPct < 100 ? '  ' + ohPct + '%' : '');
+  c.querySelector('.bar i').style.width = ohPct + '%';
+  if (ohPct < 100) {
+    c.querySelector('.b').innerHTML = '<button class="x" title="Cancel" onclick="ohCancelBuild()">&times;</button>';
+    c.querySelector('.note').textContent = 'You can switch to other tabs - this keeps running.';
+  }
+}
+// html2canvas gives no progress events, so ease the bar toward the end of the current page's share
+function ohCreep(from, to){
+  let cur = from;
+  const t = setInterval(() => { cur += (to - cur) * 0.07; ohProgress(cur); }, 200);
+  return () => clearInterval(t);
+}
+function ohCancelBuild(){ ohCancel = true; ohChipHide(); }
+function ohShowReady(){
+  const c = ohChipEl(); if (!c || !ohShare.files) return;
+  ohChipOn = true; c.classList.add('show');
+  c.querySelector('.t').textContent = 'Off Hire image ready';
+  c.querySelector('.bar i').style.width = '100%';
+  c.querySelector('.b').innerHTML = '<button class="dl" onclick="ohChipDownload()">Download</button><button class="wa" onclick="ohChipShare()">WhatsApp</button><button class="x" title="Close" onclick="ohChipHide()">&times;</button>';
+  c.querySelector('.note').textContent = 'Kept for 5 minutes, then cleared automatically.';
+}
+function ohChipDownload(){ if (ohShare.files) ohSaveFiles(ohShare.files); }
+function ohChipShare(){
+  if (!ohShare.files) return;
+  ohDoShare(ohShare.files, buildShareText(), document.querySelector('#offhire-wrap .btn-whatsapp'), false);
+}
+function ohArmExpiry(){
+  clearTimeout(ohExpiryTimer);
+  ohExpiryTimer = setTimeout(() => {
+    ohShare.files = null; ohShare.html = null;     // frees the PNGs; rebuilt on demand
+    ohChipHide();
+    if (typeof gToast === 'function') gToast('Off Hire image cleared (5 min)');
+  }, OH_EXPIRY_MS);
+}
+function ohTabVisible(){ const n = document.getElementById('note'); return !!(n && n.offsetParent !== null); }
 
 function ohSaveFiles(files){
   files.forEach((file, i) => {
@@ -8462,7 +8539,9 @@ function ohSaveFiles(files){
 }
 
 function downloadPNG(){
-  ohBuildFiles().then(ohSaveFiles).catch(err => alert('Could not create the image: ' + (err && err.message || err)));
+  ohBuildFiles(true).then(files => { ohSaveFiles(files); ohShowReady(); }).catch(err => {
+    ohChipHide(); if (err && err.message !== 'Cancelled') alert('Could not create the image: ' + (err.message || err));
+  });
 }
 
 function buildShareText(){
@@ -8503,10 +8582,13 @@ function shareWhatsApp(){
   const text = buildShareText();
   const html = document.getElementById('note').innerHTML;
   if (ohShare.files && ohShare.html === html) { ohDoShare(ohShare.files, text, btn, false); return; }   // instant path
-  btn.disabled = true; btn.textContent = 'Preparing image...';
-  ohBuildFiles().then(files => ohDoShare(files, text, btn, true)).catch(err => {
-    btn.disabled = false; btn.textContent = OH_WA_LABEL;
-    alert('Could not create the image: ' + (err && err.message || err));
+  btn.disabled = true; btn.textContent = 'Preparing image... 0%';
+  ohBuildFiles(true).then(files => {
+    if (ohTabVisible()) { ohChipHide(); ohDoShare(files, text, btn, true); }          // still on this tab: share straight away
+    else { btn.disabled = false; btn.textContent = OH_WA_LABEL; ohShowReady(); }   // user left: show chip, share needs a tap
+  }).catch(err => {
+    btn.disabled = false; btn.textContent = OH_WA_LABEL; ohChipHide();
+    if (!(err && err.message === 'Cancelled')) alert('Could not create the image: ' + (err && err.message || err));
   });
 }
 
