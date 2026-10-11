@@ -7891,6 +7891,9 @@ window.addEventListener('DOMContentLoaded', () => {
         sel.value = typeKey;
         cocRenderFields();
         const machine = COC_MACHINES[typeKey];
+        data = Object.assign({}, data);
+        // Capacity machines (forklift, crane...) often store the capacity under "AWP Height"
+        if (machine.fields.includes('capacity') && !data.capacity && data.workingHeight) data.capacity = data.workingHeight;
         const filled = [], missing = [];
         machine.fields.forEach(f => {
             const el = document.getElementById('coc-f-' + f);
