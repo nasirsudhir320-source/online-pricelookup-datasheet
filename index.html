@@ -2577,6 +2577,31 @@ a.doc-qr-line:active { background: #d4f1df; }
 .side-art span.side-lift { position: absolute; left: 14px; bottom: 12px; width: 150px; aspect-ratio: 272 / 182; background: var(--v2030) center / contain no-repeat; filter: brightness(0) invert(1); opacity: .14; }
 @media (max-width: 900px) { .hero-art .hero-logo { width: 150px; opacity: .6; } }
 @media (max-width: 640px) { .hero-art .hero-logo { width: 84px; right: 10px; top: 10px; opacity: .3; } }
+
+/* ---- v16: top search bar replaces name plate on Rates / Specs / Photos ---- */
+.tab-search { position: relative; z-index: 1; display: flex; align-items: center; gap: 9px; width: 100%; height: 46px; padding: 0 14px; margin: 0 0 14px; background: #fff; border: 1px solid #d4e3fa; border-radius: 12px; box-shadow: 0 6px 16px -10px rgba(20, 80, 200, 0.45); }
+.tab-search:focus-within { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.tab-search svg { width: 17px; height: 17px; flex: none; color: #2563eb; }
+.tab-search input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; box-shadow: none; font-size: 14px; }
+.tab-search input:focus { border: 0; box-shadow: none; }
+/* ---- v16: Teams Connect category tabs (mobile only) ---- */
+.ft-tabs { display: none; }
+@media (max-width: 899px) {
+    .ft-tabs { display: flex; gap: 8px; overflow-x: auto; margin: 0 0 12px; padding: 2px 2px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .ft-tabs::-webkit-scrollbar { display: none; }
+    .ft-tab { flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 38px; padding: 0 14px; border: 1px solid #dbe6f8; border-radius: 999px; background: #fff; color: #3a4c6d; font-family: inherit; font-size: 12.5px; font-weight: 800; white-space: nowrap; cursor: pointer; }
+    .ft-tab svg { width: 14px; height: 14px; }
+    .ft-tab em { font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #eef3fb; color: #3a4c6d; }
+    .ft-tab.active { color: #fff; border-color: transparent; background: linear-gradient(120deg, var(--c1), var(--c2)); box-shadow: 0 6px 14px -6px var(--c2); }
+    .ft-tab.active em { background: rgba(255,255,255,.25); color: #fff; }
+    #field-team-root .ft-cat:not(.ft-active) { display: none; }
+    #field-team-root .ft-cat { margin-top: 0; }
+}
+/* ---- v16: swipe between Home panes (mobile) ---- */
+@keyframes hsSlideL { from { opacity: .4; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes hsSlideR { from { opacity: .4; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+#home-top.hs-anim-l { animation: hsSlideL .22s ease-out; }
+#home-top.hs-anim-r { animation: hsSlideR .22s ease-out; }
 </style>
 <style id="nav-icons-v2">
 /* ============================================================
@@ -2638,6 +2663,141 @@ svg.pi .d { transition: fill-opacity .2s ease; }
     .side-item.active .side-ico svg { color: var(--c2); stroke-width: 2.1; }
 }
 @media (prefers-reduced-motion: reduce) { svg.pi .d, .side-ico, .side-ico svg { transition: none; } }
+</style>
+
+<style id="v15-overrides">
+/* ===== Fix: the More sheet must sit above the Offhire Generate/Download/Share bar ===== */
+@media (max-width: 899px) {
+    #mobile-more-backdrop { z-index: 2050 !important; }
+    #mobile-more-sheet { z-index: 2150 !important; }
+    body:has(#mobile-more-sheet.open) .oh-mobile-bar,
+    body:has(#mobile-more-sheet.open) .scroll-top-btn { visibility: hidden; }
+}
+
+/* ===== Home: Photos search panel ===== */
+.search-hero-panel.tint-pink { --hero-bg: linear-gradient(120deg, #fdeaf2, #fef5f9); --hero-border: #f8d3e3; --hero-icon-bg: linear-gradient(135deg, #f9c4da, #f08fb5); --hero-icon-fg: #c2185b; --hero-title: #5a1136; --hero-desc: #9a5a77; --hero-input-border: #f8dbe8; --hero-btn: linear-gradient(135deg, #e5407f, #c2185b); --hero-btn-shadow: 0 10px 22px rgba(194,24,91,0.26); }
+.home-side-stack .tint-pink .search-hero-icon { background: linear-gradient(145deg, #f06a9f, #c2185b); }
+#home-photo-results:not(:empty) { margin-top: 10px; }
+.ph-folders { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.ph-folder { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 7px 11px; border: 1px solid #f3c5d9; border-radius: 999px; background: #fff; color: #7a1a47; font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.ph-folder svg { width: 14px; height: 14px; flex: none; color: #c2185b; }
+.ph-folder span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ph-folder em { font-style: normal; font-weight: 700; font-size: 10.5px; color: #fff; background: #c2185b; border-radius: 99px; padding: 2px 7px; }
+.ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.ph-card { display: flex; flex-direction: column; min-width: 0; background: #fff; border: 1px solid #f3d3e1; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 6px 14px -12px rgba(194,24,91,.5); -webkit-tap-highlight-color: transparent; }
+.ph-card:active { transform: scale(.97); }
+.ph-card .ph-img { aspect-ratio: 1 / 1; background: #f4e6ee; }
+.ph-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph-card .ph-cap { padding: 6px 7px 7px; min-width: 0; }
+.ph-card b { display: block; font-size: 11px; line-height: 1.25; color: #3b1226; font-weight: 800; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ph-card small { display: block; margin-top: 2px; font-size: 9.5px; font-weight: 700; color: #a0617f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-more { margin-top: 10px; text-align: center; font-size: 11.5px; font-weight: 700; color: #9a5a77; }
+@media (max-width: 899px) {
+    .hs-btn { font-size: 11.5px; letter-spacing: -0.01em; }
+    #home-top[data-pane="photos"] .hero-main,
+    #home-top[data-pane="photos"] .home-side-stack > .tint-green,
+    #home-top[data-pane="photos"] .home-side-stack > .tint-purple { display: none; }
+    #home-top[data-pane="genset"] .home-side-stack > .tint-pink,
+    #home-top[data-pane="specs"] .home-side-stack > .tint-pink { display: none; }
+}
+
+/* ===== Teams Connect (mobile): clean contact cards — easy to read, copy, WhatsApp and call ===== */
+.hd-lbl { display: none; }
+@media (max-width: 899px) {
+    #field-team-root .ft-cat { padding: 12px 10px 8px; }
+    #field-team-root .hd-list:not(.hd-list-edit) { grid-template-columns: 1fr; gap: 10px; }
+    #field-team-root .hd-row-team:not(.hd-editing) {
+        display: grid; grid-template-columns: 46px minmax(0, 1fr); grid-template-areas: "av info" "act act";
+        gap: 10px 12px; align-items: start; padding: 12px; border-radius: 16px;
+        border: 1px solid #dde8f8; box-shadow: 0 8px 20px -16px rgba(20, 60, 140, 0.55);
+    }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-avatar { grid-area: av; width: 46px; height: 46px; font-size: 15px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-info { grid-area: info; gap: 6px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-name { font-size: 15.5px; line-height: 1.25; -webkit-user-select: text; user-select: text; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-team-role { display: block; margin-top: 2px; font-size: 12px; font-weight: 700; color: #5c7396; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-team-meta { flex-direction: column; flex-wrap: nowrap; gap: 6px; font-size: 13px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-team-meta span,
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-team-meta a { display: flex; align-items: center; gap: 8px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-team-meta svg { width: 14px; height: 14px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-team-phone { font-size: 15px; font-weight: 800; color: #0f3fa8; text-decoration: none; letter-spacing: .01em; -webkit-user-select: text; user-select: text; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-mail { margin-top: 0; font-size: 12.5px; font-weight: 600; color: #3f5a85; gap: 8px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-mail span { overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-actions { grid-area: act; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding-top: 10px; border-top: 1px dashed #dbe6f7; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-btn { width: auto; height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-radius: 13px; font-size: 10.5px; font-weight: 800; line-height: 1; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-btn svg { width: 18px; height: 18px; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-lbl { display: block; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-call { order: 1; background: #1456d9; border-color: #1456d9; color: #fff; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-wa { order: 2; background: #1fa855; border-color: #1fa855; color: #fff; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-copy { order: 3; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-emailbtn { order: 4; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-btn.hd-btn-disabled { background: #f3f6fb; border-color: #e1e8f3; color: #8a9bb8; }
+}
+</style>
+<style id="v17-mobile-fixes">
+/* ===== v17: search panels on Rates / Specs / Photos (same look as the Home search) ===== */
+.tab-hero { margin: 0 0 14px !important; padding: 12px 14px 14px; border-radius: 16px; }
+.tab-hero::after { display: none; }
+.tab-hero .search-hero-head { align-items: center; gap: 11px; margin-bottom: 10px; }
+.tab-hero .search-hero-icon { width: 38px; height: 38px; border-radius: 11px; box-shadow: 0 6px 12px -6px rgba(0,20,60,.45); color: #fff; }
+.tab-hero .search-hero-icon svg { width: 20px; height: 20px; }
+.tab-hero.tint-blue .search-hero-icon { background: linear-gradient(145deg, #4d9bff, #1f63e8); }
+.tab-hero.tint-purple .search-hero-icon { background: linear-gradient(145deg, #9a7bf5, #5b3fd6); }
+.tab-hero.tint-pink .search-hero-icon { background: linear-gradient(145deg, #f06a9f, #c2185b); }
+.tab-hero .search-hero-title { font-size: 14.5px; line-height: 1.2; }
+.tab-hero .search-hero-desc { font-size: 11px; margin-top: 2px; }
+.tab-hero .search-hero-row { gap: 8px; flex-direction: row; align-items: stretch; flex-wrap: nowrap; }
+.tab-hero .search-hero-input-wrap { border-radius: 10px; min-width: 0; }
+.tab-hero .search-hero-input { height: 42px; font-size: 13px; padding: 0 10px; min-width: 0; }
+.tab-hero .shi-search-ico { padding-left: 12px; }
+.tab-hero .shi-filter-ico { padding-right: 12px; }
+.tab-hero .search-hero-btn { width: auto; height: 42px; padding: 0 18px; border-radius: 10px; font-size: 13px; gap: 7px; flex: 0 0 auto; }
+@media (min-width: 900px) { .tab-hero { max-width: 760px; } .tab-hero .search-hero-input, .tab-hero .search-hero-btn { height: 44px; } }
+
+/* ===== v17: Teams Connect tabs - always one row, nothing scrolls sideways ===== */
+@media (max-width: 899px) {
+    .ft-tabs { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; overflow: visible; padding: 2px 0 6px; margin: 0 0 12px; }
+    #field-team-root .ft-tab { flex: none; min-width: 0; width: 100%; height: auto; min-height: 56px; padding: 7px 3px 6px; gap: 3px; flex-direction: column; border-radius: 14px; position: relative; font-size: 10.5px; line-height: 1.15; }
+    #field-team-root .ft-tab svg { width: 17px; height: 17px; }
+    #field-team-root .ft-tab .ft-lbl { font-weight: 800; font-size: 10.5px; max-width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em; }
+    #field-team-root .ft-tab .ft-sfx { display: none; }
+    #field-team-root .ft-tab em { position: absolute; top: 3px; right: 4px; font-size: 9px; padding: 1px 5px; line-height: 1.3; }
+}
+@media (min-width: 400px) and (max-width: 899px) { #field-team-root .ft-tab .ft-sfx { display: inline; } #field-team-root .ft-tab .ft-lbl { font-size: 11px; } }
+@media (max-width: 899px) { .ft-cat-head { flex-wrap: wrap; } }
+
+/* ===== v17: fit every phone width ===== */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (max-width: 899px) {
+    html, body { max-width: 100%; overflow-x: hidden; }
+    .home-layout, .home-main, .home-top, #home-top, .home-side-stack, .search-hero-panel, .dash-grid, .view-section { min-width: 0; max-width: 100%; }
+    img, video, canvas { max-width: 100%; }
+    .home-switch { gap: 4px; }
+    .hd-banner .hd-search { width: 100%; }
+    .rate-cards, #genset-cable-results, #home-specsheet-results, #home-photo-results { min-width: 0; max-width: 100%; }
+    .rate-cards table, #genset-cable-results table { max-width: 100%; }
+}
+@media (max-width: 480px) {
+    .dash-grid { grid-template-columns: 1fr; }
+    .search-hero-panel { padding-left: 12px; padding-right: 12px; }
+    .tab-hero .search-hero-desc { display: none; }
+}
+@media (max-width: 380px) {
+    .hs-btn { font-size: 10.5px !important; letter-spacing: -0.02em; padding: 0 2px; }
+    .home-switch { padding: 3px; }
+    .tab-hero .search-hero-btn { padding: 0 12px; }
+    .tab-hero .search-hero-btn span { display: none; }
+    .tab-hero .search-hero-btn svg { margin: 0; }
+    .hero-title, .hero-h { font-size: 19px !important; }
+    .hd-title { font-size: 18px !important; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-btn { height: 46px !important; font-size: 9.5px !important; }
+    #field-team-root .hd-row-team:not(.hd-editing) .hd-actions { gap: 5px !important; }
+}
+@media (max-width: 340px) {
+    .hs-btn { font-size: 9.5px !important; }
+    #field-team-root .ft-tab .ft-lbl { font-size: 9.5px; }
+    #field-team-root .ft-tab svg { width: 15px; height: 15px; }
+}
+@media (max-height: 520px) and (orientation: landscape) { .home-switch { position: static; } }
 </style>
 </head>
 <body>
@@ -2792,6 +2952,7 @@ svg.pi .d { transition: fill-opacity .2s ease; }
                         <button type="button" role="tab" class="hs-btn active" data-pane="rental" aria-selected="true">Rental Rates</button>
                         <button type="button" role="tab" class="hs-btn" data-pane="genset" aria-selected="false">GenSet Cable</button>
                         <button type="button" role="tab" class="hs-btn" data-pane="specs" aria-selected="false">Spec Sheets</button>
+                        <button type="button" role="tab" class="hs-btn" data-pane="photos" aria-selected="false">Photos</button>
                     </div>
                     <div class="home-top" id="home-top" data-pane="rental">
                         <div class="search-hero-panel tint-blue hero-main">
@@ -2856,6 +3017,26 @@ svg.pi .d { transition: fill-opacity .2s ease; }
                                 </div>
                                 <div class="sx-suggest" id="home-spec-suggest" role="listbox" hidden></div>
                                 <div id="home-specsheet-results"></div>
+                            </div>
+                            <div class="search-hero-panel tint-pink" id="home-photo-panel">
+                                <div class="search-hero-head">
+                                    <div class="search-hero-icon"><i data-lucide="image" size="24"></i></div>
+                                    <div>
+                                        <div class="search-hero-title">Search Machine Photos</div>
+                                        <div class="search-hero-desc">Search photos by machine, size or folder...</div>
+                                    </div>
+                                    <button class="shp-go" title="Open Photos" onclick="navigateToTab('photos')"><i data-lucide="chevron-right"></i></button>
+                                </div>
+                                <div class="search-hero-row">
+                                    <div class="search-hero-input-wrap">
+                                        <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
+                                        <input type="text" id="home-photo-search" class="search-hero-input" placeholder="Eg. Scissor Lift 12m, Generator..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="home-photo-suggest" />
+                                        <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
+                                    </div>
+                                    <button class="search-hero-btn" id="home-photo-go"><i data-lucide="search" size="16"></i> Search</button>
+                                </div>
+                                <div class="sx-suggest" id="home-photo-suggest" role="listbox" hidden></div>
+                                <div id="home-photo-results"></div>
                             </div>
                         </div>
                     </div>
@@ -3011,21 +3192,13 @@ svg.pi .d { transition: fill-opacity .2s ease; }
                     </div>
                 </aside>
                 <div class="home-main">
-                    <div class="hd-banner hd-tint-amber">
-                        <div class="hd-badge"><i data-lucide="tag"></i></div>
-                        <div class="hd-titles">
-                            <div class="hd-kicker">Rental Rates</div>
-                            <h2 class="hd-title">Rates</h2>
-                            <p class="hd-sub">Browse current rental rates across every equipment category.</p>
-                        </div>
-                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
-                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
-                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
-                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
-                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
-                        </svg>
-                    </div>
-            <div class="erp-toolbar" style="display:none;"><input type="text" id="rates-search" placeholder="Search category..." oninput="filterCategoryGrid('rates', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
+                                        <div class="search-hero-panel tint-blue tab-hero">
+    <div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="tag" size="24"></i></div><div><div class="search-hero-title">Search Rental Rates</div><div class="search-hero-desc">Search rates by equipment category...</div></div></div>
+    <div class="search-hero-row">
+        <div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="rates-search" class="search-hero-input" placeholder="Eg. Scissor Lift, Generator, Crane..." autocomplete="off" oninput="filterCategoryGrid('rates', this.value)" onkeydown="if(event.key==='Enter'){this.blur()}" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
+        <button class="search-hero-btn" type="button" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value); document.getElementById('rates-search').blur()"><i data-lucide="search" size="16"></i><span>Search</span></button>
+    </div>
+</div>
 <div id="rates-grid" class="dash-grid"></div>
         
                 </div>
@@ -3052,21 +3225,13 @@ svg.pi .d { transition: fill-opacity .2s ease; }
                     </div>
                 </aside>
                 <div class="home-main">
-                    <div class="hd-banner hd-tint-cyan">
-                        <div class="hd-badge"><i data-lucide="file-text"></i></div>
-                        <div class="hd-titles">
-                            <div class="hd-kicker">Machine Datasheets</div>
-                            <h2 class="hd-title">Specs</h2>
-                            <p class="hd-sub">Technical specifications and datasheets for every machine.</p>
-                        </div>
-                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
-                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
-                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
-                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
-                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
-                        </svg>
-                    </div>
-            <div class="erp-toolbar" style="display:none;"><input type="text" id="docs-search" placeholder="Search category..." oninput="filterCategoryGrid('docs', this.value)" /><button class="erp-btn-show" onclick="filterCategoryGrid('docs', document.getElementById('docs-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button></div>
+                                        <div class="search-hero-panel tint-purple tab-hero">
+    <div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="file-text" size="24"></i></div><div><div class="search-hero-title">Search Spec Sheets</div><div class="search-hero-desc">Search datasheets by machine category...</div></div></div>
+    <div class="search-hero-row">
+        <div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="docs-search" class="search-hero-input" placeholder="Eg. Scissor Lift, Generator, Crane..." autocomplete="off" oninput="filterCategoryGrid('docs', this.value)" onkeydown="if(event.key==='Enter'){this.blur()}" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
+        <button class="search-hero-btn" type="button" onclick="filterCategoryGrid('docs', document.getElementById('docs-search').value); document.getElementById('docs-search').blur()"><i data-lucide="search" size="16"></i><span>Search</span></button>
+    </div>
+</div>
 <div id="docs-grid" class="dash-grid"></div>
         
                 </div>
@@ -3260,20 +3425,13 @@ svg.pi .d { transition: fill-opacity .2s ease; }
                     </div>
                 </aside>
                 <div class="home-main">
-                    <div class="hd-banner hd-tint-pink">
-                        <div class="hd-badge"><i data-lucide="image"></i></div>
-                        <div class="hd-titles">
-                            <div class="hd-kicker">Machine Photos</div>
-                            <h2 class="hd-title">Photos</h2>
-                            <p class="hd-sub">Browse machine photos by category and folder.</p>
-                        </div>
-                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
-                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
-                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
-                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
-                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
-                        </svg>
-                    </div>
+                                        <div class="search-hero-panel tint-pink tab-hero">
+    <div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="image" size="24"></i></div><div><div class="search-hero-title">Search Machine Photos</div><div class="search-hero-desc">Search photos by machine, size or folder...</div></div></div>
+    <div class="search-hero-row">
+        <div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="photo-search" class="search-hero-input" placeholder="Eg. Scissor Lift 12m, Generator..." autocomplete="off" oninput="photoSearch(this.value)" onkeydown="if(event.key==='Enter'){this.blur()}" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
+        <button class="search-hero-btn" type="button" onclick="photoSearch(document.getElementById('photo-search').value); document.getElementById('photo-search').blur()"><i data-lucide="search" size="16"></i><span>Search</span></button>
+    </div>
+</div>
             <div class="breadcrumb-wrap" id="photo-breadcrumbs"></div>
             <div class="stats-line" id="photo-stats" style="padding:0 0 10px 2px;">Loading…</div>
 
@@ -4548,7 +4706,8 @@ document.addEventListener('visibilitychange', () => {
         if (state.type === 'tab') {
             document.getElementById('detail-layer').classList.add('hidden');
             document.getElementById('price-editor-overlay').classList.add('hidden');
-            applyTabStyles(state.target);
+            _restoreTabScroll = true;
+            try { applyTabStyles(state.target); } finally { _restoreTabScroll = false; }
             _restoreScroll();
         } else if (state.type === 'priceEditor') {
             document.getElementById('detail-layer').classList.add('hidden');
@@ -5166,14 +5325,25 @@ document.addEventListener('visibilitychange', () => {
             `</select>`;
     }
 
+    let ftMobileTab = 'Hire Desk';
+    function ftSetTab(key) {
+        ftMobileTab = key;
+        document.querySelectorAll('#field-team-root .ft-tab').forEach(b => b.classList.toggle('active', b.dataset.yard === key));
+        document.querySelectorAll('#field-team-root .ft-cat').forEach(c => c.classList.toggle('ft-active', c.dataset.yardKey === key));
+        const t = document.querySelector('#field-team-root .ft-tab.active');
+        if (t && t.scrollIntoView) t.scrollIntoView({ inline: 'center', block: 'nearest' });
+    }
     function renderFieldTeam() {
         const root = document.getElementById('field-team-root');
         if (!root) return;
         let html = '';
+        if (!YARD_DEFS.some(y => y.key === ftMobileTab)) ftMobileTab = YARD_DEFS[0].key;
+        html += `<div class="ft-tabs" role="tablist" aria-label="Team category">` + YARD_DEFS.map(yd =>
+            `<button type="button" role="tab" class="ft-tab${yd.key === ftMobileTab ? ' active' : ''}" data-yard="${escHtml(yd.key)}" style="--c1:${yd.c1};--c2:${yd.c2}" onclick="ftSetTab('${yd.key}')"><i data-lucide="${yd.icon}"></i><b class="ft-lbl">${escHtml(yd.label.replace(/ Yard$/, ''))}${/ Yard$/.test(yd.label) ? '<span class="ft-sfx"> Yard</span>' : ''}</b><em>${(ftEditing[yd.key] ? ftDraft[yd.key] : fieldTeamFor(yd.key)).length}</em></button>`).join('') + `</div>`;
         YARD_DEFS.forEach(yd => {
             const editing = !!ftEditing[yd.key];
             const list = editing ? ftDraft[yd.key] : fieldTeamFor(yd.key);
-            html += `<section class="ft-cat" style="--c1:${yd.c1};--c2:${yd.c2}">` +
+            html += `<section class="ft-cat${yd.key === ftMobileTab ? ' ft-active' : ''}" data-yard-key="${escHtml(yd.key)}" style="--c1:${yd.c1};--c2:${yd.c2}">` +
                 `<div class="ft-cat-head">` +
                     `<span class="ft-cat-tab"><i data-lucide="${yd.icon}"></i>${escHtml(yd.label)}</span>` +
                     `<span class="ft-cat-count">${list.length}</span>` +
@@ -5215,17 +5385,17 @@ document.addEventListener('visibilitychange', () => {
                             `<div class="hd-name">${escHtml(m.n)}${m.title ? ` <span class="hd-team-role">${escHtml(m.title)}</span>` : ''}</div>` +
                             `<div class="hd-team-meta">` +
                                 `<span class="hd-team-loc"><i data-lucide="map-pin"></i>${escHtml(m.yard)}</span>` +
-                                (m.p ? `<span class="hd-team-phone"><i data-lucide="phone"></i>${escHtml(hdPhone(m.p))}</span>` : '') +
+                                (m.p ? `<a class="hd-team-phone" href="tel:${hdPhone(m.p)}"><i data-lucide="phone"></i>${escHtml(hdPhone(m.p))}</a>` : '') +
                             `</div>` +
                             (m.e ? `<div class="hd-mail"><i data-lucide="mail"></i><span>${escHtml(m.e)}</span></div>` : '') +
                         `</div>` +
                         `<div class="hd-actions">` +
                             (m.p
-                                ? `<button class="hd-btn" title="Copy number" onclick="copyText('${hdPhone(m.p)}')"><i data-lucide="copy"></i></button><button class="hd-btn hd-wa" title="WhatsApp" onclick="window.open('https://wa.me/${hdDigits(m.p)}')">${waIcon(16)}</button><a class="hd-btn" href="tel:${hdPhone(m.p)}" title="Call"><i data-lucide="phone"></i></a>`
-                                : `<span class="hd-btn hd-btn-disabled" title="No contact number saved"><i data-lucide="copy"></i></span><span class="hd-btn hd-wa hd-btn-disabled" title="No contact number saved">${waIcon(16)}</span><span class="hd-btn hd-btn-disabled" title="No contact number saved"><i data-lucide="phone"></i></span>`) +
+                                ? `<button class="hd-btn hd-copy" title="Copy number" onclick="copyText('${hdPhone(m.p)}')"><i data-lucide="copy"></i><span class="hd-lbl">Copy</span></button><button class="hd-btn hd-wa" title="WhatsApp" onclick="window.open('https://wa.me/${hdDigits(m.p)}')">${waIcon(16)}<span class="hd-lbl">WhatsApp</span></button><a class="hd-btn hd-call" href="tel:${hdPhone(m.p)}" title="Call"><i data-lucide="phone"></i><span class="hd-lbl">Call</span></a>`
+                                : `<span class="hd-btn hd-copy hd-btn-disabled" title="No contact number saved"><i data-lucide="copy"></i><span class="hd-lbl">Copy</span></span><span class="hd-btn hd-wa hd-btn-disabled" title="No contact number saved">${waIcon(16)}<span class="hd-lbl">WhatsApp</span></span><span class="hd-btn hd-call hd-btn-disabled" title="No contact number saved"><i data-lucide="phone"></i><span class="hd-lbl">Call</span></span>`) +
                             (m.e
-                                ? `<a class="hd-btn" href="mailto:${escHtml(m.e)}" title="Send email"><i data-lucide="mail"></i></a>`
-                                : `<span class="hd-btn hd-btn-disabled" title="No email saved"><i data-lucide="mail"></i></span>`) +
+                                ? `<a class="hd-btn hd-emailbtn" href="mailto:${escHtml(m.e)}" title="Send email"><i data-lucide="mail"></i><span class="hd-lbl">Email</span></a>`
+                                : `<span class="hd-btn hd-emailbtn hd-btn-disabled" title="No email saved"><i data-lucide="mail"></i><span class="hd-lbl">Email</span></span>`) +
                         `</div></div>`;
                 });
                 html += `</div>`;
@@ -5248,7 +5418,18 @@ document.addEventListener('visibilitychange', () => {
             });
             const empty = cat.querySelector('.hd-empty');
             if (empty) empty.style.display = (cat.querySelectorAll('.hd-row-team[data-search]').length && !any) ? '' : 'none';
+            const tabBtn = document.querySelector('#field-team-root .ft-tab[data-yard="' + cat.dataset.yardKey + '"] em');
+            if (tabBtn) tabBtn.textContent = q ? cat.querySelectorAll('.hd-row-team[data-search]:not([style*="none"])').length : cat.querySelectorAll('.hd-row-team[data-search]').length;
         });
+        // On mobile, if the open tab has no match but another does, jump to the first tab that has one.
+        if (q) {
+            const counts = YARD_DEFS.map(y => {
+                const c = document.querySelector('#field-team-root .ft-cat[data-yard-key="' + y.key + '"]');
+                return { key: y.key, n: c ? c.querySelectorAll('.hd-row-team[data-search]:not([style*="none"])').length : 0 };
+            });
+            const cur = counts.find(c => c.key === ftMobileTab);
+            if (cur && !cur.n) { const first = counts.find(c => c.n); if (first) ftSetTab(first.key); }
+        }
     }
 
     function ftStartEdit(yardKey) {
@@ -6832,8 +7013,13 @@ document.addEventListener('visibilitychange', () => {
     }
 
     let companyListPopulated = false;
+    const _tabScroll = {};
+    let _restoreTabScroll = false;
     function applyTabStyles(tab) {
         if (!document.getElementById('tab-'+tab)) tab = 'home';
+        const _mc = document.getElementById('main-content');
+        const _prevTab = _mc.dataset.tab;
+        if (_prevTab && _prevTab !== tab) _tabScroll[_prevTab] = { m: _mc.scrollTop, w: window.scrollY || document.documentElement.scrollTop || 0 };
         // Top-panel tab buttons must work from inside full-screen pages: close them first
         ['detail-layer','pdf-overlay','img-preview-overlay','photo-lightbox','price-editor-overlay'].forEach(id => { const o = document.getElementById(id); if (o) o.classList.add('hidden'); });
         document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
@@ -6845,6 +7031,11 @@ document.addEventListener('visibilitychange', () => {
         const btn = document.getElementById('btn-'+tab);
         if(btn) btn.classList.add('active');
         document.getElementById('main-content').scrollTop = 0;
+        if (_restoreTabScroll && _prevTab !== tab && _tabScroll[tab]) {
+            const _sv = _tabScroll[tab];
+            const _ap = () => { _mc.scrollTop = _sv.m; window.scrollTo(0, _sv.w); };
+            _ap(); requestAnimationFrame(_ap); setTimeout(_ap, 120);
+        }
         if (tab === 'photos') {
             if (!photoDataLoaded && !photoDataLoading) loadPhotoData();
             else renderPhotoFolder('images');
@@ -7143,7 +7334,21 @@ document.addEventListener('visibilitychange', () => {
     }
     function goHomePhotos() { navigateToPhotoFolder('images'); }
 
+    function photoSearch(q) {
+        q = (q || '').trim();
+        if (!q) { renderPhotoGrid(); return; }
+        const nq = (typeof normalizeForSearch === 'function' ? normalizeForSearch(q) : q.toLowerCase());
+        const terms = nq.split(' ').filter(Boolean);
+        const base = photoPath === 'images' ? 'images/' : photoPath + '/';
+        const list = photoRawData.filter(i => i.path !== 'images' && String(i.path).startsWith(base) && (() => {
+            const h = (typeof normalizeForSearch === 'function' ? normalizeForSearch(i.name) : i.name.toLowerCase());
+            return terms.every(t => h.includes(t));
+        })());
+        renderPhotoGrid(list);
+    }
+
     function renderPhotoFolder(path) {
+        const _ps = document.getElementById('photo-search'); if (_ps && _ps.value) _ps.value = '';
         if (path !== photoPath && photoFavMode) {
             photoFavMode = false;
             const favBtn = document.getElementById('fav-filter-btn');
@@ -10601,6 +10806,194 @@ document.addEventListener('load', function (e) {
             .observe(document.body, { childList: true, subtree: true });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+
+<script>
+/* ===== Home: Photos search (same suggestion behaviour as Rates / Spec Sheets) ===== */
+(function () {
+    var inp = document.getElementById('home-photo-search');
+    if (!inp) return;
+    var box = document.getElementById('home-photo-suggest');
+    var res = document.getElementById('home-photo-results');
+    var goBtn = document.getElementById('home-photo-go');
+    var sel = -1, current = [];
+    var esc = function (x) { return String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+    var collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+    function data() { return (typeof photoRawData !== 'undefined' && photoRawData) || []; }
+    function ensureData() {
+        if (typeof photoDataLoaded === 'undefined' || photoDataLoaded || photoDataLoading) return;
+        try { var p = loadPhotoData(); if (p && p.then) p.then(function () { if (inp.value.trim()) { showSuggest(inp.value); run(inp.value, true); } }); } catch (e) {}
+    }
+    function lbl(it) { return String(it.name || '').replace(/\.(jpe?g|png|webp|gif|heic|bmp)$/i, '').trim(); }
+    function cat(it) { var p = String(it.path || '').split('/'); return p[1] && p[1] !== it.name ? p[1] : (it.type === 'folder' ? 'Folder' : 'Photos'); }
+    function where(it) { return String(it.parent || '').split('/').filter(Boolean).slice(1).join(' › ') || 'Photos'; }
+    function hay(it) { return lbl(it) + ' ' + String(it.parent || '').replace(/^images\/?/, ''); }
+    function matches(q) {
+        return data().filter(function (it) { return it.path !== 'images' && namePrefixMatches(hay(it), q); });
+    }
+
+    function hideSuggest() { box.hidden = true; box.innerHTML = ''; inp.setAttribute('aria-expanded', 'false'); sel = -1; }
+    function showSuggest(query) {
+        var nq = normalizeForSearch(query || '');
+        var terms = nq.split(' ').filter(Boolean);
+        if (!terms.length) { hideSuggest(); return; }
+        var last = terms[terms.length - 1], specific = terms.some(function (t) { return /\d/.test(t); });
+        var hl = function (label) {
+            var h = esc(label);
+            terms.forEach(function (t) {
+                var safe = esc(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                h = h.replace(new RegExp('(^|[^a-z0-9])(' + safe + ')', 'i'), '$1<mark>$2</mark>');
+            });
+            return h;
+        };
+        var labels = [], seen = {};
+        matches(query).forEach(function (it) {
+            var label = it.type === 'folder' ? String(it.name) : lbl(it);
+            var key = normalizeForSearch(label);
+            if (!label || seen[key]) return;
+            seen[key] = 1; labels.push({ label: label, cat: cat(it), folder: it.type === 'folder' });
+        });
+        if (!labels.length) { hideSuggest(); return; }
+        var html;
+        if (specific) {
+            labels.sort(function (a, b) { return (normalizeForSearch(a.label).indexOf(nq) === 0 ? 0 : 1) - (normalizeForSearch(b.label).indexOf(nq) === 0 ? 0 : 1) || collator.compare(a.label, b.label); });
+            html = labels.slice(0, 8).map(function (o) { return sxRow(o.label, o.cat, esc(o.cat), hl(o.label), '', esc(o.label)); }).join('');
+        } else {
+            var phrases = {};
+            labels.forEach(function (o) {
+                var tokens = o.label.replace(/\s+/g, ' ').split(' ');
+                var idx = tokens.findIndex(function (tk) { return normalizeForSearch(tk).split(' ')[0].indexOf(last) === 0; });
+                if (idx < 0) idx = tokens.length - 1;
+                var phrase = tokens.slice(0, idx + 1).join(' ').replace(/[(\[,/-]+$/, '');
+                var k = phrase.toLowerCase();
+                var g = phrases[k] || (phrases[k] = { phrase: phrase, n: 0, leaf: idx === tokens.length - 1, cat: o.cat, label: o.label });
+                g.n++; if (idx !== tokens.length - 1) g.leaf = false;
+            });
+            var list = Object.keys(phrases).map(function (k) { return phrases[k]; }).sort(function (a, b) { return (b.n - a.n) || collator.compare(a.phrase, b.phrase); }).slice(0, 7);
+            html = list.map(function (g) {
+                var label = g.leaf && g.n === 1 ? g.label : g.phrase;
+                return sxRow(label, g.cat, g.n > 1 ? g.n + ' items' : esc(g.cat), hl(label), g.n > 1 ? ' sx-all' : '', esc(label));
+            }).join('');
+        }
+        box.innerHTML = html; box.hidden = false; sel = -1; inp.setAttribute('aria-expanded', 'true');
+    }
+
+    function run(query, quiet) {
+        var q = (query || '').trim();
+        if (!q) { res.innerHTML = ''; current = []; hideSuggest(); return; }
+        if (!data().length) { res.innerHTML = '<div class="rate-empty">' + ((typeof photoDataLoading !== 'undefined' && photoDataLoading) ? 'Loading photos…' : 'Photos are not loaded yet — check your connection.') + '</div>'; ensureData(); return; }
+        var all = matches(q);
+        // Folders only (no photo thumbnails): matched folders + the folders that hold matched photos.
+        var fmap = {};
+        all.forEach(function (i) {
+            var path = i.type === 'folder' ? i.path : i.parent;
+            if (!path || path === 'images') return;
+            if (!fmap[path]) fmap[path] = { path: path, name: String(path).split('/').filter(Boolean).slice(1).join(' › ') || String(path) };
+        });
+        var folders = Object.keys(fmap).map(function (k) { return fmap[k]; }).sort(function (a, b) { return collator.compare(a.name, b.name); }).slice(0, 40);
+        current = [];
+        if (!folders.length) { res.innerHTML = '<div class="rate-empty">No matching folders found.</div>'; return; }
+        var html = '<div class="ph-folders">' + folders.map(function (f) {
+            var n = (typeof photoCountUnder === 'function') ? photoCountUnder(f.path) : 0;
+            return '<button type="button" class="ph-folder" data-folder="' + esc(f.path) + '"><i data-lucide="folder"></i><span>' + esc(f.name) + '</span><em>' + n + '</em></button>';
+        }).join('') + '</div>';
+        res.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function pick(label) {
+        inp.value = label;
+        if (window.sxTouchSearch) window.sxTouchSearch(inp);
+        inp.blur(); hideSuggest(); run(label);
+    }
+
+    inp.addEventListener('input', function () { ensureData(); showSuggest(inp.value); run(inp.value); });
+    inp.addEventListener('focus', function () { ensureData(); showSuggest(inp.value); });
+    inp.addEventListener('keydown', function (e) {
+        var items = box.hidden ? [] : box.querySelectorAll('.sx-item');
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            if (!items.length) return; e.preventDefault();
+            sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+            items.forEach(function (it, i) { it.classList.toggle('active', i === sel); });
+            items[sel].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (sel >= 0 && items[sel]) pick(items[sel].dataset.label);
+            else { hideSuggest(); run(inp.value); inp.blur(); }
+        } else if (e.key === 'Escape') hideSuggest();
+    });
+    goBtn.addEventListener('click', function () { hideSuggest(); inp.blur(); run(inp.value); });
+    document.addEventListener('mousedown', function (e) {
+        var item = e.target.closest && e.target.closest('#home-photo-suggest .sx-item');
+        if (item) { e.preventDefault(); pick(item.dataset.label); return; }
+        if (!(e.target.closest && e.target.closest('#home-photo-search'))) hideSuggest();
+    });
+    res.addEventListener('click', function (e) {
+        var f = e.target.closest('.ph-folder');
+        if (f) {
+            // One history entry (home -> folder) so Back lands on the exact home screen.
+            window.history.pushState({ type: 'photo-folder', target: f.dataset.folder }, '');
+            applyTabStyles('photos');
+            renderPhotoFolder(f.dataset.folder);
+            return;
+        }
+        var c = e.target.closest('.ph-card');
+        if (c) { photoGalleryItems = current.slice(); openPhotoLB(parseInt(c.dataset.i, 10)); }
+    });
+    // also warm the data when the Photos pane is chosen on mobile
+    var sw = document.getElementById('home-switch');
+    if (sw) sw.addEventListener('click', function (e) { var b = e.target.closest('.hs-btn'); if (b && b.dataset.pane === 'photos') ensureData(); });
+})();
+</script>
+
+<script>
+/* ===== Home (mobile): swipe left/right to switch Rental Rates / GenSet Cable / Spec Sheets / Photos ===== */
+(function () {
+    var tab = document.getElementById('tab-home'), sw = document.getElementById('home-switch'), top = document.getElementById('home-top');
+    if (!tab || !sw || !top) return;
+    var sx = 0, sy = 0, st = 0, ok = false, locked = false;
+    function mobile() { return window.matchMedia('(max-width: 899px)').matches; }
+    function blocked(el) {
+        // only ignore swipes that start inside something that really scrolls sideways (e.g. a wide table)
+        for (var n = el; n && n !== tab && n.nodeType === 1; n = n.parentElement) {
+            if (n.tagName === 'TEXTAREA' || n.tagName === 'SELECT' || (n.tagName === 'INPUT' && n.type === 'range')) return true;
+            if (n.scrollWidth > n.clientWidth + 4) { var ox = getComputedStyle(n).overflowX; if (ox === 'auto' || ox === 'scroll') return true; }
+        }
+        return false;
+    }
+    function begin(e) {
+        if (!mobile() || e.touches.length !== 1 || tab.classList.contains('hidden')) { ok = false; return; }
+        var t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now(); locked = false; ok = !blocked(e.target);
+    }
+    function move(e) {
+        if (!ok || !e.touches.length) return;
+        var t = e.touches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+        if (!locked && Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) ok = false;   // it's a vertical scroll, leave it alone
+        else if (Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy)) locked = true;
+    }
+    function end(e) {
+        if (!ok) return; ok = false;
+        var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+        var need = Math.max(44, Math.min(90, window.innerWidth * 0.14));
+        if (Math.abs(dx) < need || Math.abs(dx) < Math.abs(dy) * 1.3 || Date.now() - st > 900) return;
+        var btns = Array.prototype.slice.call(sw.querySelectorAll('.hs-btn'));
+        var i = btns.findIndex(function (b) { return b.classList.contains('active'); });
+        var n = i + (dx < 0 ? 1 : -1);
+        if (n < 0 || n >= btns.length) return;
+        var a = document.activeElement; if (a && a.blur && /INPUT/.test(a.tagName)) a.blur();
+        btns[n].click();
+        top.classList.remove('hs-anim-l', 'hs-anim-r'); void top.offsetWidth;
+        top.classList.add(dx < 0 ? 'hs-anim-l' : 'hs-anim-r');
+        if (btns[n].scrollIntoView) btns[n].scrollIntoView({ inline: 'center', block: 'nearest' });
+    }
+    // listen on the whole page area so a swipe that starts anywhere on the Home screen works
+    var area = document.getElementById('main-content') || tab;
+    area.addEventListener('touchstart', begin, { passive: true });
+    area.addEventListener('touchmove', move, { passive: true });
+    area.addEventListener('touchend', end, { passive: true });
+    area.addEventListener('touchcancel', function () { ok = false; }, { passive: true });
 })();
 </script>
 </body>
