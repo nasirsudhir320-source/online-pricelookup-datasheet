@@ -5865,6 +5865,14 @@ document.addEventListener('visibilitychange', () => {
         const wrap = box.parentElement, vv = window.visualViewport;
         const bottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
         const avail = bottom - wrap.getBoundingClientRect().bottom - 14;
+        const desktop = window.matchMedia && window.matchMedia('(min-width: 900px)').matches;
+        if (desktop) {
+            // Desktop: make room for the list so it never covers the cards below
+            box.style.maxHeight = '300px';
+            const cards = document.getElementById('home-rate-results');
+            if (cards) cards.style.marginTop = (14 + box.offsetHeight + 8) + 'px';
+            return;
+        }
         box.style.maxHeight = Math.max(110, Math.min(300, avail)) + 'px';
         if (canScroll && avail < 150 && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
             wrap.scrollIntoView({ block: 'start', behavior: 'smooth' });   // lift the search box above the keyboard
@@ -5879,6 +5887,8 @@ document.addEventListener('visibilitychange', () => {
         const box = document.getElementById('home-rate-suggest');
         const inp = document.getElementById('home-rate-search');
         if (box) { box.hidden = true; box.innerHTML = ''; }
+        const cardsEl = document.getElementById('home-rate-results');
+        if (cardsEl) cardsEl.style.marginTop = '';
         if (inp) inp.setAttribute('aria-expanded', 'false');
         rateSuggestIdx = -1;
     }
@@ -5886,12 +5896,6 @@ document.addEventListener('visibilitychange', () => {
     //  - letters only  -> step-by-step: the word/phrase being typed is completed one level at a time
     //                     ("t" -> Telehandler, Truck ... ; "scissor l" -> Scissor Lift), each with an item count
     //  - any number typed -> specific items only: "40" lists names containing exactly 40 (never 400)
-    // With an empty box (focused) the last few picked searches are offered.
-    const RATE_RECENT_KEY = 'homeRateRecent_v1';
-    function rateRecentGet() { try { const a = JSON.parse(localStorage.getItem(RATE_RECENT_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
-    function rateRecentAdd(label) {
-        try { const a = rateRecentGet().filter(x => x.toLowerCase() !== String(label).toLowerCase()); a.unshift(String(label)); localStorage.setItem(RATE_RECENT_KEY, JSON.stringify(a.slice(0, 5))); } catch (e) { /* storage blocked */ }
-    }
     // Each equipment category gets its own colour so suggestions are easy to tell apart at a glance.
     const SX_PALETTE = ['#1456d9', '#0f9d4e', '#7c3aed', '#e8832a', '#0891b2', '#db2777', '#ca8a04', '#dc2626'];
     function sxColor(cat) {
@@ -5920,9 +5924,7 @@ document.addEventListener('visibilitychange', () => {
         const nq = normalizeForSearch(query || '');
         const terms = nq.split(' ').filter(Boolean);
         if (!terms.length) {
-            const rec = rateRecentGet();
-            if (!rec.length) { hideRateSuggestions(); return; }
-            finish(`<div class="sx-head">Recent searches</div>` + rec.map(r => `<div class="sx-item" role="option" data-label="${esc(r)}"><span class="sx-name">${esc(r)}</span><span class="sx-cat">recent</span></div>`).join(''));
+            hideRateSuggestions();
             return;
         }
         const last = terms[terms.length - 1];
@@ -5976,7 +5978,6 @@ document.addEventListener('visibilitychange', () => {
         }).join(''));
     }
     function pickRateSuggestion(label) {
-        rateRecentAdd(label);
         const inp = document.getElementById('home-rate-search');
         if (inp) { inp.value = label; if (window.sxTouchSearch) window.sxTouchSearch(inp); inp.blur(); }   // blur closes the mobile keyboard
         hideRateSuggestions();
