@@ -1624,6 +1624,16 @@ header .sync-pill.online-pill .status-dot { width: 9px; height: 9px; }
 .op-switch input:checked + .op-track::after { transform: translateX(18px); }
 .op-switch input:focus-visible + .op-track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* ---------- Double shift switch ---------- */
+.ds-row { border-color: #f1d9a8; background: #fff9ec; }
+.ds-row .op-switch input:checked + .op-track { background: #d9830a; }
+.ds-note { margin-left: auto; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 99px; background: #fdebc8; color: #9a5b00; opacity: .6; transition: opacity .15s; }
+.rate-card.ds-on .ds-note { opacity: 1; }
+.ds-row + .op-row { margin-top: 8px; }
+.rate-card.ds-on .rate-value[data-k] { color: #c25e00; }
+.ds-calc { margin-top: 8px; padding: 8px 11px; border-radius: 10px; background: #f4f7fd; color: #3d527c; font-size: 11.5px; font-weight: 700; line-height: 1.45; font-variant-numeric: tabular-nums; }
+.ds-calc[hidden] { display: none; }
+
 /* ---------- File loading progress ---------- */
 .ld-wrap { text-align: center; color: var(--accent); font-weight: 800; }
 .ld-bar { height: 6px; max-width: 260px; margin: 12px auto 8px; border-radius: 99px; background: #dbe7fb; overflow: hidden; }
@@ -2757,7 +2767,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 @media (max-width: 899px) {
     html, body { max-width: 100%; overflow-x: hidden; }
     .home-layout, .home-main, .home-top, #home-top, .home-side-stack, .search-hero-panel, .dash-grid, .view-section { min-width: 0; max-width: 100%; }
-    img, video, canvas { max-width: 100%; }
+    img, video { max-width: 100%; }
+    /* never cap document pages: pinch-zoom has to scale width and height together */
+    #pdf-render-box canvas, #pdf-render-box img, .pdf-page-wrap, .pdf-page-wrap canvas, .md-preview-box canvas { max-width: none; }
     .home-switch { gap: 4px; }
     .hd-banner .hd-search { width: 100%; }
     .rate-cards, #genset-cable-results, #home-specsheet-results, #home-photo-results { min-width: 0; max-width: 100%; }
@@ -6227,29 +6239,58 @@ document.addEventListener('visibilitychange', () => {
         const text = (row.join(' ') + ' ' + headers.join(' ')).replace(/(with\s*out|w\/o|no|excl\w*|except)\.?\s+(an\s+)?(operator|driver)s?|(operator|driver)s?\s+(not\s+included|excluded|extra)/gi, ' ');
         const alreadyIncluded = /operator|driver|\boperated\b|\bw\/\s*op\b|\bwith\s+op\b/i.test(text);
         const hasOp = base !== null && !alreadyIncluded;
-        let pills = '';
+        let pills = '', hasDs = false;
         for (let i = 1; i < headers.length; i++) {
             const label = headers[i] || '';
             const val = (row[i] !== undefined && row[i] !== '') ? row[i] : '-';
-            const attr = hasOp && i === mi ? ` data-op="monthly" data-base="${base}"` : (hasOp && wi > 0 && i === wi ? ` data-op="weekly" data-orig="${String(val).replace(/"/g, '&quot;')}"` : '');
+            const num = rateNum(row[i]);
+            const kind = /month/i.test(label) ? 'monthly' : /week/i.test(label) ? 'weekly' : /daily|\bday\b/i.test(label) ? 'daily' : '';
+            const attr = (kind && num !== null) ? ` data-k="${kind}" data-n="${num}" data-o="${String(val).replace(/"/g, '&quot;')}"` : '';
+            if (attr) hasDs = true;
             pills += `<div class="rate-pill"><span class="rate-label">${label}</span><span class="rate-value"${attr}>${val}</span></div>`;
         }
-        const op = hasOp ? `<div class="op-row"><label class="op-switch" title="Add operator"><input type="checkbox" class="op-input" aria-label="With operator"><span class="op-track"></span></label><span class="op-label">With Operator</span><span class="op-amt-wrap">+<input type="number" class="op-amt" value="${OPERATOR_DEFAULT}" min="0" step="100" inputmode="numeric" aria-label="Operator price per month" onwheel="this.blur()"> SAR / month</span></div>` : '';
-        return { pills, op };
+        const opRow = hasOp ? `<div class="op-row"><label class="op-switch" title="Add operator"><input type="checkbox" class="op-input" aria-label="With operator"><span class="op-track"></span></label><span class="op-label">With Operator</span><span class="op-amt-wrap">+<input type="number" class="op-amt" value="${OPERATOR_DEFAULT}" min="0" step="100" inputmode="numeric" aria-label="Operator price per month" onwheel="this.blur()"> SAR / month</span></div>` : '';
+        const dsRow = hasDs ? `<div class="op-row ds-row"><label class="op-switch" title="Double shift (+40%)"><input type="checkbox" class="ds-input" aria-label="Double shift"><span class="op-track"></span></label><span class="op-label">Double Shift</span><span class="ds-note">+40%</span></div>` : '';
+        const dsCalc = hasDs ? '<div class="ds-calc" hidden></div>' : '';
+        return { pills, op: dsRow + opRow + dsCalc };
     }
+    // Double shift = machine price + 40%.  With operator = that + TWO operators (one per shift).
+    //   without operator:  price x 1.4
+    //   with operators:    price x 1.4 + 2 x operator price
+    // (Weekly follows the existing rule: when an operator is added, weekly = monthly / 3.)
+    const DOUBLE_SHIFT_UPLIFT = 1.4;
     function opRecalc(card) {
-        const on = card.querySelector('.op-input').checked;
-        const add = on ? (parseFloat(card.querySelector('.op-amt').value) || 0) : 0;
-        const m = card.querySelector('[data-op="monthly"]'), w = card.querySelector('[data-op="weekly"]');
-        if (!m) return;
-        const monthly = parseFloat(m.dataset.base) + add;
-        m.textContent = String(Math.round(monthly));
-        if (w) w.textContent = on ? String(Math.round(monthly / 3)) : w.dataset.orig;
+        const opIn = card.querySelector('.op-input'), dsIn = card.querySelector('.ds-input');
+        const on = !!(opIn && opIn.checked), ds = !!(dsIn && dsIn.checked);
+        const amtEl = card.querySelector('.op-amt');
+        const opAmt = on ? (parseFloat(amtEl && amtEl.value) || 0) : 0;
+        const mult = ds ? DOUBLE_SHIFT_UPLIFT : 1, nOps = ds ? 2 : 1;
+        const mEl = card.querySelector('[data-k="monthly"]');
+        const monthly = mEl ? parseFloat(mEl.dataset.n) * mult + opAmt * nOps : null;
+        card.querySelectorAll('[data-k]').forEach(el => {
+            const k = el.dataset.k, n = parseFloat(el.dataset.n);
+            let v = n * mult;
+            if (k === 'monthly') v = monthly;
+            else if (k === 'weekly' && on && monthly !== null) v = monthly / 3;
+            el.textContent = (ds || on) ? String(Math.round(v)) : el.dataset.o;
+        });
+        const lab = card.querySelector('.op-row:not(.ds-row) .op-label');
+        if (lab) lab.textContent = ds ? 'With 2 Operators' : 'With Operator';
+        const calc = card.querySelector('.ds-calc');
+        if (calc) {
+            const f = x => Math.round(x).toLocaleString('en-US');
+            if (ds && mEl) {
+                const base = parseFloat(mEl.dataset.n);
+                calc.textContent = 'Monthly: ' + f(base) + ' + 40% = ' + f(base * DOUBLE_SHIFT_UPLIFT) + (on ? ' + 2 operators (2 × ' + f(opAmt) + ') = ' + f(monthly) : '');
+                calc.hidden = false;
+            } else calc.hidden = true;
+        }
         card.classList.toggle('op-on', on);
+        card.classList.toggle('ds-on', ds);
     }
     document.addEventListener('input', e => {
         const t = e.target;
-        if (t && t.classList && (t.classList.contains('op-input') || t.classList.contains('op-amt'))) {
+        if (t && t.classList && (t.classList.contains('op-input') || t.classList.contains('op-amt') || t.classList.contains('ds-input'))) {
             const card = t.closest('.rate-card'); if (card) opRecalc(card);
         }
     });
