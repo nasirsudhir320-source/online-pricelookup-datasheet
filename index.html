@@ -2734,24 +2734,11 @@ svg.pi .d { transition: fill-opacity .2s ease; }
 }
 </style>
 <style id="v17-mobile-fixes">
-/* ===== v17: search panels on Rates / Specs / Photos (same look as the Home search) ===== */
-.tab-hero { margin: 0 0 14px !important; padding: 12px 14px 14px; border-radius: 16px; }
-.tab-hero::after { display: none; }
-.tab-hero .search-hero-head { align-items: center; gap: 11px; margin-bottom: 10px; }
-.tab-hero .search-hero-icon { width: 38px; height: 38px; border-radius: 11px; box-shadow: 0 6px 12px -6px rgba(0,20,60,.45); color: #fff; }
-.tab-hero .search-hero-icon svg { width: 20px; height: 20px; }
-.tab-hero.tint-blue .search-hero-icon { background: linear-gradient(145deg, #4d9bff, #1f63e8); }
-.tab-hero.tint-purple .search-hero-icon { background: linear-gradient(145deg, #9a7bf5, #5b3fd6); }
-.tab-hero.tint-pink .search-hero-icon { background: linear-gradient(145deg, #f06a9f, #c2185b); }
-.tab-hero .search-hero-title { font-size: 14.5px; line-height: 1.2; }
-.tab-hero .search-hero-desc { font-size: 11px; margin-top: 2px; }
-.tab-hero .search-hero-row { gap: 8px; flex-direction: row; align-items: stretch; flex-wrap: nowrap; }
-.tab-hero .search-hero-input-wrap { border-radius: 10px; min-width: 0; }
-.tab-hero .search-hero-input { height: 42px; font-size: 13px; padding: 0 10px; min-width: 0; }
-.tab-hero .shi-search-ico { padding-left: 12px; }
-.tab-hero .shi-filter-ico { padding-right: 12px; }
-.tab-hero .search-hero-btn { width: auto; height: 42px; padding: 0 18px; border-radius: 10px; font-size: 13px; gap: 7px; flex: 0 0 auto; }
-@media (min-width: 900px) { .tab-hero { max-width: 760px; } .tab-hero .search-hero-input, .tab-hero .search-hero-btn { height: 44px; } }
+/* ===== v17: Rates / Specs / Photos tabs reuse the Home search panels ===== */
+.home-main.sx-searching > :not(.sx-panel) { display: none !important; }
+.home-main > .sx-panel { margin-bottom: 14px; }
+.home-main > .hero-main.sx-panel { margin-top: 0; }
+@media (min-width: 900px) { .home-main > .home-side-stack.sx-panel { max-width: 760px; } }
 
 /* ===== v17: Teams Connect tabs - always one row, nothing scrolls sideways ===== */
 @media (max-width: 899px) {
@@ -2779,14 +2766,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 @media (max-width: 480px) {
     .dash-grid { grid-template-columns: 1fr; }
     .search-hero-panel { padding-left: 12px; padding-right: 12px; }
-    .tab-hero .search-hero-desc { display: none; }
 }
 @media (max-width: 380px) {
     .hs-btn { font-size: 10.5px !important; letter-spacing: -0.02em; padding: 0 2px; }
     .home-switch { padding: 3px; }
-    .tab-hero .search-hero-btn { padding: 0 12px; }
-    .tab-hero .search-hero-btn span { display: none; }
-    .tab-hero .search-hero-btn svg { margin: 0; }
     .hero-title, .hero-h { font-size: 19px !important; }
     .hd-title { font-size: 18px !important; }
     #field-team-root .hd-row-team:not(.hd-editing) .hd-btn { height: 46px !important; font-size: 9.5px !important; }
@@ -2798,6 +2781,134 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     #field-team-root .ft-tab svg { width: 15px; height: 15px; }
 }
 @media (max-height: 520px) and (orientation: landscape) { .home-switch { position: static; } }
+</style>
+<style id="v18-reservations">
+/* ===== Reservations tab ===== */
+.rv-app { --rv-blue:#0a5be8; --rv-ink:#0b2a6b; --rv-line:#dbe5f6; --rv-soft:#eef4ff; padding-bottom: 8px; }
+.rv-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin: 2px 0 12px; }
+.rv-title { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:30px; line-height:1.05; letter-spacing:-.02em; color:var(--rv-ink); margin:0; }
+.rv-sub { margin:5px 0 0; font-size:14px; color:#51668f; font-weight:500; }
+.rv-user { display:flex; align-items:center; gap:7px; flex:none; padding:4px 4px 4px 8px; border:1px solid var(--rv-line); background:#fff; border-radius:999px; max-width:46%; }
+.rv-user #reservation-user-name { font-size:11.5px; font-weight:700; color:#33507f; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:110px; }
+.rv-signout { width:28px; height:28px; border-radius:50%; border:0; background:var(--rv-soft); color:var(--rv-blue); display:grid; place-items:center; cursor:pointer; flex:none; }
+.rv-toolbar { display:flex; gap:10px; margin-bottom:12px; }
+.rv-search { flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:9px; height:50px; padding:0 14px; background:#fff; border:1.5px solid var(--rv-line); border-radius:12px; color:#5b6f97; }
+.rv-search:focus-within { border-color:var(--rv-blue); box-shadow:0 0 0 3px rgba(10,91,232,.12); }
+.rv-search input { flex:1; min-width:0; border:0; outline:0; background:transparent; font-size:14.5px; color:var(--rv-ink); font-family:inherit; }
+.rv-search input::placeholder { color:#7d8fb2; }
+.rv-add { flex:none; display:flex; align-items:center; justify-content:center; gap:7px; height:50px; padding:0 20px; border:0; border-radius:12px; background:linear-gradient(180deg,#1f74ff,#0a5be8); color:#fff; font-weight:800; font-size:14.5px; font-family:inherit; cursor:pointer; box-shadow:0 8px 16px -8px rgba(10,91,232,.7); white-space:nowrap; }
+.rv-add:active { transform:translateY(1px); }
+.rv-toolbar .sx-clear-btn { display:none; height:50px; margin:0; padding:0 12px; border-radius:12px; font-size:12.5px; }
+.rv-toolbar .sx-clear-btn.has-text { display:inline-flex; align-items:center; }
+.rv-add-long { display:none; }
+@media (min-width:520px){ .rv-add-long { display:inline; } }
+.rv-filters { display:flex; gap:8px; margin-bottom:12px; }
+.rv-fp { flex:1 1 auto; min-width:0; display:flex; align-items:center; justify-content:center; gap:6px; height:42px; padding:0 10px; border-radius:999px; border:1.5px solid var(--rv-line); background:#fff; color:var(--rv-ink); font-weight:700; font-size:13px; font-family:inherit; cursor:pointer; white-space:nowrap; }
+.rv-fp em { font-style:normal; font-weight:600; color:#6a7fa6; }
+.rv-fp.on { background:var(--rv-blue); border-color:var(--rv-blue); color:#fff; box-shadow:0 8px 14px -8px rgba(10,91,232,.7); }
+.rv-fp.on em { color:rgba(255,255,255,.85); }
+.rv-dot { width:9px; height:9px; border-radius:50%; flex:none; }
+.rv-dot.green { background:#16a34a; } .rv-dot.amber { background:#f5b50a; } .rv-dot.red { background:#e5352b; }
+@media (min-width:430px){ .rv-fp em::before{content:'(';} .rv-fp em::after{content:')';} }
+@media (max-width:429px){ .rv-fp { gap:4px; padding:0 6px; font-size:12px; } .rv-dot { width:7px; height:7px; } }
+@media (max-width:350px){ .rv-fp { font-size:11px; padding:0 4px; gap:3px; } .rv-dot { display:none; } }
+.rv-sort { display:flex; align-items:center; gap:10px; padding:0 14px; height:46px; margin-bottom:14px; background:var(--rv-soft); border:1px solid var(--rv-line); border-radius:12px; color:#5b6f97; font-size:14px; }
+.rv-sort select { flex:1; min-width:0; height:100%; border:0; outline:0; background:transparent; font-weight:800; color:var(--rv-ink); font-size:14.5px; font-family:inherit; cursor:pointer; }
+.rv-list { display:grid; gap:14px; grid-template-columns:minmax(0,1fr); align-items:start; }
+@media (min-width:900px){ .rv-list { grid-template-columns:repeat(auto-fill,minmax(430px,1fr)); } }
+.rv-card { background:#fff; border:1px solid var(--rv-line); border-radius:16px; padding:12px 14px 14px; box-shadow:0 10px 22px -18px rgba(13,44,99,.5); min-width:0; }
+.rv-card.expired { background:#fffafa; border-color:#f3d5d3; }
+.rv-card-top { display:flex; align-items:center; gap:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.rv-chips-top { flex:1; min-width:0; display:flex; align-items:center; gap:8px; flex-wrap:nowrap; overflow:hidden; }
+.rv-chip { display:inline-flex; align-items:center; height:34px; padding:0 14px; border-radius:999px; background:#e4edff; color:#14338f; font-weight:800; font-size:15px; letter-spacing:.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.rv-chip.more { background:#eef1f6; color:#667896; font-weight:700; font-size:13px; flex:none; }
+.rv-pill { flex:none; display:inline-flex; align-items:center; height:30px; padding:0 14px; border-radius:999px; font-weight:800; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; }
+.rv-pill.reserved { background:#dcf6e6; color:#12803f; } .rv-pill.pending { background:#fff0c9; color:#9a5b00; } .rv-pill.expired { background:#fde1df; color:#b42318; }
+.rv-chev { flex:none; width:30px; height:30px; display:grid; place-items:center; color:var(--rv-blue); transition:transform .2s; }
+.rv-card.open .rv-chev { transform:rotate(180deg); }
+.rv-assets { margin:12px 0 4px; padding:10px; background:var(--rv-soft); border-radius:12px; }
+.rv-assets-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 2px 8px; font-size:12.5px; font-weight:700; color:#5b6f97; }
+.rv-copyall, .rv-copy { display:inline-flex; align-items:center; gap:6px; border:1.5px solid #cfe0fb; background:#fff; color:var(--rv-blue); font-weight:800; font-family:inherit; border-radius:10px; cursor:pointer; }
+.rv-copyall { height:34px; padding:0 14px; font-size:13.5px; }
+.rv-copy { height:30px; padding:0 10px; font-size:12.5px; }
+.rv-assets ul { list-style:none; margin:0; padding:0; display:grid; gap:2px; max-height:300px; overflow:auto; }
+.rv-assets li { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 2px 4px 4px; font-weight:700; color:var(--rv-ink); font-size:15px; }
+.rv-assets li span { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.rv-remark { display:flex; gap:8px; margin-top:8px; padding:9px 10px; background:#fff; border-radius:10px; font-size:13px; color:#44587f; }
+.rv-remark svg { flex:none; margin-top:2px; color:#7d8fb2; }
+.rv-meta { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr) auto; align-items:center; gap:0; margin-top:12px; }
+.rv-m { min-width:0; padding:0 10px; border-left:1px solid #e3eaf7; display:flex; flex-direction:column; gap:2px; }
+.rv-m:first-child { padding-left:0; border-left:0; }
+.rv-m small { font-size:12px; color:#6a7fa6; font-weight:500; }
+.rv-m b { font-size:15.5px; color:var(--rv-ink); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rv-left { font-style:normal; font-size:11.5px; font-weight:700; }
+.rv-left.reserved { color:#12803f; } .rv-left.pending { color:#b36a00; } .rv-left.expired { color:#c4281c; }
+.rv-edit { margin-left:6px; width:42px; height:42px; border-radius:12px; border:1.5px solid #cfe0fb; background:#fff; color:var(--rv-blue); display:grid; place-items:center; cursor:pointer; }
+@media (max-width:400px){ .rv-m { padding:0 7px; } .rv-m b { font-size:14px; } .rv-chip { font-size:14px; padding:0 11px; } .rv-pill { padding:0 10px; font-size:11px; } .rv-edit { width:38px; height:38px; margin-left:4px; } .rv-title { font-size:26px; } }
+@media (max-width:340px){ .rv-m b { font-size:13px; } .rv-chip.more { display:none; } .rv-pill { padding:0 8px; } }
+
+/* add / edit sheet */
+body.rv-lock { overflow:hidden; }
+.rv-overlay { position:fixed; inset:0; z-index:4200; display:none; align-items:flex-end; justify-content:center; background:rgba(10,24,56,.5); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+.rv-overlay.show { display:flex; }
+.rv-sheet { width:100%; max-width:560px; max-height:94vh; max-height:94dvh; display:flex; flex-direction:column; background:#fff; border-radius:24px 24px 0 0; box-shadow:0 -20px 50px -20px rgba(0,20,70,.5); animation:rvUp .24s ease-out; }
+@keyframes rvUp { from { transform:translateY(40px); opacity:.4; } to { transform:none; opacity:1; } }
+@media (min-width:700px){ .rv-overlay { align-items:center; padding:20px; } .rv-sheet { border-radius:22px; max-height:90vh; } .rv-sheet-grab { display:none; } }
+.rv-sheet-grab { width:42px; height:4px; border-radius:4px; background:#cfd8ea; margin:8px auto 0; flex:none; }
+.rv-sheet-head { display:flex; align-items:center; justify-content:space-between; padding:10px 16px 8px 20px; flex:none; }
+.rv-sheet-head h3 { margin:0; font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:800; color:var(--rv-ink,#0b2a6b); }
+.rv-x { width:36px; height:36px; border-radius:50%; border:0; background:#eef3fb; color:#46608f; display:grid; place-items:center; cursor:pointer; }
+.rv-sheet-body { flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px 20px 8px; overscroll-behavior:contain; }
+.rv-sec { margin-bottom:18px; }
+.rv-lab { display:flex; align-items:center; justify-content:space-between; font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#52678f; margin-bottom:8px; }
+.rv-n { text-transform:none; letter-spacing:0; font-size:12px; padding:2px 10px; border-radius:999px; background:#eef1f6; color:#6a7fa6; }
+.rv-n.on { background:#e4edff; color:#14338f; }
+.rv-add-row { display:flex; gap:8px; }
+.rv-sheet input[type=text], .rv-sheet input[type=date], .rv-sheet textarea { width:100%; border:1.5px solid #d5e0f4; border-radius:12px; padding:0 14px; height:48px; font-size:16px; font-weight:700; color:#0b2a6b; background:#fff; outline:0; font-family:inherit; }
+.rv-sheet textarea { height:auto; padding:11px 14px; font-weight:600; resize:vertical; min-height:64px; }
+.rv-sheet input:focus, .rv-sheet textarea:focus { border-color:#0a5be8; box-shadow:0 0 0 3px rgba(10,91,232,.13); }
+.rv-add-btn { flex:none; display:inline-flex; align-items:center; gap:6px; height:48px; padding:0 18px; border:0; border-radius:12px; background:#0a5be8; color:#fff; font-weight:800; font-size:14.5px; font-family:inherit; cursor:pointer; }
+.rv-add-btn:disabled { background:#b9c8e4; cursor:default; }
+.rv-hint { font-size:12px; color:#7184a8; margin-top:7px; line-height:1.4; } .rv-hint.bad { color:#c4281c; font-weight:700; }
+.rv-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; max-height:172px; overflow-y:auto; padding:2px; overscroll-behavior:contain; }
+.rv-chips:empty { display:none; }
+.rv-ce { display:inline-flex; align-items:center; background:#e4edff; border-radius:999px; overflow:hidden; max-width:100%; }
+.rv-ce .t { border:0; background:transparent; padding:0 4px 0 13px; height:36px; font-weight:800; font-size:14.5px; color:#14338f; font-family:inherit; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rv-ce .x { border:0; background:transparent; width:34px; height:36px; display:grid; place-items:center; color:#4a6bb8; cursor:pointer; }
+.rv-ce .x:active { background:#cddcfb; }
+.rv-ce.warn { background:#fff0c9; } .rv-ce.warn .t { color:#7a4800; } .rv-ce.warn .x { color:#a8730f; }
+.rv-warn { display:flex; gap:8px; align-items:flex-start; margin-top:10px; padding:9px 12px; border-radius:11px; background:#fff6dc; color:#7a4800; font-size:12.5px; font-weight:600; line-height:1.4; }
+.rv-warn svg { flex:none; margin-top:1px; }
+.rv-tools { display:flex; justify-content:space-between; gap:10px; margin-top:10px; }
+.rv-link { display:inline-flex; align-items:center; gap:6px; border:0; background:transparent; color:#0a5be8; font-weight:800; font-size:13.5px; padding:6px 2px; cursor:pointer; font-family:inherit; }
+.rv-link.rv-danger { color:#c4281c; }
+.rv-range { margin-top:8px; padding:12px; border-radius:14px; background:#f3f7ff; border:1px dashed #bcd0f3; }
+.rv-range-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:10px; }
+.rv-range-grid label span { display:block; font-size:11.5px; font-weight:800; color:#52678f; margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+.rv-range-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; }
+.rv-range-foot .rv-hint { margin:0; flex:1; }
+.rv-date-row { display:flex; gap:8px; }
+.rv-step { flex:none; width:48px; height:48px; border-radius:12px; border:1.5px solid #d5e0f4; background:#fff; color:#0a5be8; display:grid; place-items:center; cursor:pointer; }
+.rv-step:active { background:#eef4ff; }
+.rv-date-row input[type=date] { text-align:center; min-width:0; }
+.rv-quick { display:flex; gap:8px; margin-top:10px; }
+.rv-quick button { flex:1; height:38px; border-radius:999px; border:1.5px solid #d5e0f4; background:#fff; color:#33507f; font-weight:700; font-size:13.5px; font-family:inherit; cursor:pointer; }
+.rv-quick button.on { background:#0a5be8; border-color:#0a5be8; color:#fff; }
+.rv-datecard { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; padding:11px 14px; border-radius:14px; background:#effaf3; border:1px solid #cdeedb; }
+.rv-datecard.pending { background:#fff8e6; border-color:#f6e2ae; } .rv-datecard.expired { background:#fff1f0; border-color:#f5cfcc; }
+.rv-datecard small { display:block; font-size:11.5px; color:#5a6f95; font-weight:600; } .rv-datecard b { font-size:16px; color:#0b2a6b; }
+.rv-dp-r { display:flex; flex-direction:column; align-items:flex-end; gap:3px; } .rv-dp-r i { font-style:normal; font-size:12px; font-weight:700; color:#4b6089; }
+.rv-dp-t { font-size:13px; color:#7184a8; }
+.rv-two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:420px){ .rv-two { grid-template-columns:1fr; gap:14px; } }
+.rv-f { display:block; } .rv-f > span { display:block; font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#52678f; margin-bottom:7px; } .rv-f > span i { text-transform:none; letter-spacing:0; font-weight:600; font-style:normal; color:#8a9bbd; }
+.rv-delete { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; height:44px; margin:2px 0 10px; border-radius:12px; border:1.5px solid #f3cbc8; background:#fff5f4; color:#c4281c; font-weight:800; font-size:14px; font-family:inherit; cursor:pointer; }
+.rv-sheet-foot { flex:none; display:flex; gap:10px; padding:12px 20px calc(14px + env(safe-area-inset-bottom,0px)); border-top:1px solid #e6edf8; background:#fff; border-radius:0 0 22px 22px; }
+.rv-cancel { flex:0 0 auto; height:50px; padding:0 22px; border-radius:13px; border:1.5px solid #d5e0f4; background:#fff; color:#33507f; font-weight:800; font-size:15px; font-family:inherit; cursor:pointer; }
+.rv-save { flex:1; height:50px; border-radius:13px; border:0; background:linear-gradient(180deg,#1f74ff,#0a5be8); color:#fff; font-weight:800; font-size:15.5px; font-family:inherit; cursor:pointer; box-shadow:0 10px 18px -10px rgba(10,91,232,.8); }
+.rv-save:disabled { opacity:.6; }
+#rv-toast { position:fixed; left:50%; bottom:calc(92px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,16px); z-index:9700; background:#0f1f45; color:#fff; padding:10px 18px; border-radius:999px; font-size:13.5px; font-weight:700; opacity:0; pointer-events:none; transition:.2s; max-width:88vw; text-align:center; }
+#rv-toast.show { opacity:1; transform:translate(-50%,0); }
 </style>
 </head>
 <body>
@@ -2968,10 +3079,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                             <div class="search-hero-row">
                                 <div class="search-hero-input-wrap">
                                     <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
-                                    <input type="text" id="home-rate-search" class="search-hero-input" placeholder="Eg. Scissor Lift, 32m, Generator, etc..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="home-rate-suggest" oninput="searchHomeRates(this.value); showRateSuggestions(this.value)" onkeydown="rateSuggestKey(event)" onfocus="showRateSuggestions(this.value)" />
+                                    <input type="text" id="home-rate-search" class="search-hero-input" placeholder="Eg. Scissor Lift, 32m, Generator, etc..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="home-rate-suggest" oninput="sxSet('rate','home'); searchHomeRates(this.value); showRateSuggestions(this.value)" onkeydown="sxSet('rate','home'); rateSuggestKey(event)" onfocus="sxSet('rate','home'); showRateSuggestions(this.value)" />
                                     <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
                                 </div>
-                                <button class="search-hero-btn" onclick="hideRateSuggestions(); document.getElementById('home-rate-search').blur(); searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                                <button class="search-hero-btn" onclick="sxSet('rate','home'); hideRateSuggestions(); document.getElementById('home-rate-search').blur(); searchHomeRates(document.getElementById('home-rate-search').value)"><i data-lucide="search" size="16"></i> Search</button>
                             </div>
                                 <div class="sx-suggest" id="home-rate-suggest" role="listbox" hidden></div>
                             <div class="rate-cards" id="home-rate-results"></div>
@@ -3010,10 +3121,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                                 <div class="search-hero-row">
                                     <div class="search-hero-input-wrap">
                                         <span class="shi-search-ico"><i data-lucide="search" size="18"></i></span>
-                                        <input type="text" id="home-specsheet-search" class="search-hero-input" placeholder="Search datasheets by machine name..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="home-spec-suggest" oninput="searchHomeSpecSheets(this.value); showSpecSuggestions(this.value)" onkeydown="specSuggestKey(event)" onfocus="showSpecSuggestions(this.value)" />
+                                        <input type="text" id="home-specsheet-search" class="search-hero-input" placeholder="Search datasheets by machine name..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="home-spec-suggest" oninput="sxSet('spec','home'); searchHomeSpecSheets(this.value); showSpecSuggestions(this.value)" onkeydown="sxSet('spec','home'); specSuggestKey(event)" onfocus="sxSet('spec','home'); showSpecSuggestions(this.value)" />
                                         <span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span>
                                     </div>
-                                    <button class="search-hero-btn" onclick="hideSpecSuggestions(); document.getElementById('home-specsheet-search').blur(); searchHomeSpecSheets(document.getElementById('home-specsheet-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+                                    <button class="search-hero-btn" onclick="sxSet('spec','home'); hideSpecSuggestions(); document.getElementById('home-specsheet-search').blur(); searchHomeSpecSheets(document.getElementById('home-specsheet-search').value)"><i data-lucide="search" size="16"></i> Search</button>
                                 </div>
                                 <div class="sx-suggest" id="home-spec-suggest" role="listbox" hidden></div>
                                 <div id="home-specsheet-results"></div>
@@ -3192,12 +3303,18 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                     </div>
                 </aside>
                 <div class="home-main">
-                                        <div class="search-hero-panel tint-blue tab-hero">
-    <div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="tag" size="24"></i></div><div><div class="search-hero-title">Search Rental Rates</div><div class="search-hero-desc">Search rates by equipment category...</div></div></div>
-    <div class="search-hero-row">
-        <div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="rates-search" class="search-hero-input" placeholder="Eg. Scissor Lift, Generator, Crane..." autocomplete="off" oninput="filterCategoryGrid('rates', this.value)" onkeydown="if(event.key==='Enter'){this.blur()}" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
-        <button class="search-hero-btn" type="button" onclick="filterCategoryGrid('rates', document.getElementById('rates-search').value); document.getElementById('rates-search').blur()"><i data-lucide="search" size="16"></i><span>Search</span></button>
-    </div>
+                                        <div class="search-hero-panel tint-blue hero-main sx-panel">
+<div class="hero-art" aria-hidden="true">
+                                <svg class="hero-waves" viewBox="0 0 800 120" preserveAspectRatio="none"><path d="M0 70C110 30 220 96 340 66S560 20 800 58V120H0Z" fill="#fff" opacity=".35"/><path d="M0 92C140 60 260 112 400 88S640 56 800 84V120H0Z" fill="#8fbbf2" opacity=".38"/><path d="M0 108C170 90 300 118 460 104S680 86 800 102V120H0Z" fill="#6ea3ec" opacity=".34"/></svg>
+                                <span class="hero-logo" role="img" aria-label="Saudi Vision 2030"></span>
+                            </div>
+<div class="hero-copy"><div class="hero-kicker">Rental Rates</div><h2 class="hero-h">Search Rental Rates</h2><p class="hero-p">Find rates for any equipment — type a machine name, size or capacity.</p></div>
+<div class="search-hero-row">
+<div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="rates-search" class="search-hero-input" placeholder="Eg. Scissor Lift, 32m, Generator, etc..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="rates-suggest" oninput="sxSet('rate','tab'); searchHomeRates(this.value); showRateSuggestions(this.value)" onkeydown="sxSet('rate','tab'); rateSuggestKey(event)" onfocus="sxSet('rate','tab'); showRateSuggestions(this.value)" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
+<button class="search-hero-btn" type="button"  onclick="sxSet('rate','tab'); hideRateSuggestions(); document.getElementById('rates-search').blur(); searchHomeRates(document.getElementById('rates-search').value)"><i data-lucide="search" size="16"></i> Search</button>
+</div>
+<div class="sx-suggest" id="rates-suggest" role="listbox" hidden></div>
+<div class="rate-cards" id="rates-results"></div>
 </div>
 <div id="rates-grid" class="dash-grid"></div>
         
@@ -3225,13 +3342,15 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                     </div>
                 </aside>
                 <div class="home-main">
-                                        <div class="search-hero-panel tint-purple tab-hero">
-    <div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="file-text" size="24"></i></div><div><div class="search-hero-title">Search Spec Sheets</div><div class="search-hero-desc">Search datasheets by machine category...</div></div></div>
-    <div class="search-hero-row">
-        <div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="docs-search" class="search-hero-input" placeholder="Eg. Scissor Lift, Generator, Crane..." autocomplete="off" oninput="filterCategoryGrid('docs', this.value)" onkeydown="if(event.key==='Enter'){this.blur()}" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
-        <button class="search-hero-btn" type="button" onclick="filterCategoryGrid('docs', document.getElementById('docs-search').value); document.getElementById('docs-search').blur()"><i data-lucide="search" size="16"></i><span>Search</span></button>
-    </div>
+                                        <div class="home-side-stack sx-panel"><div class="search-hero-panel tint-purple">
+<div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="file-text" size="24"></i></div><div><div class="search-hero-title">Search Spec Sheets</div><div class="search-hero-desc">Search datasheets by machine name...</div></div></div>
+<div class="search-hero-row">
+<div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="docs-search" class="search-hero-input" placeholder="Search datasheets by machine name..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="docs-suggest" oninput="sxSet('spec','tab'); searchHomeSpecSheets(this.value); showSpecSuggestions(this.value)" onkeydown="sxSet('spec','tab'); specSuggestKey(event)" onfocus="sxSet('spec','tab'); showSpecSuggestions(this.value)" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
+<button class="search-hero-btn" type="button"  onclick="sxSet('spec','tab'); hideSpecSuggestions(); document.getElementById('docs-search').blur(); searchHomeSpecSheets(document.getElementById('docs-search').value)"><i data-lucide="search" size="16"></i> Search</button>
 </div>
+<div class="sx-suggest" id="docs-suggest" role="listbox" hidden></div>
+<div id="docs-results" class=""></div>
+</div></div>
 <div id="docs-grid" class="dash-grid"></div>
         
                 </div>
@@ -3425,13 +3544,15 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                     </div>
                 </aside>
                 <div class="home-main">
-                                        <div class="search-hero-panel tint-pink tab-hero">
-    <div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="image" size="24"></i></div><div><div class="search-hero-title">Search Machine Photos</div><div class="search-hero-desc">Search photos by machine, size or folder...</div></div></div>
-    <div class="search-hero-row">
-        <div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="photo-search" class="search-hero-input" placeholder="Eg. Scissor Lift 12m, Generator..." autocomplete="off" oninput="photoSearch(this.value)" onkeydown="if(event.key==='Enter'){this.blur()}" /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
-        <button class="search-hero-btn" type="button" onclick="photoSearch(document.getElementById('photo-search').value); document.getElementById('photo-search').blur()"><i data-lucide="search" size="16"></i><span>Search</span></button>
-    </div>
+                                        <div class="home-side-stack sx-panel"><div class="search-hero-panel tint-pink">
+<div class="search-hero-head"><div class="search-hero-icon"><i data-lucide="image" size="24"></i></div><div><div class="search-hero-title">Search Machine Photos</div><div class="search-hero-desc">Search photos by machine, size or folder...</div></div></div>
+<div class="search-hero-row">
+<div class="search-hero-input-wrap"><span class="shi-search-ico"><i data-lucide="search" size="18"></i></span><input type="text" id="photo-search" class="search-hero-input" placeholder="Eg. Scissor Lift 12m, Generator..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="photo-suggest"  /><span class="shi-filter-ico"><i data-lucide="sliders-horizontal" size="16"></i></span></div>
+<button class="search-hero-btn" type="button" id="photo-go" ><i data-lucide="search" size="16"></i> Search</button>
 </div>
+<div class="sx-suggest" id="photo-suggest" role="listbox" hidden></div>
+<div id="photo-results" class=""></div>
+</div></div>
             <div class="breadcrumb-wrap" id="photo-breadcrumbs"></div>
             <div class="stats-line" id="photo-stats" style="padding:0 0 10px 2px;">Loading…</div>
 
@@ -3477,21 +3598,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                     </div>
                 </aside>
                 <div class="home-main">
-                    <div class="hd-banner hd-tint-orange">
-                        <div class="hd-badge"><i data-lucide="calendar-check"></i></div>
-                        <div class="hd-titles">
-                            <div class="hd-kicker">Reservation Tracker</div>
-                            <h2 class="hd-title">Reserve</h2>
-                            <p class="hd-sub">View and manage equipment reservations.</p>
-                        </div>
-                        <svg class="hd-art" viewBox="0 0 300 110" aria-hidden="true">
-                            <path d="M0 110C60 70 130 40 230 8L300 0V110Z" fill="#fff" opacity=".35"/>
-                            <path d="M90 110C150 76 210 44 300 26V110Z" fill="#9cc4fb" opacity=".3"/>
-                            <g fill="#7db0f8" opacity=".78"><circle cx="96" cy="50" r="12"/><path d="M72 104c0-18 11-28 24-28s24 10 24 28z"/></g>
-                            <g fill="#4c8ef0"><circle cx="150" cy="38" r="17"/><path d="M114 108c0-25 16-40 36-40s36 15 36 40z"/></g>
-                        </svg>
-                    </div>
-            <div id="reservation-auth-gate" class="res-auth-gate">
+                    <div id="reservation-auth-gate" class="res-auth-gate">
                 <div class="res-auth-card">
                     <i data-lucide="lock" size="30"></i>
                     <h3>Sign in to use your Reservation Tracker</h3>
@@ -3500,22 +3607,33 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
                     <div class="res-auth-err hidden" id="reservation-auth-err"></div>
                 </div>
             </div>
-            <div id="reservation-app" class="hidden">
-                <div class="res-user-bar">
-                    <div class="res-user-info">
+            <div id="reservation-app" class="hidden rv-app">
+                <div class="rv-head">
+                    <div class="rv-head-txt">
+                        <h2 class="rv-title">Reservations</h2>
+                        <p class="rv-sub">View and manage equipment reservations.</p>
+                    </div>
+                    <div class="rv-user">
                         <img id="reservation-user-photo" class="res-user-avatar" src="" alt="" />
                         <span id="reservation-user-name"></span>
+                        <button type="button" class="rv-signout" onclick="reservationSignOut()" title="Sign out" aria-label="Sign out"><i data-lucide="log-out" size="15"></i></button>
                     </div>
-                    <button class="res-signout-btn" onclick="reservationSignOut()"><i data-lucide="log-out" size="13"></i> Sign out</button>
                 </div>
-                <div class="erp-stats" id="reservation-stats"></div>
-                <div class="erp-toolbar">
-                    <input type="text" id="reservation-search" placeholder="Search asset, client, sales person..." oninput="filterReservations(this.value)" />
-                    <button class="erp-btn-show" onclick="filterReservations(document.getElementById('reservation-search').value)"><i data-lucide="search" size="14"></i> SHOW RECORDS</button>
-                    <button class="res-add-btn" onclick="openReservationModal()"><i data-lucide="plus" size="14"></i> ADD RESERVATION</button>
+                <div class="rv-toolbar">
+                    <label class="rv-search"><i data-lucide="search" size="18"></i><input type="text" id="reservation-search" placeholder="Search asset, client, salesperson..." oninput="filterReservations(this.value)" autocomplete="off" /></label>
+                    <button type="button" class="rv-add" onclick="openReservationModal()"><i data-lucide="plus" size="18"></i><span>Add<span class="rv-add-long"> Reservation</span></span></button>
                 </div>
-                <h3 class="group-title">Reservations</h3>
-                <div id="reservation-list"></div>
+                <div class="rv-filters" id="reservation-stats"></div>
+                <div class="rv-sort"><label for="reservation-sort">Sort by:</label>
+                    <select id="reservation-sort" onchange="setReservationSort(this.value)">
+                        <option value="due">Due date</option>
+                        <option value="added">Recently added</option>
+                        <option value="client">Client (A–Z)</option>
+                        <option value="sales">Salesperson (A–Z)</option>
+                        <option value="asset">Asset number</option>
+                    </select>
+                </div>
+                <div id="reservation-list" class="rv-list"></div>
             </div>
         
                 </div>
@@ -3699,36 +3817,66 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         <button type="button" class="ohb ohb-wa" onclick="shareWhatsApp()"><i data-lucide="share-2" size="18"></i><span>Share</span></button>
     </div>
 
-    <div class="res-modal-overlay" id="reservationModalOverlay">
-      <div class="res-modal">
-        <h3 id="reservationModalTitle">Add Reservation</h3>
-        <input type="hidden" id="res-id" />
-        <div class="res-field">
-          <label>Asset No.</label>
-          <input type="text" id="res-asset" placeholder="e.g. SG-713-160" />
+    <div class="rv-overlay" id="reservationModalOverlay" onmousedown="if(event.target===this)closeReservationModal()">
+      <div class="rv-sheet" role="dialog" aria-modal="true" aria-labelledby="reservationModalTitle">
+        <div class="rv-sheet-grab" aria-hidden="true"></div>
+        <div class="rv-sheet-head">
+          <h3 id="reservationModalTitle">Add Reservation</h3>
+          <button type="button" class="rv-x" onclick="closeReservationModal()" aria-label="Close"><i data-lucide="x" size="18"></i></button>
         </div>
-        <div class="res-field">
-          <label>Sales Person</label>
-          <input type="text" id="res-sales" placeholder="e.g. Manmesh" />
+        <div class="rv-sheet-body">
+          <input type="hidden" id="res-id" />
+          <section class="rv-sec">
+            <div class="rv-lab"><span>Asset numbers</span><span class="rv-n" id="rv-asset-count">0 added</span></div>
+            <div class="rv-add-row">
+              <input type="text" id="rv-asset-input" placeholder="Type or paste asset numbers" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="done" oninput="rvOnAssetInput(event)" onkeydown="rvOnAssetKey(event)" onblur="rvCommitPending()" />
+              <button type="button" class="rv-add-btn" onmousedown="event.preventDefault()" onclick="rvCommitPending(true)"><i data-lucide="plus" size="16"></i> Add</button>
+            </div>
+            <div class="rv-hint">Add them one by one, or paste a list separated by commas, spaces or new lines.</div>
+            <div class="rv-chips" id="rv-chips"></div>
+            <div class="rv-warn hidden" id="rv-conflict"></div>
+            <div class="rv-tools">
+              <button type="button" class="rv-link" onclick="rvToggleRange()"><i data-lucide="list-plus" size="14"></i> Add a range</button>
+              <button type="button" class="rv-link rv-danger hidden" id="rv-clear-all" onclick="rvClearAssets()"><i data-lucide="trash-2" size="14"></i> Remove all</button>
+            </div>
+            <div class="rv-range hidden" id="rv-range">
+              <div class="rv-range-grid">
+                <label><span>From</span><input type="text" id="rv-range-from" placeholder="S28AD-960" autocapitalize="characters" autocomplete="off" oninput="rvRangePreview()" /></label>
+                <label><span>To</span><input type="text" id="rv-range-to" placeholder="964" autocapitalize="characters" autocomplete="off" oninput="rvRangePreview()" /></label>
+              </div>
+              <div class="rv-range-foot"><span class="rv-hint" id="rv-range-preview">Eg. S28AD-960 to 964 adds 5 numbers.</span><button type="button" class="rv-add-btn" id="rv-range-go" onclick="rvAddRange()" disabled>Add range</button></div>
+            </div>
+          </section>
+
+          <section class="rv-sec">
+            <div class="rv-lab"><span>Reservation date</span></div>
+            <div class="rv-date-row">
+              <button type="button" class="rv-step" onclick="rvShiftDate(-1)" aria-label="Previous day"><i data-lucide="chevron-left" size="18"></i></button>
+              <input type="date" id="res-date" onchange="rvDateChanged()" oninput="rvDateChanged()" />
+              <button type="button" class="rv-step" onclick="rvShiftDate(1)" aria-label="Next day"><i data-lucide="chevron-right" size="18"></i></button>
+            </div>
+            <div class="rv-quick" id="rv-quick">
+              <button type="button" data-q="-1" onclick="rvQuickDate(-1)">Yesterday</button>
+              <button type="button" data-q="0" onclick="rvQuickDate(0)">Today</button>
+              <button type="button" data-q="1" onclick="rvQuickDate(1)">Tomorrow</button>
+            </div>
+            <div class="rv-datecard" id="rv-date-preview"></div>
+          </section>
+
+          <section class="rv-sec rv-two">
+            <label class="rv-f"><span>Client</span><input type="text" id="res-client" list="rv-clients" placeholder="e.g. SIIC" autocomplete="off" /></label>
+            <label class="rv-f"><span>Salesperson</span><input type="text" id="res-sales" list="rv-saleslist" placeholder="e.g. Manmesh" autocomplete="off" /></label>
+            <datalist id="rv-clients"></datalist><datalist id="rv-saleslist"></datalist>
+          </section>
+          <section class="rv-sec">
+            <label class="rv-f"><span>Remark <i>(optional)</i></span><textarea id="res-remark" rows="2" placeholder="Notes for this reservation..."></textarea></label>
+          </section>
+          <button type="button" class="rv-delete hidden" id="res-delete-btn" onclick="deleteReservationFromModal()"><i data-lucide="trash-2" size="15"></i> Delete reservation</button>
         </div>
-        <div class="res-field">
-          <label>Reservation Date</label>
-          <input type="date" id="res-date" />
-          <div style="font-size:10.5px; color:var(--text-dim); margin-top:5px;">Status &amp; days left are calculated automatically from this date.</div>
+        <div class="rv-sheet-foot">
+          <button type="button" class="rv-cancel" onclick="closeReservationModal()">Cancel</button>
+          <button type="button" class="rv-save" id="rv-save" onclick="saveReservationForm()">Save Reservation</button>
         </div>
-        <div class="res-field">
-          <label>Client</label>
-          <input type="text" id="res-client" placeholder="e.g. SIIC" />
-        </div>
-        <div class="res-field">
-          <label>Remark</label>
-          <textarea id="res-remark" placeholder="Optional notes..."></textarea>
-        </div>
-        <div class="res-modal-actions">
-          <button class="res-btn-cancel" onclick="closeReservationModal()">Cancel</button>
-          <button class="res-btn-save" onclick="saveReservationForm()">Save</button>
-        </div>
-        <button class="res-btn-delete hidden" id="res-delete-btn" onclick="deleteReservationFromModal()"><i data-lucide="trash-2" size="14"></i> Delete Reservation</button>
       </div>
     </div>
 </div>
@@ -5688,73 +5836,107 @@ document.addEventListener('visibilitychange', () => {
         return { status, days: daysLeft, key };
     }
 
-    function resStatusClass(key) {
-        if (key === 'reserved') return 'active';
-        if (key === 'pending') return 'pending';
-        return 'expired';
+    /* ---------- Reservations UI (cards, filters, sort, add/edit sheet) ---------- */
+    const rvEsc = x => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const rvSplit = str => String(str || '').split(/[\s,;|]+/).map(x => x.trim().toUpperCase()).filter(Boolean);
+    // A reservation can hold many asset numbers. Older records only have one "asset" text - read both.
+    function assetsOf(r) { return (Array.isArray(r.assets) && r.assets.length) ? r.assets.map(String) : rvSplit(r.asset); }
+    const rvIso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const rvParse = str => { const d = new Date(str + 'T00:00:00'); return isNaN(d) ? null : d; };
+    function rvAddDays(str, n) { const d = rvParse(str) || new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return rvIso(d); }
+    function rvFmt(str) { const d = rvParse(str); return d ? d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; }
+    const rvDue = str => str ? rvAddDays(str, 2) : '';   // last valid day = reservation date + 2 (same rule as the status above)
+    function rvLeftText(c, dateStr) {
+        if (!dateStr || !rvParse(dateStr)) return '';
+        if (c.key === 'expired') {
+            const t = new Date(); t.setHours(0, 0, 0, 0);
+            return Math.round((t - rvParse(dateStr)) / 86400000) - 2 + 'd overdue';
+        }
+        return c.days === 0 ? 'Last day today' : c.days + 'd left';
     }
+    const RV_LABEL = { reserved: 'Reserved', pending: 'Due soon', expired: 'Expired' };
 
-    function fmtResDate(d) {
-        if (!d) return '—';
-        const dt = new Date(d + 'T00:00:00');
-        if (isNaN(dt)) return d;
-        return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+    let currentReservationSort = 'due';
+    const rvExpanded = new Set();
+    function rvToast(msg) {
+        let t = document.getElementById('rv-toast');
+        if (!t) { t = document.createElement('div'); t.id = 'rv-toast'; document.body.appendChild(t); }
+        t.textContent = msg; t.className = 'show';
+        clearTimeout(t._h); t._h = setTimeout(() => { t.className = ''; }, 1900);
     }
+    function rvCopy(text, msg) {
+        const done = () => rvToast(msg || 'Copied');
+        const fallback = () => {
+            const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+            document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { rvToast('Could not copy'); } ta.remove();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    }
+    function rvCopyAsset(id, i) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r)[i]; if (a) rvCopy(a, 'Copied ' + a); }
+    function rvCopyAll(id) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r); rvCopy(a.join('\n'), 'Copied ' + a.length + ' asset number' + (a.length === 1 ? '' : 's')); }
+    function toggleReservationCard(id) { if (rvExpanded.has(id)) rvExpanded.delete(id); else rvExpanded.add(id); filterReservations(); }
 
-    function setReservationFilter(key) {
-        currentReservationFilter = key;
-        renderReservations();
-    }
+    function setReservationFilter(key) { currentReservationFilter = key; renderReservations(); }
+    function setReservationSort(v) { currentReservationSort = v; filterReservations(); }
 
     function renderReservations() {
         const computed = RESERVATIONS.map(r => ({ r, c: computeReservationStatus(r.date) }));
-        const total = computed.length;
-        const reservedCount = computed.filter(x => x.c.key === 'reserved').length;
-        const pendingCount = computed.filter(x => x.c.key === 'pending').length;
-        const expiredCount = computed.filter(x => x.c.key === 'expired').length;
-
-        const sel = k => currentReservationFilter === k ? ' res-tab-selected' : '';
-        document.getElementById('reservation-stats').innerHTML =
-            `<div class="erp-stat c-blue res-tab${sel('all')}" onclick="setReservationFilter('all')"><i data-lucide="clipboard-list" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${total}</span><span class="erp-stat-label">Total Reservations</span></div>` +
-            `<div class="erp-stat c-green res-tab${sel('reserved')}" onclick="setReservationFilter('reserved')"><i data-lucide="check-circle" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${reservedCount}</span><span class="erp-stat-label">Active</span></div>` +
-            `<div class="erp-stat c-teal res-tab${sel('pending')}" onclick="setReservationFilter('pending')"><i data-lucide="clock" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${pendingCount}</span><span class="erp-stat-label">Last Day</span></div>` +
-            `<div class="erp-stat c-red res-tab${sel('expired')}" onclick="setReservationFilter('expired')"><i data-lucide="x-circle" class="erp-stat-icon" size="18"></i><span class="erp-stat-value">${expiredCount}</span><span class="erp-stat-label">Expired</span></div>`;
-
+        const n = k => computed.filter(x => x.c.key === k).length;
+        const pills = [['all', 'All', '', computed.length], ['reserved', 'Reserved', 'green', n('reserved')], ['pending', 'Due soon', 'amber', n('pending')], ['expired', 'Expired', 'red', n('expired')]];
+        document.getElementById('reservation-stats').innerHTML = pills.map(([k, label, dot, count]) =>
+            `<button type="button" class="rv-fp${currentReservationFilter === k ? ' on' : ''}" onclick="setReservationFilter('${k}')">${dot ? `<i class="rv-dot ${dot}"></i>` : ''}<span>${label}</span><em>${count}</em></button>`).join('');
         renderReservationRows(computed);
-        (typeof lucide !== 'undefined' && lucide.createIcons());
+    }
+
+    function rvSorted(list) {
+        const by = currentReservationSort, cmp = (a, b) => String(a || '').localeCompare(String(b || ''), undefined, { numeric: true, sensitivity: 'base' });
+        const added = r => (r.createdAt && (r.createdAt.seconds || (r.createdAt.toMillis && r.createdAt.toMillis() / 1000))) || 0;
+        return list.slice().sort((x, y) => {
+            if (by === 'client') return cmp(x.r.client, y.r.client);
+            if (by === 'sales') return cmp(x.r.sales, y.r.sales);
+            if (by === 'asset') return cmp(assetsOf(x.r)[0], assetsOf(y.r)[0]);
+            if (by === 'added') return added(y.r) - added(x.r);
+            const ex = x.c.key === 'expired' ? 1 : 0, ey = y.c.key === 'expired' ? 1 : 0;
+            if (ex !== ey) return ex - ey;                                   // active ones first
+            const d = cmp(x.r.date || '9999', y.r.date || '9999');
+            return ex ? -d : d;                                              // soonest due first; expired: most recent first
+        });
+    }
+
+    function rvCardHtml({ r, c }) {
+        const assets = assetsOf(r), n = assets.length, open = rvExpanded.has(r.id), id = rvEsc(r.id);
+        const more = n > 1 ? `<span class="rv-chip more">+${n - 1} more</span>` : '';
+        const list = open ? `<div class="rv-assets">
+                <div class="rv-assets-bar"><span>${n} asset number${n === 1 ? '' : 's'}</span><button type="button" class="rv-copyall" onclick="event.stopPropagation(); rvCopyAll('${id}')"><i data-lucide="copy" size="15"></i> Copy ${n > 1 ? 'all' : ''}</button></div>
+                <ul>${assets.map((a, i) => `<li><span>${rvEsc(a)}</span><button type="button" class="rv-copy" onclick="event.stopPropagation(); rvCopyAsset('${id}', ${i})"><i data-lucide="copy" size="14"></i> Copy</button></li>`).join('')}</ul>
+                ${r.remark ? `<div class="rv-remark"><i data-lucide="message-square-text" size="14"></i><span>${rvEsc(r.remark)}</span></div>` : ''}
+            </div>` : '';
+        return `<article class="rv-card ${c.key}${open ? ' open' : ''}" data-id="${id}">
+            <div class="rv-card-top" onclick="toggleReservationCard('${id}')" role="button" tabindex="0" aria-expanded="${open}">
+                <div class="rv-chips-top"><span class="rv-chip main">${rvEsc(assets[0] || '—')}</span>${more}</div>
+                <span class="rv-pill ${c.key}">${RV_LABEL[c.key]}</span>
+                <span class="rv-chev" aria-hidden="true"><i data-lucide="chevron-down" size="20"></i></span>
+            </div>
+            ${list}
+            <div class="rv-meta">
+                <div class="rv-m"><small>Client</small><b>${rvEsc(r.client || '—')}</b></div>
+                <div class="rv-m"><small>Salesperson</small><b>${rvEsc(r.sales || '—')}</b></div>
+                <div class="rv-m due"><small>Due Date</small><b>${r.date ? rvFmt(rvDue(r.date)) : '—'}</b><i class="rv-left ${c.key}">${rvEsc(rvLeftText(c, r.date))}</i></div>
+                <button type="button" class="rv-edit" onclick="openReservationModal('${id}')" aria-label="Edit reservation"><i data-lucide="pencil" size="17"></i></button>
+            </div>
+        </article>`;
     }
 
     function renderReservationRows(computed) {
-        const searchVal = (document.getElementById('reservation-search').value || '').toLowerCase();
+        const q = (document.getElementById('reservation-search').value || '').trim().toLowerCase();
         const filtered = computed.filter(({ r, c }) => {
             if (currentReservationFilter !== 'all' && c.key !== currentReservationFilter) return false;
-            if (searchVal) {
-                const hay = [r.asset, r.sales, r.client].join(' ').toLowerCase();
-                if (!hay.includes(searchVal)) return false;
-            }
+            if (q && ![assetsOf(r).join(' '), r.sales, r.client, r.remark].join(' ').toLowerCase().includes(q)) return false;
             return true;
         });
         const list = document.getElementById('reservation-list');
-        if (!filtered.length) {
-            list.innerHTML = `<div class="res-empty"><i data-lucide="calendar-check" size="34"></i>${RESERVATIONS.length ? 'No reservations match this view.' : 'No reservations yet. Tap "Add Reservation" to create the first one.'}</div>`;
-        } else {
-            list.innerHTML = filtered.map(({ r, c }) => `<div class="res-row" data-id="${r.id}" ${r.remark ? `title="${r.remark.replace(/"/g, '&quot;')}"` : ''}>
-                <div class="res-row-main">
-                    <span class="res-row-asset">${r.asset || '—'}</span>
-                    <span class="res-row-sep">•</span>
-                    <span class="res-row-sales">${r.sales || '—'}</span>
-                    <span class="res-row-sep">•</span>
-                    <span class="res-row-date">${fmtResDate(r.date)}</span>
-                    <span class="res-row-sep">•</span>
-                    <span class="res-row-days">${c.days}d left</span>
-                    ${r.client ? `<span class="res-row-sep">•</span><span class="res-row-sales">${r.client}</span>` : ''}
-                </div>
-                <div class="res-row-right">
-                    <span class="res-badge ${resStatusClass(c.key)}">${c.status}</span>
-                    <button class="res-row-edit" onclick="openReservationModal('${r.id}')"><i data-lucide="pencil" size="13"></i></button>
-                </div>
-            </div>`).join('');
-        }
+        list.innerHTML = filtered.length ? rvSorted(filtered).map(rvCardHtml).join('')
+            : `<div class="res-empty"><i data-lucide="calendar-check" size="34"></i>${RESERVATIONS.length ? 'No reservations match this view.' : 'No reservations yet. Tap "Add" to create the first one.'}</div>`;
         (typeof lucide !== 'undefined' && lucide.createIcons());
     }
 
@@ -5770,61 +5952,173 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
+    /* ---------- Add / edit sheet ---------- */
+    let rvAssets = [];
+    const rvEl = id => document.getElementById(id);
+
+    function rvConflictFor(a) {
+        return RESERVATIONS.find(r => r.id !== reservationEditingId && computeReservationStatus(r.date).key !== 'expired' && assetsOf(r).includes(a));
+    }
+    function rvPush(tok, quiet) {
+        tok = String(tok || '').trim().toUpperCase();
+        if (!tok) return false;
+        if (rvAssets.includes(tok)) { if (!quiet) rvToast(tok + ' is already added'); return false; }
+        rvAssets.push(tok); return true;
+    }
+    function rvRenderChips() {
+        const n = rvAssets.length;
+        rvEl('rv-asset-count').textContent = n + ' added';
+        rvEl('rv-asset-count').classList.toggle('on', n > 0);
+        rvEl('rv-clear-all').classList.toggle('hidden', n < 2);
+        rvEl('rv-chips').innerHTML = rvAssets.map((a, i) => {
+            const cf = rvConflictFor(a);
+            return `<span class="rv-ce${cf ? ' warn' : ''}"${cf ? ` title="Already in another active reservation (${rvEsc(cf.client || cf.sales || '')})"` : ''}><button type="button" class="t" onclick="rvEditAsset(${i})" title="Tap to edit">${rvEsc(a)}</button><button type="button" class="x" onclick="rvRemoveAsset(${i})" aria-label="Remove ${rvEsc(a)}"><i data-lucide="x" size="13"></i></button></span>`;
+        }).join('');
+        const dup = rvAssets.map(a => [a, rvConflictFor(a)]).filter(x => x[1]);
+        const box = rvEl('rv-conflict');
+        box.classList.toggle('hidden', !dup.length);
+        if (dup.length) box.innerHTML = `<i data-lucide="triangle-alert" size="15"></i><span>${dup.length === 1 ? '1 number is' : dup.length + ' numbers are'} already in another active reservation: ${dup.slice(0, 3).map(([a, r]) => rvEsc(a) + (r.client ? ' (' + rvEsc(r.client) + ')' : '')).join(', ')}${dup.length > 3 ? '…' : ''}</span>`;
+        rvEl('rv-save').textContent = n > 1 ? `Save ${n} assets` : 'Save Reservation';
+        (typeof lucide !== 'undefined' && lucide.createIcons());
+    }
+    function rvRemoveAsset(i) { rvAssets.splice(i, 1); rvRenderChips(); }
+    function rvEditAsset(i) {
+        const v = rvAssets[i]; rvAssets.splice(i, 1); rvRenderChips();
+        const inp = rvEl('rv-asset-input'); rvCommitPending(); inp.value = v; inp.focus(); try { inp.setSelectionRange(v.length, v.length); } catch (e) { }
+    }
+    function rvClearAssets() { if (rvAssets.length && confirm('Remove all ' + rvAssets.length + ' asset numbers?')) { rvAssets = []; rvRenderChips(); } }
+    function rvCommitPending(focusAfter) {
+        const inp = rvEl('rv-asset-input'); if (!inp) return;
+        const toks = rvSplit(inp.value); let added = 0, dups = 0;
+        toks.forEach(t => { if (rvPush(t, true)) added++; else dups++; });
+        inp.value = '';
+        if (dups && !added) rvToast(dups === 1 ? 'Already added' : dups + ' were already added');
+        if (toks.length) rvRenderChips();
+        if (focusAfter) inp.focus();
+    }
+    function rvOnAssetInput(e) {
+        const inp = e.target, v = inp.value;
+        if (!/[\s,;]/.test(v)) return;                       // still typing one number
+        const endsSep = /[\s,;]$/.test(v), parts = v.split(/[\s,;]+/);
+        const rest = endsSep ? '' : parts.pop();
+        let dups = 0; parts.filter(Boolean).forEach(p => { if (!rvPush(p, true)) dups++; });
+        inp.value = rest || '';
+        if (dups) rvToast(dups === 1 ? 'Already added' : dups + ' were already added');
+        rvRenderChips();
+    }
+    function rvOnAssetKey(e) {
+        if (e.key === 'Enter') { e.preventDefault(); rvCommitPending(true); }
+        else if (e.key === 'Backspace' && !e.target.value && rvAssets.length && e.shiftKey) { rvAssets.pop(); rvRenderChips(); }
+    }
+
+    function rvToggleRange() {
+        const box = rvEl('rv-range'); box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) {
+            if (!rvEl('rv-range-from').value && rvAssets.length) rvEl('rv-range-from').value = rvAssets[rvAssets.length - 1];
+            rvEl('rv-range-to').focus(); rvRangePreview();
+        }
+    }
+    function rvRangeParse() {
+        const from = rvEl('rv-range-from').value.trim().toUpperCase(), toRaw = rvEl('rv-range-to').value.trim();
+        const m = from.match(/^(.*?)(\d+)$/); if (!m) return null;
+        const start = parseInt(m[2], 10), tm = toRaw.match(/(\d+)$/), end = tm ? parseInt(tm[1], 10) : NaN;
+        return { prefix: m[1], width: m[2].length, start, end };
+    }
+    function rvRangePreview() {
+        const p = rvRangeParse(), out = rvEl('rv-range-preview'), go = rvEl('rv-range-go');
+        let ok = false, msg = 'Eg. S28AD-960 to 964 adds 5 numbers.';
+        if (rvEl('rv-range-from').value.trim() && !p) msg = 'The first number must end with digits, like S28AD-960.';
+        else if (p && !isNaN(p.end)) {
+            if (p.end < p.start) msg = 'The last number must be higher than the first.';
+            else if (p.end - p.start > 199) msg = 'A range can add up to 200 numbers at a time.';
+            else { const cnt = p.end - p.start + 1; ok = true; msg = `${p.prefix + String(p.start).padStart(p.width, '0')} → ${p.prefix + String(p.end).padStart(p.width, '0')} · ${cnt} numbers`; go.textContent = 'Add ' + cnt; }
+        }
+        out.textContent = msg; out.classList.toggle('bad', !ok && /must|up to/.test(msg)); go.disabled = !ok; if (!ok) go.textContent = 'Add range';
+    }
+    function rvAddRange() {
+        const p = rvRangeParse(); if (!p || isNaN(p.end) || p.end < p.start || p.end - p.start > 199) return;
+        let added = 0; for (let i = p.start; i <= p.end; i++) if (rvPush(p.prefix + String(i).padStart(p.width, '0'), true)) added++;
+        rvEl('rv-range-from').value = ''; rvEl('rv-range-to').value = ''; rvEl('rv-range').classList.add('hidden');
+        rvRenderChips(); rvToast(added + ' number' + (added === 1 ? '' : 's') + ' added');
+    }
+
+    function rvDateChanged() {
+        const v = rvEl('res-date').value, today = rvIso(new Date());
+        document.querySelectorAll('#rv-quick button').forEach(b => b.classList.toggle('on', !!v && v === rvAddDays(today, +b.dataset.q)));
+        const box = rvEl('rv-date-preview');
+        if (!v) { box.innerHTML = '<span class="rv-dp-t">Pick the date this reservation was made.</span>'; box.className = 'rv-datecard'; return; }
+        const c = computeReservationStatus(v);
+        box.className = 'rv-datecard ' + c.key;
+        box.innerHTML = `<div><small>Due date</small><b>${rvFmt(rvDue(v))}</b></div><div class="rv-dp-r"><span class="rv-pill ${c.key}">${RV_LABEL[c.key]}</span><i>${rvEsc(rvLeftText(c, v))}</i></div>`;
+    }
+    function rvSetDate(v) { rvEl('res-date').value = v; rvDateChanged(); }
+    function rvShiftDate(n) { rvSetDate(rvAddDays(rvEl('res-date').value || rvIso(new Date()), n)); }
+    function rvQuickDate(n) { rvSetDate(rvAddDays(rvIso(new Date()), n)); }
+
     function openReservationModal(id) {
         reservationEditingId = id || null;
         const r = id ? RESERVATIONS.find(x => x.id === id) : null;
-        document.getElementById('reservationModalTitle').textContent = r ? 'Edit Reservation' : 'Add Reservation';
-        document.getElementById('res-id').value = r ? r.id : '';
-        document.getElementById('res-asset').value = r ? (r.asset || '') : '';
-        document.getElementById('res-sales').value = r ? (r.sales || '') : '';
-        document.getElementById('res-date').value = r ? (r.date || '') : '';
-        document.getElementById('res-client').value = r ? (r.client || '') : '';
-        document.getElementById('res-remark').value = r ? (r.remark || '') : '';
-        document.getElementById('res-delete-btn').classList.toggle('hidden', !r);
-        document.getElementById('reservationModalOverlay').classList.add('show');
+        rvEl('reservationModalTitle').textContent = r ? 'Edit Reservation' : 'Add Reservation';
+        rvEl('res-id').value = r ? r.id : '';
+        rvAssets = r ? assetsOf(r) : [];
+        rvEl('rv-asset-input').value = '';
+        rvEl('res-sales').value = r ? (r.sales || '') : '';
+        rvEl('res-client').value = r ? (r.client || '') : '';
+        rvEl('res-remark').value = r ? (r.remark || '') : '';
+        const uniq = k => [...new Set(RESERVATIONS.map(x => (x[k] || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+        rvEl('rv-clients').innerHTML = uniq('client').map(v => `<option value="${rvEsc(v)}">`).join('');
+        rvEl('rv-saleslist').innerHTML = uniq('sales').map(v => `<option value="${rvEsc(v)}">`).join('');
+        rvEl('rv-range').classList.add('hidden'); rvEl('rv-range-from').value = ''; rvEl('rv-range-to').value = '';
+        rvEl('res-delete-btn').classList.toggle('hidden', !r);
+        rvEl('rv-save').disabled = false;
+        rvRenderChips();
+        rvSetDate(r ? (r.date || '') : rvIso(new Date()));
+        rvEl('reservationModalOverlay').classList.add('show');
+        document.body.classList.add('rv-lock');
+        rvEl('reservationModalOverlay').querySelector('.rv-sheet-body').scrollTop = 0;
+        if (!r) setTimeout(() => rvEl('rv-asset-input').focus(), 80);
     }
 
     function closeReservationModal() {
-        document.getElementById('reservationModalOverlay').classList.remove('show');
+        rvEl('reservationModalOverlay').classList.remove('show');
+        document.body.classList.remove('rv-lock');
         reservationEditingId = null;
     }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && rvEl('reservationModalOverlay') && rvEl('reservationModalOverlay').classList.contains('show')) closeReservationModal(); });
 
     async function saveReservationForm() {
         if (!resAuth || !resAuth.currentUser) { alert('Please sign in first.'); return; }
-        const asset = document.getElementById('res-asset').value.trim();
-        if (!asset) { alert('Asset No. is required'); return; }
+        rvCommitPending();
+        if (!rvAssets.length) { rvToast('Add at least one asset number'); rvEl('rv-asset-input').focus(); return; }
+        const date = rvEl('res-date').value;
+        if (!date) { rvToast('Pick the reservation date'); rvEl('res-date').focus(); return; }
         const data = {
-            asset,
-            sales: document.getElementById('res-sales').value.trim(),
-            date: document.getElementById('res-date').value,
-            client: document.getElementById('res-client').value.trim(),
-            remark: document.getElementById('res-remark').value.trim()
+            asset: rvAssets.join(', '),          // kept as text too, so older screens / exports still work
+            assets: rvAssets.slice(),
+            sales: rvEl('res-sales').value.trim(),
+            date,
+            client: rvEl('res-client').value.trim(),
+            remark: rvEl('res-remark').value.trim()
         };
-        const uid = resAuth.currentUser.uid;
-        const col = resDb.collection('users').doc(uid).collection('reservations');
+        const col = resDb.collection('users').doc(resAuth.currentUser.uid).collection('reservations');
+        const btn = rvEl('rv-save'); btn.disabled = true; const old = btn.textContent; btn.textContent = 'Saving…';
         try {
-            if (reservationEditingId) {
-                await col.doc(reservationEditingId).update(data);
-            } else {
-                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                await col.add(data);
-            }
-            closeReservationModal();
+            if (reservationEditingId) await col.doc(reservationEditingId).update(data);
+            else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await col.add(data); }
+            closeReservationModal(); rvToast('Reservation saved');
         } catch (e) {
-            alert('Could not save: ' + e.message);
+            btn.disabled = false; btn.textContent = old; alert('Could not save: ' + e.message);
         }
     }
 
     async function deleteReservationFromModal() {
         if (!reservationEditingId || !resAuth || !resAuth.currentUser) return;
-        if (!confirm('Delete this reservation?')) return;
-        const uid = resAuth.currentUser.uid;
+        const r = RESERVATIONS.find(x => x.id === reservationEditingId), n = r ? assetsOf(r).length : 1;
+        if (!confirm('Delete this reservation' + (n > 1 ? ' (' + n + ' asset numbers)' : '') + '?')) return;
         try {
-            await resDb.collection('users').doc(uid).collection('reservations').doc(reservationEditingId).delete();
-            closeReservationModal();
-        } catch (e) {
-            alert('Could not delete: ' + e.message);
-        }
+            await resDb.collection('users').doc(resAuth.currentUser.uid).collection('reservations').doc(reservationEditingId).delete();
+            closeReservationModal(); rvToast('Reservation deleted');
+        } catch (e) { alert('Could not delete: ' + e.message); }
     }
 
     function renderGrids() {
@@ -6047,19 +6341,35 @@ document.addEventListener('visibilitychange', () => {
         renderRateCards(filtered, headers);
     }
 
+    // ---- Shared by the Home panels and the Rates / Specs tab panels: which copy of the search box is in use ----
+    const SXIDS = {
+        rate: { home: { inp: 'home-rate-search', box: 'home-rate-suggest', res: 'home-rate-results' }, tab: { inp: 'rates-search', box: 'rates-suggest', res: 'rates-results' } },
+        spec: { home: { inp: 'home-specsheet-search', box: 'home-spec-suggest', res: 'home-specsheet-results' }, tab: { inp: 'docs-search', box: 'docs-suggest', res: 'docs-results' } }
+    };
+    const SXCTX = { rate: 'home', spec: 'home' };
+    function sxSet(kind, ctx) { SXCTX[kind] = ctx; }
+    function sxEl(kind, part, ctx) { return document.getElementById(SXIDS[kind][ctx || SXCTX[kind]][part]); }
+    // In a tab, a live search replaces the category grid / folder list underneath the panel.
+    function sxSearching(kind, on) {
+        if (SXCTX[kind] !== 'tab') return;
+        const i = sxEl(kind, 'inp'), w = i && i.closest('.home-main');
+        if (w) w.classList.toggle('sx-searching', !!on);
+    }
+
     // ---- Live suggestions for the Home rental search box ----
     // Prefix-matches every typed word against equipment names across all rate
     // categories (so "sci" -> "Scissor Lift ...") and lists up to 8 unique names.
     let rateSuggestIdx = -1;
     // Keep the list inside the part of the screen the on-screen keyboard leaves free.
     function fitRateSuggest() { /* list is in normal page flow now - nothing to measure */ }
-    function hideRateSuggestions() {
-        const box = document.getElementById('home-rate-suggest');
-        const inp = document.getElementById('home-rate-search');
-        if (box) { box.hidden = true; box.innerHTML = ''; }
-        const cardsEl = document.getElementById('home-rate-results');
-        if (cardsEl) cardsEl.style.marginTop = '';
-        if (inp) inp.setAttribute('aria-expanded', 'false');
+    function hideRateSuggestions(ctx) {
+        const ctxs = ctx ? [ctx] : [SXCTX.rate];
+        ctxs.forEach(c => {
+            const box = sxEl('rate', 'box', c), inp = sxEl('rate', 'inp', c), cardsEl = sxEl('rate', 'res', c);
+            if (box) { box.hidden = true; box.innerHTML = ''; }
+            if (cardsEl) cardsEl.style.marginTop = '';
+            if (inp) inp.setAttribute('aria-expanded', 'false');
+        });
         rateSuggestIdx = -1;
     }
     // Suggestions come in two flavours:
@@ -6084,12 +6394,12 @@ document.addEventListener('visibilitychange', () => {
         return `<div class="sx-item${extraCls || ''}" role="option" data-label="${labelAttr}" style="--sx-c:${col}"><span class="sx-name">${hlHtml}</span><span class="sx-cat">${right}</span></div>`;
     }
     function showRateSuggestions(query) {
-        const box = document.getElementById('home-rate-suggest');
+        const box = sxEl('rate','box');
         if (!box) return;
         const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         const finish = html => {
             box.innerHTML = html; box.hidden = false; fitRateSuggest(true); rateSuggestIdx = -1;
-            const inp = document.getElementById('home-rate-search'); if (inp) inp.setAttribute('aria-expanded', 'true');
+            const inp = sxEl('rate','inp'); if (inp) inp.setAttribute('aria-expanded', 'true');
         };
         const nq = normalizeForSearch(query || '');
         const terms = nq.split(' ').filter(Boolean);
@@ -6148,13 +6458,13 @@ document.addEventListener('visibilitychange', () => {
         }).join(''));
     }
     function pickRateSuggestion(label) {
-        const inp = document.getElementById('home-rate-search');
+        const inp = sxEl('rate','inp');
         if (inp) { inp.value = label; if (window.sxTouchSearch) window.sxTouchSearch(inp); inp.blur(); }   // blur closes the mobile keyboard
         hideRateSuggestions();
         searchHomeRates(label);
     }
     function rateSuggestKey(e) {
-        const box = document.getElementById('home-rate-suggest');
+        const box = sxEl('rate','box');
         if (!box || box.hidden) { if (e.key === 'Enter') searchHomeRates(e.target.value); return; }
         const items = box.querySelectorAll('.sx-item');
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -6169,14 +6479,14 @@ document.addEventListener('visibilitychange', () => {
         } else if (e.key === 'Escape') { hideRateSuggestions(); }
     }
     document.addEventListener('mousedown', e => {
-        const item = e.target.closest && e.target.closest('#home-rate-suggest .sx-item');
+        const item = e.target.closest && e.target.closest('#home-rate-suggest .sx-item, #rates-suggest .sx-item');
         if (item) {
             e.preventDefault();
-            if (item.dataset.group) pickRateSuggestion(item.dataset.group);
-            else pickRateSuggestion(item.dataset.label);
+            sxSet('rate', item.closest('#rates-suggest') ? 'tab' : 'home');
+            pickRateSuggestion(item.dataset.group || item.dataset.label);
             return;
         }
-        if (!(e.target.closest && e.target.closest('#home-rate-search'))) hideRateSuggestions();
+        if (!(e.target.closest && e.target.closest('#home-rate-search, #rates-search'))) { hideRateSuggestions('home'); hideRateSuggestions('tab'); }
     });
 
     // Single search box on the Home tab — searches equipment rates across
@@ -6184,9 +6494,10 @@ document.addEventListener('visibilitychange', () => {
     // Rental Rates tab and pick a category first. Only renders once the
     // person actually types something.
     function searchHomeRates(query) {
-        const list = document.getElementById('home-rate-results');
+        const list = sxEl('rate','res');
         if (!list) return;
         const q = query.trim().toLowerCase();
+        sxSearching('rate', !!q);
         if (!q) { list.innerHTML = ''; return; }
 
         const matches = [];
@@ -6234,9 +6545,10 @@ document.addEventListener('visibilitychange', () => {
     // person doesn't need to drill down through folders first. Only renders
     // once the person actually types something.
     function searchHomeSpecSheets(query) {
-        const list = document.getElementById('home-specsheet-results');
+        const list = sxEl('spec','res');
         if (!list) return;
         const q = query.trim().toLowerCase();
+        sxSearching('spec', !!q);
         if (!q) { list.innerHTML = ''; if (typeof hideSpecSuggestions === 'function') hideSpecSuggestions(); return; }
 
         const allFiles = collectDocsFiles(db.docsRoot, '', []);
@@ -6251,23 +6563,24 @@ document.addEventListener('visibilitychange', () => {
 
     // ---- Live suggestions for the Home spec-sheet search (same behaviour as the rental search) ----
     let specSuggestIdx = -1;
-    function hideSpecSuggestions() {
-        const box = document.getElementById('home-spec-suggest');
-        const inp = document.getElementById('home-specsheet-search');
-        if (box) { box.hidden = true; box.innerHTML = ''; }
-        if (inp) inp.setAttribute('aria-expanded', 'false');
-        const res = document.getElementById('home-specsheet-results');
-        if (res) res.style.marginTop = '';
+    function hideSpecSuggestions(ctx) {
+        const ctxs = ctx ? [ctx] : [SXCTX.spec];
+        ctxs.forEach(c => {
+            const box = sxEl('spec', 'box', c), inp = sxEl('spec', 'inp', c), res = sxEl('spec', 'res', c);
+            if (box) { box.hidden = true; box.innerHTML = ''; }
+            if (inp) inp.setAttribute('aria-expanded', 'false');
+            if (res) res.style.marginTop = '';
+        });
         specSuggestIdx = -1;
     }
     function fitSpecSuggest() { /* in normal flow */ }
     function showSpecSuggestions(query) {
-        const box = document.getElementById('home-spec-suggest');
+        const box = sxEl('spec','box');
         if (!box) return;
         const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         const finish = html => {
             box.innerHTML = html; box.hidden = false; specSuggestIdx = -1;
-            const inp = document.getElementById('home-specsheet-search'); if (inp) inp.setAttribute('aria-expanded', 'true');
+            const inp = sxEl('spec','inp'); if (inp) inp.setAttribute('aria-expanded', 'true');
             fitSpecSuggest();
         };
         const nq = normalizeForSearch(query || '');
@@ -6317,13 +6630,13 @@ document.addEventListener('visibilitychange', () => {
         }).join(''));
     }
     function pickSpecSuggestion(label) {
-        const inp = document.getElementById('home-specsheet-search');
+        const inp = sxEl('spec','inp');
         if (inp) { inp.value = label; if (window.sxTouchSearch) window.sxTouchSearch(inp); inp.blur(); }
         hideSpecSuggestions();
         searchHomeSpecSheets(label);
     }
     function specSuggestKey(e) {
-        const box = document.getElementById('home-spec-suggest');
+        const box = sxEl('spec','box');
         if (!box || box.hidden) { if (e.key === 'Enter') searchHomeSpecSheets(e.target.value); return; }
         const items = box.querySelectorAll('.sx-item');
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -6338,9 +6651,9 @@ document.addEventListener('visibilitychange', () => {
         } else if (e.key === 'Escape') { hideSpecSuggestions(); }
     }
     document.addEventListener('mousedown', e => {
-        const item = e.target.closest && e.target.closest('#home-spec-suggest .sx-item');
-        if (item) { e.preventDefault(); pickSpecSuggestion(item.dataset.label); return; }
-        if (!(e.target.closest && e.target.closest('#home-specsheet-search'))) hideSpecSuggestions();
+        const item = e.target.closest && e.target.closest('#home-spec-suggest .sx-item, #docs-suggest .sx-item');
+        if (item) { e.preventDefault(); sxSet('spec', item.closest('#docs-suggest') ? 'tab' : 'home'); pickSpecSuggestion(item.dataset.label); return; }
+        if (!(e.target.closest && e.target.closest('#home-specsheet-search, #docs-search'))) { hideSpecSuggestions('home'); hideSpecSuggestions('tab'); }
     });
 
     // ---- Genset Cable & MTS Recommendation (home tab) ----
@@ -6452,9 +6765,11 @@ document.addEventListener('visibilitychange', () => {
             el.addEventListener('input', reset);
         }
 
-        armAutoClear('home-rate-search', () => searchHomeRates(''));
+        armAutoClear('home-rate-search', () => { sxSet('rate','home'); searchHomeRates(''); });
+        armAutoClear('rates-search', () => { sxSet('rate','tab'); searchHomeRates(''); });
         armAutoClear('genset-kva-search', () => searchGensetCable(''));
-        armAutoClear('home-specsheet-search', () => searchHomeSpecSheets(''));
+        armAutoClear('home-specsheet-search', () => { sxSet('spec','home'); searchHomeSpecSheets(''); });
+        armAutoClear('docs-search', () => { sxSet('spec','tab'); searchHomeSpecSheets(''); });
     })();
 
     function viewDocs(path) {
@@ -7349,6 +7664,8 @@ document.addEventListener('visibilitychange', () => {
 
     function renderPhotoFolder(path) {
         const _ps = document.getElementById('photo-search'); if (_ps && _ps.value) _ps.value = '';
+        const _pr = document.getElementById('photo-results'); if (_pr) _pr.innerHTML = '';
+        const _pw = _ps && _ps.closest('.home-main'); if (_pw) _pw.classList.remove('sx-searching');
         if (path !== photoPath && photoFavMode) {
             photoFavMode = false;
             const favBtn = document.getElementById('fav-filter-btn');
@@ -10811,12 +11128,13 @@ document.addEventListener('load', function (e) {
 
 <script>
 /* ===== Home: Photos search (same suggestion behaviour as Rates / Spec Sheets) ===== */
-(function () {
-    var inp = document.getElementById('home-photo-search');
+function sxPhotoInit(inpId, boxId, resId, goId, isTab) {
+    var inp = document.getElementById(inpId);
     if (!inp) return;
-    var box = document.getElementById('home-photo-suggest');
-    var res = document.getElementById('home-photo-results');
-    var goBtn = document.getElementById('home-photo-go');
+    var box = document.getElementById(boxId);
+    var res = document.getElementById(resId);
+    var goBtn = document.getElementById(goId);
+    var panelWrap = isTab ? inp.closest('.home-main') : null;
     var sel = -1, current = [];
     var esc = function (x) { return String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
     var collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -10882,6 +11200,7 @@ document.addEventListener('load', function (e) {
 
     function run(query, quiet) {
         var q = (query || '').trim();
+        if (panelWrap) panelWrap.classList.toggle('sx-searching', !!q);
         if (!q) { res.innerHTML = ''; current = []; hideSuggest(); return; }
         if (!data().length) { res.innerHTML = '<div class="rate-empty">' + ((typeof photoDataLoading !== 'undefined' && photoDataLoading) ? 'Loading photos…' : 'Photos are not loaded yet — check your connection.') + '</div>'; ensureData(); return; }
         var all = matches(q);
@@ -10926,9 +11245,9 @@ document.addEventListener('load', function (e) {
     });
     goBtn.addEventListener('click', function () { hideSuggest(); inp.blur(); run(inp.value); });
     document.addEventListener('mousedown', function (e) {
-        var item = e.target.closest && e.target.closest('#home-photo-suggest .sx-item');
+        var item = e.target.closest && e.target.closest('#' + boxId + ' .sx-item');
         if (item) { e.preventDefault(); pick(item.dataset.label); return; }
-        if (!(e.target.closest && e.target.closest('#home-photo-search'))) hideSuggest();
+        if (!(e.target.closest && e.target.closest('#' + inpId))) hideSuggest();
     });
     res.addEventListener('click', function (e) {
         var f = e.target.closest('.ph-folder');
@@ -10937,6 +11256,7 @@ document.addEventListener('load', function (e) {
             window.history.pushState({ type: 'photo-folder', target: f.dataset.folder }, '');
             applyTabStyles('photos');
             renderPhotoFolder(f.dataset.folder);
+            if (isTab) { inp.value = ''; run(''); }
             return;
         }
         var c = e.target.closest('.ph-card');
@@ -10944,8 +11264,11 @@ document.addEventListener('load', function (e) {
     });
     // also warm the data when the Photos pane is chosen on mobile
     var sw = document.getElementById('home-switch');
-    if (sw) sw.addEventListener('click', function (e) { var b = e.target.closest('.hs-btn'); if (b && b.dataset.pane === 'photos') ensureData(); });
-})();
+    if (sw && !isTab) sw.addEventListener('click', function (e) { var b = e.target.closest('.hs-btn'); if (b && b.dataset.pane === 'photos') ensureData(); });
+}
+sxPhotoInit('home-photo-search', 'home-photo-suggest', 'home-photo-results', 'home-photo-go', false);
+sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
+
 </script>
 
 <script>
