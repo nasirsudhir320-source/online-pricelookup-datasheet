@@ -73,7 +73,9 @@ body {
     text-rendering: optimizeLegibility;
 }
 @media (min-width: 900px) {
-    html { height: 100%; }
+    /* Desktop only: compact the full interface like browser zoom at 80%.
+       The mobile viewport and mobile-specific sizing remain unchanged. */
+    html { height: 100%; zoom: 0.8; }
     body { width: 100% !important; height: 100% !important; }
 }
 .hidden { display: none !important; }
