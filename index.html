@@ -2947,48 +2947,33 @@ body.rv-lock { overflow:hidden; }
 /* ---------- Cable Price Calculator ---------- */
 .cc-wrap { margin-top: 12px; }
 #home-top:not([data-pane="rental"]) ~ .cc-wrap { display: none; }
-.cc-toggle { width: 100%; display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; border-radius: 13px; background: #fff; border: 1px solid #d3e2f8; color: #1d4ed8; font-size: 14px; font-weight: 800; font-family: inherit; box-shadow: 0 3px 8px -5px rgba(20,60,140,.4); cursor: pointer; text-align: left; }
-.cc-toggle svg { width: 18px; height: 18px; flex: none; }
+.cc-toggle { width: 100%; display: flex; align-items: center; gap: 9px; height: 40px; padding: 0 13px; border-radius: 12px; background: #fff; border: 1px solid #d3e2f8; color: #1d4ed8; font-size: 13.5px; font-weight: 800; font-family: inherit; box-shadow: 0 3px 8px -5px rgba(20,60,140,.4); cursor: pointer; text-align: left; }
+.cc-toggle svg { width: 17px; height: 17px; flex: none; }
 .cc-toggle span { flex: 1; }
 .cc-toggle .cc-chev { transition: transform .2s; }
 .cc-toggle.open { background: linear-gradient(180deg,#2f7cf6,#1d5fe0); color: #fff; border-color: #1d5fe0; }
 .cc-toggle.open .cc-chev { transform: rotate(180deg); }
-.cc-card { margin-top: 10px; background: #fff; border: 1px solid var(--line-blue, #d3e2f8); border-radius: 18px; padding: 14px; box-shadow: 0 14px 30px -24px rgba(20,60,140,.45); }
+.cc-card { margin-top: 8px; background: #fff; border: 1px solid var(--line-blue, #d3e2f8); border-radius: 16px; padding: 12px; box-shadow: 0 14px 30px -24px rgba(20,60,140,.45); }
 .cc-card.hidden { display: none; }
-.cc-head { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
-.cc-icon { width: 40px; height: 40px; border-radius: 12px; background: #e8f0ff; color: #1d5fe0; display: grid; place-items: center; flex: none; }
-.cc-icon svg { width: 21px; height: 21px; }
-.cc-title { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 16px; color: #0b2a6b; line-height: 1.2; }
-.cc-sub { font-size: 12px; color: #6a7fa6; margin-top: 2px; line-height: 1.35; }
-.cc-sec { margin-bottom: 12px; }
-.cc-lab, .cc-field > span { display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #52678f; margin-bottom: 7px; }
-.cc-seg { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 4px; padding: 4px; border-radius: 13px; background: #eef3fb; }
-.cc-seg button { height: 40px; border: 0; border-radius: 10px; background: transparent; color: #43608f; font-weight: 800; font-size: 13.5px; font-family: inherit; cursor: pointer; min-width: 0; white-space: nowrap; }
-.cc-seg button.on { background: #fff; color: #1d5fe0; box-shadow: 0 3px 8px -4px rgba(20,60,140,.5); }
-.cc-runs { display: flex; gap: 8px; align-items: flex-end; }
-.cc-chip { flex: none; height: 44px; padding: 0 16px; border-radius: 12px; border: 1.5px solid #d5e0f4; background: #fff; color: #33507f; font-weight: 800; font-size: 14px; font-family: inherit; cursor: pointer; }
-.cc-chip.on { background: #1d5fe0; border-color: #1d5fe0; color: #fff; }
-.cc-runs-in { flex: 1; min-width: 0; margin: 0; }
-.cc-runs-in > span { margin-bottom: 4px; }
+.cc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .cc-field { display: block; min-width: 0; }
-.cc-card input[type=number] { width: 100%; height: 44px; border: 1.5px solid #d5e0f4; border-radius: 12px; padding: 0 12px; font-size: 16px; font-weight: 800; color: #0b2a6b; background: #fff; outline: 0; font-family: inherit; min-width: 0; -moz-appearance: textfield; }
-.cc-card input[type=number]:focus { border-color: #1d5fe0; box-shadow: 0 0 0 3px rgba(29,95,224,.14); }
+.cc-field > span { display: block; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #52678f; margin-bottom: 5px; }
+.cc-other { grid-column: 1 / -1; }
+.cc-other.hidden { display: none; }
+.cc-card select, .cc-card input[type=number] { width: 100%; height: 42px; border: 1.5px solid #d5e0f4; border-radius: 11px; padding: 0 12px; font-size: 15px; font-weight: 800; color: #0b2a6b; background-color: #fff; outline: 0; font-family: inherit; min-width: 0; -moz-appearance: textfield; }
+.cc-card select { -webkit-appearance: none; appearance: none; padding-right: 32px; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231d5fe0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; }
+.cc-card select:focus, .cc-card input[type=number]:focus { border-color: #1d5fe0; box-shadow: 0 0 0 3px rgba(29,95,224,.14); }
 .cc-inp { position: relative; }
-.cc-inp input { padding-right: 44px !important; }
-.cc-inp em { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 12px; font-weight: 800; color: #7184a8; pointer-events: none; }
-.cc-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.cc-inp input { padding-right: 40px !important; }
+.cc-inp em { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 11.5px; font-weight: 800; color: #7184a8; pointer-events: none; }
 .cc-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.cc-tile { border-radius: 14px; padding: 11px 13px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.cc-tile small { font-size: 11.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
-.cc-tile b { font-family: 'Space Grotesk', sans-serif; font-size: 25px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.cc-tile i { font-style: normal; font-size: 11.5px; font-weight: 700; opacity: .75; }
+.cc-tile { border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; min-width: 0; }
+.cc-tile small { font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.cc-tile b { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.cc-tile i { font-style: normal; font-size: 11px; font-weight: 700; opacity: .75; }
 .cc-tile.m { background: #e8f0ff; color: #14338f; } .cc-tile.w { background: #dcf6e6; color: #0f6b38; }
-.cc-break { margin-top: 10px; padding: 9px 12px; border-radius: 11px; background: #f4f7fd; color: #3d527c; font-size: 12px; font-weight: 700; line-height: 1.55; font-variant-numeric: tabular-nums; }
-.cc-copy { margin-top: 10px; width: 100%; height: 42px; display: flex; align-items: center; justify-content: center; gap: 7px; border-radius: 12px; border: 1.5px solid #cfe0fb; background: #fff; color: #1d5fe0; font-weight: 800; font-size: 14px; font-family: inherit; cursor: pointer; }
-.cc-copy svg { width: 16px; height: 16px; }
-.cc-copy:disabled { opacity: .45; cursor: default; }
-@media (max-width: 360px) { .cc-two { grid-template-columns: 1fr; } .cc-tile b { font-size: 21px; } .cc-chip { padding: 0 12px; } }
-@media (min-width: 900px) { .cc-wrap { max-width: 560px; } }
+@media (max-width: 340px) { .cc-tile b { font-size: 18px; } .cc-grid { gap: 8px; } }
+@media (min-width: 900px) { .cc-wrap { max-width: 520px; } }
 </style>
 </head>
 <body>
@@ -3235,24 +3220,22 @@ body.rv-lock { overflow:hidden; }
                     <div class="cc-wrap" id="cc-wrap">
                         <button class="cc-toggle" id="cc-toggle" type="button" aria-expanded="false" aria-controls="cc-card" onclick="toggleCableCalc()"><i data-lucide="calculator"></i><span>Cable Price Calculator</span><i data-lucide="chevron-down" class="cc-chev"></i></button>
                         <section class="cc-card hidden" id="cc-card" aria-label="Cable price calculator">
-                            <div class="cc-head"><div class="cc-icon"><i data-lucide="cable"></i></div><div><div class="cc-title">Cable Price Calculator</div><div class="cc-sub">Cable type = number of cables. Total meters = cables × runs × meters.</div></div></div>
-                            <div class="cc-sec">
-                                <div class="cc-lab">Cable type</div>
-                                <div class="cc-seg" id="cc-core" role="radiogroup" aria-label="Cable type">
-                                    <button type="button" class="on" role="radio" aria-checked="true" data-core="Single core" data-n="1" onclick="ccSetCore(this)">Single core</button>
-                                    <button type="button" role="radio" aria-checked="false" data-core="2 core" data-n="2" onclick="ccSetCore(this)">2 core</button>
-                                    <button type="button" role="radio" aria-checked="false" data-core="4 core" data-n="4" onclick="ccSetCore(this)">4 core</button>
-                                </div>
-                            </div>
-                            <div class="cc-sec">
-                                <div class="cc-lab">Runs</div>
-                                <div class="cc-runs">
-                                    <button type="button" class="cc-chip" data-runs="1" onclick="ccQuickRuns(1)">1 run</button>
-                                    <button type="button" class="cc-chip on" data-runs="4" onclick="ccQuickRuns(4)">4 runs</button>
-                                    <label class="cc-field cc-runs-in"><span>Other</span><input type="number" id="cc-runs" inputmode="numeric" min="1" max="99" step="1" value="4" onfocus="this.select()" oninput="ccCalc()" aria-label="Number of runs" /></label>
-                                </div>
-                            </div>
-                            <div class="cc-two">
+                            <div class="cc-grid">
+                                <label class="cc-field"><span>Cable type</span>
+                                    <select id="cc-core" onchange="ccCalc()">
+                                        <option value="1" selected>Single core</option>
+                                        <option value="2">2 core</option>
+                                        <option value="4">4 core</option>
+                                    </select>
+                                </label>
+                                <label class="cc-field"><span>Runs</span>
+                                    <select id="cc-runs-sel" onchange="ccSel()">
+                                        <option value="1">1 run</option>
+                                        <option value="4" selected>4 runs</option>
+                                        <option value="other">Other…</option>
+                                    </select>
+                                </label>
+                                <label class="cc-field cc-other hidden" id="cc-runs-other"><span>Number of runs</span><input type="number" id="cc-runs" inputmode="numeric" min="1" max="99" step="1" value="4" onfocus="this.select()" oninput="ccCalc()" /></label>
                                 <label class="cc-field"><span>Cable meters</span><div class="cc-inp"><input type="number" id="cc-meters" inputmode="decimal" min="0" step="any" value="10" placeholder="e.g. 50" onfocus="this.select()" oninput="ccCalc()" /><em>m</em></div></label>
                                 <label class="cc-field"><span>Price per meter</span><div class="cc-inp"><input type="number" id="cc-ppm" inputmode="decimal" min="0" step="any" value="10" placeholder="e.g. 5" onfocus="this.select()" oninput="ccCalc()" /><em>SAR</em></div></label>
                             </div>
@@ -3260,8 +3243,6 @@ body.rv-lock { overflow:hidden; }
                                 <div class="cc-tile m"><small>Monthly</small><b id="cc-month">—</b><i>SAR</i></div>
                                 <div class="cc-tile w"><small>Weekly</small><b id="cc-week">—</b><i>SAR</i></div>
                             </div>
-                            <div class="cc-break" id="cc-break">Enter the cable meters and the price per meter.</div>
-                            <button type="button" class="cc-copy" id="cc-copy" onclick="ccCopy()" disabled><i data-lucide="copy"></i> Copy quote</button>
                         </section>
                     </div>
 
@@ -11173,11 +11154,9 @@ document.addEventListener('load', function (e) {
    monthly      = price per meter x total meters
    weekly       = monthly / 3                                                   */
 (function () {
-    var last = '';
     function el(id) { return document.getElementById(id); }
     function num(id) { var v = parseFloat(el(id).value); return isFinite(v) && v > 0 ? v : 0; }
     function fmt(n) { return (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
-    function core() { var b = document.querySelector('#cc-core button.on'); return b ? { name: b.dataset.core, n: parseInt(b.dataset.n, 10) || 1 } : { name: 'Single core', n: 1 }; }
 
     window.toggleCableCalc = function () {
         var card = el('cc-card'), btn = el('cc-toggle'); if (!card || !btn) return;
@@ -11187,36 +11166,24 @@ document.addEventListener('load', function (e) {
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
         if (open) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
-    window.ccSetCore = function (b) {
-        document.querySelectorAll('#cc-core button').forEach(function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    // runs: dropdown value, or - when "Other…" is picked - whatever was typed
+    function runsVal() { var sel = el('cc-runs-sel').value; return sel === 'other' ? (parseFloat(el('cc-runs').value) || 0) : (parseFloat(sel) || 0); }
+    function val(k) { return k === 'runs' ? runsVal() : (parseFloat(el(k === 'meters' ? 'cc-meters' : 'cc-ppm').value) || 0); }
+    window.ccSel = function () {
+        var other = el('cc-runs-sel').value === 'other';
+        el('cc-runs-other').classList.toggle('hidden', !other);
+        if (other) { el('cc-runs').focus(); el('cc-runs').select(); }
         window.ccCalc();
     };
-    window.ccQuickRuns = function (n) { el('cc-runs').value = n; window.ccCalc(); };
     window.ccCalc = function () {
-        var raw = parseInt(el('cc-runs').value, 10), runs = raw > 0 ? Math.min(raw, 99) : 1;
-        document.querySelectorAll('.cc-chip').forEach(function (c) { c.classList.toggle('on', parseInt(c.dataset.runs, 10) === raw); });
-        var m = num('cc-meters'), p = num('cc-ppm');
-        if (!m || !p) {
-            el('cc-month').textContent = '—'; el('cc-week').textContent = '—';
-            el('cc-break').textContent = 'Enter the cable meters and the price per meter.';
-            el('cc-copy').disabled = true; last = ''; return;
-        }
-        var c = core(), total = c.n * runs * m, monthly = p * total, weekly = monthly / 3;
-        el('cc-month').textContent = fmt(monthly); el('cc-week').textContent = fmt(weekly);
-        var runTxt = runs + (runs === 1 ? ' run' : ' runs');
-        var l1 = c.name + ' (' + c.n + (c.n === 1 ? ' cable' : ' cables') + ') × ' + runTxt + ' × ' + fmt(m) + ' m = ' + fmt(total) + ' m';
-        var l2 = fmt(p) + ' SAR/m × ' + fmt(total) + ' m = ' + fmt(monthly) + ' SAR / month';
-        var l3 = 'Weekly = ' + fmt(monthly) + ' ÷ 3 = ' + fmt(weekly) + ' SAR / week';
-        el('cc-break').innerHTML = l1 + '<br>' + l2 + '<br>' + l3;
-        last = 'Cable rental — ' + l1 + '\nRate: ' + fmt(p) + ' SAR per meter\nMonthly: ' + fmt(monthly) + ' SAR\nWeekly: ' + fmt(weekly) + ' SAR';
-        el('cc-copy').disabled = false;
+        var cables = parseInt(el('cc-core').value, 10) || 1;
+        var runs = Math.min(Math.floor(val('runs')), 99), m = val('meters'), p = val('ppm');
+        if (!m || !p || !runs) { el('cc-month').textContent = '—'; el('cc-week').textContent = '—'; return; }
+        var monthly = p * cables * runs * m;
+        el('cc-month').textContent = fmt(monthly);
+        el('cc-week').textContent = fmt(monthly / 3);
     };
     window.ccCalc();
-    window.ccCopy = function () {
-        if (!last) return;
-        if (typeof rvCopy === 'function') { rvCopy(last, 'Quote copied'); return; }
-        if (navigator.clipboard) navigator.clipboard.writeText(last);
-    };
 })();
 
 /* ===== Home (mobile): switch between Rental Rates / GenSet Cable / Spec Sheets searches ===== */
