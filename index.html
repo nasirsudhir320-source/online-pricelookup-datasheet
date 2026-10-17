@@ -2972,6 +2972,9 @@ body.rv-lock { overflow:hidden; }
 .cc-tile b { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 .cc-tile i { font-style: normal; font-size: 11px; font-weight: 700; opacity: .75; }
 .cc-tile.m { background: #e8f0ff; color: #14338f; } .cc-tile.w { background: #dcf6e6; color: #0f6b38; }
+.cc-ds { margin: 0 0 10px !important; padding: 8px 12px; }
+.cc-card.ds-on .ds-note { opacity: 1; }
+.cc-card.ds-on .cc-tile b { color: #c25e00; }
 @media (max-width: 340px) { .cc-tile b { font-size: 18px; } .cc-grid { gap: 8px; } }
 @media (min-width: 900px) { .cc-wrap { max-width: 520px; } }
 </style>
@@ -3237,8 +3240,9 @@ body.rv-lock { overflow:hidden; }
                                 </label>
                                 <label class="cc-field cc-other hidden" id="cc-runs-other"><span>Number of runs</span><input type="number" id="cc-runs" inputmode="numeric" min="1" max="99" step="1" value="4" onfocus="this.select()" oninput="ccCalc()" /></label>
                                 <label class="cc-field"><span>Cable meters</span><div class="cc-inp"><input type="number" id="cc-meters" inputmode="decimal" min="0" step="any" value="10" placeholder="e.g. 50" onfocus="this.select()" oninput="ccCalc()" /><em>m</em></div></label>
-                                <label class="cc-field"><span>Price per meter</span><div class="cc-inp"><input type="number" id="cc-ppm" inputmode="decimal" min="0" step="any" value="10" placeholder="e.g. 5" onfocus="this.select()" oninput="ccCalc()" /><em>SAR</em></div></label>
+                                <label class="cc-field"><span>Price per meter</span><div class="cc-inp"><input type="number" id="cc-ppm" inputmode="decimal" min="0" step="any" value="12" placeholder="e.g. 5" onfocus="this.select()" oninput="ccCalc()" /><em>SAR</em></div></label>
                             </div>
+                            <div class="op-row ds-row cc-ds"><label class="op-switch" title="Double shift (+40%)"><input type="checkbox" id="cc-ds" aria-label="Double shift" onchange="ccCalc()"><span class="op-track"></span></label><span class="op-label">Double Shift</span><span class="ds-note">+40%</span></div>
                             <div class="cc-tiles">
                                 <div class="cc-tile m"><small>Monthly</small><b id="cc-month">—</b><i>SAR</i></div>
                                 <div class="cc-tile w"><small>Weekly</small><b id="cc-week">—</b><i>SAR</i></div>
@@ -11152,6 +11156,7 @@ document.addEventListener('load', function (e) {
    cables       = 1 (single core) / 2 (2 core) / 4 (4 core)
    total meters = cables x runs x cable meters
    monthly      = price per meter x total meters
+   double shift = monthly x 1.4
    weekly       = monthly / 3                                                   */
 (function () {
     function el(id) { return document.getElementById(id); }
@@ -11178,8 +11183,10 @@ document.addEventListener('load', function (e) {
     window.ccCalc = function () {
         var cables = parseInt(el('cc-core').value, 10) || 1;
         var runs = Math.min(Math.floor(val('runs')), 99), m = val('meters'), p = val('ppm');
+        el('cc-card').classList.toggle('ds-on', el('cc-ds').checked);
         if (!m || !p || !runs) { el('cc-month').textContent = '—'; el('cc-week').textContent = '—'; return; }
-        var monthly = p * cables * runs * m;
+        var ds = el('cc-ds').checked;                       // double shift = price + 40%
+        var monthly = p * cables * runs * m * (ds ? 1.4 : 1);
         el('cc-month').textContent = fmt(monthly);
         el('cc-week').textContent = fmt(monthly / 3);
     };
