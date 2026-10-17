@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <script>
+    /* Phones only: render at an 80% scale (same as browser zoom 80%) so every card fits. Desktop/tablet untouched. */
+    (function () {
+        try {
+            var w = Math.min(screen.width, screen.height);
+            var touch = (navigator.maxTouchPoints || 0) > 0;
+            if (touch && w <= 600) {
+                document.querySelector('meta[name="viewport"]').setAttribute('content',
+                    'width=device-width, initial-scale=0.8, minimum-scale=0.8, maximum-scale=0.8, user-scalable=no, viewport-fit=cover');
+            }
+        } catch (e) {}
+    })();
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>SUDHIR PRO MOBILE</title>
@@ -3094,6 +3107,51 @@ body.rv-lock { overflow:hidden; }
   .rate-card.rc .rate-pill:not(.rp-num) { flex-basis: 100%; }
   .genset-table th { font-size: 9px; }
   .genset-table td, .genset-table td.gt-mts-cell { font-size: 10.5px; }
+}
+
+/* ---------- Desktop: render at 80% scale (same as browser zoom 80%) ---------- */
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  html { zoom: 0.8; }
+}
+
+/* ---------- Rate cards: adapt to the card's own width (any screen, any zoom) ---------- */
+.rate-card.rc { container-type: inline-size; }
+@container (max-width: 460px) {
+  .rc-head { flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 10px; }
+  .rc-title { flex: 1 1 0; min-width: calc(100% - 60px); gap: 7px; }
+  .rc-lead { width: 24px; height: 24px; }
+  .rc-head .rc-badge { order: 3; padding: 4px 10px; font-size: 10.5px; gap: 5px; }
+  .rc-head .rc-badge svg { width: 12px; height: 12px; }
+  .rc-head .machine-placeholder { order: 2; margin-left: auto; width: 44px; min-width: 44px; height: 38px; }
+  .rc-title .rate-item-name { font-size: 13.5px; line-height: 1.2; overflow-wrap: break-word; }
+  .rc-sub { margin-top: 2px; font-size: 9.5px; letter-spacing: .2px; }
+  .rc-body { padding: 8px; }
+  .rc .rate-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .rc .rate-pill { flex: 1 1 78px; min-width: 0; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 2px 5px; padding: 6px 8px; border-radius: 10px; }
+  .rc .rate-pill:not(.rp-num) { flex: 1 1 100%; }
+  .rc .rp-ico { width: 14px; height: 14px; margin: 0; }
+  .rc .rp-txt { flex: 1 1 auto; }
+  .rc .rate-label { white-space: nowrap; font-size: 8.5px; letter-spacing: .3px; }
+  .rc .rate-value { margin-top: 1px; font-size: 12px; }
+  .rc .rp-num .rate-value { white-space: nowrap; overflow-wrap: normal; word-break: keep-all; font-size: 16px; }
+  .rc-opts { margin-top: 6px; border-radius: 12px; }
+  .rc-opts .op-row, .rc-opts .ds-row { padding: 7px 8px; gap: 6px; }
+  .rc-optt { gap: 6px; }
+  .rc-optt svg { width: 16px; height: 16px; }
+  .rc-optt .op-label { font-size: 11.5px; }
+  .rc-optc { gap: 6px; }
+  .rc .op-switch { width: 34px; height: 20px; }
+  .rc .op-track::after { width: 14px; height: 14px; top: 3px; left: 3px; }
+  .rc .op-switch input:checked + .op-track::after { transform: translateX(14px); }
+  .rc-opts .ds-note { font-size: 10.5px; padding: 3px 8px; }
+  .rc-opts .op-amt-wrap { padding: 2px 8px 3px; border-radius: 10px; min-width: 70px; }
+  .rc-opts .op-amt { height: 20px; font-size: 14px; }
+  .rc-opts .op-amt-wrap small { font-size: 9px; }
+  .rc .ds-calc { margin-top: 6px; padding: 6px 8px; font-size: 10.5px; }
+}
+@container (max-width: 270px) {
+  .rc-opts { grid-template-columns: 1fr; }
+  .rc-opts .op-row + .op-row { border-left: 0; border-top: 1px solid #dfe6f5; }
 }
 </style>
 </head>
@@ -8949,6 +9007,7 @@ document.addEventListener('visibilitychange', () => {
             if (typeof mdCurrentResults !== 'undefined' && mdCurrentResults.length && document.getElementById('md-results')) mdRenderResults();
             return;
         }
+        if (mergeDrag || mergeSettling || mergeDragCandidate) mergeForceReset();
         list.innerHTML = mergeItems.map((item, idx) => mergeItemRowHtml(item, idx, count)).join('');
         (typeof lucide!=='undefined'&&lucide.createIcons());
         initMergeDragHandles();
@@ -8991,9 +9050,38 @@ document.addEventListener('visibilitychange', () => {
         });
     }
 
+    // Recover from any half-finished drag (lost pointerup, list re-rendered mid-drag,
+    // an exception while settling...). Without this one bad gesture leaves
+    // mergeDrag / mergeSettling stuck and every later drag is silently ignored.
+    let mergeSettleStart = 0;
+    function mergeForceReset() {
+        const d = mergeDrag;
+        mergeDrag = null; mergeSettling = false; mergeDragCandidate = null;
+        if (d) { try { cancelAnimationFrame(d.raf); } catch (_) {} }
+        document.removeEventListener('pointermove', onMergeDragMove);
+        document.removeEventListener('pointerup', onMergeDragEnd);
+        document.removeEventListener('pointercancel', onMergeDragEnd);
+        document.removeEventListener('touchmove', mergeBlockTouchMove);
+        cleanupMergeCandidateListeners();
+        document.body.classList.remove('merge-dragging');
+        document.querySelectorAll('.doc-drag-placeholder').forEach(el => el.remove());
+        document.querySelectorAll('#merge-list .doc-item').forEach(el => {
+            el.classList.remove('doc-dragging');
+            ['transform', 'transition', 'position', 'zIndex', 'marginRight'].forEach(k => { el.style[k] = ''; });
+        });
+        if (mergeSuppressClickActive) {
+            document.removeEventListener('click', mergeSuppressNextClick, true);
+            mergeSuppressClickActive = false;
+        }
+    }
+    window.addEventListener('blur', () => { if (mergeDrag) onMergeDragEnd(); else mergeDragCandidate && onMergeCandidateUp(); });
+
     function onMergeCardPointerDown(e) {
         if (e.button !== undefined && e.button !== 0) return;     // primary button / touch only
+        if (mergeDrag && (!mergeDrag.row.isConnected || Date.now() - (mergeDrag.t || 0) > 20000)) mergeForceReset();
+        if (mergeSettling && Date.now() - mergeSettleStart > 700) mergeForceReset();
         if (mergeSettling || mergeDrag) return;
+        if (mergeDragCandidate) { mergeDragCandidate = null; cleanupMergeCandidateListeners(); }
         const row = e.currentTarget;
         // buttons / links on the card (remove, QR link) keep their own taps
         if (e.target.closest('.doc-remove, .doc-qr-line, a, button')) return;
@@ -9122,7 +9210,7 @@ document.addEventListener('visibilitychange', () => {
         document.body.classList.add('merge-dragging');
         document.addEventListener('touchmove', mergeBlockTouchMove, { passive: false });
 
-        mergeDrag = { row, list, placeholder, startX, startLeft: rect.left, tx: 0, pointerX: startX, raf: 0 };
+        mergeDrag = { row, list, placeholder, startX, startLeft: rect.left, tx: 0, pointerX: startX, raf: 0, t: Date.now() };
         mergeDragAutoScroll();
     }
 
@@ -9164,6 +9252,7 @@ document.addEventListener('visibilitychange', () => {
 
     function onMergeDragMove(e) {
         if (!mergeDrag) return;
+        if (e.pointerType === 'mouse' && e.buttons === 0) { onMergeDragEnd(); return; }   // button released outside the window
         mergeDrag.pointerX = e.clientX;
         mergeDragUpdate();
     }
@@ -9184,18 +9273,23 @@ document.addEventListener('visibilitychange', () => {
         const flowLeft = row.getBoundingClientRect().left - d.tx;
         const finalTx = placeholder.getBoundingClientRect().left - flowLeft;
         mergeSettling = true;
+        mergeSettleStart = Date.now();
         row.classList.remove('doc-dragging');
         row.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1)';
         row.style.transform = 'translateX(' + finalTx + 'px)';
 
         setTimeout(() => {
-            list.insertBefore(row, placeholder);
-            placeholder.remove();
-            ['transform', 'transition', 'position', 'zIndex', 'marginRight'].forEach(k => { row.style[k] = ''; });
-            const newOrderIds = Array.from(list.children).filter(el => el.classList.contains('doc-item')).map(el => el.dataset.id);
-            mergeItems.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
-            mergeSettling = false;
-            mergeRenderList(); // refresh "#N" labels and arrow states
+            try {
+                if (placeholder.parentNode === list && row.parentNode === list) list.insertBefore(row, placeholder);
+                placeholder.remove();
+                ['transform', 'transition', 'position', 'zIndex', 'marginRight'].forEach(k => { row.style[k] = ''; });
+                const newOrderIds = Array.from(list.children).filter(el => el.classList.contains('doc-item')).map(el => el.dataset.id);
+                if (newOrderIds.length === mergeItems.length) mergeItems.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+            } catch (err) { console.warn('merge reorder', err); }
+            finally {
+                mergeSettling = false;
+                mergeRenderList(); // refresh "#N" labels and arrow states
+            }
         }, 210);
 
         // Safety net: make sure the click-suppressor from a drag-release never lingers and eats a later tap.
