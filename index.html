@@ -2939,6 +2939,11 @@ body.rv-lock { overflow:hidden; }
 .home-transport .dmm-cols { align-items: start; flex: 0 0 auto; }
 .home-transport .dmm-col-table-wrap { flex: 0 1 auto; min-height: 0; max-height: 620px; }
 @media (max-width: 899px) { .home-transport .dmm-col-table-wrap { max-height: 360px; } }
+/* reservation cards: show the full due date, let names wrap instead of "Shazm..." */
+.rv-meta { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto; }
+.rv-m b { white-space: normal; overflow-wrap: anywhere; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rv-m.due b { white-space: nowrap; display: block; overflow: visible; }
+@media (max-width: 400px) { .rv-m.due b { font-size: 13.5px; } .rv-m small { font-size: 11px; } }
 </style>
 </head>
 <body>
@@ -5888,6 +5893,12 @@ document.addEventListener('visibilitychange', () => {
 
     let currentReservationSort = 'due';
     const rvExpanded = new Set();
+    const rvExpTimers = {};
+    const RV_AUTO_CLOSE_MS = 2 * 60 * 1000;      // an opened card folds back after 2 minutes
+    function rvArmClose(id) {
+        clearTimeout(rvExpTimers[id]);
+        rvExpTimers[id] = setTimeout(() => { rvExpanded.delete(id); delete rvExpTimers[id]; filterReservations(); }, RV_AUTO_CLOSE_MS);
+    }
     function rvToast(msg) {
         let t = document.getElementById('rv-toast');
         if (!t) { t = document.createElement('div'); t.id = 'rv-toast'; document.body.appendChild(t); }
@@ -5902,9 +5913,13 @@ document.addEventListener('visibilitychange', () => {
         };
         if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
     }
-    function rvCopyAsset(id, i) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r)[i]; if (a) rvCopy(a, 'Copied ' + a); }
-    function rvCopyAll(id) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r); rvCopy(a.join('\n'), 'Copied ' + a.length + ' asset number' + (a.length === 1 ? '' : 's')); }
-    function toggleReservationCard(id) { if (rvExpanded.has(id)) rvExpanded.delete(id); else rvExpanded.add(id); filterReservations(); }
+    function rvCopyAsset(id, i) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r)[i]; if (a) rvCopy(a, 'Copied ' + a); if (rvExpanded.has(id)) rvArmClose(id); }
+    function rvCopyAll(id) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r); rvCopy(a.join('\n'), 'Copied ' + a.length + ' asset number' + (a.length === 1 ? '' : 's')); if (rvExpanded.has(id)) rvArmClose(id); }
+    function toggleReservationCard(id) {
+        if (rvExpanded.has(id)) { rvExpanded.delete(id); clearTimeout(rvExpTimers[id]); delete rvExpTimers[id]; }
+        else { rvExpanded.add(id); rvArmClose(id); }
+        filterReservations();
+    }
 
     function setReservationFilter(key) { currentReservationFilter = key; renderReservations(); }
     function setReservationSort(v) { currentReservationSort = v; filterReservations(); }
@@ -5937,7 +5952,7 @@ document.addEventListener('visibilitychange', () => {
         const assets = assetsOf(r), n = assets.length, open = rvExpanded.has(r.id), id = rvEsc(r.id);
         const more = n > 1 ? `<span class="rv-chip more">+${n - 1} more</span>` : '';
         const list = open ? `<div class="rv-assets">
-                <div class="rv-assets-bar"><span>${n} asset number${n === 1 ? '' : 's'}</span><button type="button" class="rv-copyall" onclick="event.stopPropagation(); rvCopyAll('${id}')"><i data-lucide="copy" size="15"></i> Copy ${n > 1 ? 'all' : ''}</button></div>
+                ${n > 1 ? `<div class="rv-assets-bar"><span>${n} asset numbers</span><button type="button" class="rv-copyall" onclick="event.stopPropagation(); rvCopyAll('${id}')"><i data-lucide="copy" size="15"></i> Copy all</button></div>` : ''}
                 <ul>${assets.map((a, i) => `<li><span>${rvEsc(a)}</span><button type="button" class="rv-copy" onclick="event.stopPropagation(); rvCopyAsset('${id}', ${i})"><i data-lucide="copy" size="14"></i> Copy</button></li>`).join('')}</ul>
                 ${r.remark ? `<div class="rv-remark"><i data-lucide="message-square-text" size="14"></i><span>${rvEsc(r.remark)}</span></div>` : ''}
             </div>` : '';
