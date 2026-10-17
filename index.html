@@ -1161,6 +1161,26 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #offhire-wrap .co-drop div:last-child { border-bottom: none; }
 #offhire-wrap .co-drop div:hover, #offhire-wrap .co-drop div.act { background: var(--card-2); }
 #offhire-wrap .field textarea { resize: vertical; line-height: 1.4; }
+/* ---- Off Hire form: compact layout (fewer rows, less scrolling) ---- */
+#offhire-wrap .panel { padding: 14px 16px; }
+#offhire-wrap .panel h2 { font-size: 16px; padding-bottom: 6px; margin-bottom: 10px; }
+#offhire-wrap .panel h2.oh-sec { border: none; padding-bottom: 0; margin: 12px 0 6px; font-size: 14px; }
+#offhire-wrap .field { margin-bottom: 8px; }
+#offhire-wrap .field label { font-size: 11px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#offhire-wrap .field input, #offhire-wrap .field select, #offhire-wrap .field textarea { padding: 6px 8px; font-size: 13px; }
+#offhire-wrap .row2, #offhire-wrap .row3 { display: flex; gap: 8px; }
+#offhire-wrap .row2 .field, #offhire-wrap .row3 .field { flex: 1 1 0; min-width: 0; }
+#offhire-wrap .row3 .field input { padding-left: 6px; padding-right: 6px; }
+#offhire-wrap .field input[type="date"] { min-width: 0; }
+#offhire-wrap .oh-paste { margin-bottom: 6px; }
+#offhire-wrap .oh-paste textarea { min-height: 0; }
+#offhire-wrap .oh-add-btn { width: 100%; margin: 0 0 8px 0; padding: 7px 12px; }
+#offhire-wrap .items-block { margin-bottom: 6px; }
+#offhire-wrap .btn-add { padding: 7px 12px; margin-top: 0; }
+#offhire-wrap .actions { margin-top: 12px; }
+@media (max-width: 899px) {
+    #offhire-wrap .panel { padding: 12px; }
+}
 #offhire-wrap .items-block.compact { padding: 8px 10px; }
 #offhire-wrap .items-block.compact .ib-top { display: flex; gap: 6px; align-items: center; padding-right: 28px; }
 #offhire-wrap .items-block.compact .ib-top input { padding: 6px 8px; font-size: 12px; border: 1px solid var(--border-strong); border-radius: 6px; min-width: 0; }
@@ -3971,9 +3991,15 @@ body.rv-lock { overflow:hidden; }
   <div class="panel">
     <h2>Off Hire Note Details</h2>
 
-    <div class="field">
-      <label>Off Hire Note No.</label>
-      <input type="text" id="noteNo" value="">
+    <div class="row2">
+      <div class="field">
+        <label>Off Hire Note No.</label>
+        <input type="text" id="noteNo" value="">
+      </div>
+      <div class="field">
+        <label>Off Hire Date</label>
+        <input type="date" id="offHireDate">
+      </div>
     </div>
 
     <div class="field">
@@ -3981,34 +4007,39 @@ body.rv-lock { overflow:hidden; }
       <input type="text" id="companyName" value="" autocomplete="off" placeholder="Type to search, or type a new name...">
       <div id="companyDrop" class="co-drop"></div>
     </div>
-    <div class="field">
-      <label>Customer City / Location</label>
-      <input type="text" id="companyCity" value="DAMMAM, KSA">
-    </div>
 
     <div class="row2">
       <div class="field">
-        <label>Off Hire Date</label>
-        <input type="date" id="offHireDate">
+        <label>City / Location</label>
+        <input type="text" id="companyCity" value="DAMMAM, KSA">
       </div>
+      <div class="field">
+        <label>Site</label>
+        <input type="text" id="site" value="Dammam">
+      </div>
+    </div>
+
+    <div class="row3">
       <div class="field">
         <label>PO No.</label>
         <input type="text" id="poNo" value="PO-000000">
       </div>
+      <div class="field">
+        <label>Printed By</label>
+        <input type="text" id="printedBy" value="Nasir Shaik">
+      </div>
+      <div class="field">
+        <label>Doc Ref No.</label>
+        <input type="text" id="docRef" value="920029113">
+      </div>
     </div>
 
-    <div class="field">
-      <label>Site</label>
-      <input type="text" id="site" value="Dammam">
-    </div>
-
-    <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
-    <h2 style="border:none;padding-bottom:0;">Equipment / Accessories</h2>
-    <div class="field">
+    <h2 class="oh-sec">Equipment / Accessories</h2>
+    <div class="field oh-paste">
       <label>Paste items (one per line &ndash; 1st line = machine asset no.)</label>
-      <textarea id="pasteItems" rows="5" placeholder="SG-095-125&#10;Drip Tray&#10;Earthing cable and Rod&#10;Fire Extinguisher"></textarea>
+      <textarea id="pasteItems" rows="3" placeholder="SG-095-125&#10;Drip Tray&#10;Earthing cable and Rod&#10;Fire Extinguisher"></textarea>
     </div>
-    <button type="button" class="btn btn-primary" style="width:100%;margin:0 0 10px 0;" onclick="startPasteAdd()">+ Add</button>
+    <button type="button" class="btn btn-primary oh-add-btn" onclick="startPasteAdd()">+ Add</button>
     <div id="itemsContainer"></div>
     <button type="button" class="btn btn-add" onclick="addItem()">+ Add blank row</button>
 
@@ -4060,19 +4091,6 @@ body.rv-lock { overflow:hidden; }
       <textarea id="remarks" rows="2"></textarea>
     </div>
 
-    </div>
-
-    <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
-    <h2 style="border:none;padding-bottom:0;">Print Info</h2>
-    <div class="row2">
-      <div class="field">
-        <label>Printed By</label>
-        <input type="text" id="printedBy" value="Nasir Shaik">
-      </div>
-      <div class="field">
-        <label>Document Ref No.</label>
-        <input type="text" id="docRef" value="920029113">
-      </div>
     </div>
 
     <div class="actions">
@@ -11066,7 +11084,11 @@ let ohShare = { html: null, files: null, promise: null, promiseHtml: null };
 let ohBuildTimer = null;
 
 function ohFileName(i, total){
-  const base = document.getElementById('noteNo').value || 'offhire_note';
+  // OFF-HIRE_<off hire note no>_<company name>.png  (_p2, _p3... added only for multi-page notes)
+  const clean = v => String(v || '').replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const noteNo = clean(document.getElementById('noteNo').value) || 'offhire_note';
+  const company = clean(document.getElementById('companyName').value);
+  const base = 'OFF-HIRE_' + noteNo + (company ? '_' + company : '');
   return base + (total > 1 ? '_p' + (i + 1) : '') + '.png';
 }
 
@@ -11231,10 +11253,9 @@ function buildShareText(){
   document.querySelectorAll('#itemsContainer .items-block').forEach((b, idx) => {
     const propNo = (b.querySelector('.i-propNo').value || '').trim();
     const desc = (b.querySelector('.i-desc').value || '').trim();
-    const label = idx === 0 ? 'Asset No' : `Accessory ${idx}`;
     const parts = [propNo || '-'];
     if (desc && desc !== propNo) parts.push(desc);
-    lines.push(`${label}: ${parts.join(' - ')}`);
+    lines.push(parts.join(' - '));
   });
   return lines.join('\n');
 }
@@ -11275,9 +11296,13 @@ function shareWhatsApp(){
 }
 
 // Print only the note: copy the rendered pages into a print-only root and hide the rest of the app.
+let ohOrigTitle = null;
+function ohPdfTitle(){ return ohFileName(0, 1).replace(/\.png$/i, ''); }   // browsers use document.title as the "Save as PDF" file name
 function ohPreparePrint(){
   renderNote();
   ohCleanupPrint();
+  if (ohOrigTitle === null) ohOrigTitle = document.title;
+  document.title = ohPdfTitle();
   const root = document.createElement('div');
   root.id = 'oh-print-root';
   root.innerHTML = '<div id="offhire-wrap"><div id="note">' + document.getElementById('note').innerHTML + '</div></div>';
@@ -11285,6 +11310,7 @@ function ohPreparePrint(){
   document.body.classList.add('oh-printing');
 }
 function ohCleanupPrint(){
+  if (ohOrigTitle !== null) { document.title = ohOrigTitle; ohOrigTitle = null; }
   const r = document.getElementById('oh-print-root');
   if (r) r.remove();
   document.body.classList.remove('oh-printing');
@@ -11298,14 +11324,19 @@ window.addEventListener('afterprint', ohCleanupPrint);
 // Customer suggestions: show at most 30 filtered matches instead of a 3,000-item datalist
 (function(){
   const inp = document.getElementById('companyName'), drop = document.getElementById('companyDrop');
-  let res = [], act = -1;
+  let res = [], act = -1, skipShow = false;
   const hide = () => { drop.classList.remove('show'); act = -1; };
   function pick(i){
     inp.value = res[i];
     hide();
+    skipShow = true;   // the input event below must refresh the note, not re-open the list
     inp.dispatchEvent(new Event('input', { bubbles: true }));
+    skipShow = false;
+    hide();
+    inp.blur();
   }
   function show(){
+    if (skipShow) return;
     const q = inp.value.trim().toLowerCase();
     if (!q) { hide(); return; }
     const starts = [], has = [];
