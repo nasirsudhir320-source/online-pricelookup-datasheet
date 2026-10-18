@@ -1161,6 +1161,19 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #offhire-wrap .co-drop div:last-child { border-bottom: none; }
 #offhire-wrap .co-drop div:hover, #offhire-wrap .co-drop div.act { background: var(--card-2); }
 #offhire-wrap .field textarea { resize: vertical; line-height: 1.4; }
+/* ---- Edit Rates: delete / add entry ---- */
+#price-editor-panel .pe-act-col { width: 40px; min-width: 40px; text-align: center; padding-left: 4px; padding-right: 4px; }
+#price-editor-panel .pe-row-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid #fecaca; background: #fff1f2; color: #b91c1c; font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+#price-editor-panel .pe-row-btn svg { width: 15px !important; height: 15px !important; min-width: 15px; flex: none; display: block; pointer-events: none; }
+#price-editor-panel .pe-row-btn:hover { background: #fee2e2; }
+#price-editor-panel .pe-row-btn.undo { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+#price-editor-panel tr.row-del td { opacity: .5; }
+#price-editor-panel tr.row-del td:last-child { opacity: 1; }
+#price-editor-panel tr.row-del .field { text-decoration: line-through; pointer-events: none; }
+#price-editor-panel tr.row-new td { background: #f0fdf4; }
+#price-editor-panel .pe-add-row { display: block; width: 100%; margin: 10px 0 4px; padding: 10px 12px; border: 1.5px dashed #94a3b8; border-radius: 10px; background: #f8fafc; color: #1e3a5f; font-weight: 700; font-size: 13px; cursor: pointer; }
+#price-editor-panel .pe-add-row:hover { background: #eef2ff; border-color: #6366f1; }
+
 /* ---- Off Hire form: compact layout (fewer rows, less scrolling) ---- */
 #offhire-wrap .panel { padding: 14px 16px; }
 #offhire-wrap .panel h2 { font-size: 16px; padding-bottom: 6px; margin-bottom: 10px; }
@@ -4344,6 +4357,12 @@ let currentColumns = [];
 let currentRows = [];
 let editMode = false;
 let dirty = {}; // "row-col" -> {row,col,type,value,oldValue,colName,rowLabel}
+const PE_TRASH_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+let delRows = new Set();   // sheet row numbers queued for deletion
+let newRows = [];          // [{cells:[...]}] rows queued to be appended
+let peColTypes = [];
+function resetRowOps(){ delRows = new Set(); newRows = []; }
+function pendingCount(){ return Object.keys(dirty).length + delRows.size + newRows.length; }
 let trayCollapsed = false;
 
 const tabCache = {};   // gid -> {columns, rows}
@@ -4450,12 +4469,12 @@ function renderTabs(){
 }
 
 async function loadTab(gid){
-  if (editMode && Object.keys(dirty).length) {
+  if (editMode && pendingCount()) {
     if (!confirm('You have unsaved changes on this tab. Switch tabs and discard them?')) return;
   }
   if (editMode) exitEditMode();
   currentGid = gid;
-  dirty = {};
+  dirty = {}; resetRowOps();
   searchInput.value = '';
   renderTabs();
   updateTray();
@@ -4501,7 +4520,7 @@ function renderTable(){
     content.innerHTML = '<div class="empty">No columns on this tab.</div>';
     return;
   }
-  if (!currentRows.length){
+  if (!currentRows.length && !editMode){
     content.innerHTML = '<div class="empty">No rows on this tab.</div>';
     return;
   }
@@ -4513,6 +4532,7 @@ function renderTable(){
   const colTypes = currentColumns.map((_, i) =>
     (i === 0 && currentColumns.length > 1) ? 'label' : detectColType(i, currentRows)
   );
+  peColTypes = colTypes;
   const query = searchInput.value.trim().toLowerCase();
   const colWidthCh = colTypes.map((type, ci) => {
     let m = 0;
@@ -4532,6 +4552,7 @@ function renderTable(){
     if (type === 'boolean') th.innerHTML += '<span class="type-mark">◐</span>';
     headRow.appendChild(th);
   });
+  if (editMode){ const thA = document.createElement('th'); thA.className = 'pe-act-col'; headRow.appendChild(thA); }
   thead.appendChild(headRow);
   table.appendChild(thead);
 
@@ -4544,6 +4565,8 @@ function renderTable(){
     visibleCount++;
 
     const tr = document.createElement('tr');
+    const isDel = delRows.has(r.row);
+    if (isDel) tr.className = 'row-del';
     currentColumns.forEach((name, ci) => {
       const type = colTypes[ci];
       const td = document.createElement('td');
@@ -4628,8 +4651,66 @@ function renderTable(){
       tr.appendChild(td);
     });
 
+    if (editMode){
+      const tdA = document.createElement('td');
+      tdA.className = 'pe-act-col';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pe-row-btn' + (isDel ? ' undo' : '');
+      btn.title = isDel ? 'Undo delete' : 'Delete this row';
+      btn.innerHTML = isDel ? '&#8630;' : PE_TRASH_SVG;
+      btn.addEventListener('click', () => {
+        if (isDel) delRows.delete(r.row);
+        else {
+          delRows.add(r.row);
+          Object.keys(dirty).forEach(k => { if (k.indexOf(r.row + '-') === 0) delete dirty[k]; });   // edits on a deleted row are pointless
+        }
+        updateTray(); renderTable();
+      });
+      tdA.appendChild(btn);
+      tr.appendChild(tdA);
+    }
+
     tbody.appendChild(tr);
   });
+
+  // rows queued to be added (editable, shown at the bottom)
+  if (editMode){
+    newRows.forEach((nr, ni) => {
+      const tr = document.createElement('tr');
+      tr.className = 'row-new';
+      currentColumns.forEach((name, ci) => {
+        const td = document.createElement('td');
+        const t = colTypes[ci] === 'label' ? 'text' : colTypes[ci];
+        if (t === 'boolean'){
+          td.className = 'bool';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox'; cb.checked = truthy(nr.cells[ci]);
+          cb.addEventListener('change', () => { nr.cells[ci] = cb.checked; updateTray(); });
+          td.appendChild(cb);
+        } else {
+          td.className = t === 'number' ? 'num' : 'sub-cell';
+          const input = document.createElement('input');
+          input.className = 'field dirty' + (t === 'number' ? ' num' : '');
+          input.type = t === 'number' ? 'number' : 'text';
+          input.placeholder = ci === 0 ? 'New ' + (name || 'entry') : (name || '');
+          input.value = nr.cells[ci] === undefined ? '' : nr.cells[ci];
+          input.style.minWidth = colWidthCh[ci] + 'ch';
+          input.addEventListener('input', () => { nr.cells[ci] = input.value; updateTray(); });
+          td.appendChild(input);
+        }
+        tr.appendChild(td);
+      });
+      const tdA = document.createElement('td');
+      tdA.className = 'pe-act-col';
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'pe-row-btn'; btn.title = 'Remove this new row';
+      btn.innerHTML = '&times;';
+      btn.addEventListener('click', () => { newRows.splice(ni, 1); updateTray(); renderTable(); });
+      tdA.appendChild(btn); tr.appendChild(tdA);
+      tbody.appendChild(tr);
+    });
+  }
 
   table.appendChild(tbody);
   content.innerHTML = '';
@@ -4641,8 +4722,19 @@ function renderTable(){
   peHead.lastChild.textContent = visibleCount + ' row' + (visibleCount === 1 ? '' : 's');
   content.appendChild(peHead);
   content.appendChild(table);
+  if (editMode){
+    const add = document.createElement('button');
+    add.type = 'button'; add.className = 'pe-add-row';
+    add.textContent = '+ Add entry';
+    add.addEventListener('click', () => {
+      newRows.push({ cells: currentColumns.map((_, i) => peColTypes[i] === 'boolean' ? false : '') });
+      updateTray(); renderTable();
+      const last = content.querySelector('tr.row-new:last-child input'); if (last) last.focus();
+    });
+    content.appendChild(add);
+  }
 
-  if (!visibleCount){
+  if (!visibleCount && !editMode){
     content.innerHTML = `<div class="empty">No matches for "${query}".<br><span class="sub">Try a different search term.</span></div>`;
   }
 }
@@ -4674,9 +4766,10 @@ function displayVal(v, type){
 
 function updateTray(){
   const items = Object.values(dirty);
-  trayCount.textContent = items.length;
-  trayPlural.textContent = items.length === 1 ? '' : 's';
-  saveBtn.disabled = items.length === 0;
+  const opCount = items.length + delRows.size + newRows.length;
+  trayCount.textContent = opCount;
+  trayPlural.textContent = opCount === 1 ? '' : 's';
+  saveBtn.disabled = opCount === 0;
 
   if (editMode && items.length > 0){
     tray.className = 'tray show';
@@ -4708,13 +4801,44 @@ function updateTray(){
     row.appendChild(loc); row.appendChild(diff); row.appendChild(revert);
     trayList.appendChild(row);
   });
+  // queued deletions
+  delRows.forEach(rn => {
+    const src = currentRows.find(x => x.row === rn);
+    const row = document.createElement('div');
+    row.className = 'tray-item';
+    const loc = document.createElement('div'); loc.className = 'loc';
+    loc.textContent = (src && src.cells[0]) || ('Row ' + rn);
+    const diff = document.createElement('div'); diff.className = 'diff';
+    diff.innerHTML = '<span class="old">Delete row</span>';
+    const revert = document.createElement('button'); revert.className = 'revert';
+    revert.innerHTML = '<i data-lucide="x" size="13"></i>'; revert.title = 'Keep this row';
+    revert.addEventListener('click', () => { delRows.delete(rn); updateTray(); renderTable(); });
+    row.appendChild(loc); row.appendChild(diff); row.appendChild(revert);
+    trayList.appendChild(row);
+  });
+  // queued additions
+  newRows.forEach((nr, ni) => {
+    const row = document.createElement('div');
+    row.className = 'tray-item';
+    const loc = document.createElement('div'); loc.className = 'loc';
+    loc.textContent = 'New row';
+    const diff = document.createElement('div'); diff.className = 'diff';
+    const label = String(nr.cells[0] === undefined ? '' : nr.cells[0]).trim();
+    diff.innerHTML = '<span class="new"></span>';
+    diff.firstChild.textContent = label || '(blank)';
+    const revert = document.createElement('button'); revert.className = 'revert';
+    revert.innerHTML = '<i data-lucide="x" size="13"></i>'; revert.title = 'Remove this new row';
+    revert.addEventListener('click', () => { newRows.splice(ni, 1); updateTray(); renderTable(); });
+    row.appendChild(loc); row.appendChild(diff); row.appendChild(revert);
+    trayList.appendChild(row);
+  });
   if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
 }
 
 // ---------- edit / password / save flow ----------
 editBtn.addEventListener('click', () => {
   if (editMode){
-    if (Object.keys(dirty).length && !confirm('Discard unsaved changes?')) return;
+    if (pendingCount() && !confirm('Discard unsaved changes?')) return;
     exitEditMode();
   } else {
     pwInput.value = '';
@@ -4738,7 +4862,7 @@ pwSubmit.addEventListener('click', () => {
 
 function enterEditMode(){
   editMode = true;
-  dirty = {};
+  dirty = {}; resetRowOps();
   editBtn.innerHTML = '<i data-lucide="x" size="14"></i>';
   editBtn.title = 'Cancel edit';
   if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
@@ -4749,7 +4873,7 @@ function enterEditMode(){
 
 function exitEditMode(){
   editMode = false;
-  dirty = {};
+  dirty = {}; resetRowOps();
   editBtn.innerHTML = '<i data-lucide="pencil" size="14"></i>';
   editBtn.title = 'Edit';
   if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
@@ -4765,39 +4889,62 @@ trayHead.addEventListener('click', (e) => {
 });
 
 discardBtn.addEventListener('click', () => {
-  if (!Object.keys(dirty).length) return;
+  if (!pendingCount()) return;
   if (!confirm('Discard all pending changes?')) return;
-  dirty = {};
+  dirty = {}; resetRowOps();
   renderTable();
   updateTray();
 });
 
 saveBtn.addEventListener('click', async () => {
-  const items = Object.values(dirty);
-  if (!items.length) return;
+  const items = Object.values(dirty).filter(d => !delRows.has(d.row));
+  const deleteRows = Array.from(delRows).sort((x, y) => x - y);
+  const addRows = newRows
+    .map(nr => nr.cells.map((v, i) => (peColTypes[i] === 'number' && v !== '' && v !== undefined) ? Number(v) : v))
+    .filter(cells => cells.some(v => v !== '' && v !== false && v !== undefined));   // ignore completely blank new rows
+  if (!items.length && !deleteRows.length && !addRows.length) return;
+  if (deleteRows.length && !confirm('Permanently delete ' + deleteRows.length + ' row' + (deleteRows.length === 1 ? '' : 's') + ' from the Google Sheet? This cannot be undone from here.')) return;
 
   const updates = items.map(d => ({ row: d.row, col: d.col, value: d.value, type: d.type }));
   setStatus('pending', 'saving…');
   saveBtn.disabled = true;
 
   try {
+    const payload = { gid: currentGid, updates };
+    if (deleteRows.length) payload.deleteRows = deleteRows;
+    if (addRows.length) payload.addRows = addRows;
     const res = await fetchWithTimeout(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ gid: currentGid, updates })
+      body: JSON.stringify(payload)
     }, 20000);
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'save failed');
+    // The sheet script must confirm it really deleted / added; an older script silently ignores these keys.
+    if (deleteRows.length && Number(data.deleted) !== deleteRows.length) throw new Error('the sheet script does not support deleting rows yet - update the Apps Script');
+    if (addRows.length && Number(data.added) !== addRows.length) throw new Error('the sheet script does not support adding rows yet - update the Apps Script');
 
-    // optimistic local update — no full reload needed
-    items.forEach(d => {
-      const row = currentRows.find(r => r.row === d.row);
-      if (row) row.cells[d.col] = d.type === 'number' ? Number(d.value) : d.value;
-    });
-    tabCache[currentGid] = { columns: currentColumns, rows: currentRows };
+    const nDone = (Number(data.updated) || 0) + (Number(data.deleted) || 0) + (Number(data.added) || 0);
+    if (deleteRows.length || addRows.length){
+      // row numbers have shifted - reload the tab from the sheet instead of patching locally
+      delete tabCache[currentGid];
+      try { const fresh = await fetchTab(currentGid); currentColumns = fresh.columns; currentRows = fresh.rows; } catch (e) {}
+    } else {
+      // optimistic local update — no full reload needed
+      items.forEach(d => {
+        const row = currentRows.find(r => r.row === d.row);
+        if (row) row.cells[d.col] = d.type === 'number' ? Number(d.value) : d.value;
+      });
+      tabCache[currentGid] = { columns: currentColumns, rows: currentRows };
+    }
 
-    setStatus('ok', `saved ${data.updated} change${data.updated === 1 ? '' : 's'}`);
-    showToast(`Saved ${data.updated} change${data.updated === 1 ? '' : 's'} to sheet`, 'ok');
+    const parts = [];
+    if (data.updated) parts.push(`${data.updated} edit${data.updated === 1 ? '' : 's'}`);
+    if (data.deleted) parts.push(`${data.deleted} deleted`);
+    if (data.added) parts.push(`${data.added} added`);
+    const summary = parts.join(', ') || `${nDone} change${nDone === 1 ? '' : 's'}`;
+    setStatus('ok', `saved · ${summary}`);
+    showToast(`Saved to sheet: ${summary}`, 'ok');
     // Refresh the host app's own cached rates/notifications in the background
     // so whatever the person looks at next (home screen, a rates category)
     // already reflects this save — no logout/login needed.
