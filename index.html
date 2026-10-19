@@ -947,8 +947,6 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #price-editor-panel button.ghost { background: transparent; border-color: var(--border); color: var(--ink-dim); box-shadow: none; }
 #price-editor-panel button.ghost:hover { color: var(--ink); }
 #price-editor-panel button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-#price-editor-panel #editBtn { width: 34px; height: 34px; padding: 0; border-radius: 11px; justify-content: center; box-shadow: var(--sh-sm); }
-#price-editor-panel #editBtn span { display: none; }
 #price-editor-panel .tabbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 #price-editor-panel .tab { font-family: var(--display); font-size: 11.5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; padding: 9px 14px; border-radius: 11px; background: var(--panel); color: var(--ink-dim); cursor: pointer; border: 1px solid var(--border); white-space: nowrap; transition: border-color .12s, color .12s, background .12s; position: relative; }
 #price-editor-panel .tab:hover { color: var(--ink); border-color: var(--border-strong); }
@@ -1047,7 +1045,6 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
     #price-editor-panel .wrap { max-width: 100%; }
     #price-editor-panel .slim-bar { margin-bottom: 18px; }
     #price-editor-panel .status { font-size: 12.5px; padding: 9px 14px; }
-    #price-editor-panel #editBtn { width: 38px; height: 38px; border-radius: 12px; }
     #price-editor-panel .tabbar { gap: 8px; margin-bottom: 18px; }
     #price-editor-panel .tab { padding: 10px 18px; font-size: 12px; }
     #price-editor-panel .toolbar { margin-bottom: 20px; }
@@ -1171,8 +1168,61 @@ body.grid-compact .grid.photo-view { grid-template-columns: repeat(2, 1fr) !impo
 #price-editor-panel tr.row-del td:last-child { opacity: 1; }
 #price-editor-panel tr.row-del .field { text-decoration: line-through; pointer-events: none; }
 #price-editor-panel tr.row-new td { background: #f0fdf4; }
-#price-editor-panel .pe-add-row { display: block; width: 100%; margin: 10px 0 4px; padding: 10px 12px; border: 1.5px dashed #94a3b8; border-radius: 10px; background: #f8fafc; color: #1e3a5f; font-weight: 700; font-size: 13px; cursor: pointer; }
+#price-editor-panel .pe-add-row { display: block; width: 100%; margin: 0 0 8px; padding: 10px 12px; border: 1.5px dashed #94a3b8; border-radius: 10px; background: #f8fafc; color: #1e3a5f; font-weight: 700; font-size: 13px; cursor: pointer; }
 #price-editor-panel .pe-add-row:hover { background: #eef2ff; border-color: #6366f1; }
+
+/* ---- Edit Rates: category card with per-category Edit button + drop-down edit panel ---- */
+#price-editor-panel #editBanner { display: none !important; }
+#price-editor-panel .cat-card { position: relative; z-index: 5; margin-bottom: 12px; background: var(--card, #fff); border: 1px solid var(--border-strong); border-radius: 18px; box-shadow: var(--sh-sm); }
+#price-editor-panel .cat-card.editing { position: sticky; top: 0; z-index: 60; border-color: #93b4f5; box-shadow: 0 16px 32px -18px rgba(15,23,42,.55); }
+#price-editor-panel .cat-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 17px 17px 0 0; background: linear-gradient(135deg, #2563eb, #4f8bf5); color: #fff; }
+#price-editor-panel .cat-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#price-editor-panel .cat-name { font-family: var(--display); font-weight: 800; font-size: 14.5px; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#price-editor-panel .cat-count { flex: none; padding: 2px 9px; border-radius: 12px; background: rgba(255,255,255,.22); font-size: 11px; font-weight: 700; white-space: nowrap; }
+#price-editor-panel .cat-head .cat-edit-btn { flex: 0 1 auto; min-width: 0; max-width: 62%; display: inline-flex; align-items: center; gap: 7px; width: auto; height: auto; padding: 8px 13px; border-radius: 11px; border: 1.5px solid rgba(255,255,255,.75); background: rgba(255,255,255,.16); color: #fff; font-weight: 800; font-size: 12.5px; box-shadow: none; cursor: pointer; }
+#price-editor-panel .cat-head .cat-edit-btn:hover { background: rgba(255,255,255,.28); }
+#price-editor-panel .cat-head .cat-edit-btn span { display: inline; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#price-editor-panel .cat-badge { display: none; flex: none; padding: 6px 11px; border-radius: 11px; background: #fff; color: #1d4ed8; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+#price-editor-panel .cat-card.editing .cat-edit-btn { display: none; }
+#price-editor-panel .cat-card.editing .cat-badge { display: inline-block; }
+#price-editor-panel .cat-search-slot { padding: 10px 12px 12px; }
+#price-editor-panel .cat-card.editing .cat-search-slot { display: none; }
+#price-editor-panel .cat-panel { display: none; padding: 10px 12px 12px; }
+#price-editor-panel .cat-card.editing .cat-panel { display: block; animation: catDrop .22s ease; }
+@keyframes catDrop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+#price-editor-panel .cat-panel-search { margin-bottom: 8px; }
+#price-editor-panel .pe-search { position: relative; }
+#price-editor-panel .cat-card .search { width: 100%; padding: 11px 38px 11px 38px; border-radius: 12px; background: #f1f5f9; border: 1px solid transparent; box-shadow: none; font-size: 13.5px; }
+#price-editor-panel .cat-card .search:focus { background: #fff; border-color: #93b4f5; box-shadow: 0 0 0 4px rgba(59,130,246,.15); outline: none; }
+#price-editor-panel .cat-card .pe-search-x { display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; padding: 0; border: none; border-radius: 50%; background: #cbd5e1; color: #fff; font-size: 16px; line-height: 1; box-shadow: none; cursor: pointer; align-items: center; justify-content: center; }
+#price-editor-panel .pe-search.has-text .pe-search-x { display: flex; }
+#price-editor-panel .cat-actions-row { display: flex; align-items: center; gap: 8px; }
+#price-editor-panel .cat-card .pe-add-row { flex: none; display: inline-flex; align-items: center; gap: 6px; width: auto; margin: 0; padding: 9px 13px; border-radius: 11px; border: 1.5px solid #bfd4fb; background: #eff5ff; color: #1d4ed8; font-weight: 800; font-size: 12.5px; box-shadow: none; cursor: pointer; }
+#price-editor-panel .cat-card .pe-add-row:hover { background: #dbeafe; }
+#price-editor-panel .cat-card .pe-plus { font-size: 17px; line-height: 1; font-weight: 700; }
+#price-editor-panel .cat-card .tray { position: static; left: auto; right: auto; bottom: auto; z-index: auto; display: block; flex: 1 1 auto; min-width: 0; transform: none; transition: none; pointer-events: auto; }
+#price-editor-panel .cat-card .tray-head { display: flex; justify-content: flex-end; padding: 0; border: none; }
+#price-editor-panel .cat-card .tray-title { display: inline-flex; align-items: center; gap: 7px; min-width: 0; padding: 8px 11px; border-radius: 11px; background: #f1f5f9; border: 1px solid var(--border); color: #334155; font-size: 12px; font-weight: 700; letter-spacing: 0; white-space: nowrap; overflow: hidden; cursor: pointer; }
+#price-editor-panel .cat-card .tray-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #94a3b8; color: #fff; font-size: 11px; line-height: 20px; text-align: center; }
+#price-editor-panel .cat-card .tray.has-pending .tray-count { background: #2563eb; }
+#price-editor-panel .cat-card .tray.has-pending .tray-title { background: #eff5ff; border-color: #bfd4fb; color: #1e3a8a; }
+#price-editor-panel .cat-card .tray-chev { font-size: 10px; opacity: .6; transition: transform .15s; }
+#price-editor-panel .cat-card .tray.open .tray-chev { transform: rotate(180deg); }
+#price-editor-panel .cat-card .tray-list { position: absolute; left: 0; right: 0; top: 100%; margin-top: 6px; max-height: min(50vh, 320px); overflow-y: auto; padding: 4px 8px; background: var(--card, #fff); border: 1px solid var(--border-strong); border-radius: 14px; box-shadow: 0 20px 44px -14px rgba(15,23,42,.4); z-index: 70; }
+#price-editor-panel .cat-btns { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+#price-editor-panel .cat-btns button { display: inline-flex; align-items: center; justify-content: center; text-align: center; padding: 10px 8px; border-radius: 11px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+#price-editor-panel .cat-btns button.cancel { color: #b91c1c; border-color: #fecaca; background: #fff5f5; }
+#price-editor-panel .cat-btns button.cancel:hover { background: #fee2e2; color: #991b1b; }
+@media (max-width: 899px) {
+  #price-editor-panel .tabbar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
+  #price-editor-panel .tabbar::-webkit-scrollbar { display: none; }
+  #price-editor-panel .tabbar .tab { flex: none; white-space: nowrap; }
+}
+@media (max-width: 380px) { #price-editor-panel .cat-card .tray-word { display: none; } }
+@media (min-width: 900px) {
+  #price-editor-panel .wrap .cat-card { max-width: 760px; margin-left: auto; margin-right: auto; }
+  #price-editor-panel .wrap .table-scroll { width: 100%; max-width: 760px; }
+}
 
 /* ---- Off Hire form: compact layout (fewer rows, less scrolling) ---- */
 #offhire-wrap .panel { padding: 14px 16px; }
@@ -4276,38 +4326,48 @@ body.rv-lock { overflow:hidden; }
 <div class="wrap">
   <div class="slim-bar">
     <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">connecting…</span></div>
-    <button id="editBtn"><i data-lucide="pencil" size="14"></i><span>Edit</span></button>
   </div>
 
   <div class="tabbar" id="tabbar"></div>
 
-  <div class="toolbar">
-    <div class="search-wrap">
-      <i data-lucide="search" class="search-icon" size="14"></i>
-      <input class="search" id="searchInput" placeholder="Search this tab…">
-      <span class="kbd">/</span>
+  <div class="cat-card" id="catCard">
+    <div class="cat-head">
+      <div class="cat-title"><span class="cat-name" id="catName">&mdash;</span><span class="cat-count" id="catCount"></span></div>
+      <button type="button" class="cat-edit-btn" id="editBtn"><i data-lucide="pencil" size="14"></i><span id="editBtnLabel">Edit</span></button>
+      <span class="cat-badge">Editing</span>
+    </div>
+    <div class="cat-search-slot" id="catSearchSlot">
+      <div class="pe-search" id="peSearch">
+        <i data-lucide="search" class="search-icon" size="15"></i>
+        <input class="search" id="searchInput" placeholder="Search this category&hellip;" autocomplete="off">
+        <button type="button" class="pe-search-x" id="peSearchX" aria-label="Clear search">&times;</button>
+      </div>
+    </div>
+    <div class="cat-panel" id="catPanel">
+      <div class="cat-panel-search" id="catPanelSearchSlot"></div>
+      <div class="cat-actions-row">
+        <button type="button" class="pe-add-row" id="peAddBtn"><span class="pe-plus">+</span><span>Add entry</span></button>
+        <div class="tray" id="tray">
+          <div class="tray-head" id="trayHead">
+            <div class="tray-title"><span class="tray-count" id="trayCount">0</span><span class="tray-word">pending change<span id="trayPlural">s</span></span><span class="tray-chev">&#9662;</span></div>
+          </div>
+          <div class="tray-list" id="trayList"></div>
+        </div>
+      </div>
+      <div class="cat-btns">
+        <button type="button" class="primary" id="saveBtn">Save</button>
+        <button type="button" class="ghost" id="discardBtn">Discard</button>
+        <button type="button" class="ghost cancel" id="cancelBtn">Cancel</button>
+      </div>
     </div>
   </div>
 
-  <div class="edit-banner" id="editBanner"><span class="pip"></span><span>Edit mode — fields are unlocked. Changes queue in the tray below until you save.</span></div>
+  <div class="edit-banner" id="editBanner" hidden><span class="pip"></span><span>Edit mode — fields are unlocked. Changes queue in the bar above until you save.</span></div>
 
   <div class="table-scroll"><div id="content"><div class="loading-state">Loading…</div></div></div>
 </div>
 
 <div class="toast" id="toast"></div>
-
-<div class="tray" id="tray">
-  <div class="tray-inner">
-    <div class="tray-head" id="trayHead">
-      <div class="tray-title"><span class="tray-count" id="trayCount">0</span> pending change<span id="trayPlural">s</span></div>
-      <div class="tray-actions">
-        <button class="ghost" id="discardBtn">Discard all</button>
-        <button class="primary" id="saveBtn">Save changes</button>
-      </div>
-    </div>
-    <div class="tray-list" id="trayList"></div>
-  </div>
-</div>
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -4333,6 +4393,11 @@ const EDIT_PASSWORD = "9768";
 const statusDot = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
 const tabbar = document.getElementById('tabbar');
+const catCard = document.getElementById('catCard');
+const catName = document.getElementById('catName');
+const catCount = document.getElementById('catCount');
+const editBtnLabel = document.getElementById('editBtnLabel');
+const peSearchEl = document.getElementById('peSearch');
 const content = document.getElementById('content');
 const searchInput = document.getElementById('searchInput');
 const editBtn = document.getElementById('editBtn');
@@ -4363,7 +4428,8 @@ let newRows = [];          // [{cells:[...]}] rows queued to be appended
 let peColTypes = [];
 function resetRowOps(){ delRows = new Set(); newRows = []; }
 function pendingCount(){ return Object.keys(dirty).length + delRows.size + newRows.length; }
-let trayCollapsed = false;
+let trayCollapsed = true;       // the list of pending changes is a dropdown, opened by tapping the pill
+trayList.style.display = 'none';
 
 const tabCache = {};   // gid -> {columns, rows}
 const inflight = {};   // gid -> promise, to avoid duplicate fetches
@@ -4466,6 +4532,8 @@ function renderTabs(){
     el.addEventListener('mouseenter', () => prefetch(s.gid));
     tabbar.appendChild(el);
   });
+  const act = tabbar.querySelector('.tab.active');
+  if (act && act.scrollIntoView) act.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 async function loadTab(gid){
@@ -4533,6 +4601,7 @@ function renderTable(){
     (i === 0 && currentColumns.length > 1) ? 'label' : detectColType(i, currentRows)
   );
   peColTypes = colTypes;
+  document.getElementById('peSearch').classList.toggle('has-text', !!searchInput.value);
   const query = searchInput.value.trim().toLowerCase();
   const colWidthCh = colTypes.map((type, ci) => {
     let m = 0;
@@ -4708,31 +4777,17 @@ function renderTable(){
       btn.innerHTML = '&times;';
       btn.addEventListener('click', () => { newRows.splice(ni, 1); updateTray(); renderTable(); });
       tdA.appendChild(btn); tr.appendChild(tdA);
-      tbody.appendChild(tr);
+      tbody.insertBefore(tr, tbody.firstChild);   // top of the list, so no scrolling to the bottom
     });
   }
 
   table.appendChild(tbody);
   content.innerHTML = '';
   const peSheet = sheets.find(sh => sh.gid === currentGid);
-  const peHead = document.createElement('div');
-  peHead.className = 'pe-head';
-  peHead.innerHTML = '<span class="pe-title"></span><span class="pe-count"></span>';
-  peHead.firstChild.textContent = peSheet ? peSheet.name : '';
-  peHead.lastChild.textContent = visibleCount + ' row' + (visibleCount === 1 ? '' : 's');
-  content.appendChild(peHead);
+  catName.textContent = peSheet ? peSheet.name : '';
+  catCount.textContent = visibleCount + ' row' + (visibleCount === 1 ? '' : 's');
+  editBtnLabel.textContent = peSheet ? 'Edit ' + peSheet.name : 'Edit';
   content.appendChild(table);
-  if (editMode){
-    const add = document.createElement('button');
-    add.type = 'button'; add.className = 'pe-add-row';
-    add.textContent = '+ Add entry';
-    add.addEventListener('click', () => {
-      newRows.push({ cells: currentColumns.map((_, i) => peColTypes[i] === 'boolean' ? false : '') });
-      updateTray(); renderTable();
-      const last = content.querySelector('tr.row-new:last-child input'); if (last) last.focus();
-    });
-    content.appendChild(add);
-  }
 
   if (!visibleCount && !editMode){
     content.innerHTML = `<div class="empty">No matches for "${query}".<br><span class="sub">Try a different search term.</span></div>`;
@@ -4771,13 +4826,10 @@ function updateTray(){
   trayPlural.textContent = opCount === 1 ? '' : 's';
   saveBtn.disabled = opCount === 0;
 
-  if (editMode && items.length > 0){
-    tray.className = 'tray show';
-  } else if (editMode) {
-    tray.className = 'tray show';
-  } else {
-    tray.className = 'tray';
-  }
+  catCard.classList.toggle('editing', !!editMode);
+  tray.classList.toggle('show', !!editMode);
+  tray.classList.toggle('has-pending', opCount > 0);
+  searchInput.placeholder = editMode ? 'Search entries to edit or delete…' : 'Search this category…';
 
   trayList.innerHTML = '';
   items.forEach(d => {
@@ -4863,30 +4915,47 @@ pwSubmit.addEventListener('click', () => {
 function enterEditMode(){
   editMode = true;
   dirty = {}; resetRowOps();
-  editBtn.innerHTML = '<i data-lucide="x" size="14"></i>';
-  editBtn.title = 'Cancel edit';
-  if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
-  editBanner.className = 'edit-banner show';
+  document.getElementById('catPanelSearchSlot').appendChild(peSearchEl);   // search moves into the drop-down panel
   renderTable();
   updateTray();
+  if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
+  setTimeout(() => catCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
 }
 
 function exitEditMode(){
   editMode = false;
   dirty = {}; resetRowOps();
-  editBtn.innerHTML = '<i data-lucide="pencil" size="14"></i>';
-  editBtn.title = 'Edit';
-  if (window.lucide) (typeof lucide!=='undefined'&&lucide.createIcons());
-  editBanner.className = 'edit-banner';
+  document.getElementById('catSearchSlot').appendChild(peSearchEl);       // search goes back under the category header
+  trayCollapsed = true; trayList.style.display = 'none'; tray.classList.remove('open');
   renderTable();
   updateTray();
 }
+
+document.getElementById('cancelBtn').addEventListener('click', () => {
+  if (pendingCount() && !confirm('Discard unsaved changes and stop editing?')) return;
+  exitEditMode();
+});
+
+document.getElementById('peAddBtn').addEventListener('click', () => {
+  if (!currentColumns.length) return;
+  searchInput.value = '';   // a filter could hide the context; new rows are always shown anyway
+  newRows.push({ cells: currentColumns.map((_, i) => peColTypes[i] === 'boolean' ? false : '') });
+  updateTray(); renderTable();
+  const first = content.querySelector('tr.row-new input');   // newest new row is the first row of the table
+  if (first){ first.scrollIntoView({ block: 'center' }); first.focus(); }
+});
 
 trayHead.addEventListener('click', (e) => {
   if (e.target.closest('button')) return;
   trayCollapsed = !trayCollapsed;
   trayList.style.display = trayCollapsed ? 'none' : '';
+  tray.classList.toggle('open', !trayCollapsed);
 });
+document.addEventListener('click', (e) => {            // tap anywhere else to close the dropdown
+  if (trayCollapsed || e.target.closest('#catCard')) return;
+  trayCollapsed = true; trayList.style.display = 'none'; tray.classList.remove('open');
+});
+document.getElementById('peSearchX').addEventListener('click', () => { searchInput.value = ''; renderTable(); searchInput.focus(); });
 
 discardBtn.addEventListener('click', () => {
   if (!pendingCount()) return;
