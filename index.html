@@ -1928,6 +1928,27 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
 /* =====================================================================
    ARABIC TRANSLATOR tab
    ===================================================================== */
+/* =====================================================================
+   AIR QUALITY tab
+   ===================================================================== */
+.pi-airquality{color:#0891b2;}
+#mobile-more-sheet .mm-grid button[data-tab="airquality"]:not(.active) .mm-ico{background:color-mix(in srgb,#0891b2 11%,#fff) !important;}
+@media (max-width: 899px) { main[data-tab="airquality"] { padding: 0; } }
+@media (min-width: 900px) {
+    main[data-tab="airquality"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="airquality"] > #tab-airquality { flex: 1 0 auto; display: flex; flex-direction: column; }
+    main[data-tab="airquality"] > #tab-airquality.hidden { display: none; }
+    #tab-airquality .home-layout { flex: 1; }
+}
+main[data-tab="airquality"] .app-footer { display: none; }
+#tab-airquality .home-main { min-height: 0; }
+.aq-open { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--accent); font-weight: 800; font-size: 12px; text-decoration: none; white-space: nowrap; }
+.aq-open svg { width: 15px; height: 15px; }
+.aq-frame-wrap { position: relative; flex: 1; min-height: 560px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--card); }
+.aq-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+.aq-loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-dim); font-weight: 700; font-size: 13px; }
+@media (max-width: 899px) { .aq-frame-wrap { min-height: calc(100dvh - 300px); } .aq-open { margin-left: 0; } }
+
 .pi-translator{color:#7c3aed;}
 #mobile-more-sheet .mm-grid button[data-tab="translator"]:not(.active) .mm-ico{background:color-mix(in srgb,#7c3aed 11%,#fff) !important;}
 @media (max-width: 899px) { main[data-tab="translator"] { padding: 0; } }
@@ -3489,6 +3510,7 @@ body.rv-lock { overflow:hidden; }
             <button class="nav-tab" id="btn-reservation" onclick="navigateToTab('reservation')"><div class="nav-icon-badge"><svg class="pi pi-reservation" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.500" y="9.500" width="37" height="32" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="5.500" y="9.500" width="37" height="32" rx="5"/><path d="M5.500 20h37M15.500 5v8M32.500 5v8"/><path d="M16.500 30.500l5 5 9.500-10.500"/></svg></div><span>Reserve</span></button>
             <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge"><svg class="pi pi-teams" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="16" r="6.500" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><circle cx="19" cy="16" r="6.500"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3"/><path d="M32 9.800a6 6 0 0 1 0 11.600M36.500 28.500A9 9 0 0 1 42 37v4"/></svg></div><span>Teams Connect</span></button>
             <button class="nav-tab" id="btn-translator" onclick="navigateToTab('translator')"><div class="nav-icon-badge"><svg class="pi pi-translator" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.500" y="6.500" width="24" height="24" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="4.500" y="6.500" width="24" height="24" rx="5"/><rect x="19.500" y="17.500" width="24" height="24" rx="5" fill="#fff"/><path d="M10 24.500 16.500 11l6.500 13.500M12.300 20h8.400"/><text x="31.500" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" stroke="none" font-family="Tahoma,'Segoe UI',Arial,sans-serif">ع</text></svg></div><span>Arabic</span></button>
+            <button class="nav-tab" id="btn-airquality" onclick="navigateToTab('airquality')"><div class="nav-icon-badge"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></div><span>Air</span></button>
         </nav>
         <div class="hdr-right">
             <div class="sync-pill online-pill">
@@ -3510,6 +3532,7 @@ body.rv-lock { overflow:hidden; }
             <button type="button" data-tab="reservation" onclick="mobileGo('reservation')"><span class="mm-ico"><svg class="pi pi-reservation" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.500" y="9.500" width="37" height="32" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="5.500" y="9.500" width="37" height="32" rx="5"/><path d="M5.500 20h37M15.500 5v8M32.500 5v8"/><path d="M16.500 30.500l5 5 9.500-10.500"/></svg></span><b>Reserve</b></button>
             <button type="button" data-tab="hiredesk" onclick="mobileGo('hiredesk')"><span class="mm-ico"><svg class="pi pi-teams" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="16" r="6.500" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><circle cx="19" cy="16" r="6.500"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3"/><path d="M32 9.800a6 6 0 0 1 0 11.600M36.500 28.500A9 9 0 0 1 42 37v4"/></svg></span><b>Teams Connect</b></button>
             <button type="button" data-tab="translator" onclick="mobileGo('translator')"><span class="mm-ico"><svg class="pi pi-translator" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.500" y="6.500" width="24" height="24" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="4.500" y="6.500" width="24" height="24" rx="5"/><rect x="19.500" y="17.500" width="24" height="24" rx="5" fill="#fff"/><path d="M10 24.500 16.500 11l6.500 13.500M12.300 20h8.400"/><text x="31.500" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" stroke="none" font-family="Tahoma,'Segoe UI',Arial,sans-serif">ع</text></svg></span><b>Arabic</b></button>
+            <button type="button" data-tab="airquality" onclick="mobileGo('airquality')"><span class="mm-ico"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></span><b>Air Quality</b></button>
         </div>
     </div>
     <nav id="mobile-dock" aria-label="Main navigation">
@@ -3537,6 +3560,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -3725,6 +3749,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item active" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -3791,6 +3816,66 @@ body.rv-lock { overflow:hidden; }
             </div>
             <div id="dmm-transport-groups" class="dmm-cols"></div>
         </div>
+        <div id="tab-airquality" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+
+                    <div class="side-nav">
+
+                        <button class="side-item" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Teams Connect</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+
+                        <button class="side-item active" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+
+                    </div>
+
+                    <div class="side-art" aria-hidden="true">
+
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+
+                        <span class="side-lift" aria-hidden="true"></span>
+
+                        <span class="side-build">Build v14 · 20 Sep 2026</span>
+
+                    </div>
+
+                </aside>
+                <div class="home-main">
+                    <div class="hd-banner hd-tint-cyan">
+                        <div class="hd-badge"><i data-lucide="wind"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Air Quality</div>
+                            <h2 class="hd-title">Air Quality Monitor</h2>
+                            <p class="hd-sub">Live air quality readings.</p>
+                        </div>
+                        <a class="aq-open" href="https://shaiknasir320-ops.github.io/Air_Quality/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Open in browser</a>
+                    </div>
+                    <div class="aq-frame-wrap">
+                        <div class="aq-loading" id="aq-loading">Loading air quality&hellip;</div>
+                        <iframe id="aq-frame" title="Air Quality" data-src="https://shaiknasir320-ops.github.io/Air_Quality/" loading="lazy" referrerpolicy="no-referrer" allow="geolocation"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
                 <div id="tab-translator" class="view-section hidden">
             <div class="home-layout">
                 <aside class="home-sidebar">
@@ -3806,6 +3891,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4006,6 +4092,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4048,6 +4135,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4088,6 +4176,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4124,6 +4213,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4292,6 +4382,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4347,6 +4438,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4410,6 +4502,7 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -8425,6 +8518,13 @@ document.addEventListener('visibilitychange', () => {
             populateCompanyList();
         }
         if (tab === 'reservation') initReservationsTab();
+        if (tab === 'airquality') {
+            const _f = document.getElementById('aq-frame');
+            if (_f && !_f.getAttribute('src')) {
+                _f.addEventListener('load', () => { const l = document.getElementById('aq-loading'); if (l) l.style.display = 'none'; }, { once: true });
+                _f.setAttribute('src', _f.dataset.src);
+            }
+        }
     }
 
     function doAuth() {
@@ -9126,7 +9226,7 @@ document.addEventListener('visibilitychange', () => {
     function goBack() { window.history.back(); }
 
     /* ---- Mobile bottom dock ---- */
-    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'translator'];
+    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'translator', 'airquality'];
     function mobileMoreClose() {
         document.getElementById('mobile-more-sheet').classList.remove('open');
         document.getElementById('mobile-more-backdrop').classList.remove('open');
@@ -10531,6 +10631,44 @@ window.addEventListener('DOMContentLoaded', () => {
         mergeEnsureLibrary().catch(() => {
             document.getElementById('merge-status').textContent = 'QR checking failed to load — merging will still work.';
         });
+    });
+
+    /* ===================== AIR QUALITY -> MERGE LIST BRIDGE ===================== */
+    /* The Air Quality page (embedded in #aq-frame) can hand a PDF it generated
+       to this app with window.parent.postMessage({type:'aq-pdf', name, data}, ...).
+       It lands in the same merge queue as uploaded files (mergeAddFiles).
+       Only messages coming from that exact iframe + origin are accepted. */
+    const AQ_ORIGIN = 'https://shaiknasir320-ops.github.io';
+    const AQ_MAX_PDF_BYTES = 30 * 1024 * 1024;
+    window.addEventListener('message', async (ev) => {
+        try {
+            const frame = document.getElementById('aq-frame');
+            if (!frame || ev.source !== frame.contentWindow || ev.origin !== AQ_ORIGIN) return;
+            const msg = ev.data;
+            if (!msg || msg.type !== 'aq-pdf') return;
+            const reply = (ok, error) => { try { ev.source.postMessage({ type: 'aq-pdf-ack', ok, error: error || null }, ev.origin); } catch (e) {} };
+
+            let blob = null;
+            if (msg.data instanceof Blob) blob = msg.data;
+            else if (msg.data instanceof ArrayBuffer) blob = new Blob([msg.data], { type: 'application/pdf' });
+            else if (typeof msg.data === 'string') {
+                const b64 = msg.data.replace(/^data:application\/pdf;base64,/, '');
+                const bin = atob(b64);
+                const bytes = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                blob = new Blob([bytes], { type: 'application/pdf' });
+            }
+            if (!blob || blob.size === 0) { reply(false, 'empty'); return; }
+            if (blob.size > AQ_MAX_PDF_BYTES) { gToast('Air Quality PDF is too large to add'); reply(false, 'too-large'); return; }
+            const head = new Uint8Array(await blob.slice(0, 5).arrayBuffer());
+            if (String.fromCharCode(...head) !== '%PDF-') { gToast('Air Quality file was not a valid PDF'); reply(false, 'not-pdf'); return; }
+
+            let name = String(msg.name || 'Air Quality Report').replace(/[\\/:*?"<>|]+/g, '_').slice(0, 120);
+            if (!/\.pdf$/i.test(name)) name += '.pdf';
+            mergeAddFiles([new File([blob], name, { type: 'application/pdf' })]);
+            gToast('Air Quality PDF added to Machine Docs merge list');
+            reply(true);
+        } catch (e) { console.error('Air Quality bridge error', e); }
     });
 
     /* ===================== MACHINE DOCUMENTS (search + select + merge) ===================== */
