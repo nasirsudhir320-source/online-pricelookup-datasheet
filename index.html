@@ -1927,9 +1927,6 @@ main[data-tab="hiredesk"] .app-footer { display: none; }
 
 
 /* =====================================================================
-   ARABIC TRANSLATOR tab
-   ===================================================================== */
-/* =====================================================================
    AIR QUALITY tab
    ===================================================================== */
 .pi-airquality{color:#0891b2;}
@@ -1949,59 +1946,6 @@ main[data-tab="airquality"] .app-footer { display: none; }
 .aq-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
 .aq-loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-dim); font-weight: 700; font-size: 13px; }
 @media (max-width: 899px) { .aq-frame-wrap { min-height: calc(100dvh - 300px); } .aq-open { margin-left: 0; } }
-
-.pi-translator{color:#7c3aed;}
-#mobile-more-sheet .mm-grid button[data-tab="translator"]:not(.active) .mm-ico{background:color-mix(in srgb,#7c3aed 11%,#fff) !important;}
-@media (max-width: 899px) { main[data-tab="translator"] { padding: 0; } }
-@media (min-width: 900px) {
-    main[data-tab="translator"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
-    main[data-tab="translator"] > #tab-translator { flex: 1 0 auto; display: flex; flex-direction: column; }
-    main[data-tab="translator"] > #tab-translator.hidden { display: none; }
-}
-main[data-tab="translator"] .app-footer { display: none; }
-.tr-wrap { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
-.tr-dirbar { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 10px 12px; }
-.tr-lang { flex: 1; text-align: center; font-weight: 800; font-size: 14px; color: var(--ink); padding: 10px 8px; border-radius: 11px; background: var(--accent-dim); letter-spacing: .2px; }
-.tr-swap { flex: none; width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 8px 16px -8px rgba(109,40,217,.7); transition: transform .25s; }
-.tr-swap:active { transform: rotate(180deg) scale(.94); }
-.tr-swap svg { width: 20px; height: 20px; }
-.tr-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-@media (min-width: 900px) { .tr-grid { grid-template-columns: 1fr 1fr; } }
-.tr-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
-.tr-box-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #6d28d9; border-bottom: 1px solid var(--border); background: #f7f4ff; }
-.tr-box-head .tr-count { font-family: var(--mono); font-size: 10.5px; color: var(--text-dim); text-transform: none; letter-spacing: 0; }
-.tr-text { width: 100%; min-height: 170px; border: none; outline: none; resize: vertical; padding: 14px; font-size: 16px; line-height: 1.6; color: var(--ink); background: transparent; font-family: 'Manrope','Segoe UI',Tahoma,'Noto Naskh Arabic',sans-serif; }
-.tr-text[dir="rtl"], .tr-out[dir="rtl"] { font-family: 'Segoe UI',Tahoma,'Noto Naskh Arabic','Noto Sans Arabic',Arial,sans-serif; font-size: 19px; line-height: 1.85; text-align: right; }
-.tr-out { min-height: 170px; padding: 14px; font-size: 16px; line-height: 1.6; color: var(--ink); white-space: pre-wrap; word-break: break-word; flex: 1; font-family: 'Manrope','Segoe UI',Tahoma,sans-serif; }
-.tr-out.tr-placeholder { color: var(--text-faint, #94a3b8); }
-.tr-out.tr-error { color: #dc2626; font-size: 13px; font-weight: 700; }
-.tr-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
-.tr-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 13px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--ink); font-size: 12.5px; font-weight: 800; cursor: pointer; }
-.tr-btn svg { width: 15px; height: 15px; }
-.tr-btn:active { background: var(--accent-dim); }
-.tr-btn.primary { color: #fff; border-color: transparent; background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-.tr-btn.wa { color: #fff; border-color: transparent; background: linear-gradient(135deg, #22c55e, #15803d); }
-.tr-btn:disabled { opacity: .45; pointer-events: none; }
-.tr-sec { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; }
-.tr-sec-title { font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #6d28d9; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-.tr-sec-title button { background: none; border: none; color: #dc2626; font-size: 11px; font-weight: 800; cursor: pointer; }
-.tr-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.tr-chip { border: 1px solid #ddd2fb; background: #f7f4ff; color: #4c1d95; border-radius: 999px; padding: 8px 13px; font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: left; }
-.tr-chip:active { background: #ebe3ff; }
-.tr-hist-item { padding: 10px 2px; border-bottom: 1px solid #eef2f7; cursor: pointer; }
-.tr-hist-item:last-child { border-bottom: none; }
-.tr-hist-src { font-size: 12.5px; color: var(--text-dim); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tr-hist-dst { font-size: 15px; font-weight: 700; color: var(--ink); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Segoe UI',Tahoma,'Noto Naskh Arabic',Arial,sans-serif; }
-.tr-spin { display: inline-block; width: 14px; height: 14px; border: 2px solid #ddd2fb; border-top-color: #6d28d9; border-radius: 50%; animation: trspin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
-@keyframes trspin { to { transform: rotate(360deg); } }
-
-
-.tr-modebar { display: flex; gap: 6px; padding: 5px; margin-top: 14px; background: #ede9fe; border-radius: 14px; }
-.tr-mode { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; border: none; border-radius: 10px; background: transparent; color: #5b21b6; font-size: 13.5px; font-weight: 800; cursor: pointer; }
-.tr-mode svg { width: 16px; height: 16px; }
-.tr-mode.on { background: #fff; box-shadow: 0 4px 10px -4px rgba(109,40,217,.45); color: #6d28d9; }
-#tr-shot-wrap { margin-top: 14px; }
-#tr-text-wrap { margin-top: 14px; }
 
 /* =====================================================================
    YARDS tab — "Find nearest yard" finder
@@ -3415,6 +3359,203 @@ body.rv-lock { overflow:hidden; }
 .dl-note { font-size: 11px; font-weight: 600; color: var(--text-faint, #94a3b8); flex: 1 1 220px; line-height: 1.45; }
 .dl-foot-btns { display: flex; gap: 8px; }
 .dl-foot-btns .dl-btn { height: 36px; font-size: 12px; }
+
+/* =====================================================================
+   COLOROS 17 THEME  —  "Fluid Fusion" motion + "Liquid Acrylic" look
+   Bright airy canvas, frosted translucent panels, contour glow edges,
+   floating-island bottom bar, squircle corners, springy touch feedback.
+   (Override layer: remove this block + the c17 script to go back.)
+   ===================================================================== */
+:root {
+    --c17-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --c17-flow:   cubic-bezier(0.22, 1, 0.36, 1);
+    --c17-glass:  rgba(255, 255, 255, 0.58);
+    --c17-glass-hi: rgba(255, 255, 255, 0.78);
+    --c17-edge:   rgba(255, 255, 255, 0.82);
+    --c17-ink:    #14213d;
+    --c17-glow:   rgba(47, 123, 255, 0.42);
+    --accent: #2f7bff;
+    --accent-2: #1b5ee8;
+    --accent-dim: #e4eeff;
+    --bg: #eef3fb;
+    --border: #e1e8f4;
+    --sh-md: 0 2px 6px rgba(30, 60, 130, 0.04), 0 14px 32px -16px rgba(30, 70, 160, 0.26);
+    --sh-lg: 0 4px 12px rgba(30, 60, 130, 0.05), 0 28px 56px -24px rgba(30, 70, 160, 0.34);
+}
+
+/* ---- Airy canvas with soft colour light ---- */
+body {
+    background-color: #eef3fb !important;
+    background-image:
+        radial-gradient(900px 520px at 6% -8%,  rgba(88, 150, 255, 0.30), transparent 62%),
+        radial-gradient(760px 480px at 100% 4%, rgba(120, 226, 206, 0.26), transparent 60%),
+        radial-gradient(820px 560px at 92% 100%, rgba(186, 150, 255, 0.22), transparent 62%),
+        radial-gradient(700px 480px at 0% 100%, rgba(255, 198, 160, 0.20), transparent 62%),
+        linear-gradient(180deg, #f8fbff 0%, #eef3fb 100%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}
+::selection { background: rgba(47, 123, 255, 0.22); }
+* { scrollbar-width: thin; scrollbar-color: rgba(60, 90, 150, 0.28) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(60, 90, 150, 0.26); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+
+/* ---- Liquid-acrylic header ---- */
+header {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.50)) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(190%); backdrop-filter: blur(30px) saturate(190%);
+    border-bottom: 1px solid var(--c17-edge) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.95) inset, 0 14px 34px -26px rgba(30, 70, 160, 0.5) !important;
+    border-radius: 0 0 28px 28px;
+}
+header nav {
+    background: rgba(255, 255, 255, 0.46);
+    border: 1px solid var(--c17-edge);
+    border-radius: 26px;
+    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 24px -16px rgba(30, 70, 160, 0.35);
+}
+.nav-tab { border-radius: 18px; }
+.nav-tab .nav-icon-badge { transition: transform 0.5s var(--c17-spring), box-shadow 0.35s var(--c17-flow), opacity 0.25s ease; }
+@media (hover: hover) { .nav-tab:hover .nav-icon-badge { transform: translateY(-2px) scale(1.08); } }
+.nav-tab.active { background: rgba(255, 255, 255, 0.82) !important; box-shadow: 0 0 0 1px rgba(47, 123, 255, 0.20), 0 10px 22px -10px var(--c17-glow), inset 0 1px 0 #fff !important; }
+
+/* ---- Frosted sidebar (was solid navy) ---- */
+.home-sidebar {
+    background:
+        radial-gradient(280px 220px at 15% 0%, rgba(120, 180, 255, 0.28), transparent 70%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(244, 249, 255, 0.50)) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(185%); backdrop-filter: blur(28px) saturate(185%);
+    border: 1px solid var(--c17-edge);
+    box-shadow: inset 0 1px 0 #fff, 0 22px 48px -28px rgba(30, 70, 160, 0.45);
+}
+@media (min-width: 900px) { .home-sidebar { margin: 12px 0 12px 14px; border-radius: 30px; overflow: hidden; } }
+.side-item { color: var(--c17-ink) !important; border-radius: 18px; transition: background-color 0.3s var(--c17-flow), box-shadow 0.35s var(--c17-flow), border-color 0.3s ease, translate 0.45s var(--c17-spring), scale 0.35s var(--c17-spring); }
+.side-item + .side-item::before { background: rgba(30, 60, 120, 0.06); }
+.side-item:hover { background: rgba(47, 123, 255, 0.09); }
+@media (hover: hover) { .side-item:hover { translate: 3px 0; } }
+.side-item.active {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(228, 239, 255, 0.85)) !important;
+    border-color: rgba(47, 123, 255, 0.28) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9) inset, 0 12px 24px -12px var(--c17-glow) !important;
+}
+.side-ico { border-radius: 13px; box-shadow: 0 8px 14px -8px rgba(30, 70, 160, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.55); }
+.side-txt b { color: var(--c17-ink) !important; }
+.side-txt small { color: #6b7a99 !important; }
+.side-chev { color: #8a98b8 !important; }
+.side-art { opacity: 0.4; }
+
+/* ---- Cards, banners and panels: squircle + contour glow ---- */
+.hd-banner, .hero-main, .search-hero-panel {
+    border-radius: 26px !important;
+    box-shadow: 0 18px 38px -26px rgba(30, 90, 220, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 0 0 1px rgba(255, 255, 255, 0.40) !important;
+}
+.rate-card, .item-card, .cc-card, .cc-tile, .info-box, .tr-box, .md-col-card, .sx-panel, .panel {
+    border-radius: 20px;
+    box-shadow: var(--sh-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: translate 0.45s var(--c17-spring), scale 0.35s var(--c17-spring), box-shadow 0.3s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+@media (hover: hover) {
+    .rate-card:hover, .item-card:hover, .cc-card:hover, .cc-tile:hover, .md-col-card:hover { translate: 0 -4px; box-shadow: var(--sh-lg), inset 0 1px 0 #fff, 0 0 0 1px rgba(47, 123, 255, 0.16); }
+}
+.hd-badge { border-radius: 18px; }
+.search-hero-btn, .hd-btn, .btn-primary { border-radius: 16px; }
+
+/* ---- Fields: no extra focus rings on inner inputs (avoids the "ghost" box in search bars) ---- */
+.search-hero-input, .search-hero-input:focus, .search-hero-input:focus-visible,
+.search-hero-input-wrap input, .search-hero-input-wrap input:focus, .search-hero-input-wrap input:focus-visible,
+.rate-search input, .rate-search input:focus, .rate-search input:focus-visible {
+    outline: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- Touch feedback: press in toward the finger, bounce out ---- */
+.c17-press { scale: 0.955; transition: scale 0.16s var(--c17-flow) !important; }
+.c17-bounce { animation: c17-bounce 0.52s var(--c17-flow) both; }
+@keyframes c17-bounce {
+    0%   { scale: 0.955; }
+    42%  { scale: 1.045; }
+    72%  { scale: 0.992; }
+    100% { scale: 1; }
+}
+
+/* ---- Fluid page transitions with staggered rise ---- */
+.view-section { animation: c17-in 0.5s var(--c17-flow) both !important; }
+@keyframes c17-in {
+    from { opacity: 0; scale: 0.975; translate: 0 16px; }
+    to   { opacity: 1; scale: 1;     translate: 0 0; }
+}
+.view-section:not(.hidden) .home-main > *,
+.view-section:not(.hidden) .home-top > * { animation: c17-rise 0.62s var(--c17-spring) both; }
+.view-section:not(.hidden) .home-main > *:nth-child(1) { animation-delay: 0.02s; }
+.view-section:not(.hidden) .home-main > *:nth-child(2) { animation-delay: 0.07s; }
+.view-section:not(.hidden) .home-main > *:nth-child(3) { animation-delay: 0.12s; }
+.view-section:not(.hidden) .home-main > *:nth-child(4) { animation-delay: 0.17s; }
+.view-section:not(.hidden) .home-main > *:nth-child(n+5) { animation-delay: 0.22s; }
+.view-section:not(.hidden) .home-top > *:nth-child(2) { animation-delay: 0.08s; }
+@keyframes c17-rise {
+    from { opacity: 0; translate: 0 22px; scale: 0.97; }
+    to   { opacity: 1; translate: 0 0;    scale: 1; }
+}
+.home-sidebar .side-item { animation: c17-slide 0.55s var(--c17-spring) both; }
+.home-sidebar .side-item:nth-child(1) { animation-delay: 0.00s; } .home-sidebar .side-item:nth-child(2) { animation-delay: 0.03s; }
+.home-sidebar .side-item:nth-child(3) { animation-delay: 0.06s; } .home-sidebar .side-item:nth-child(4) { animation-delay: 0.09s; }
+.home-sidebar .side-item:nth-child(5) { animation-delay: 0.12s; } .home-sidebar .side-item:nth-child(6) { animation-delay: 0.15s; }
+.home-sidebar .side-item:nth-child(7) { animation-delay: 0.18s; } .home-sidebar .side-item:nth-child(8) { animation-delay: 0.21s; }
+.home-sidebar .side-item:nth-child(n+9) { animation-delay: 0.24s; }
+@keyframes c17-slide { from { opacity: 0; translate: -18px 0; } to { opacity: 1; translate: 0 0; } }
+
+/* ---- Mobile: floating-island bottom bar + glass More sheet ---- */
+@media (max-width: 899px) {
+    #mobile-dock {
+        left: 12px !important; right: 12px !important;
+        bottom: calc(10px + var(--safe-bottom, 0px)) !important;
+        height: 66px !important; padding: 5px 5px !important; padding-bottom: 5px !important;
+        border-radius: 34px !important;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.50)) !important;
+        border: 1px solid var(--c17-edge) !important; border-bottom: 1px solid var(--c17-edge) !important;
+        -webkit-backdrop-filter: blur(30px) saturate(200%) !important; backdrop-filter: blur(30px) saturate(200%) !important;
+        box-shadow: 0 18px 40px -12px rgba(20, 50, 110, 0.38), 0 2px 0 rgba(255, 255, 255, 0.95) inset, 0 0 0 0.5px rgba(30, 60, 120, 0.10) !important;
+        animation: c17-dock-in 0.7s var(--c17-spring) both;
+    }
+    @keyframes c17-dock-in { from { translate: 0 90px; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+    #mobile-dock .md-item {
+        border-radius: 28px !important;
+        transition: background 0.35s var(--c17-flow), box-shadow 0.35s var(--c17-flow), flex-grow 0.5s var(--c17-spring), scale 0.4s var(--c17-spring) !important;
+    }
+    #mobile-dock .md-item:active { transform: none; }
+    #mobile-dock .md-item.active {
+        background: linear-gradient(170deg, rgba(255, 255, 255, 0.98), rgba(222, 236, 255, 0.88)) !important;
+        box-shadow: 0 10px 22px -8px var(--c17-glow), 0 0 0 1px rgba(47, 123, 255, 0.22), inset 0 1px 0 #fff !important;
+        color: var(--accent-2) !important;
+        flex-grow: 1.18 !important;
+    }
+    #mobile-dock .md-item.active .md-ico svg { filter: none !important; }
+    #mobile-dock .md-item.active .md-ico { animation: c17-bounce 0.55s var(--c17-spring); }
+
+    #mobile-more-backdrop { background: rgba(30, 50, 100, 0.22) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    #mobile-more-sheet {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(248, 251, 255, 0.62)) !important;
+        border: 1px solid var(--c17-edge) !important; border-radius: 32px !important;
+        -webkit-backdrop-filter: blur(32px) saturate(200%) !important; backdrop-filter: blur(32px) saturate(200%) !important;
+        box-shadow: 0 28px 60px -18px rgba(20, 50, 110, 0.45), inset 0 1px 0 #fff !important;
+        transform-origin: 88% 100%;
+        transition: transform 0.55s var(--c17-spring), opacity 0.25s ease !important;
+    }
+    #mobile-more-sheet:not(.open) { transform: translateY(26px) scale(0.88); }
+    #mobile-more-sheet .mm-ico { border-radius: 19px !important; background: rgba(255, 255, 255, 0.85) !important; box-shadow: inset 0 1px 0 #fff, 0 6px 14px -8px rgba(30, 70, 160, 0.35) !important; }
+    #mobile-more-sheet.open .mm-grid button { animation: c17-pop 0.55s var(--c17-spring) both; }
+    #mobile-more-sheet.open .mm-grid button:nth-child(1) { animation-delay: 0.00s; } #mobile-more-sheet.open .mm-grid button:nth-child(2) { animation-delay: 0.03s; }
+    #mobile-more-sheet.open .mm-grid button:nth-child(3) { animation-delay: 0.06s; } #mobile-more-sheet.open .mm-grid button:nth-child(4) { animation-delay: 0.09s; }
+    #mobile-more-sheet.open .mm-grid button:nth-child(5) { animation-delay: 0.12s; } #mobile-more-sheet.open .mm-grid button:nth-child(n+6) { animation-delay: 0.15s; }
+    @keyframes c17-pop { from { opacity: 0; scale: 0.6; translate: 0 14px; } to { opacity: 1; scale: 1; translate: 0 0; } }
+    #mobile-more-sheet .mm-grid button.active .mm-ico { background: linear-gradient(160deg, #3a86ff, #1b5ee8) !important; box-shadow: 0 10px 20px -8px var(--c17-glow) !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .view-section, .view-section .home-main > *, .view-section .home-top > *, .home-sidebar .side-item,
+    #mobile-dock, #mobile-more-sheet .mm-grid button, .c17-bounce, #mobile-dock .md-item.active .md-ico { animation: none !important; }
+    .c17-press { scale: 1; }
+}
 </style>
 </head>
 <body>
@@ -3510,7 +3651,6 @@ body.rv-lock { overflow:hidden; }
             <button class="nav-tab" id="btn-yards" onclick="navigateToTab('yards')"><div class="nav-icon-badge"><svg class="pi pi-yards" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 43.500S10.500 32 10.500 21.500a13.500 13.500 0 0 1 27 0C37.500 32 24 43.500 24 43.500z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M24 43.500S10.500 32 10.500 21.500a13.500 13.500 0 0 1 27 0C37.500 32 24 43.500 24 43.500z"/><circle cx="24" cy="21.500" r="5"/></svg></div><span>Yards</span></button>
             <button class="nav-tab" id="btn-reservation" onclick="navigateToTab('reservation')"><div class="nav-icon-badge"><svg class="pi pi-reservation" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.500" y="9.500" width="37" height="32" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="5.500" y="9.500" width="37" height="32" rx="5"/><path d="M5.500 20h37M15.500 5v8M32.500 5v8"/><path d="M16.500 30.500l5 5 9.500-10.500"/></svg></div><span>Reserve</span></button>
             <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge"><svg class="pi pi-teams" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="16" r="6.500" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><circle cx="19" cy="16" r="6.500"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3"/><path d="M32 9.800a6 6 0 0 1 0 11.600M36.500 28.500A9 9 0 0 1 42 37v4"/></svg></div><span>Teams Connect</span></button>
-            <button class="nav-tab" id="btn-translator" onclick="navigateToTab('translator')"><div class="nav-icon-badge"><svg class="pi pi-translator" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.500" y="6.500" width="24" height="24" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="4.500" y="6.500" width="24" height="24" rx="5"/><rect x="19.500" y="17.500" width="24" height="24" rx="5" fill="#fff"/><path d="M10 24.500 16.500 11l6.500 13.500M12.300 20h8.400"/><text x="31.500" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" stroke="none" font-family="Tahoma,'Segoe UI',Arial,sans-serif">ع</text></svg></div><span>Arabic</span></button>
             <button class="nav-tab" id="btn-airquality" onclick="navigateToTab('airquality')"><div class="nav-icon-badge"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></div><span>Air</span></button>
         </nav>
         <div class="hdr-right">
@@ -3532,7 +3672,6 @@ body.rv-lock { overflow:hidden; }
             <button type="button" data-tab="yards" onclick="mobileGo('yards')"><span class="mm-ico"><svg class="pi pi-yards" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 43.500S10.500 32 10.500 21.500a13.500 13.500 0 0 1 27 0C37.500 32 24 43.500 24 43.500z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M24 43.500S10.500 32 10.500 21.500a13.500 13.500 0 0 1 27 0C37.500 32 24 43.500 24 43.500z"/><circle cx="24" cy="21.500" r="5"/></svg></span><b>Yards</b></button>
             <button type="button" data-tab="reservation" onclick="mobileGo('reservation')"><span class="mm-ico"><svg class="pi pi-reservation" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.500" y="9.500" width="37" height="32" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="5.500" y="9.500" width="37" height="32" rx="5"/><path d="M5.500 20h37M15.500 5v8M32.500 5v8"/><path d="M16.500 30.500l5 5 9.500-10.500"/></svg></span><b>Reserve</b></button>
             <button type="button" data-tab="hiredesk" onclick="mobileGo('hiredesk')"><span class="mm-ico"><svg class="pi pi-teams" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="16" r="6.500" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><circle cx="19" cy="16" r="6.500"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3"/><path d="M32 9.800a6 6 0 0 1 0 11.600M36.500 28.500A9 9 0 0 1 42 37v4"/></svg></span><b>Teams Connect</b></button>
-            <button type="button" data-tab="translator" onclick="mobileGo('translator')"><span class="mm-ico"><svg class="pi pi-translator" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.500" y="6.500" width="24" height="24" rx="5" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><rect x="4.500" y="6.500" width="24" height="24" rx="5"/><rect x="19.500" y="17.500" width="24" height="24" rx="5" fill="#fff"/><path d="M10 24.500 16.500 11l6.500 13.500M12.300 20h8.400"/><text x="31.500" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" stroke="none" font-family="Tahoma,'Segoe UI',Arial,sans-serif">ع</text></svg></span><b>Arabic</b></button>
             <button type="button" data-tab="airquality" onclick="mobileGo('airquality')"><span class="mm-ico"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></span><b>Air Quality</b></button>
         </div>
     </div>
@@ -3560,7 +3699,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -3749,7 +3887,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -3820,45 +3957,24 @@ body.rv-lock { overflow:hidden; }
         <div id="tab-airquality" class="view-section hidden">
             <div class="home-layout">
                 <aside class="home-sidebar">
-
                     <div class="side-nav">
-
                         <button class="side-item" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Teams Connect</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
-
                         <button class="side-item active" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-
                     </div>
-
                     <div class="side-art" aria-hidden="true">
-
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
-
                         <span class="side-lift" aria-hidden="true"></span>
-
                         <span class="side-build">Build v14 · 20 Sep 2026</span>
-
                     </div>
-
                 </aside>
                 <div class="home-main">
                     <div class="hd-banner hd-tint-cyan">
@@ -3877,207 +3993,6 @@ body.rv-lock { overflow:hidden; }
                 </div>
             </div>
         </div>
-                <div id="tab-translator" class="view-section hidden">
-            <div class="home-layout">
-                <aside class="home-sidebar">
-                    <div class="side-nav">
-                        <button class="side-item" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Teams Connect</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item active" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
-                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                    </div>
-                    <div class="side-art" aria-hidden="true">
-                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
-                        <span class="side-lift" aria-hidden="true"></span>
-                        <span class="side-build">Build v14 · 20 Sep 2026</span>
-                    </div>
-                </aside>
-                <div class="home-main">
-                    <div class="hd-banner hd-tint-violet">
-                        <div class="hd-badge"><i data-lucide="languages"></i></div>
-                        <div class="hd-titles">
-                            <div class="hd-kicker">Arabic Translator</div>
-                            <h2 class="hd-title">English &#8596; Arabic</h2>
-                            <p class="hd-sub">Translate text or screenshots for clients, operators and site teams.</p>
-                        </div>
-                    </div>
-
-                    <div class="tr-modebar" role="tablist">
-                        <button type="button" id="tr-mode-text" class="tr-mode on" onclick="trMode('text')"><i data-lucide="type"></i> Text</button>
-                        <button type="button" id="tr-mode-shot" class="tr-mode" onclick="trMode('shot')"><i data-lucide="scan-text"></i> Screenshot</button>
-                    </div>
-                    <div class="tr-wrap" id="tr-text-wrap">
-                        <div class="tr-dirbar">
-                            <div class="tr-lang" id="tr-from-label">English</div>
-                            <button class="tr-swap" type="button" onclick="trSwap()" title="Swap languages" aria-label="Swap languages"><i data-lucide="arrow-left-right"></i></button>
-                            <div class="tr-lang" id="tr-to-label">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; (Arabic)</div>
-                        </div>
-
-                        <div class="tr-grid">
-                            <div class="tr-box">
-                                <div class="tr-box-head"><span id="tr-in-head">English</span><span class="tr-count" id="tr-count">0 / 5000</span></div>
-                                <textarea id="tr-in" class="tr-text" maxlength="5000" placeholder="Type or paste text here..." oninput="trInput()" dir="ltr"></textarea>
-                                <div class="tr-actions">
-                                    <button class="tr-btn primary" type="button" onclick="trRun()"><i data-lucide="languages"></i> Translate</button>
-                                    <button class="tr-btn" type="button" onclick="trPaste()"><i data-lucide="clipboard-paste"></i> Paste</button>
-                                    <button class="tr-btn" type="button" onclick="trClear()"><i data-lucide="x"></i> Clear</button>
-                                </div>
-                            </div>
-                            <div class="tr-box">
-                                <div class="tr-box-head"><span id="tr-out-head">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; (Arabic)</span><span class="tr-count" id="tr-status"></span></div>
-                                <div id="tr-out" class="tr-out tr-placeholder" dir="rtl">Translation will appear here</div>
-                                <div class="tr-actions">
-                                    <button class="tr-btn" type="button" id="tr-copy" onclick="trCopy()" disabled><i data-lucide="copy"></i> Copy</button>
-                                    <button class="tr-btn" type="button" id="tr-speak" onclick="trSpeak()" disabled><i data-lucide="volume-2"></i> Listen</button>
-                                    <button class="tr-btn wa" type="button" id="tr-wa" onclick="trWhatsApp()" disabled><i data-lucide="send"></i> WhatsApp</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tr-sec">
-                            <div class="tr-sec-title"><span>Quick phrases</span></div>
-                            <div class="tr-chips" id="tr-chips"></div>
-                        </div>
-
-                        <div class="tr-sec" id="tr-hist-sec" style="display:none;">
-                            <div class="tr-sec-title"><span>Recent translations</span><button type="button" onclick="trHistClear()">Clear</button></div>
-                            <div id="tr-hist"></div>
-                        </div>
-                    </div>
-                    <div class="tr-wrap" id="tr-shot-wrap" style="display:none;">
-                        <template id="ss-tpl"><style>
-  :host { --navy:#173e67; --blue:#1976d2; --line:#d7e6f6; --text:#17365d; display:block; font-family:Segoe UI,Tahoma,Arial,sans-serif; color:var(--text); }
-  * { box-sizing:border-box; }
-  .toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
-  .opts { display:flex; gap:16px; flex-wrap:wrap; font-size:14px; align-items:center; }
-  .actions { display:flex; gap:9px; flex-wrap:wrap; }
-  button { font:inherit; cursor:pointer; border:1px solid #bdd3ec; background:#fff; color:var(--text); border-radius:9px; padding:9px 14px; }
-  button:hover { background:#edf6ff; }
-  button.primary { background:var(--blue); border-color:var(--blue); color:#fff; }
-  button.primary:hover { background:#125eaa; }
-  button:disabled { opacity:.6; cursor:wait; }
-  .panels { display:grid; grid-template-columns:repeat(auto-fit,minmax(360px,1fr)); gap:16px; }
-  .panel { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; min-width:0; }
-  .panel-head { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#f4f8fd; border-bottom:1px solid var(--line); }
-  .panel-head h2 { margin:0; font-size:18px; }
-  .panel-body { padding:14px; }
-  .paste-zone { min-height:340px; border:2px dashed #bfd5ed; border-radius:9px; background:#f8fbff; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:14px; color:#67809b; gap:10px; outline:none; }
-  .paste-zone:focus { border-color:var(--blue); }
-  .paste-zone img { max-width:100%; max-height:520px; object-fit:contain; }
-  .paste-zone.has-image { border-style:solid; background:#fff; }
-  .out { width:100%; min-height:200px; border:1px solid #d7e8fb; background:#f5faff; border-radius:9px; padding:16px; font:inherit; font-size:17px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; }
-  #translation { min-height:260px; }
-  textarea.out { resize:vertical; }
-  label.small { display:block; font-size:13px; color:#607b98; margin:12px 0 5px; }
-  .status { margin-top:10px; min-height:20px; font-size:14px; color:#5c7590; }
-  .status.error { color:#b42318; } .status.success { color:#16803d; }
-  .settings { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin-bottom:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; font-size:14px; }
-  .settings label { display:block; font-size:13px; color:#607b98; margin-bottom:4px; }
-  .settings select, .settings input { width:100%; font:inherit; padding:8px 10px; border:1px solid #bdd3ec; border-radius:8px; background:#fff; color:var(--text); }
-  .settings .note { grid-column:1/-1; font-size:12.5px; color:#607b98; }
-  .qr-item { border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-bottom:10px; background:#f8fbff; }
-  .qr-item pre { margin:0 0 10px; white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; font-size:16px; }
-  .qr-item .qr-actions { display:flex; gap:8px; flex-wrap:wrap; }
-  .qr-item a.btn { font:inherit; text-decoration:none; border:1px solid #bdd3ec; background:#fff; color:var(--text); border-radius:9px; padding:9px 14px; }
-  .qr-item .qr-tr { margin-top:10px; padding:10px; background:#eef6ff; border-radius:8px; white-space:pre-wrap; }
-  details.settings-box { margin-bottom:16px; background:#fff; border:1px solid var(--line); border-radius:12px; }
-  details.settings-box > summary { cursor:pointer; padding:12px 16px; font-weight:600; list-style:none; }
-  details.settings-box > summary::-webkit-details-marker { display:none; }
-  details.settings-box[open] > summary { border-bottom:1px solid var(--line); }
-  details.settings-box .settings { border:0; margin:0; border-radius:0 0 12px 12px; }
-  .tabs { display:flex; background:#f4f8fd; border-bottom:1px solid var(--line); }
-  .tab { flex:1; border:0; border-radius:0; background:transparent; padding:14px 10px; font-size:16px; font-weight:600; color:#607b98; border-bottom:3px solid transparent; }
-  .tab:hover { background:#e9f3fd; }
-  .tab.active { color:var(--blue); background:#fff; border-bottom-color:var(--blue); }
-  .tabpane[hidden] { display:none; }
-  .pane-tools { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
-  .pane-tools .opts { font-size:13.5px; display:flex; gap:14px; flex-wrap:wrap; }
-  #qrResults .qr-item pre { font-size:18px; }
-  .qr-empty { text-align:center; color:#67809b; padding:50px 10px; border:2px dashed #bfd5ed; border-radius:9px; background:#f8fbff; }
-  .qr-empty .big { font-size:44px; }
-
-  .hint { margin:0 0 12px; font-size:13.5px; color:#607b98; }
-  .paste-zone button { margin:2px; }
-  @media (max-width:520px) { .panels { grid-template-columns:1fr; } .tab { font-size:14px; padding:12px 6px; } }
-</style><div class="ss-wrap">
-  <p class="hint">Press <b>Win + Shift + S</b> to capture, click the screenshot box, then press <b>Ctrl + V</b>. On a phone, use <b>Choose Image</b>.</p>
-  <details class="settings-box">
-    <summary>⚙ Settings (Google keys &amp; engines)</summary>
-    <div class="settings">
-      <div><label for="ocrEngine">Text reading (OCR)</label>
-        <select id="ocrEngine">
-          <option value="tesseract">Tesseract (free, in browser)</option>
-          <option value="vision">Google Cloud Vision (more accurate, needs API key)</option>
-        </select></div>
-      <div><label for="trEngine">Translation</label>
-        <select id="trEngine">
-          <option value="free">Google Translate (free web endpoint)</option>
-          <option value="cloud">Google Cloud Translation API (needs API key)</option>
-        </select></div>
-      <div><label for="apiKey">Google Cloud API key (optional)</label>
-        <input id="apiKey" type="password" name="gcloud-api-key" placeholder="Paste key for Vision / Translation" autocomplete="new-password" data-lpignore="true" data-1p-ignore data-bwignore data-form-type="other"></div>
-      <div class="note">The key is saved only in this browser and sent only to Google. Enable “Cloud Vision API” and “Cloud Translation API” for the key in Google Cloud Console. If a Google service fails, the tool falls back automatically (Cloud → free Google → MyMemory).</div>
-    </div>
-  </details>
-
-  <div class="panels">
-    <section class="panel">
-      <div class="panel-head"><h2>▧ Screenshot</h2><button id="clearBtn">Clear</button></div>
-      <div class="panel-body">
-        <div id="pasteZone" class="paste-zone" tabindex="0"></div>
-        <div id="ocrStatus" class="status">Waiting for screenshot…</div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="tabs" role="tablist">
-        <button class="tab active" data-tab="text" role="tab">🔤 Text Translation</button>
-        <button class="tab" data-tab="qr" role="tab">▦ QR Scanner<span id="qrBadge"></span></button>
-      </div>
-
-      <div id="tab-text" class="tabpane panel-body">
-        <div class="pane-tools">
-          <div class="opts">
-            <label><input type="checkbox" id="autoChk" checked> Auto-translate on paste</label>
-            <label><input type="checkbox" id="enhChk" checked> Enhance image</label>
-          </div>
-          <div class="actions">
-            <button id="translateBtn" class="primary">Translate</button>
-            <button id="copyBtn">Copy English</button>
-          </div>
-        </div>
-        <div id="translation" class="out">Your English translation will appear here.</div>
-        <div id="translateStatus" class="status"></div>
-        <label class="small" for="arabicText">Extracted Arabic text (fix any OCR mistakes, then click “Re-translate text”)</label>
-        <textarea id="arabicText" class="out" dir="rtl" style="min-height:140px" placeholder="Extracted text appears here…"></textarea>
-        <div style="margin-top:8px"><button id="retranslateBtn">Re-translate text</button></div>
-      </div>
-
-      <div id="tab-qr" class="tabpane panel-body" hidden>
-        <div class="pane-tools">
-          <div class="opts">Decodes every QR code found in the screenshot.</div>
-          <div class="actions"><button id="scanQrBtn" class="primary">Scan QR</button></div>
-        </div>
-        <div id="qrResults"></div>
-        <div id="qrStatus" class="status"></div>
-      </div>
-    </section>
-  </div>
-</div></template>
-                        <div id="ss-host"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
 <div id="tab-hiredesk" class="view-section hidden">
             <div class="home-layout">
                 <aside class="home-sidebar">
@@ -4092,7 +4007,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -4135,7 +4049,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -4176,7 +4089,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -4213,7 +4125,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -4382,7 +4293,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -4438,7 +4348,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -4502,7 +4411,6 @@ body.rv-lock { overflow:hidden; }
                         <button class="side-item active" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create & view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards & locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
-                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="languages"></i></span><span class="side-txt"><b>Arabic Translator</b><small>English &#8596; Arabic</small></span><i data-lucide="chevron-right"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
@@ -8523,7 +8431,7 @@ document.addEventListener('visibilitychange', () => {
             const _f = document.getElementById('aq-frame');
             if (_f && !_f.getAttribute('src')) {
                 _f.addEventListener('load', () => { const l = document.getElementById('aq-loading'); if (l) l.style.display = 'none'; }, { once: true });
-                _f.setAttribute('src', _f.dataset.src);
+                _f.setAttribute('src', _f.dataset.src + (_f.dataset.src.indexOf('?') < 0 ? '?' : '&') + 'v=' + Date.now());
             }
         }
     }
@@ -9227,7 +9135,7 @@ document.addEventListener('visibilitychange', () => {
     function goBack() { window.history.back(); }
 
     /* ---- Mobile bottom dock ---- */
-    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'translator', 'airquality'];
+    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'airquality'];
     function mobileMoreClose() {
         document.getElementById('mobile-more-sheet').classList.remove('open');
         document.getElementById('mobile-more-backdrop').classList.remove('open');
@@ -12666,609 +12574,6 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
 })();
 </script>
 <script>
-/* ===================== ARABIC TRANSLATOR ===================== */
-(function () {
-    var dir = 'en|ar', timer = null, reqId = 0, lastOut = '';
-    var HKEY = 'trHistory_v1';
-    var PHRASES = [
-        'Please send a copy of the operator\u2019s Iqama.',
-        'The machine will be delivered tomorrow morning.',
-        'Please confirm the site location.',
-        'Please share the PO / work order.',
-        'Please sign the delivery note.',
-        'The equipment is off-hire from today.',
-        'Fuel is not included in the rental rate.',
-        'Please keep the machine in a safe place.',
-        'The operator will arrive at the site shortly.',
-        'We need a gate pass for the machine.'
-    ];
-    function $(id) { return document.getElementById(id); }
-    function hasArabic(s) { return /[\u0600-\u06FF]/.test(s); }
-    function hasLatin(s) { return /[A-Za-z]/.test(s); }
-    function setLabels() {
-        var en = dir === 'en|ar';
-        $('tr-from-label').textContent = en ? 'English' : '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (Arabic)';
-        $('tr-to-label').textContent = en ? '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (Arabic)' : 'English';
-        $('tr-in-head').textContent = en ? 'English' : '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (Arabic)';
-        $('tr-out-head').textContent = en ? '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (Arabic)' : 'English';
-        $('tr-in').setAttribute('dir', en ? 'ltr' : 'rtl');
-        $('tr-in').placeholder = en ? 'Type or paste text here...' : '\u0627\u0643\u062A\u0628 \u0623\u0648 \u0627\u0644\u0635\u0642 \u0627\u0644\u0646\u0635 \u0647\u0646\u0627...';
-        $('tr-out').setAttribute('dir', en ? 'rtl' : 'ltr');
-    }
-    function setOut(text, kind) {
-        var o = $('tr-out');
-        o.textContent = text;
-        o.className = 'tr-out' + (kind ? ' tr-' + kind : '');
-        var ok = !kind;
-        ['tr-copy', 'tr-speak', 'tr-wa'].forEach(function (id) { $(id).disabled = !ok; });
-        if (ok) lastOut = text;
-    }
-    function resetOut() {
-        lastOut = '';
-        $('tr-status').textContent = '';
-        setOut(dir === 'en|ar' ? 'Translation will appear here' : 'Translation will appear here', 'placeholder');
-        $('tr-out').setAttribute('dir', 'ltr');
-        if (dir === 'en|ar') $('tr-out').setAttribute('dir', 'ltr');
-    }
-    async function viaGoogle(q, sl, tl) {
-        var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sl + '&tl=' + tl + '&dt=t&q=' + encodeURIComponent(q);
-        var r = await fetch(url);
-        if (!r.ok) throw new Error('G' + r.status);
-        var j = await r.json();
-        return j[0].map(function (x) { return x[0] || ''; }).join('');
-    }
-    async function viaMyMemory(q, sl, tl) {
-        var chunks = q.match(/[\s\S]{1,450}(?:\s|$)/g) || [q], out = [];
-        for (var k = 0; k < chunks.length; k++) {
-            var r = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(chunks[k]) + '&langpair=' + sl + '|' + tl);
-            if (!r.ok) throw new Error('M' + r.status);
-            var j = await r.json();
-            if (!j.responseData || !j.responseData.translatedText) throw new Error('M-empty');
-            out.push(j.responseData.translatedText);
-        }
-        return out.join(' ');
-    }
-    window.trRun = async function () {
-        clearTimeout(timer);
-        var q = $('tr-in').value.trim();
-        if (!q) { resetOut(); return; }
-        var parts = dir.split('|'), my = ++reqId;
-        $('tr-status').innerHTML = '<span class="tr-spin"></span>Translating';
-        var res = '';
-        try { res = await viaGoogle(q, parts[0], parts[1]); }
-        catch (e1) {
-            try { res = await viaMyMemory(q, parts[0], parts[1]); }
-            catch (e2) { res = ''; }
-        }
-        if (my !== reqId) return;
-        $('tr-status').textContent = '';
-        if (!res) {
-            setOut(navigator.onLine === false ? 'You are offline. Connect to the internet to translate.' : 'Could not translate right now. Please try again.', 'error');
-            $('tr-out').setAttribute('dir', 'ltr');
-            return;
-        }
-        $('tr-out').setAttribute('dir', parts[1] === 'ar' ? 'rtl' : 'ltr');
-        setOut(res);
-        histAdd(q, res);
-    };
-    window.trInput = function () {
-        var v = $('tr-in').value;
-        $('tr-count').textContent = v.length + ' / 5000';
-        if (hasArabic(v) && dir === 'en|ar') { dir = 'ar|en'; setLabels(); }
-        else if (!hasArabic(v) && hasLatin(v) && dir === 'ar|en') { dir = 'en|ar'; setLabels(); }
-        clearTimeout(timer);
-        if (!v.trim()) { reqId++; resetOut(); return; }
-        timer = setTimeout(window.trRun, 700);
-    };
-    window.trSwap = function () {
-        var prev = lastOut;
-        dir = dir === 'en|ar' ? 'ar|en' : 'en|ar';
-        setLabels();
-        if (prev) { $('tr-in').value = prev; $('tr-count').textContent = prev.length + ' / 5000'; window.trRun(); }
-        else { window.trInput(); }
-    };
-    window.trClear = function () {
-        reqId++; $('tr-in').value = ''; $('tr-count').textContent = '0 / 5000'; resetOut(); $('tr-in').focus();
-    };
-    window.trPaste = async function () {
-        try {
-            var t = await navigator.clipboard.readText();
-            if (t) { $('tr-in').value = t; window.trInput(); window.trRun(); }
-        } catch (e) { if (typeof gToast === 'function') gToast('Long-press the box to paste'); $('tr-in').focus(); }
-    };
-    window.trCopy = function () {
-        if (!lastOut) return;
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(lastOut).then(function () { if (typeof gToast === 'function') gToast('Copied!'); });
-    };
-    window.trSpeak = function () {
-        if (!lastOut || !('speechSynthesis' in window)) { if (typeof gToast === 'function') gToast('Speech not supported'); return; }
-        window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(lastOut);
-        u.lang = dir === 'en|ar' ? 'ar-SA' : 'en-US';
-        window.speechSynthesis.speak(u);
-    };
-    window.trWhatsApp = function () {
-        if (!lastOut) return;
-        window.open('https://wa.me/?text=' + encodeURIComponent(lastOut), '_blank');
-    };
-    window.trUsePhrase = function (i) {
-        dir = 'en|ar'; setLabels();
-        $('tr-in').value = PHRASES[i];
-        $('tr-count').textContent = PHRASES[i].length + ' / 5000';
-        window.trRun();
-        $('main-content').scrollTop = 0;
-    };
-    /* history */
-    function histGet() { try { return JSON.parse(localStorage.getItem(HKEY) || '[]'); } catch (e) { return []; } }
-    function histSet(a) { try { localStorage.setItem(HKEY, JSON.stringify(a)); } catch (e) {} }
-    function histAdd(src, dst) {
-        var a = histGet().filter(function (x) { return x.s !== src; });
-        a.unshift({ s: src, d: dst, dir: dir });
-        histSet(a.slice(0, 10)); histRender();
-    }
-    function histRender() {
-        var a = histGet(), box = $('tr-hist');
-        $('tr-hist-sec').style.display = a.length ? '' : 'none';
-        box.innerHTML = '';
-        a.forEach(function (x, i) {
-            var d = document.createElement('div'); d.className = 'tr-hist-item';
-            var s = document.createElement('div'); s.className = 'tr-hist-src'; s.textContent = x.s;
-            var t = document.createElement('div'); t.className = 'tr-hist-dst'; t.textContent = x.d;
-            t.setAttribute('dir', x.dir === 'en|ar' ? 'rtl' : 'ltr');
-            d.appendChild(s); d.appendChild(t);
-            d.onclick = function () {
-                dir = x.dir || 'en|ar'; setLabels();
-                $('tr-in').value = x.s; $('tr-count').textContent = x.s.length + ' / 5000';
-                $('tr-out').setAttribute('dir', dir === 'en|ar' ? 'rtl' : 'ltr'); setOut(x.d);
-                $('main-content').scrollTop = 0;
-            };
-            box.appendChild(d);
-        });
-    }
-    window.trHistClear = function () { histSet([]); histRender(); };
-    function init() {
-        var c = $('tr-chips'); if (!c) return;
-        PHRASES.forEach(function (p, i) {
-            var b = document.createElement('button'); b.type = 'button'; b.className = 'tr-chip'; b.textContent = p;
-            b.onclick = function () { window.trUsePhrase(i); }; c.appendChild(b);
-        });
-        setLabels(); resetOut(); histRender();
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
-})();
-</script>
-<script>
-/* ===================== ARABIC SCREENSHOT TRANSLATOR (merged; isolated in a Shadow DOM) ===================== */
-(() => {
-  const host = document.getElementById('ss-host');
-  const tpl = document.getElementById('ss-tpl');
-  const root = host.attachShadow({ mode: 'open' });
-  root.appendChild(tpl.content.cloneNode(true));
-  const $ = id => root.getElementById(id);
-  const _libs = {};
-  function loadLib(url) {
-    if (!_libs[url]) _libs[url] = new Promise((res, rej) => {
-      const el = document.createElement('script'); el.src = url; el.onload = res;
-      el.onerror = () => { delete _libs[url]; rej(new Error('Could not load a required library. Check your internet connection.')); };
-      document.head.appendChild(el);
-    });
-    return _libs[url];
-  }
-  const pasteZone = $('pasteZone'), translation = $('translation'), arabicText = $('arabicText');
-  const ocrStatus = $('ocrStatus'), translateStatus = $('translateStatus');
-  const translateBtn = $('translateBtn'), retranslateBtn = $('retranslateBtn');
-  const EMPTY = 'Your English translation will appear here.';
-  let imageDataUrl = null, lastEnglish = '', worker = null, onProgress = () => {};
-
-  function setStatus(el, text, kind = '') { el.textContent = text; el.className = 'status' + (kind ? ' ' + kind : ''); }
-
-  function showEmptyZone() {
-    pasteZone.classList.remove('has-image');
-    pasteZone.innerHTML = '<div style="font-size:42px">▧</div><strong>Click here, then press Ctrl + V</strong><span>You can also drag an image here or choose a file.</span><button id="chooseBtn" type="button">Choose Image</button><button id="pasteBtn" type="button">Paste from clipboard</button><input id="fileInput" type="file" accept="image/*" hidden>';
-    $('chooseBtn').addEventListener('click', e => { e.stopPropagation(); $('fileInput').click(); });
-    $('pasteBtn').addEventListener('click', async e => {
-      e.stopPropagation();
-      try {
-        const items = await navigator.clipboard.read();
-        for (const it of items) {
-          const t = it.types.find(x => x.startsWith('image/'));
-          if (t) { const b = await it.getType(t); loadImage(new File([b], 'clipboard.png', { type: t })); return; }
-        }
-        setStatus(ocrStatus, 'No image found in the clipboard.', 'error');
-      } catch (err) { setStatus(ocrStatus, 'Clipboard access blocked. Use Ctrl + V or Choose Image.', 'error'); }
-    });
-    $('fileInput').addEventListener('change', e => loadImage(e.target.files[0]));
-  }
-
-  function loadImage(file) {
-    if (!file || !file.type.startsWith('image/')) { setStatus(ocrStatus, 'Please paste or select an image.', 'error'); return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-      imageDataUrl = reader.result;
-      pasteZone.classList.add('has-image');
-      pasteZone.innerHTML = '';
-      const img = new Image(); img.src = imageDataUrl; img.alt = 'Pasted screenshot';
-      pasteZone.appendChild(img);
-      translation.textContent = EMPTY; arabicText.value = ''; lastEnglish = '';
-      setStatus(translateStatus, '');
-      setStatus(ocrStatus, 'Screenshot ready.', 'success');
-      textDone = false; lastQR = { count: 0, fraction: 0 };
-      setStatus(ocrStatus, 'Detecting content…');
-      scanQR(imageDataUrl).then(r => {
-        // A QR that fills a good part of the image => QR scanner. Otherwise it is a text image.
-        if (r.count && r.fraction >= 0.12) {
-          setStatus(ocrStatus, 'QR code detected: opened QR Scanner.', 'success');
-          setTab('qr');
-        } else {
-          if (r.count) setStatus(ocrStatus, 'Text image with ' + r.count + ' QR code(s): see the QR tab.', 'success');
-          setTab('text');
-        }
-      }).catch(e => { setStatus(qrStatus, e.message, 'error'); setTab('text'); });
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // Paste anywhere on the page
-  document.addEventListener('paste', e => {
-    const pane = document.getElementById('tab-translator');
-    if (!pane || pane.classList.contains('hidden') || !host.offsetParent) return;   // only while the Screenshot mode is on screen
-    const tgt = e.composedPath ? e.composedPath()[0] : e.target;
-    if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA')) return;
-    const items = e.clipboardData && e.clipboardData.items;
-    if (!items) return;
-    for (const item of items) {
-      if (item.type.startsWith('image/')) { e.preventDefault(); loadImage(item.getAsFile()); return; }
-    }
-  });
-  pasteZone.addEventListener('click', e => { if (e.target.id !== 'chooseBtn') pasteZone.focus(); });
-  pasteZone.addEventListener('dragover', e => { e.preventDefault(); pasteZone.style.borderColor = '#1976d2'; });
-  pasteZone.addEventListener('dragleave', () => { pasteZone.style.borderColor = ''; });
-  pasteZone.addEventListener('drop', e => { e.preventDefault(); pasteZone.style.borderColor = ''; if (e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]); });
-
-  // Image enhancement: upscale, grayscale, stretch contrast, invert dark backgrounds
-  function enhance(dataUrl) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const target = 2200;
-        const scale = Math.min(3, Math.max(1, target / img.width));
-        const c = document.createElement('canvas');
-        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
-        const ctx = c.getContext('2d');
-        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, c.width, c.height);
-        const d = ctx.getImageData(0, 0, c.width, c.height), p = d.data;
-        let min = 255, max = 0, sum = 0; const n = p.length / 4;
-        for (let i = 0; i < p.length; i += 4) {
-          const g = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
-          p[i] = g; if (g < min) min = g; if (g > max) max = g; sum += g;
-        }
-        const invert = (sum / n) < 110, range = Math.max(1, max - min);
-        for (let i = 0; i < p.length; i += 4) {
-          let g = (p[i] - min) * 255 / range;
-          if (invert) g = 255 - g;
-          p[i] = p[i + 1] = p[i + 2] = g;
-        }
-        ctx.putImageData(d, 0, 0);
-        resolve(c);
-      };
-      img.onerror = () => reject(new Error('Could not read the image.'));
-      img.src = dataUrl;
-    });
-  }
-
-  const workers = {};
-  async function getWorker(lang) {
-    if (workers[lang]) return workers[lang];
-    if (!window.Tesseract) await loadLib('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
-    workers[lang] = await Tesseract.createWorker(lang, 1, { logger: m => onProgress(m, lang) });
-    return workers[lang];
-  }
-
-  const AR = /[\u0600-\u06FF]/g, LAT = /[A-Za-z]/g;
-  const count = (t, re) => (t.match(re) || []).length;
-
-  // Read Arabic and English separately (each model is far more accurate on its own script), then merge by position
-  async function tesseractOCR(input) {
-    const wa = await getWorker('ara');
-    const ra = (await wa.recognize(input)).data;
-    const we = await getWorker('eng');
-    const re = (await we.recognize(input)).data;
-    const mk = (d, src) => (d.lines || []).map(l => ({
-      t: (l.text || '').trim(), c: l.confidence || 0, y0: l.bbox.y0, y1: l.bbox.y1, src
-    })).filter(l => l.t);
-    const A = mk(ra, 'a').filter(l => count(l.t, AR) > count(l.t, LAT));
-    const E = mk(re, 'e').filter(l => count(l.t, LAT) > count(l.t, AR) && count(l.t, LAT) >= 2);
-    if (!A.length && !E.length) return ra.text || re.text || '';
-    const all = [...A, ...E].sort((x, y) => x.y0 - y.y0);
-    const kept = [];
-    for (const l of all) {
-      const clash = kept.find(k => {
-        const ov = Math.min(k.y1, l.y1) - Math.max(k.y0, l.y0);
-        return ov > 0.5 * Math.min(k.y1 - k.y0, l.y1 - l.y0);
-      });
-      if (!clash) { kept.push(l); continue; }
-      if (clash.src === l.src) continue;
-      if (clash.c >= 65 && l.c >= 65) kept.push(l);          // both look genuine: keep both (mixed-script row)
-      else if (l.c > clash.c) kept[kept.indexOf(clash)] = l;  // otherwise keep the more confident reading
-    }
-    kept.sort((x, y) => x.y0 - y.y0);
-    return kept.map(l => l.t).join('\n');
-  }
-
-  // Translation with chunking + fallback
-  function chunkText(text, max) {
-    const lines = text.split('\n'), chunks = []; let cur = '';
-    for (const line of lines) {
-      if ((cur + '\n' + line).length > max && cur) { chunks.push(cur); cur = line; }
-      else cur = cur ? cur + '\n' + line : line;
-    }
-    if (cur) chunks.push(cur);
-    return chunks;
-  }
-  // ---- Tabs ----
-  let activeTab = 'text', textDone = false;
-  function setTab(name) {
-    activeTab = name;
-    root.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-    $('tab-text').hidden = name !== 'text';
-    $('tab-qr').hidden = name !== 'qr';
-    if (name === 'text' && imageDataUrl && !textDone && $('autoChk').checked) runTranslation();
-  }
-  root.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
-
-  // ---- QR code scanner ----
-  let lastQR = { count: 0, fraction: 0 };
-  const qrResults = $('qrResults'), qrStatus = $('qrStatus');
-  const QR_EMPTY_HTML = '<div class="qr-empty"><div class="big">▦</div><div>Paste a screenshot containing a QR code.<br>It is decoded automatically.</div></div>';
-  qrResults.innerHTML = QR_EMPTY_HTML;
-  const qrBadge = $('qrBadge');
-
-  function loadImg(src) {
-    return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Could not read image.')); i.src = src; });
-  }
-  async function scanQR(dataUrl) {
-    if (!dataUrl) { setStatus(qrStatus, 'Paste or choose a screenshot first.', 'error'); return { count: 0, fraction: 0 }; }
-    if (!window.jsQR) { try { await loadLib('https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'); } catch (e) {} }
-    if (!window.jsQR) { setStatus(qrStatus, 'QR library did not load. Check your internet connection and reload.', 'error'); return { count: 0, fraction: 0 }; }
-    setStatus(qrStatus, 'Scanning for QR codes…');
-    qrResults.className = ''; qrResults.textContent = ''; qrBadge.textContent = '';
-    const img = await loadImg(dataUrl);
-    const found = []; let maxFrac = 0;
-    for (const scale of [1, 2, 0.6, 3]) {
-      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
-      if (w * h > 14e6 || w < 40 || h < 40) continue;
-      if (scale !== 1 && w * h > 5e6) continue; // keep big screenshots fast
-      const c = document.createElement('canvas'); c.width = w; c.height = h;
-      const ctx = c.getContext('2d', { willReadFrequently: true });
-      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
-      for (let n = 0; n < 6; n++) {
-        const d = ctx.getImageData(0, 0, w, h);
-        const code = jsQR(d.data, w, h, { inversionAttempts: 'attemptBoth' });
-        if (!code) break;
-        if (code.data && !found.includes(code.data)) found.push(code.data);
-        const L = code.location, pts = [L.topLeftCorner, L.topRightCorner, L.bottomLeftCorner, L.bottomRightCorner];
-        const x0 = Math.min(...pts.map(p => p.x)), x1 = Math.max(...pts.map(p => p.x));
-        const y0 = Math.min(...pts.map(p => p.y)), y1 = Math.max(...pts.map(p => p.y));
-        maxFrac = Math.max(maxFrac, ((x1 - x0) * (y1 - y0)) / (w * h));
-        ctx.fillStyle = '#fff'; ctx.fillRect(x0 - 6, y0 - 6, x1 - x0 + 12, y1 - y0 + 12); // hide it, look for another
-      }
-      if (found.length) break;
-    }
-    renderQR(found);
-    lastQR = { count: found.length, fraction: maxFrac };
-    return lastQR;
-  }
-  function renderQR(list) {
-    qrResults.textContent = '';
-    qrBadge.textContent = list.length ? ' (' + list.length + ')' : '';
-    if (!list.length) { qrResults.innerHTML = '<div class="qr-empty"><div class="big">∅</div><div>No QR code found in this image.</div></div>'; setStatus(qrStatus, ''); return; }
-    list.forEach(text => {
-      const box = document.createElement('div'); box.className = 'qr-item';
-      const pre = document.createElement('pre'); pre.textContent = text; if (count(text, AR)) pre.dir = 'auto';
-      const actions = document.createElement('div'); actions.className = 'qr-actions';
-      const copy = document.createElement('button'); copy.textContent = 'Copy';
-      copy.onclick = async () => { try { await navigator.clipboard.writeText(text); copy.textContent = 'Copied ✓'; setTimeout(() => copy.textContent = 'Copy', 1500); } catch (e) {} };
-      actions.appendChild(copy);
-      if (/^https?:\/\//i.test(text.trim())) {
-        const a = document.createElement('a'); a.className = 'btn'; a.href = text.trim(); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Open link ↗';
-        actions.appendChild(a);
-      }
-      if (count(text, AR)) {
-        const tr = document.createElement('button'); tr.textContent = 'Translate to English';
-        tr.onclick = async () => {
-          tr.disabled = true;
-          try {
-            const out = await translateText(text);
-            let el = box.querySelector('.qr-tr'); if (!el) { el = document.createElement('div'); el.className = 'qr-tr'; box.appendChild(el); }
-            el.textContent = out;
-          } catch (e) { setStatus(qrStatus, e.message || 'Translation failed.', 'error'); }
-          tr.disabled = false;
-        };
-        actions.appendChild(tr);
-      }
-      box.appendChild(pre); box.appendChild(actions); qrResults.appendChild(box);
-    });
-    setStatus(qrStatus, list.length + ' QR code' + (list.length > 1 ? 's' : '') + ' found.', 'success');
-  }
-  $('scanQrBtn').addEventListener('click', () => scanQR(imageDataUrl).catch(e => setStatus(qrStatus, e.message, 'error')));
-
-  // ---- Settings (saved in this browser) ----
-  const ocrEngine = $('ocrEngine'), trEngine = $('trEngine'), apiKeyEl = $('apiKey');
-  try {
-    ocrEngine.value = localStorage.getItem('ssOcrEngine') || 'tesseract';
-    trEngine.value = localStorage.getItem('ssTrEngine') || 'free';
-    apiKeyEl.value = localStorage.getItem('ssGKey') || '';
-  } catch (e) {}
-  function saveSettings() {
-    try { localStorage.setItem('ssOcrEngine', ocrEngine.value); localStorage.setItem('ssTrEngine', trEngine.value); localStorage.setItem('ssGKey', apiKeyEl.value.trim()); } catch (e) {}
-  }
-  [ocrEngine, trEngine].forEach(el => el.addEventListener('change', saveSettings));
-  apiKeyEl.addEventListener('input', saveSettings);
-  const getKey = () => apiKeyEl.value.trim();
-
-  async function visionOCR(dataUrl) {
-    const key = getKey();
-    if (!key) throw new Error('Enter your Google Cloud API key to use Cloud Vision.');
-    const r = await fetch('https://vision.googleapis.com/v1/images:annotate?key=' + encodeURIComponent(key), {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requests: [{
-        image: { content: dataUrl.split(',')[1] },
-        features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
-        imageContext: { languageHints: ['ar', 'en'] }
-      }] })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error('Google Vision: ' + ((data.error && data.error.message) || r.status));
-    const res = data.responses && data.responses[0];
-    if (res && res.error) throw new Error('Google Vision: ' + res.error.message);
-    return (res && res.fullTextAnnotation && res.fullTextAnnotation.text) || '';
-  }
-  async function googleCloudChunk(text) {
-    const key = getKey();
-    if (!key) throw new Error('No API key');
-    const r = await fetch('https://translation.googleapis.com/language/translate/v2?key=' + encodeURIComponent(key), {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ q: text, source: 'ar', target: 'en', format: 'text' })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error('Google Cloud Translation: ' + ((data.error && data.error.message) || r.status));
-    return data.data.translations[0].translatedText;
-  }
-  async function googleChunk(text) {
-    const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=' + encodeURIComponent(text));
-    if (!r.ok) throw new Error('Google Translate error ' + r.status);
-    const data = await r.json();
-    return (data[0] || []).map(p => p[0] || '').join('');
-  }
-  async function myMemoryChunk(text) {
-    const r = await fetch('https://api.mymemory.translated.net/get?langpair=ar|en&q=' + encodeURIComponent(text));
-    if (!r.ok) throw new Error('MyMemory error ' + r.status);
-    const data = await r.json();
-    return (data.responseData && data.responseData.translatedText) || '';
-  }
-  async function translateRaw(text) {
-    if (trEngine.value === 'cloud') {
-      try {
-        const out = [];
-        for (const c of chunkText(text, 4000)) out.push(await googleCloudChunk(c));
-        return out.join('\n');
-      } catch (e) { setStatus(translateStatus, 'Cloud Translation failed (' + e.message + '). Trying free Google…'); }
-    }
-    try {
-      const out = [];
-      for (const c of chunkText(text, 1200)) out.push(await googleChunk(c));
-      return out.join('\n');
-    } catch (e) {
-      setStatus(translateStatus, 'Google failed, trying backup translator…');
-      const out2 = [];
-      for (const c of chunkText(text, 450)) out2.push(await myMemoryChunk(c));
-      return out2.join('\n');
-    }
-  }
-
-  async function translateText(text) {
-    const lines = text.replace(/\u0640/g, '').split('\n');
-    const blocks = [];
-    for (const line of lines) {
-      const isAr = count(line, AR) > 0 && count(line, AR) >= count(line, LAT);
-      const last = blocks[blocks.length - 1];
-      if (last && last.ar === isAr && isAr) last.text += '\n' + line;
-      else blocks.push({ ar: isAr, text: line });
-    }
-    const out = [];
-    for (const b of blocks) out.push(b.ar ? await translateRaw(b.text) : b.text);
-    return out.join('\n');
-  }
-
-  async function translateArabic(text) {
-    setStatus(translateStatus, 'Translating…');
-    translation.textContent = 'Translating…';
-    const english = await translateText(text);
-    lastEnglish = english.trim();
-    translation.textContent = lastEnglish || 'No translation returned.';
-    setStatus(translateStatus, 'Translation complete.', 'success');
-  }
-
-  async function runTranslation() {
-    if (!imageDataUrl) { setStatus(ocrStatus, 'Paste or choose a screenshot first.', 'error'); return; }
-    textDone = true;
-    translateBtn.disabled = true; retranslateBtn.disabled = true;
-    translation.textContent = 'Working…';
-    try {
-      setStatus(ocrStatus, 'Preparing image…');
-      let raw;
-      if (ocrEngine.value === 'vision') {
-        try {
-          setStatus(ocrStatus, 'Reading text with Google Cloud Vision…');
-          raw = await visionOCR(imageDataUrl);
-        } catch (e) {
-          setStatus(ocrStatus, e.message + ' Using Tesseract instead…', 'error');
-          raw = null;
-        }
-      }
-      if (raw === undefined || raw === null) {
-        const input = $('enhChk').checked ? await enhance(imageDataUrl) : imageDataUrl;
-        setStatus(ocrStatus, 'Loading Arabic OCR (first time takes longer)…');
-        onProgress = (m, lang) => {
-          if (m.status === 'recognizing text') setStatus(ocrStatus, 'Reading ' + (lang === 'ara' ? 'Arabic' : 'English') + ' text: ' + Math.round((m.progress || 0) * 100) + '%');
-          else if (m.status && m.status.includes('loading')) setStatus(ocrStatus, 'Loading OCR data…');
-        };
-        raw = await tesseractOCR(input);
-      }
-      const extracted = (raw || '').replace(/\u0640/g, '').split('\n').map(l => l.trim()).filter(Boolean).join('\n');
-      if (!extracted) {
-        if (lastQR.count) { setStatus(ocrStatus, 'No text found, but a QR code was detected: opened QR Scanner.', 'success'); translation.textContent = EMPTY; setTab('qr'); return; }
-        throw new Error('No readable text found. Try a clearer or larger screenshot.');
-      }
-      arabicText.value = extracted;
-      setStatus(ocrStatus, 'Text extracted.', 'success');
-      await translateArabic(extracted);
-    } catch (err) {
-      translation.textContent = 'Unable to translate this image.\n\n' + (err.message || 'Please try again.');
-      setStatus(translateStatus, 'Something went wrong.', 'error');
-    } finally {
-      translateBtn.disabled = false; retranslateBtn.disabled = false;
-    }
-  }
-
-  retranslateBtn.addEventListener('click', async () => {
-    const t = arabicText.value.trim();
-    if (!t) return;
-    retranslateBtn.disabled = true;
-    try { await translateArabic(t); }
-    catch (e) { setStatus(translateStatus, e.message || 'Translation failed.', 'error'); }
-    finally { retranslateBtn.disabled = false; }
-  });
-  translateBtn.addEventListener('click', runTranslation);
-
-  $('copyBtn').addEventListener('click', async () => {
-    if (!lastEnglish) return;
-    try { await navigator.clipboard.writeText(lastEnglish); setStatus(translateStatus, 'English text copied.', 'success'); }
-    catch { setStatus(translateStatus, 'Select the text and press Ctrl + C.', 'error'); }
-  });
-  $('clearBtn').addEventListener('click', () => {
-    imageDataUrl = null; lastEnglish = ''; arabicText.value = '';
-    translation.textContent = EMPTY;
-    setStatus(ocrStatus, 'Waiting for screenshot…'); setStatus(translateStatus, '');
-    qrResults.innerHTML = QR_EMPTY_HTML; qrBadge.textContent = ''; setStatus(qrStatus, ''); textDone = false;
-    showEmptyZone();
-  });
-
-  showEmptyZone();
-})();
-
-/* mode switch: Text <-> Screenshot */
-function trMode(m) {
-    var shot = m === 'shot';
-    document.getElementById('tr-text-wrap').style.display = shot ? 'none' : '';
-    document.getElementById('tr-shot-wrap').style.display = shot ? '' : 'none';
-    document.getElementById('tr-mode-text').classList.toggle('on', !shot);
-    document.getElementById('tr-mode-shot').classList.toggle('on', shot);
-}
-</script>
-<script>
 /* ===================== YARDS: find nearest yard ===================== */
 (function () {
     var $ = function (id) { return document.getElementById(id); };
@@ -13985,6 +13290,37 @@ function trMode(m) {
         if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(cur.text).then(function () { if (typeof gToast === 'function') gToast('Copied!'); });
     };
     window.dlWhatsApp = function () { if (cur) window.open('https://wa.me/?text=' + encodeURIComponent(cur.text), '_blank'); };
+})();
+</script>
+<script id="coloros17-js">
+/* ColorOS 17 touch feedback: the control presses in toward your fingertip, then springs back */
+(function () {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var SEL = '.side-item,.nav-tab,.md-item,.act-btn,.hd-btn,.btn,.btn-primary,.item-card,.cc-tile,.rate-card,.search-hero-btn,.mm-grid button,.tray-btn,.md-action-btn,.dl-btn';
+    var held = [];
+    document.addEventListener('pointerdown', function (e) {
+        var t = e.target.closest && e.target.closest(SEL);
+        if (!t || t.disabled) return;
+        var r = t.getBoundingClientRect();
+        if (r.width && r.height) {
+            t.style.transformOrigin = ((e.clientX - r.left) / r.width * 100).toFixed(1) + '% ' + ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%';
+        }
+        t.classList.remove('c17-bounce');
+        t.classList.add('c17-press');
+        held.push(t);
+    }, { passive: true });
+    function release() {
+        held.forEach(function (t) {
+            t.classList.remove('c17-press');
+            void t.offsetWidth;
+            t.classList.add('c17-bounce');
+            setTimeout(function () { t.classList.remove('c17-bounce'); t.style.transformOrigin = ''; }, 560);
+        });
+        held = [];
+    }
+    document.addEventListener('pointerup', release, { passive: true });
+    document.addEventListener('pointercancel', release, { passive: true });
+    document.addEventListener('scroll', function () { if (held.length) release(); }, { passive: true, capture: true });
 })();
 </script>
 </body>
