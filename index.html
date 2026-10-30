@@ -3634,6 +3634,150 @@ main[data-tab="notes"] .app-footer { display: none; }
 .nt-toast { position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom,0px)); translate:-50% 20px; z-index:9600; max-width:90vw; background:rgba(20,33,61,.94); color:#fff; padding:11px 16px; border-radius:16px; font-size:13px; font-weight:700; opacity:0; pointer-events:none; transition:opacity .25s, translate .4s cubic-bezier(.34,1.56,.64,1); }
 .nt-toast.show { opacity:1; translate:-50% 0; }
 @media (min-width: 900px) { .nt-toast { bottom:28px; } }
+/* =====================================================================
+   MTD MERGER tab  (weekly MTD report combiner)
+   ===================================================================== */
+.pi-mtd{color:#7c3aed;}
+#mobile-more-sheet .mm-grid button[data-tab="mtd"]:not(.active) .mm-ico{background:color-mix(in srgb,#7c3aed 12%,#fff) !important;}
+@media (max-width: 899px) { main[data-tab="mtd"] { padding: 0; } }
+@media (min-width: 900px) {
+    main[data-tab="mtd"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="mtd"] > #tab-mtd { flex: 1 0 auto; display: flex; flex-direction: column; }
+    main[data-tab="mtd"] > #tab-mtd.hidden { display: none; }
+}
+main[data-tab="mtd"] .app-footer { display: none; }
+.mtd-app { --m-ink:#14213d; --m-line:#e1e8f4; --m-soft:#f1ecff; --m-vio:#7c3aed; --m-mut:#7d8fb2; --m-ok:#1b7a3e; --m-warn:#946200; --m-err:#b42318; display:flex; flex-direction:column; gap:14px; padding-bottom:10px; }
+.mtd-cols { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; align-items:start; }
+@media (min-width: 900px) { .mtd-cols.two { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } }
+.mtd-card { background:rgba(255,255,255,.80); border:1px solid var(--m-line); border-radius:24px; padding:16px; box-shadow:0 14px 34px -24px rgba(30,70,160,.4), inset 0 1px 0 #fff; }
+.mtd-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.mtd-step { flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:13px; color:#fff; background:linear-gradient(160deg,#9b6bff,#6d28d9); box-shadow:0 8px 14px -8px rgba(109,40,217,.7); }
+.mtd-head .grow { flex:1; min-width:0; }
+.mtd-head h3 { margin:0; font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:800; color:var(--m-ink); }
+.mtd-hint { margin:2px 0 0; font-size:12px; color:var(--m-mut); line-height:1.4; }
+.mtd-chip { flex:none; font-size:12px; font-weight:800; color:var(--m-vio); background:var(--m-soft); padding:4px 11px; border-radius:999px; }
+.mtd-drop { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; padding:26px 16px; border:2px dashed #c9b8f5; border-radius:20px; background:linear-gradient(180deg,rgba(124,58,237,.05),rgba(47,123,255,.05)); cursor:pointer; transition:background .25s, border-color .25s, scale .35s cubic-bezier(.34,1.56,.64,1); }
+.mtd-drop:hover, .mtd-drop.over { border-color:var(--m-vio); background:linear-gradient(180deg,rgba(124,58,237,.10),rgba(47,123,255,.08)); }
+.mtd-drop.over { scale:1.012; }
+.mtd-drop .ic { width:52px; height:52px; border-radius:17px; display:grid; place-items:center; color:#fff; background:linear-gradient(160deg,#9b6bff,#6d28d9); box-shadow:0 14px 24px -12px rgba(109,40,217,.7); margin-bottom:2px; }
+.mtd-drop .ic svg { width:24px; height:24px; }
+.mtd-drop strong { font-size:15px; color:var(--m-ink); font-family:'Space Grotesk',sans-serif; }
+.mtd-drop span { font-size:12px; color:var(--m-mut); }
+ul.mtd-files { list-style:none; margin:12px 0 0; padding:0; display:grid; gap:8px; }
+ul.mtd-files:empty { display:none; }
+ul.mtd-files li { display:flex; align-items:center; gap:10px; padding:9px 10px 9px 12px; background:#fff; border:1px solid var(--m-line); border-radius:15px; animation:mtd-in .4s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes mtd-in { from { opacity:0; translate:0 10px; scale:.97; } to { opacity:1; translate:0 0; scale:1; } }
+ul.mtd-files li::before { content:"XLSX"; flex:none; font-size:9.5px; font-weight:800; letter-spacing:.04em; color:var(--m-ok); background:#e3f4ea; border-radius:7px; padding:6px 6px; }
+.mtd-fname { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; font-size:13px; color:var(--m-ink); }
+.mtd-fsize { color:var(--m-mut); font-size:11.5px; font-variant-numeric:tabular-nums; flex:none; }
+.mtd-fb { display:flex; gap:3px; flex:none; }
+.mtd-fb button { width:28px; height:28px; border:0; border-radius:9px; background:#f3f6fc; color:#5b6f97; cursor:pointer; font-size:11px; line-height:1; display:grid; place-items:center; font-family:inherit; }
+.mtd-fb button:hover { background:#e7eefb; }
+.mtd-fb button.x { color:#c62828; font-size:17px; }
+.mtd-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; }
+.mtd-status { flex:1 1 100%; font-size:12.5px; color:var(--m-mut); }
+.mtd-btn { flex:1; min-width:120px; display:inline-flex; align-items:center; justify-content:center; gap:8px; height:48px; padding:0 16px; border:0; border-radius:15px; font-weight:800; font-size:14.5px; font-family:inherit; cursor:pointer; transition:opacity .2s; }
+.mtd-btn.ghost { flex:0 0 auto; background:#f1ecff; color:var(--m-vio); }
+.mtd-btn.primary { background:linear-gradient(180deg,#9b6bff,#6d28d9); color:#fff; box-shadow:0 14px 24px -12px rgba(109,40,217,.75); }
+.mtd-btn.green { background:linear-gradient(180deg,#2fb673,#1b8f57); color:#fff; box-shadow:0 14px 24px -12px rgba(27,143,87,.7); }
+.mtd-btn:disabled { opacity:.42; cursor:not-allowed; box-shadow:none; }
+.mtd-scroll { max-height:380px; overflow:auto; border:1px solid var(--m-line); border-radius:14px; background:#fff; }
+.mtd-scroll table { width:100%; border-collapse:collapse; font-size:13px; }
+.mtd-scroll th, .mtd-scroll td { text-align:left; padding:0 12px; height:38px; border-bottom:1px solid var(--m-line); }
+.mtd-scroll tbody tr:last-child td { border-bottom:0; }
+.mtd-scroll thead th { position:sticky; top:0; background:#f6f3ff; color:#6b5a9c; font-weight:800; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; z-index:1; }
+.mtd-scroll td.n, .mtd-scroll th.n { text-align:right; }
+.mtd-scroll td.fv { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.mtd-scroll td.fv.none { color:var(--m-mut); font-style:italic; font-size:12px; }
+.mtd-scroll tr.nofile td:first-child { color:var(--m-mut); }
+.mtd-rev-in { font:inherit; font-size:12.5px; width:92px; height:28px; padding:0 8px; border:1px solid var(--m-line); border-radius:8px; background:#f7f9fd; color:var(--m-ink); text-align:right; font-variant-numeric:tabular-nums; outline:0; }
+.mtd-rev-in:focus { border-color:var(--m-vio); background:#fff; }
+.mtd-rev-in.set { border-color:var(--m-vio); background:var(--m-soft); font-weight:800; }
+.mtd-opts { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:12px; }
+.mtd-chk { display:flex; align-items:center; gap:8px; color:#5b6f97; font-size:12.5px; cursor:pointer; }
+.mtd-chk input { accent-color:#7c3aed; width:16px; height:16px; margin:0; }
+.mtd-opts .mtd-btn { height:38px; font-size:12.5px; min-width:0; }
+.mtd-note { margin-top:12px; font-size:12.5px; color:#3f8a60; background:#e9f8ef; border:1px solid #bfe9cf; border-radius:14px; padding:10px 12px; }
+.mtd-log { margin:0; font:12px/1.55 ui-monospace,Menlo,Consolas,monospace; white-space:pre-wrap; word-break:break-word; color:#33415f; max-height:260px; overflow:auto; }
+.mtd-log .ok { color:var(--m-ok); } .mtd-log .warn { color:var(--m-warn); } .mtd-log .err { color:var(--m-err); font-weight:700; }
+@media (max-width: 560px) { .mtd-btn { min-width:0; } .mtd-fsize { display:none; } }
+
+.mtd-status.ok { color:var(--m-ok); font-weight:800; }
+.mtd-status.err { color:var(--m-err); font-weight:800; }
+.mtd-post { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px dashed var(--m-line); }
+.mtd-post .mtd-btn { flex:1 1 120px; }
+.mtd-btn.wa { background:linear-gradient(180deg,#34d16b,#1ea952); color:#fff; box-shadow:0 14px 24px -12px rgba(30,169,82,.7); }
+.mtd-btn.mail { background:linear-gradient(180deg,#4d94ff,#2563eb); color:#fff; box-shadow:0 14px 24px -12px rgba(37,99,235,.7); }
+@media (min-width: 900px) { .mtd-btn.wa { display:none; } }      /* WhatsApp share is for the phone */
+.mtd-scroll tr.tm td { background:#faf8ff; color:#6d28d9; font-weight:800; font-size:11px; letter-spacing:.05em; text-transform:uppercase; height:30px; border-bottom:1px solid var(--m-line); }
+.mtd-modal { position:fixed; inset:0; z-index:9500; display:none; align-items:flex-end; justify-content:center; background:rgba(25,40,80,.38); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+.mtd-modal.show { display:flex; }
+.mtd-sheet { width:100%; max-width:980px; max-height:92dvh; display:flex; flex-direction:column; background:rgba(255,255,255,.95); border-radius:28px 28px 0 0; padding:18px 18px calc(16px + env(safe-area-inset-bottom,0px)); box-shadow:0 -20px 60px -20px rgba(20,50,110,.5); animation:mtd-sheet-in .45s cubic-bezier(.34,1.3,.64,1) both; }
+@media (min-width: 900px) { .mtd-modal { align-items:center; } .mtd-sheet { border-radius:28px; max-height:86vh; } }
+@keyframes mtd-sheet-in { from { translate:0 40px; opacity:0; } to { translate:0 0; opacity:1; } }
+.mtd-sheet-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.mtd-sheet-head h3 { margin:0; font-size:19px; font-weight:800; color:#14213d; font-family:'Space Grotesk',sans-serif; }
+.mtd-sheet-head p { margin:3px 0 0; font-size:12px; color:#7d8fb2; line-height:1.4; }
+.mtd-x { flex:none; width:36px; height:36px; border-radius:50%; border:0; background:#f1ecff; color:#7c3aed; font-size:22px; line-height:1; cursor:pointer; }
+.mtd-tgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:12px; overflow:auto; padding:2px 2px 8px; align-items:stretch; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+@media (max-width: 640px) { .mtd-tgrid { grid-template-columns:minmax(0,1fr); } }
+.mtd-team { display:flex; flex-direction:column; background:#faf8ff; border:1.5px solid #e6defb; border-radius:18px; padding:10px; transition:border-color .15s, background .15s, box-shadow .15s; min-height:120px; }
+.mtd-team.over { border-color:#7c3aed; background:#f1eaff; box-shadow:0 0 0 4px rgba(124,58,237,.16); }
+.mtd-team.can-drop { border-style:dashed; border-color:#b79af0; cursor:pointer; }
+.mtd-team header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:2px 4px 8px; }
+.mtd-team header b { font-size:13.5px; color:#3b1d86; font-family:'Space Grotesk',sans-serif; }
+.mtd-team header span { font-size:11.5px; font-weight:800; color:#7c3aed; background:#fff; border-radius:999px; padding:2px 9px; }
+.mtd-tlist { display:flex; flex-direction:column; gap:6px; flex:1; min-height:44px; }
+.mtd-person { display:flex; align-items:center; gap:8px; min-height:44px; padding:6px 8px 6px 6px; background:#fff; border:1px solid #e1e8f4; border-radius:13px; font-size:13.5px; color:#14213d; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; cursor:grab; box-shadow:0 3px 8px -6px rgba(30,60,130,.4); }
+body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select:none !important; -webkit-user-select:none !important; }
+.mtd-person .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; }
+.mtd-person.picked { border-color:#7c3aed; background:#f3edff; box-shadow:0 0 0 2px rgba(124,58,237,.25); }
+.mtd-person.lifted { opacity:.3; }
+.mtd-grip { flex:none; width:22px; text-align:center; color:#a897d6; font-weight:800; letter-spacing:-2px; font-size:16px; line-height:1; }
+.mtd-person .has { flex:none; width:8px; height:8px; border-radius:50%; background:#22a45d; }
+.mtd-person em { flex:none; font-style:normal; font-size:9.5px; font-weight:800; color:#b45309; background:#fff0cf; border-radius:6px; padding:2px 6px; }
+.mtd-person .mv { flex:none; width:34px; height:34px; border:0; border-radius:10px; background:#f1ecff; color:#7c3aed; cursor:pointer; font-size:16px; font-weight:800; line-height:1; }
+.mtd-person .mv:hover { background:#e6dcff; }
+.mtd-person .rm { flex:none; width:34px; height:34px; border:0; border-radius:10px; background:#fde8e8; color:#c62828; cursor:pointer; font-size:18px; line-height:1; }
+.mtd-ghost { position:fixed; z-index:9800; pointer-events:none; translate:-26px -50%; box-shadow:0 22px 40px -10px rgba(60,20,140,.55); border-color:#7c3aed; background:#fff; rotate:-2deg; scale:1.04; opacity:.97; }
+.mtd-line { flex:none; height:4px; margin:-2px 4px; border-radius:4px; background:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,.18); }
+.mtd-none { padding:14px; text-align:center; color:#a897d6; font-size:12px; border:1.5px dashed #d9ccf8; border-radius:12px; }
+.mtd-add { margin-top:8px; width:100%; height:38px; border:1.5px dashed #d9ccf8; border-radius:11px; background:transparent; color:#7c3aed; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit; }
+.mtd-menu { position:fixed; z-index:9700; min-width:210px; max-width:86vw; padding:8px; background:#fff; border:1px solid #e1e8f4; border-radius:16px; box-shadow:0 24px 50px -14px rgba(20,40,100,.5); display:flex; flex-direction:column; gap:4px; animation:mtd-in .25s cubic-bezier(.34,1.56,.64,1) both; }
+.mtd-person.excl { background:#fbf6f6; border-color:#f1d4d4; }
+.mtd-person.excl .nm { text-decoration:line-through; color:#9a6b6b; }
+.mtd-person em.x { background:#fde8e8; color:#c62828; }
+.mtd-person .mv { font-size:20px; padding-bottom:5px; }
+.mtd-menu hr { border:0; border-top:1px solid #ece7fb; margin:4px 2px; width:calc(100% - 4px); }
+.mtd-menu button.danger { background:#fde8e8; color:#b42318; }
+.mtd-excl { grid-column:1 / -1; background:#fff8f8; border:1.5px solid #f5d6d6; border-radius:18px; padding:12px; }
+.mtd-excl-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 2px 8px; }
+.mtd-excl-head b { font-size:13.5px; color:#8a2a2a; font-family:'Space Grotesk',sans-serif; }
+.mtd-excl-head span { font-size:11.5px; font-weight:800; color:#c62828; background:#fff; border-radius:999px; padding:2px 9px; }
+.mtd-excl-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
+.mtd-xchip { display:inline-flex; align-items:center; gap:8px; padding:6px 6px 6px 12px; background:#fff; border:1px solid #f1d4d4; border-radius:999px; font-size:13px; font-weight:700; color:#6b2a2a; }
+.mtd-xchip button { border:0; border-radius:999px; background:#f1ecff; color:#7c3aed; font-weight:800; font-size:12px; padding:6px 12px; cursor:pointer; font-family:inherit; }
+.mtd-excl-none { margin:0 0 6px; font-size:12.5px; color:#a87d7d; }
+.mtd-tgrid { align-content:start; grid-auto-rows:max-content; flex:1 1 auto; min-height:0; }
+.mtd-rev-in { width:100%; min-width:68px; max-width:140px; }
+.mtd-scroll th, .mtd-scroll td { padding:0 8px; }
+.mtd-scroll th:first-child, .mtd-scroll td:first-child { padding-left:12px; }
+.mtd-team { flex:none; }
+.mtd-team .mtd-tlist { flex:1 0 auto; }
+.mtd-person { flex:none; }
+.mtd-add { flex:none; position:relative; }
+.mtd-menu small { padding:4px 8px 6px; font-size:11px; font-weight:800; color:#7d8fb2; letter-spacing:.04em; text-transform:uppercase; }
+.mtd-menu button { height:42px; padding:0 12px; text-align:left; border:0; border-radius:11px; background:#f6f3ff; color:#3b1d86; font-weight:800; font-size:13.5px; font-family:inherit; cursor:pointer; }
+.mtd-menu button:disabled { opacity:.4; cursor:default; }
+.mtd-sheet-foot { display:flex; gap:10px; margin-top:14px; }
+.mtd-sheet-foot .mtd-btn { flex:1; }
+@media (max-width: 560px) {
+  .mtd-actions .mtd-btn { flex:1 1 45%; }
+  .mtd-actions .mtd-btn.primary { flex:1 1 100%; order:5; }
+  .mtd-post .mtd-btn { flex:1 1 30%; min-width:0; padding:0 8px; font-size:13.5px; }
+  .mtd-opts { flex-direction:column; align-items:stretch; }
+  .mtd-opts .mtd-btn { width:100%; }
+}
 </style>
 </head>
 <body>
@@ -3731,6 +3875,7 @@ main[data-tab="notes"] .app-footer { display: none; }
             <button class="nav-tab" id="btn-hiredesk" onclick="navigateToTab('hiredesk')"><div class="nav-icon-badge"><svg class="pi pi-teams" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="16" r="6.500" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><circle cx="19" cy="16" r="6.500"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3"/><path d="M32 9.800a6 6 0 0 1 0 11.600M36.500 28.500A9 9 0 0 1 42 37v4"/></svg></div><span>Teams Connect</span></button>
             <button class="nav-tab" id="btn-airquality" onclick="navigateToTab('airquality')"><div class="nav-icon-badge"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></div><span>Air</span></button>
             <button class="nav-tab" id="btn-notes" onclick="navigateToTab('notes')"><div class="nav-icon-badge"><svg class="pi pi-notes" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 8h28v22l-9 10H10z"/><path d="M29 40v-8a2 2 0 012-2h7"/><path d="M17 17h14M17 24h9"/></svg></div><span>Notes</span></button>
+            <button class="nav-tab" id="btn-mtd" onclick="navigateToTab('mtd')"><div class="nav-icon-badge"><svg class="pi pi-mtd" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 7l16 8-16 8-16-8z"/><path d="M8 24l16 8 16-8"/><path d="M8 33l16 8 16-8"/></svg></div><span>MTD</span></button>
         </nav>
         <div class="hdr-right">
             <div class="sync-pill online-pill">
@@ -3753,6 +3898,7 @@ main[data-tab="notes"] .app-footer { display: none; }
             <button type="button" data-tab="hiredesk" onclick="mobileGo('hiredesk')"><span class="mm-ico"><svg class="pi pi-teams" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="19" cy="16" r="6.500" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3z" fill="currentColor" fill-opacity=".16" stroke="none" class="d"/><circle cx="19" cy="16" r="6.500"/><path d="M6.500 41v-3a10 10 0 0 1 10-10h5a10 10 0 0 1 10 10v3"/><path d="M32 9.800a6 6 0 0 1 0 11.600M36.500 28.500A9 9 0 0 1 42 37v4"/></svg></span><b>Teams Connect</b></button>
             <button type="button" data-tab="airquality" onclick="mobileGo('airquality')"><span class="mm-ico"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></span><b>Air Quality</b></button>
             <button type="button" data-tab="notes" onclick="mobileGo('notes')"><span class="mm-ico"><svg class="pi pi-notes" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 8h28v22l-9 10H10z"/><path d="M29 40v-8a2 2 0 012-2h7"/><path d="M17 17h14M17 24h9"/></svg></span><b>Notes</b></button>
+            <button type="button" data-tab="mtd" onclick="mobileGo('mtd')"><span class="mm-ico"><svg class="pi pi-mtd" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 7l16 8-16 8-16-8z"/><path d="M8 24l16 8 16-8"/><path d="M8 33l16 8 16-8"/></svg></span><b>MTD Merger</b></button>
         </div>
     </div>
     <nav id="mobile-dock" aria-label="Main navigation">
@@ -3781,6 +3927,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -3970,6 +4117,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4052,6 +4200,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4092,6 +4241,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4133,6 +4283,83 @@ main[data-tab="notes"] .app-footer { display: none; }
             </div>
         </div>
 
+        <div id="tab-mtd" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Teams Connect</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <span class="side-lift" aria-hidden="true"></span>
+                        <span class="side-build">Build v14 · 20 Sep 2026</span>
+                    </div>
+                </aside>
+                                                <div class="home-main">
+                    <div class="hd-banner hd-tint-violet">
+                        <div class="hd-badge"><i data-lucide="layers"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">MTD</div>
+                            <h2 class="hd-title">MTD Merger</h2>
+                            <p class="hd-sub">Merge each salesperson&rsquo;s workbook into one weekly report.</p>
+                        </div>
+                    </div>
+                    <div class="mtd-app" id="mtd-app">
+                        <div class="mtd-cols" id="mtd-cols">
+                        <section class="mtd-card">
+                            <div class="mtd-head"><span class="mtd-step">1</span>
+                                <div class="grow"><h3>Add workbooks</h3><p class="mtd-hint">The first file (&starf;) is the base layout. Use &#9650;&#9660; to change which one is first.</p></div>
+                                <span class="mtd-chip" id="mtd-count">0 files</span></div>
+                            <div class="mtd-drop" id="mtd-drop">
+                                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M5 20h14"/></svg></div>
+                                <strong>Drop Excel files here or tap to choose</strong>
+                                <span>.xlsx only</span>
+                                <input type="file" id="mtd-input" accept=".xlsx" multiple class="hidden">
+                            </div>
+                            <ul class="mtd-files" id="mtd-files"></ul>
+                            <div class="mtd-actions">
+                                <div class="mtd-status" id="mtd-status">Add at least one workbook to start.</div>
+                                <button type="button" class="mtd-btn ghost" id="mtd-teams-btn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20v-1a5 5 0 015-5h2a5 5 0 015 5v1"/><circle cx="17.500" cy="9" r="2.500"/><path d="M17 14.200a4.200 4.200 0 014 4.100V20"/></svg> Team allocation</button>
+                                <button type="button" class="mtd-btn ghost" id="mtd-clear" disabled>Clear all</button>
+                                <button type="button" class="mtd-btn primary" id="mtd-run" disabled>Run</button>
+                            </div>
+                            <div class="mtd-post hidden" id="mtd-post">
+                                <button type="button" class="mtd-btn green" id="mtd-download"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg> Download</button>
+                                <button type="button" class="mtd-btn wa" id="mtd-wa"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.600 15.100L2 22l5-1.300A10 10 0 1012 2zm5.200 14.200c-.2.600-1.300 1.200-1.800 1.200-.5.100-1 .2-3.200-.7-2.700-1.100-4.400-3.800-4.600-4-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.300 0 .5l-.4.600c-.1.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.100 1 2.100 1.300 2.400 1.400.3.100.4.100.6-.1l.8-1c.2-.3.400-.2.700-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg> WhatsApp</button>
+                                <button type="button" class="mtd-btn mail" id="mtd-mail"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.500"/><path d="M3.500 7l8.500 6 8.500-6"/></svg> Email</button>
+                            </div>
+                        </section>
+                        <section class="mtd-card hidden" id="mtd-revcard">
+                            <div class="mtd-head"><span class="mtd-step">2</span>
+                                <div class="grow"><h3>Revenue &amp; targets &middot; SALES TEAM</h3><p class="mtd-hint">Only people whose file is added. Retype any box to change it in the merged file.</p></div></div>
+                            <div class="mtd-scroll"><table>
+                                <thead><tr><th>Sales person</th><th class="n">Revenue</th><th class="n">Target revenue</th><th class="n">Target MTD</th></tr></thead>
+                                <tbody id="mtd-revbody"></tbody>
+                            </table></div>
+                            <div class="mtd-opts">
+                                <label class="mtd-chk"><input type="checkbox" id="mtd-clearstale" checked> Clear revenue for people whose file isn&rsquo;t added</label>
+                                <button type="button" class="mtd-btn ghost" id="mtd-revreset" disabled>Reset to file values</button>
+                            </div>
+                        </section>
+                        </div>
+                        <section class="mtd-card hidden" id="mtd-logcard"><div class="mtd-head" style="margin-bottom:8px"><div class="grow"><h3 style="font-size:14px">Details</h3></div></div><pre class="mtd-log" id="mtd-log"></pre></section>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <div id="tab-hiredesk" class="view-section hidden">
             <div class="home-layout">
                 <aside class="home-sidebar">
@@ -4149,6 +4376,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4192,6 +4420,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4233,6 +4462,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4270,6 +4500,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4439,6 +4670,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4495,6 +4727,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item active" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4559,6 +4792,7 @@ main[data-tab="notes"] .app-footer { display: none; }
                         <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View & manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -8576,6 +8810,7 @@ document.addEventListener('visibilitychange', () => {
         }
         if (tab === 'reservation') initReservationsTab();
         if (tab === 'notes' && typeof initNotesTab === 'function') initNotesTab();
+        if (tab === 'mtd' && typeof initMtdTab === 'function') initMtdTab();
         if (tab === 'airquality') {
             const _f = document.getElementById('aq-frame');
             if (_f && !_f.getAttribute('src')) {
@@ -9284,7 +9519,7 @@ document.addEventListener('visibilitychange', () => {
     function goBack() { window.history.back(); }
 
     /* ---- Mobile bottom dock ---- */
-    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'airquality', 'notes'];
+    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'airquality', 'notes', 'mtd'];
     function mobileMoreClose() {
         document.getElementById('mobile-more-sheet').classList.remove('open');
         document.getElementById('mobile-more-backdrop').classList.remove('open');
@@ -13584,6 +13819,1002 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && modal.classList.contains('show')) closeModal(); });
     window.initNotesTab = function () { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { } } render(); };
     bindAuth();
+})();
+</script>
+
+<script id="mtd-js">
+/* ---------- MTD MERGER: combines each salesperson's weekly workbook (ExcelJS, runs in the browser) ---------- */
+(() => {
+  const TEAM = 'SALES TEAM', PIPE = 'SALES PIPELINE', TWP = 'Team Wise Performance';
+  const FIRST_ROW = 11, LAST_TEAM_ROW = 26, PIPE_COLS = 19, COPY_COLS = 13, DATA_COLS = [1,3,4,9,10,11,12,13], TEAM_FIRST_COL = 3, TEAM_LAST_COL = 26, REV_COL = 21, T2 = 22;
+  const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  const LS_TEAMS = 'mtd_teams_v2';
+  const DEFAULT_TEAMS = [
+    { name: 'Mohammad Arif Team', members: ['Mohammad Arif', 'Fahim Akhtar', 'Mazhar Hussain', 'Syed Shazmaan', 'Ayub Khan', 'Umer Nafay Manegar', 'Faizaan'] },
+    { name: 'Waseem Ashraf Team', members: ['Waseem Ashraf', 'Akhtar', 'Kashif Raza', 'Sheik Mohammed Nihal', 'Arfaz', 'Manmesh Pole', 'Abdul Rahman Farhan'] },
+    { name: 'Rabin Mukherjee', members: ['Rabin Mukherjee'] }
+  ];
+  const UNASSIGNED = 'Unassigned';
+  const LS_EXC = 'mtd_excluded_v1';
+  const DEFAULT_EXCLUDED = []; const ALWAYS_OUT = ['Faiz Ahmed', 'Sirajuddin'];       // removed completely; add them back from Team allocation if needed
+
+  let files = [];            // File objects, in order
+  let outBuffer = null;
+  let revInfo = [], revTok = 0;
+  const overrides = {};     // normalised name -> text typed in the manual box
+  const NEW_PEOPLE = new Set();   // names added automatically from files (shown with a NEW badge)
+  let FILE_PEOPLE = new Set();    // names that have a workbook added right now
+
+  const $ = id => document.getElementById(id);
+  const drop = $('mtd-drop'), picker = $('mtd-input'), list = $('mtd-files');
+  const runBtn = $('mtd-run'), clearBtn = $('mtd-clear'), dlBtn = $('mtd-download');
+  const monthName = () => new Date().toLocaleString('en-US', { month: 'long' });
+  const outName = () => `Weekly MTD - Reports - ${monthName()}.xlsx`;
+
+  /* ---------- teams (saved on this device) ---------- */
+  let TEAMS = loadTeams();
+  function loadTeams() {
+    try {
+      const t = JSON.parse(localStorage.getItem(LS_TEAMS) || 'null');
+      if (Array.isArray(t) && t.length && t.every(x => x && typeof x.name === 'string' && Array.isArray(x.members))) return t;
+    } catch (e) { /* ignore */ }
+    return JSON.parse(JSON.stringify(DEFAULT_TEAMS));
+  }
+  function saveTeams() { try { localStorage.setItem(LS_TEAMS, JSON.stringify(TEAMS)); } catch (e) { /* ignore */ } }
+  /* names that are left out of the merged file, even if workbooks or the base file list them */
+  let EXCLUDED = loadExcluded();
+  function loadExcluded() {
+    try { const t = JSON.parse(localStorage.getItem(LS_EXC) || 'null'); if (Array.isArray(t)) return t.filter(x => typeof x === 'string' && x.trim()); } catch (e) { /* ignore */ }
+    return DEFAULT_EXCLUDED.slice();
+  }
+  function saveExcluded() { try { localStorage.setItem(LS_EXC, JSON.stringify(EXCLUDED)); } catch (e) { /* ignore */ } }
+  const squash = s => norm(s).replace(/[^\p{L}\p{N}]/gu, '');
+  function matchEx(entry, name) {
+    const x = squash(entry), q = squash(name);
+    if (!x || !q) return false;
+    return x === q || (1 - lev(x, q) / Math.max(x.length, q.length)) >= 0.88;       // "Siraj Uddin" = "Sirajuddin", "Faiz Ahmad" = "Faiz Ahmed"
+  }
+  const isAlways = name => { const q = squash(name); return !!q && (ALWAYS_OUT.some(a => matchEx(a, name)) || q.startsWith('sirajuddin') || q.startsWith('sirajudin') || /^faizah[am]/.test(q)); };
+  const isExcluded = name => isAlways(name) || EXCLUDED.some(e => matchEx(e, name));
+  function setExcluded(name, on) {
+    if (on) { if (!isExcluded(name)) EXCLUDED.push(name); }
+    else EXCLUDED = EXCLUDED.filter(e => !matchEx(e, name));
+    saveExcluded();
+  }
+  function unassignedTeam() {
+    let t = TEAMS.find(x => x.name === UNASSIGNED);
+    if (!t) { t = { name: UNASSIGNED, members: [] }; TEAMS.push(t); }
+    return t;
+  }
+  function teamOf(key) { for (const t of TEAMS) if (t.members.some(m => norm(m) === key)) return t; return null; }
+
+  /* ---------- file picking ---------- */
+  drop.addEventListener('click', () => picker.click());
+  picker.addEventListener('change', e => { addFiles(e.target.files); picker.value = ''; });
+  // Drag & drop works anywhere on the page while the MTD tab is open
+  const tabOpen = () => { const t = document.getElementById('tab-mtd'); return t && !t.classList.contains('hidden'); };
+  const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+  window.addEventListener('dragenter', e => { if (!tabOpen() || !hasFiles(e)) return; e.preventDefault(); drop.classList.add('over'); });
+  window.addEventListener('dragover',  e => { if (!tabOpen() || !hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+  window.addEventListener('dragleave', e => { if (!tabOpen() || !hasFiles(e)) return; if (e.target === document.documentElement || e.clientX <= 0 || e.clientY <= 0) drop.classList.remove('over'); });
+  window.addEventListener('drop',      e => { if (!tabOpen() || !hasFiles(e)) return; e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); });
+  clearBtn.addEventListener('click', () => { files = []; reset(); render(); loadRevenue(); });
+  runBtn.addEventListener('click', run);
+  dlBtn.addEventListener('click', download);
+  $('mtd-wa').addEventListener('click', () => share('wa'));
+  $('mtd-mail').addEventListener('click', () => share('mail'));
+  $('mtd-teams-btn').addEventListener('click', openTeams);
+
+  function addFiles(fl) {
+    for (const f of fl) {
+      if (!/\.xlsx$/i.test(f.name)) { log(`Skipped "${f.name}" \u2013 only .xlsx is supported`, 'warn'); continue; }
+      if (!files.some(x => x.name === f.name && x.size === f.size)) files.push(f);
+    }
+    reset(); render(); loadRevenue();
+  }
+  function reset() {
+    outBuffer = null;
+    $('mtd-post').classList.add('hidden');
+    $('mtd-logcard').classList.add('hidden'); $('mtd-log').innerHTML = '';
+    setStatus(files.length ? 'Ready \u2013 press Run to combine.' : 'Add at least one workbook to start.');
+  }
+  function setStatus(msg, cls) { const s = $('mtd-status'); s.textContent = msg; s.className = 'mtd-status' + (cls ? ' ' + cls : ''); }
+  function render() {
+    list.innerHTML = '';
+    files.forEach((f, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="mtd-fname"></span><span class="mtd-fsize">${(f.size/1024).toFixed(0)} KB</span><div class="mtd-fb"><button type="button" class="up" title="Move up">&#9650;</button><button type="button" class="dn" title="Move down">&#9660;</button><button type="button" class="x" title="Remove">&times;</button></div>`;
+      li.querySelector('.mtd-fname').textContent = (i === 0 ? '\u2605 ' : '') + f.name;
+      const move = d => { const j = i + d; if (j < 0 || j >= files.length) return; [files[i], files[j]] = [files[j], files[i]]; reset(); render(); loadRevenue(); };
+      li.querySelector('.up').addEventListener('click', () => move(-1));
+      li.querySelector('.dn').addEventListener('click', () => move(1));
+      li.querySelector('.x').addEventListener('click', () => { files.splice(i, 1); reset(); render(); loadRevenue(); });
+      list.appendChild(li);
+    });
+    runBtn.disabled = files.length === 0;
+    clearBtn.disabled = files.length === 0;
+    $('mtd-count').textContent = files.length + (files.length === 1 ? ' file' : ' files');
+  }
+
+  /* ---------- logging (the log card only appears when something needs attention) ---------- */
+  function log(msg, cls) {
+    if (cls === 'warn' || cls === 'err') $('mtd-logcard').classList.remove('hidden');
+    const s = document.createElement('span');
+    if (cls) s.className = cls;
+    s.textContent = msg + '\n';
+    $('mtd-log').appendChild(s);
+  }
+
+  /* ---------- helpers ---------- */
+  function txt(v) {
+    if (v == null) return '';
+    if (typeof v === 'object') {
+      if (v instanceof Date) return v.toISOString();
+      if (v.richText) return v.richText.map(r => r.text).join('');
+      if (v.result != null) return txt(v.result);
+      if (v.text != null) return txt(v.text);
+      return '';
+    }
+    return String(v);
+  }
+  const norm = s => txt(s).trim().toLowerCase().replace(/\s+/g, ' ');
+  const isFormula = v => v && typeof v === 'object' && !(v instanceof Date) &&
+                         (v.formula !== undefined || v.sharedFormula !== undefined);
+  const isArrayF = v => v && v.shareType === 'array';
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const plain = v => (v && typeof v === 'object' && v.richText) ? v.richText.map(r => r.text).join('') : v;
+
+  // Turn shared formulas into normal ones so cells can safely be copied around
+  function unshare(ws) {
+    if (!ws) return;
+    ws.eachRow({ includeEmpty: false }, row => row.eachCell({ includeEmpty: false }, cell => {
+      try {
+        const v = cell.value;
+        if (v && typeof v === 'object' && (v.sharedFormula !== undefined || v.shareType === 'shared')) {
+          const f = cell.formula;
+          if (f) cell.value = { formula: f, result: v.result };
+        }
+      } catch (e) { /* leave as is */ }
+    }));
+  }
+
+  let excelP = null;
+  function ensureExcel() {
+    if (window.ExcelJS) return Promise.resolve();
+    if (excelP) return excelP;
+    excelP = new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+      s.onload = res; s.onerror = () => { excelP = null; rej(new Error('Could not load the ExcelJS library. Check your internet connection and try again.')); };
+      document.head.appendChild(s);
+    });
+    return excelP;
+  }
+
+  async function loadWb(file) {
+    await ensureExcel();
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(await file.arrayBuffer());
+    [TEAM, PIPE, TWP].forEach(n => unshare(wb.getWorksheet(n)));
+    return wb;
+  }
+
+  function pipeRows(ws) {
+    const rows = [];
+    ws.eachRow({ includeEmpty: false }, (row, rn) => {
+      if (rn < FIRST_ROW) return;
+      // A row is real only if it has data in a column the template does NOT pre-fill
+      // (Company, Order Value, Created Date, Close Date, Machine, Size, Qty, Remarks).
+      // Sales Person / Month / Stage / Win % / Status are pre-filled on blank rows.
+      let any = false;
+      for (const c of DATA_COLS) {
+        const v = row.getCell(c).value;
+        if (v !== null && v !== undefined && txt(v).trim() !== '') { any = true; break; }
+      }
+      if (!any) return;
+      const vals = [], styles = [];
+      for (let c = 1; c <= COPY_COLS; c++) {
+        const cell = row.getCell(c);
+        vals.push(cell.value);
+        styles.push(clone(cell.style || {}));
+      }
+      rows.push({ vals, styles });
+    });
+    return rows;
+  }
+
+  function teamNames(ws) {
+    const m = {};
+    for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) {
+      const n = norm(ws.getCell(r, 2).value);
+      if (n) m[n] = r;
+    }
+    return m;
+  }
+
+  function detectOwner(ws, pipeWs, fileName) {
+    const counts = {};
+    pipeWs.eachRow({ includeEmpty: false }, (row, rn) => {
+      if (rn < FIRST_ROW) return;
+      const n = txt(row.getCell(2).value).trim();
+      if (n) counts[n] = (counts[n] || 0) + 1;
+    });
+    const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    if (best) return best[0];
+    const fn = fileName.toLowerCase().replace(/[_\-.]+/g, ' ');
+    for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) {
+      const n = txt(ws.getCell(r, 2).value).trim();
+      if (n && fn.includes(n.toLowerCase())) return n;
+    }
+    return null;
+  }
+
+  function extendRanges(f, newLast, qualified) {
+    const re = qualified
+      ? /('SALES PIPELINE'!\$[A-Z]{1,3}\$(?:10|11):\$[A-Z]{1,3}\$)(\d+)/g
+      : /(\$[A-Z]{1,3}\$(?:10|11):\$[A-Z]{1,3}\$)(\d+)/g;
+    return f.replace(re, (m, a, n) => (+n < newLast ? a + (newLast + 100) : m));
+  }
+  function fixFormulaRanges(ws, newLast, qualified) {
+    if (!ws) return 0;
+    let changed = 0;
+    ws.eachRow({ includeEmpty: false }, row => row.eachCell({ includeEmpty: false }, cell => {
+      const v = cell.value;
+      if (!isFormula(v) || isArrayF(v) || !v.formula) return;
+      const nf = extendRanges(v.formula, newLast, qualified);
+      if (nf !== v.formula) { cell.value = { formula: nf, result: v.result }; changed++; }
+    }));
+    return changed;
+  }
+
+  /* ---------- revenue (SALES TEAM column U) ---------- */
+  function fileRevenue(ws, row) { return fileCell(ws, row, REV_COL); }
+  function detectCols(ws) {
+    const found = new Set();
+    for (let r = FIRST_ROW - 4; r < FIRST_ROW; r++) for (let c = 14; c <= 26; c++) if (/^tar/.test(norm(ws.getCell(r, c).value))) found.add(c);
+    const cols = [...found].sort((a, b) => a - b), tr = REV_COL - 1, tm = REV_COL + 3;
+    if (cols.includes(tr) && cols.includes(tm)) return { tr, tm };
+    if (cols.length >= 2) return { tr: cols[cols.length - 2], tm: cols[cols.length - 1] };
+    return { tr, tm };
+  }
+  function fileCell(ws, row, col) {
+    const v = ws.getCell(row, col).value;
+    if (v === null || v === undefined || v === '') return { text: '–', num: null };
+    const t = txt(isFormula(v) ? v.result : v).trim();
+    const n = parseFloat(t.replace(/,/g, ''));
+    if (isFormula(v) && t === '') return { text: '(formula)', num: null };
+    return { text: isNaN(n) ? (t || '–') : n.toLocaleString('en-US', { maximumFractionDigits: 2 }), num: isNaN(n) ? null : n };
+  }
+
+
+  /* ---------- names & formulas ---------- */
+  const tokens = s => norm(s).replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(Boolean);
+  function lev(a, b) {
+    const m = a.length, n = b.length; if (!m) return n; if (!n) return m;
+    let prev = Array.from({ length: n + 1 }, (_, j) => j);
+    for (let i = 1; i <= m; i++) {
+      const cur = [i];
+      for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = cur;
+    }
+    return prev[n];
+  }
+  /* index of the candidate that is clearly "the same person" (spelling / extra word differences), or -1 */
+  function bestMatch(name, cands) {
+    const n = norm(name), tn = tokens(name);
+    const hits = [];
+    cands.forEach((c, i) => {
+      const tc = tokens(c), [sh, lo] = tn.length <= tc.length ? [tn, tc] : [tc, tn];
+      if (sh.length && sh.length >= Math.min(2, lo.length) && sh.every(t => lo.includes(t))) hits.push(i);
+    });
+    if (hits.length === 1) return hits[0];
+    if (hits.length > 1) return -1;
+    let best = -1, bs = 0, second = 0;
+    cands.forEach((c, i) => {
+      const b = norm(c), r = 1 - lev(n, b) / Math.max(n.length, b.length, 1);
+      if (r > bs) { second = bs; bs = r; best = i; } else if (r > second) second = r;
+    });
+    return (bs >= 0.86 && bs - second >= 0.05) ? best : -1;
+  }
+  const isTotalRow = s => /^(grand\s+)?total\b|^sub\s*total\b|^average\b/i.test(String(s || '').trim());
+
+  /* move every relative row reference by `delta` rows, like copy/paste in Excel */
+  function shiftFormula(f, delta) {
+    if (!delta) return f;
+    let out = '', i = 0;
+    while (i < f.length) {
+      const ch = f[i];
+      if (ch === '"') {
+        let j = i + 1;
+        while (j < f.length) { if (f[j] === '"') { if (f[j + 1] === '"') { j += 2; continue; } break; } j++; }
+        out += f.slice(i, j + 1); i = j + 1; continue;
+      }
+      if (ch === "'") {
+        let j = i + 1; while (j < f.length && f[j] !== "'") j++;
+        out += f.slice(i, j + 1); i = j + 1; continue;
+      }
+      const prev = i ? f[i - 1] : '';
+      const m = /^(\$?)([A-Za-z]{1,3})(\$?)(\d+)(?![\w(.!])/.exec(f.slice(i, i + 12));
+      if (m && !/[A-Za-z0-9_.]/.test(prev)) {
+        out += m[1] + m[2] + m[3] + (m[3] === '$' ? m[4] : String(Math.max(1, +m[4] + delta)));
+        i += m[0].length; continue;
+      }
+      out += ch; i++;
+    }
+    return out;
+  }
+
+  /* ---------- teams: names come from the files, new people are added, team read from the file ---------- */
+  const stripTeam = s => norm(s).replace(/\bteam\b/g, ' ').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+  const NOT_A_TEAM = new Set(['sales team', 'team', 'team wise performance', 'team name', 'teams', 'team wise']);
+  function teamIdxFor(label) {
+    const k = stripTeam(label); if (k.length < 4) return -1;
+    return TEAMS.findIndex(t => { const a = stripTeam(t.name); return a === k || (a.length >= 4 && (a.includes(k) || k.includes(a))); });
+  }
+  function teamFromFile(info) {
+    const key = norm(info.owner);
+    const label = v => { const t = txt(isFormula(v) ? v.result : v).trim(); return (t && t.length <= 60 && /\bteam\b/i.test(t) && !NOT_A_TEAM.has(norm(t))) ? t : ''; };
+    const verdict = t => { const i = teamIdxFor(t); return i >= 0 ? { idx: i } : (/\S+\s+\S*.*\bteam$/i.test(t) ? { fresh: t } : null); };
+    const scan = (ws, r, c0, c1) => { for (let c = c0; c <= c1; c++) { const t = label(ws.getCell(r, c).value); if (t) { const v = verdict(t); if (v) return v; } } return null; };
+    try {
+      const rows = teamNames(info.team), r = rows[key];
+      if (r) {
+        let v = scan(info.team, r, 1, 30); if (v) return v;
+        for (let u = r - 1; u >= 1; u--) { v = scan(info.team, u, 1, 2); if (v) return v; }
+      }
+      if (info.twp) {
+        let at = null;
+        info.twp.eachRow({ includeEmpty: false }, (row, rn) => row.eachCell({ includeEmpty: false }, (cell, cn) => { if (!at && norm(cell.value) === key) at = [rn, cn]; }));
+        if (at) {
+          let v = scan(info.twp, at[0], 1, 30); if (v) return v;
+          for (let u = at[0] - 1; u >= Math.max(1, at[0] - 60); u--) { v = scan(info.twp, u, Math.max(1, at[1] - 1), at[1] + 1); if (v) return v; }
+        }
+      }
+    } catch (e) { console.error(e); }
+    return null;
+  }
+  /* infos: [{ team, twp, owner, file }] in file order (the first one is the base layout) */
+  function reconcile(infos, say) {
+    let changed = false;
+    const slots = [];
+    TEAMS.forEach(t => t.members.forEach((m, idx) => slots.push({ t, idx })));
+    const val = s => s.t.members[s.idx];
+    const used = new Set(), left = [], fresh = [];
+    infos.filter(i => i.owner).forEach(i => {                                  // 1. same name
+      const s = slots.find(x => !used.has(x) && norm(val(x)) === norm(i.owner));
+      if (s) used.add(s); else left.push(i);
+    });
+    left.forEach(i => {                                                         // 2. same person, different spelling \u2192 the file's name wins
+      const c = slots.filter(x => !used.has(x)), k = bestMatch(i.owner, c.map(val));
+      if (k >= 0) { used.add(c[k]); say && say(`Name taken from the file: "${val(c[k])}" \u2192 "${i.owner}"`, 'warn'); c[k].t.members[c[k].idx] = i.owner; changed = true; }
+      else fresh.push(i);
+    });
+    fresh.forEach(i => {                                                        // 3. new person \u2192 added to the list
+      if (isExcluded(i.owner)) { say && say(`"${i.owner}" is removed from the merged file \u2013 not added to the teams`, 'warn'); return; }
+      const v = teamFromFile(i);
+      let t = null, how = '';
+      if (v && v.idx != null) { t = TEAMS[v.idx]; how = `team "${t.name}" read from the file`; }
+      else if (v && v.fresh) { t = TEAMS.find(x => norm(x.name) === norm(v.fresh)); if (!t) { t = { name: v.fresh, members: [] }; const u = TEAMS.findIndex(x => x.name === UNASSIGNED); if (u >= 0) TEAMS.splice(u, 0, t); else TEAMS.push(t); } how = `new team "${t.name}" read from the file`; }
+      else { t = unassignedTeam(); how = 'no team found in the file \u2013 use \u201cTeam allocation\u201d to move him'; }
+      t.members.push(i.owner); NEW_PEOPLE.add(norm(i.owner)); changed = true;
+      say && say(`New sales person "${i.owner}" added \u2013 ${how}`, 'warn');
+    });
+    // people in the base layout who are in no team
+    const base = infos[0];
+    if (base && base.team) {
+      const all = () => TEAMS.reduce((a, t) => a.concat(t.members), []);
+      for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) {
+        const nm = txt(base.team.getCell(r, 2).value).trim();
+        if (!nm || isTotalRow(nm) || isExcluded(nm)) continue;
+        const pool = all();
+        if (pool.some(m => norm(m) === norm(nm)) || bestMatch(nm, pool) >= 0) continue;
+        unassignedTeam().members.push(nm); changed = true;
+        say && say(`"${nm}" is in the base file but in no team \u2013 placed under ${UNASSIGNED}`, 'warn');
+      }
+    }
+    TEAMS = TEAMS.filter(t => t.members.length || t.name !== UNASSIGNED);
+    if (changed) saveTeams();
+    return changed;
+  }
+
+  async function loadRevenue() {
+    const tok = ++revTok;
+    if (!files.length) { revInfo = []; FILE_PEOPLE = new Set(); renderRev(); return; }
+    const infos = [];
+    for (const f of files) {
+      try {
+        const wb = await loadWb(f);
+        const team = wb.getWorksheet(TEAM), pipe = wb.getWorksheet(PIPE), twp = wb.getWorksheet(TWP);
+        if (team && pipe) infos.push({ team, twp, owner: detectOwner(team, pipe, f.name), file: f.name });
+      } catch (e) { console.error(e); if (/ExcelJS/.test(e.message || '')) { log(e.message, 'err'); break; } }
+    }
+    if (tok !== revTok) return;                       // a newer file change took over
+    if (!infos.length) { revInfo = []; FILE_PEOPLE = new Set(); renderRev(); return; }
+    reconcile(infos, null);
+    const byKey = {};
+    infos.forEach(i => { if (i.owner && !byKey[norm(i.owner)]) byKey[norm(i.owner)] = i; });
+    FILE_PEOPLE = new Set(Object.keys(byKey));
+    const out = [];
+    TEAMS.forEach(t => t.members.forEach(m => {         // only people whose workbook has been added, grouped by team
+      const i = byKey[norm(m)]; if (!i || isExcluded(m)) return;
+      const row = teamNames(i.team)[norm(m)]; if (!row) return;
+      const cols = detectCols(i.team);
+      out.push({ name: m, key: norm(m), team: t.name, fv: fileRevenue(i.team, row), tr: fileCell(i.team, row, cols.tr), tm: fileCell(i.team, row, cols.tm) });
+    }));
+    revInfo = out; renderRev();
+    if (teamsOpen()) paintTeams();
+  }
+
+  const FIELDS = [['rev', 'Revenue'], ['tr', 'Target revenue'], ['tm', 'Target MTD']];
+  const origOf = (p, f) => f === 'rev' ? p.fv : p[f];
+  const fmtN = o => (o && o.num != null) ? o.num.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
+  const parseN = t => { const x = (t || '').trim(); if (!x) return null; const n = Number(x.replace(/[,\s]/g, '')); return isNaN(n) ? NaN : n; };
+  const edited = (p, f) => { const o = overrides[p.key]; if (!o || o[f] === undefined) return false; const n = parseN(o[f]); return n !== null && (isNaN(n) || n !== origOf(p, f).num); };
+  function renderRev() {
+    const body = $('mtd-revbody'); body.innerHTML = '';
+    $('mtd-revcard').classList.toggle('hidden', !revInfo.length);
+    $('mtd-cols').classList.toggle('two', revInfo.length > 0);
+    let last = null;
+    revInfo.forEach(p => {
+      if (p.team !== last) {
+        last = p.team;
+        const th = document.createElement('tr'); th.className = 'tm';
+        const td = document.createElement('td'); td.colSpan = 4; td.textContent = p.team; th.appendChild(td); body.appendChild(th);
+      }
+      const tr = document.createElement('tr');
+      const tdN = document.createElement('td'); tdN.textContent = p.name; tr.appendChild(tdN);
+      FIELDS.forEach(([f, label]) => {
+        const td = document.createElement('td'); td.className = 'n';
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.inputMode = 'decimal'; inp.className = 'mtd-rev-in';
+        inp.placeholder = '\u2013';
+        const o = overrides[p.key];
+        inp.value = (o && o[f] !== undefined) ? o[f] : fmtN(origOf(p, f));
+        inp.setAttribute('aria-label', label + ' for ' + p.name);
+        inp.classList.toggle('set', edited(p, f));
+        inp.addEventListener('input', () => {
+          (overrides[p.key] = overrides[p.key] || {})[f] = inp.value;
+          inp.classList.toggle('set', edited(p, f));
+          updRevBtn(); reset();       // earlier result no longer matches
+        });
+        td.appendChild(inp); tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+    updRevBtn();
+  }
+  function updRevBtn() {
+    $('mtd-revreset').disabled = !revInfo.some(p => FIELDS.some(([f]) => edited(p, f)));
+  }
+  $('mtd-revreset').addEventListener('click', () => {
+    Object.keys(overrides).forEach(k => delete overrides[k]); reset(); renderRev();
+  });
+
+  /* ---------- main ---------- */
+  async function run() {
+    try { await ensureExcel(); } catch (e) { log(e.message, 'err'); setStatus('Could not start \u2013 see the details below.', 'err'); return; }
+    reset(); runBtn.disabled = true; clearBtn.disabled = true;
+    $('mtd-log').innerHTML = ''; setStatus('Working\u2026');
+    try {
+      log(`Reading ${files.length} file(s)\u2026`);
+      const loaded = [];
+      for (const f of files) {
+        const wb = await loadWb(f);
+        const team = wb.getWorksheet(TEAM), pipe = wb.getWorksheet(PIPE), twp = wb.getWorksheet(TWP);
+        if (!team || !pipe) { log(`"${f.name}": missing sheet "${TEAM}" or "${PIPE}" \u2013 skipped`, 'err'); continue; }
+        const owner = detectOwner(team, pipe, f.name);
+        const rows = pipeRows(pipe);
+        if (!owner) log(`"${f.name}": could not tell whose file this is \u2013 pipeline rows are still copied`, 'warn');
+        loaded.push({ file: f, wb, team, pipe, twp, owner, rows });
+        log(`\u2713 ${f.name} \u2192 ${owner || '(unknown)'} \u00b7 ${rows.length} pipeline rows`, 'ok');
+      }
+      if (!loaded.length) throw new Error('No usable files.');
+      reconcile(loaded.map(L => ({ team: L.team, twp: L.twp, owner: L.owner, file: L.file.name })), log);
+
+      const dropped = new Set(loaded.filter(L => L.owner && isExcluded(L.owner)));
+      dropped.forEach(L => log(`"${L.owner}" is removed from the merged file \u2013 his workbook's pipeline rows were not included`, 'warn'));
+      const master = loaded[0].wb;
+      const mTeam = master.getWorksheet(TEAM), mPipe = master.getWorksheet(PIPE), mTwp = master.getWorksheet(TWP);
+
+      /* 1. Pipeline. Values only are taken from the files. Every pipeline row gets the SAME font, size, borders
+            and centred alignment, built from the base layout's first data row. */
+      const tpl = [];
+      for (let c = 1; c <= COPY_COLS; c++) tpl[c] = clone(mPipe.getCell(FIRST_ROW, c).style || {});
+      const bf = (tpl[1] && tpl[1].font) || {};
+      const UFONT = { name: bf.name || 'Calibri', size: bf.size || 11, family: bf.family || 2, bold: false, italic: false, color: { argb: 'FF000000' } };
+      if (bf.scheme) UFONT.scheme = bf.scheme;
+      const THIN = { style: 'thin', color: { argb: 'FF000000' } };
+      const UBORDER = { top: THIN, left: THIN, bottom: THIN, right: THIN };
+      const isGeneral = f => !f || /^general$/i.test(f);
+      const seenFmt = {};
+      const styleFor = (c, val, srcFmt) => {
+        let nf = tpl[c].numFmt;
+        if (isGeneral(nf)) {
+          if (val instanceof Date) nf = 'dd-mmm-yyyy';
+          else if (typeof val === 'number') { if (!seenFmt[c] && !isGeneral(srcFmt)) seenFmt[c] = srcFmt; nf = seenFmt[c]; }
+          else nf = undefined;
+        }
+        const st = { font: clone(UFONT), alignment: { horizontal: 'center', vertical: 'middle', wrapText: true }, border: clone(UBORDER), fill: { type: 'pattern', pattern: 'none' } };
+        if (nf) st.numFmt = nf;
+        return st;
+      };
+      const lastOld = mPipe.rowCount;
+      for (let r = FIRST_ROW; r <= lastOld; r++) {
+        for (let c = 1; c <= PIPE_COLS; c++) mPipe.getCell(r, c).value = null;
+      }
+      let out = FIRST_ROW;
+      for (const L of loaded) {
+        if (dropped.has(L)) continue;
+        for (const row of L.rows) {
+          for (let c = 1; c <= COPY_COLS; c++) {
+            const cell = mPipe.getCell(out, c);
+            const val = plain(row.vals[c - 1]);
+            if (val !== null && val !== undefined) cell.value = val;
+            cell.style = styleFor(c, val, (row.styles[c - 1] || {}).numFmt);
+          }
+          out++;
+        }
+      }
+      const newLast = out - 1;
+      {
+        const lastCol = Math.max(30, mPipe.columnCount || 0);
+        for (let r = FIRST_ROW; r <= newLast; r++) {
+          // stray coloured cells to the right of the table (left over from the base file) are removed
+          for (let c = COPY_COLS + 1; c <= lastCol; c++) {
+            const cell = mPipe.getCell(r, c);
+            if (cell.fill && cell.fill.type === 'pattern' && cell.fill.pattern && cell.fill.pattern !== 'none') cell.fill = { type: 'pattern', pattern: 'none' };
+          }
+          mPipe.getRow(r).height = undefined;     // let Excel size each row to its (wrapped) text
+        }
+      }
+
+      /* 2. Sales Team: the people list is rebuilt in team order. Names come from the files. */
+      const snap = [], reserved = new Set();
+      for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) {                    // the base layout, before any change
+        const nm = txt(mTeam.getCell(r, 2).value).trim();
+        if (!nm) continue;
+        if (isTotalRow(nm)) { reserved.add(r); continue; }
+        if (isExcluded(nm)) continue;                       // removed people: their base rows are dropped
+        const cells = {};
+        for (let c = TEAM_FIRST_COL; c <= TEAM_LAST_COL; c++) cells[c] = mTeam.getCell(r, c).value;
+        snap.push({ name: nm, row: r, cells, used: false });
+      }
+      const slots = [];
+      for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) if (!reserved.has(r)) slots.push(r);
+      const order = [];
+      TEAMS.forEach(t => t.members.forEach(m => { if (!isExcluded(m)) order.push({ name: m, team: t.name }); }));
+      order.forEach(o => {
+        o.L = loaded.find(L => L.owner && norm(L.owner) === norm(o.name));
+        const b = snap.find(x => !x.used && norm(x.name) === norm(o.name));
+        if (b) { b.used = true; o.base = b; }
+      });
+      order.forEach(o => {
+        if (o.base) return;
+        const c = snap.filter(x => !x.used), k = bestMatch(o.name, c.map(x => x.name));
+        if (k >= 0) { c[k].used = true; o.base = c[k]; }
+      });
+      const skipped = order.filter(o => !o.L && !o.base).map(o => o.name);
+      let plan = order.filter(o => o.L || o.base);
+      if (plan.length > slots.length) {
+        log(`The sheet has room for ${slots.length} people but ${plan.length} are listed \u2013 the last ${plan.length - slots.length} were not written: ${plan.slice(slots.length).map(o => o.name).join(', ')}`, 'err');
+        plan = plan.slice(0, slots.length);
+      }
+      if (skipped.length) log(`No row written for ${skipped.join(', ')} (no workbook added and not in the base file)`);
+      const rowOf = {}, renames = [];
+      plan.forEach((o, i) => {
+        const dst = slots[i];
+        rowOf[norm(o.name)] = dst;
+        let get = null, srcRow = null;
+        if (o.L) {
+          const r = teamNames(o.L.team)[norm(o.L.owner)];
+          if (r) { srcRow = r; get = c => o.L.team.getCell(r, c).value; }
+          else log(`${o.name}: not found in the "${TEAM}" list of his own file \u2013 base row used`, 'warn');
+        }
+        if (!get && o.base) { srcRow = o.base.row; get = c => o.base.cells[c]; }
+        if (o.base && norm(o.base.name) !== norm(o.name)) renames.push([o.base.name, o.name]);
+        const nm = mTeam.getCell(dst, 2);
+        if (!isFormula(nm.value)) nm.value = o.name;
+        const n2 = mTeam.getCell(dst + T2, 2);
+        if (!isFormula(n2.value) && norm(n2.value) !== norm(o.name)) n2.value = o.name;
+        const delta = srcRow ? dst - srcRow : 0;
+        for (let c = TEAM_FIRST_COL; c <= TEAM_LAST_COL; c++) {
+          const d = mTeam.getCell(dst, c), dv = d.value, sv = get ? get(c) : null;
+          if (isFormula(sv)) {
+            if (isArrayF(sv) || !sv.formula) continue;
+            const nf = shiftFormula(sv.formula, delta);
+            if (!(isFormula(dv) && dv.formula === nf)) d.value = { formula: nf, result: sv.result };
+          } else if (sv === null || sv === undefined || sv === '') {
+            if (dv !== null && dv !== undefined && !isFormula(dv)) d.value = null;
+          } else {
+            d.value = plain(sv);
+          }
+        }
+      });
+      for (let k = plan.length; k < slots.length; k++) {                    // rows that are no longer used
+        const r = slots[k];
+        const nm = mTeam.getCell(r, 2); if (nm.value != null && !isFormula(nm.value)) nm.value = null;
+        const n2 = mTeam.getCell(r + T2, 2); if (n2.value != null && !isFormula(n2.value)) n2.value = null;
+        for (let c = TEAM_FIRST_COL; c <= TEAM_LAST_COL; c++) { const d = mTeam.getCell(r, c); if (d.value != null && !isFormula(d.value)) d.value = null; }
+      }
+      // keep the Team Wise Performance sheet in step with corrected spellings
+      if (mTwp) renames.forEach(([from, to]) => mTwp.eachRow(row => row.eachCell(cell => {
+        if (typeof cell.value === 'string' && norm(cell.value) === norm(from)) cell.value = to;
+      })));
+      if (mTwp) {
+        let n = 0;
+        mTwp.eachRow(row => row.eachCell(cell => { const v = cell.value; if (typeof v === 'string' && v.length <= 60 && isExcluded(v)) { cell.value = null; n++; } }));
+        if (n) log(`Removed ${n} excluded name(s) from "${TWP}"`);
+      }
+      /* 2d. Team Wise Performance: teams in a fixed order (Arif, Waseem, Rabin); each team lists ONLY the people whose workbook was added */
+      if (mTwp) {
+        const key = x => { const n = norm(x); return /arif/.test(n) ? 'arif' : /wa[sz]e*i?m/.test(n) ? 'wasim' : /rabin/.test(n) ? 'rabin' : n; };
+        const blocks = [], maxR = mTwp.rowCount;
+        let prevHdr = false;
+        for (let r = 1; r <= maxR; r++) {
+          const a = txt(mTwp.getCell(r, 1).value).trim();
+          const isH = !!a && a.length <= 40 && /team\s*$/i.test(a);
+          if (isH && !prevHdr) {
+            let tar = 0, tot = 0;
+            for (let q = r + 1; q <= Math.min(r + 3, maxR) && !tar; q++) if ([2, 3, 4].some(c => norm(mTwp.getCell(q, c).value) === 'tar')) tar = q;
+            if (tar) for (let q = tar + 1; q <= maxR; q++) if (/^total\b/i.test(txt(mTwp.getCell(q, 1).value).trim())) { tot = q; break; }
+            if (tar && tot) blocks.push({ hdr: r, label: a, first: tar + 1, last: tot - 1, tot });
+          }
+          prevHdr = isH;
+        }
+        if (!blocks.length) log(`"${TWP}": team blocks not found \u2013 left as in the base file`, 'warn');
+        else {
+          const rank = t => { const k = key(t.name); return k === 'arif' ? 0 : k === 'wasim' ? 1 : k === 'rabin' ? 2 : 3; };
+          const withFile = plan.filter(o => o.L);
+          const outTeams = TEAMS.map((t, i) => ({ t, i })).sort((x, y) => rank(x.t) - rank(y.t) || x.i - y.i).map(x => x.t)
+            .filter(t => withFile.some(o => o.team === t.name));
+          const labels = {}; blocks.forEach(b => { labels[key(b.label)] = b.label; });
+          if (outTeams.length > blocks.length) log(`"${TWP}" has room for ${blocks.length} teams \u2013 not shown: ${outTeams.slice(blocks.length).map(t => t.name).join(', ')}`, 'err');
+          const clearRow = r => { for (let c = 1; c <= 24; c++) { const cell = mTwp.getCell(r, c); if (cell.isMerged && cell.master && cell.master.address !== cell.address) continue; if (cell.value !== null && cell.value !== undefined) cell.value = null; } };
+          blocks.forEach((b, bi) => {
+            const t = outTeams[bi];
+            if (!t) { for (let r = b.hdr; r <= b.tot; r++) { if (r > b.hdr && r <= b.last) clearRow(r); mTwp.getRow(r).hidden = true; } return; }
+            let people = withFile.filter(o => o.team === t.name).map(o => o.name);
+            const room = b.last - b.first + 1;
+            if (people.length > room) { log(`${t.name}: only ${room} rows in "${TWP}" \u2013 not shown: ${people.slice(room).join(', ')}`, 'err'); people = people.slice(0, room); }
+            const hc = mTwp.getCell(b.hdr, 1);
+            if (!isFormula(hc.value)) hc.value = labels[key(t.name)] || (t.name.replace(/\s*team\s*$/i, '') + "'s Team");
+            for (let i = 0; i < room; i++) {
+              const r = b.first + i, row = mTwp.getRow(r);
+              if (i < people.length) { mTwp.getCell(r, 1).value = people[i]; row.hidden = false; }
+              else { clearRow(r); row.hidden = true; }
+            }
+          });
+          log(`${TWP}: ${outTeams.slice(0, blocks.length).map(t => t.name).join(' \u2192 ')}`, 'ok');
+        }
+      }
+      TEAMS.forEach(t => log(`${t.name}: ${t.members.filter(m => rowOf[norm(m)] && !isExcluded(m)).map(m => m + ' (row ' + rowOf[norm(m)] + ')').join(', ') || '\u2013'}`, 'ok'));
+
+      /* 2a. People without a file: drop the revenue (col U) inherited from the base file */
+      if ($('mtd-clearstale').checked) {
+        plan.forEach(o => {
+          if (o.L) return;
+          const cell = mTeam.getCell(rowOf[norm(o.name)], REV_COL);
+          if (cell.value !== null && cell.value !== undefined && !isFormula(cell.value)) {
+            log(`Revenue for ${o.name}: no file added \u2013 old value cleared (row ${rowOf[norm(o.name)]}, column U)`, 'ok');
+            cell.value = null;
+          }
+        });
+      }
+
+      /* 2b. Revenue / target revenue / target MTD changed on the page win over the file values */
+      {
+        const mc = detectCols(mTeam), colOf = { rev: REV_COL, tr: mc.tr, tm: mc.tm };
+        const letter = n => { let t = ''; while (n > 0) { const m = (n - 1) % 26; t = String.fromCharCode(65 + m) + t; n = Math.floor((n - 1) / 26); } return t; };
+        revInfo.forEach(p => FIELDS.forEach(([f, label]) => {
+          if (!edited(p, f)) return;
+          const t = overrides[p.key][f], n = parseN(t), row = rowOf[p.key];
+          if (isNaN(n)) { log(`${label} for ${p.name}: "${t}" is not a number \u2013 file value kept`, 'warn'); return; }
+          if (!row) { log(`${label} for ${p.name}: name not found in ${TEAM} \u2013 skipped`, 'warn'); return; }
+          mTeam.getCell(row, colOf[f]).value = n;
+          log(`\u2713 ${label} for ${p.name} set to ${n.toLocaleString('en-US')} (row ${row}, column ${letter(colOf[f])})`, 'ok');
+        }));
+      }
+
+      /* /* 2c. Same row height for every person row (stops one row from auto-growing) */
+      {
+        const dflt = (mTeam.properties && mTeam.properties.defaultRowHeight) || 15;
+        for (const first of [FIRST_ROW, FIRST_ROW + T2]) {
+          const rowsUsed = [];
+          for (let r = first; r < first + (LAST_TEAM_ROW - FIRST_ROW + 1); r++)
+            if (txt(mTeam.getCell(r, 2).value).trim()) rowsUsed.push(r);
+          if (!rowsUsed.length) continue;
+          const tally = {};
+          rowsUsed.forEach(r => { const h = mTeam.getRow(r).height || dflt; tally[h] = (tally[h] || 0) + 1; });
+          const common = +Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
+          rowsUsed.forEach(r => { if ((mTeam.getRow(r).height || dflt) !== common) mTeam.getRow(r).height = common; });
+        }
+      }
+
+      /* 3. Make summary formulas cover all the stacked pipeline rows */
+      const c1 = fixFormulaRanges(mPipe, newLast, false);
+      const c2 = fixFormulaRanges(mTeam, newLast, true) + fixFormulaRanges(mTwp, newLast, true);
+      if (c1 + c2) log(`Extended ${c1 + c2} formula range(s) to cover ${newLast - FIRST_ROW + 1} pipeline rows`);
+
+      /* 4. Clean-up so Excel opens the file without a repair prompt */
+      master.eachSheet(ws => {
+        if (Array.isArray(ws.conditionalFormattings)) {
+          ws.conditionalFormattings = ws.conditionalFormattings
+            .map(cf => ({ ...cf, rules: (cf.rules || []).filter(r => r && r.type !== 'dataBar' && r.type !== 'iconSet' && r.type !== 'colorScale') }))
+            .filter(cf => cf.rules.length);
+        }
+        ws.eachRow({ includeEmpty: false }, row => row.eachCell({ includeEmpty: false }, cell => {
+          if (typeof cell.value === 'string' && /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(cell.value)) {
+            cell.value = cell.value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+          }
+        }));
+      });
+      master.eachSheet(ws => ws.eachRow({ includeEmpty: false }, row => row.eachCell({ includeEmpty: false }, cell => {
+        const v = cell.value;
+        if (!isFormula(v)) return;
+        const f = cell.formula;
+        if (!f) return;
+        if (isArrayF(v)) { const nv = { ...v }; delete nv.result; cell.value = nv; }
+        else cell.value = { formula: f };
+      })));
+      master.calcProperties = master.calcProperties || {};
+      master.calcProperties.fullCalcOnLoad = true;
+
+      outBuffer = await master.xlsx.writeBuffer();
+      $('mtd-post').classList.remove('hidden');           // Download / WhatsApp / Email only appear after a successful merge
+      setStatus(`\u2714 Done \u2013 ${loaded.length} file${loaded.length > 1 ? 's' : ''} combined (${newLast - FIRST_ROW + 1} pipeline rows).`, 'ok');
+    } catch (err) {
+      console.error(err);
+      log('Error: ' + (err && err.message ? err.message : err), 'err');
+      setStatus('Something went wrong \u2013 see the details below.', 'err');
+    } finally {
+      runBtn.disabled = files.length === 0; clearBtn.disabled = files.length === 0;
+    }
+  }
+
+  /* ---------- download / share ---------- */
+  function download() {
+    if (!outBuffer) return;
+    const blob = new Blob([outBuffer], { type: XLSX_MIME });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = outName();
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }
+  const MAIL_TO = ['arif@sudhirrentals.com', 'wasim@sudhirrentals.com', 'rabin@sudhirrentals.com'];
+  async function share(kind) {
+    if (!outBuffer) return;
+    const name = outName(), title = name.replace(/\.xlsx$/, ''), text = `${title}`;
+    /* the browser's share sheet attaches the file to the app you pick (Outlook, WhatsApp...) \u2013 nothing is downloaded */
+    try {
+      const f = new File([outBuffer], name, { type: XLSX_MIME });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) {
+        if (kind === 'mail') { try { await navigator.clipboard.writeText(MAIL_TO.join('; ')); } catch (e) { /* ignore */ } }
+        await navigator.share({ files: [f], title, text });
+        if (kind === 'mail') setStatus(`Choose Outlook in the share window. Recipients copied \u2013 paste them in "To": ${MAIL_TO.join('; ')}`, 'ok');
+        return;
+      }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    /* this browser can't share files: open the mail app / WhatsApp without downloading anything */
+    if (kind === 'wa') { window.open('https://wa.me/?text=' + encodeURIComponent(`${title} \u2013 please see the attached file.`), '_blank'); }
+    else { window.location.href = 'mailto:' + MAIL_TO.join(';') + '?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(`Hello,\n\nPlease find attached the ${title}.\n`); }
+    setStatus('This browser cannot attach files automatically \u2013 use Download, then attach the file.', 'err');
+  }
+
+  /* ---------- team allocation (view team-wise, drag people between teams) ---------- */
+  let modal = null, picked = null, drag = null, menuFrom = null, scrollRaf = 0;
+  const teamsOpen = () => modal && modal.classList.contains('show');
+  function esc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function openTeams() {
+    if (!modal) {
+      modal = document.createElement('div'); modal.className = 'mtd-modal'; modal.id = 'mtd-tmodal';
+      modal.innerHTML = '<div class="mtd-sheet" role="dialog" aria-modal="true"><div class="mtd-sheet-head"><div><h3>Team allocation</h3><p>Press and drag a name to another team \u2013 or tap <b>\u22ef</b> beside a name to move it, leave it out of the merged file, or delete it. Saved on this device.</p></div><button type="button" class="mtd-x" data-t="close" aria-label="Close">\u00d7</button></div><div class="mtd-tgrid" id="mtd-tgrid"></div><div class="mtd-sheet-foot"><button type="button" class="mtd-btn ghost" data-t="reset">Reset to default</button><button type="button" class="mtd-btn primary" data-t="close">Done</button></div></div>';
+      document.body.appendChild(modal);
+      modal.addEventListener('click', onTeamClick);
+      modal.addEventListener('pointerdown', onTeamDown);
+      modal.addEventListener('contextmenu', e => { if (drag) e.preventDefault(); });
+      window.addEventListener('pointermove', onTeamMove);
+      window.addEventListener('pointerup', onTeamUp);
+      window.addEventListener('pointercancel', () => endDrag(true));
+      document.addEventListener('touchmove', e => { if (drag && drag.active && e.cancelable) e.preventDefault(); }, { passive: false });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && teamsOpen()) { if (drag) endDrag(true); else closeTeams(); } });
+    }
+    picked = null; closeMenu(); paintTeams(); modal.classList.add('show');
+  }
+  function closeTeams() { closeMenu(); if (modal) modal.classList.remove('show'); saveTeams(); reset(); loadRevenue(); }
+  function personHtml(m, ti, mi) {
+    const ex = isExcluded(m);
+    return `<div class="mtd-person${picked && picked.ti === ti && picked.mi === mi ? ' picked' : ''}${ex ? ' excl' : ''}" data-ti="${ti}" data-mi="${mi}"><span class="mtd-grip" title="Drag">\u22ee\u22ee</span><span class="nm">${esc(m)}</span>${ex ? '<em class="x">REMOVED</em>' : ''}${FILE_PEOPLE.has(norm(m)) ? '<i class="has" title="Workbook added"></i>' : ''}${NEW_PEOPLE.has(norm(m)) ? '<em>NEW</em>' : ''}<button type="button" class="mv" data-t="mv" title="Move / remove / delete" aria-label="Options for ${esc(m)}">\u22ef</button></div>`;
+  }
+  function exclHtml() {
+    return `<section class="mtd-excl" id="mtd-excl"><div class="mtd-excl-head"><b>Left out of the merged file</b><span>${EXCLUDED.length}</span></div>` +
+      (EXCLUDED.length ? '<div class="mtd-excl-list">' + EXCLUDED.map((n, i) => `<span class="mtd-xchip"><span>${esc(n)}</span><button type="button" data-t="restore" data-xi="${i}">Add back</button></span>`).join('') + '</div>' : '<p class="mtd-excl-none">Nobody is left out.</p>') +
+      '<button type="button" class="mtd-add" data-t="addx">+ Leave another name out</button></section>';
+  }
+  function paintTeams() {
+    const g = $('mtd-tgrid'); if (!g) return;
+    g.innerHTML = TEAMS.map((t, ti) => `<section class="mtd-team${picked ? ' can-drop' : ''}" data-ti="${ti}"><header><b>${esc(t.name)}</b><span>${t.members.length}</span></header><div class="mtd-tlist">` +
+      t.members.map((m, mi) => personHtml(m, ti, mi)).join('') +
+      (t.members.length ? '' : '<div class="mtd-none">Drop people here</div>') + `</div><button type="button" class="mtd-add" data-t="add" data-ti="${ti}">+ Add person</button></section>`).join('') + exclHtml();
+  }
+  function moveMember(from, to, beforeIdx) {
+    const m = TEAMS[from.ti].members.splice(from.mi, 1)[0];
+    let at = beforeIdx == null ? TEAMS[to].members.length : beforeIdx;
+    if (from.ti === to && beforeIdx != null && from.mi < beforeIdx) at--;
+    TEAMS[to].members.splice(Math.max(0, at), 0, m);
+    TEAMS = TEAMS.filter(t => t.members.length || t.name !== UNASSIGNED);
+    picked = null; saveTeams(); paintTeams();
+  }
+
+  /* options menu for a person: move, leave out of the file, delete */
+  function closeMenu() { const m = document.getElementById('mtd-menu'); if (m) m.remove(); menuFrom = null; }
+  function openMenu(btn, p) {
+    closeMenu();
+    menuFrom = { ti: +p.dataset.ti, mi: +p.dataset.mi };
+    const name = TEAMS[menuFrom.ti].members[menuFrom.mi], ex = isExcluded(name);
+    const menu = document.createElement('div'); menu.id = 'mtd-menu'; menu.className = 'mtd-menu';
+    menu.innerHTML = '<small>Move to\u2026</small>' + TEAMS.map((t, i) => `<button type="button" data-t="to" data-to="${i}"${i === menuFrom.ti ? ' disabled' : ''}>${esc(t.name)}</button>`).join('') +
+      '<hr>' + (ex ? '<button type="button" data-t="inc">\u2714 Include in the merged file</button>' : '<button type="button" data-t="exc">Leave out of the merged file</button>') +
+      '<button type="button" class="danger" data-t="del">Delete name from the list</button>';
+    modal.appendChild(menu);
+    const r = btn.getBoundingClientRect(), k = fixedScale(), mr = menu.getBoundingClientRect(), mw = mr.width, mh = mr.height;
+    menu.style.left = (Math.max(8, Math.min(window.innerWidth - mw - 8, r.right - mw)) / k) + 'px';
+    menu.style.top = (Math.max(8, Math.min(window.innerHeight - mh - 8, r.bottom + 6)) / k) + 'px';
+  }
+  const tidy = () => { TEAMS = TEAMS.filter(t => t.members.length || t.name !== UNASSIGNED); saveTeams(); };
+
+  function onTeamClick(e) {
+    if (e.target === modal) { closeTeams(); return; }
+    const b = e.target.closest('[data-t]');
+    if (b) {
+      const a = b.dataset.t;
+      if (a === 'close') closeTeams();
+      else if (a === 'mv') { openMenu(b, b.closest('.mtd-person')); }
+      else if (a === 'to') { const f = menuFrom; closeMenu(); if (f) moveMember(f, +b.dataset.to); }
+      else if (a === 'exc' || a === 'inc') { const f = menuFrom; closeMenu(); if (f) { setExcluded(TEAMS[f.ti].members[f.mi], a === 'exc'); paintTeams(); } }
+      else if (a === 'del') {
+        const f = menuFrom; closeMenu(); if (!f) return;
+        const name = TEAMS[f.ti].members[f.mi];
+        if (!confirm(`Delete "${name}" from the list? He will also be left out of the merged file (you can add him back later).`)) return;
+        TEAMS[f.ti].members.splice(f.mi, 1); setExcluded(name, true); picked = null; tidy(); paintTeams();
+      }
+      else if (a === 'restore') {
+        const name = EXCLUDED[+b.dataset.xi]; if (name == null) return;
+        setExcluded(name, false);
+        if (!TEAMS.some(t => t.members.some(m => matchEx(name, m)))) unassignedTeam().members.push(name);
+        saveTeams(); paintTeams();
+      }
+      else if (a === 'addx') {
+        const n = (prompt('Name to leave out of the merged file:') || '').trim(); if (!n) return;
+        setExcluded(n, true); paintTeams();
+      }
+      else if (a === 'reset') { closeMenu(); if (confirm('Reset the teams and the left-out names to the default list?')) { TEAMS = JSON.parse(JSON.stringify(DEFAULT_TEAMS)); EXCLUDED = DEFAULT_EXCLUDED.slice(); NEW_PEOPLE.clear(); picked = null; saveTeams(); saveExcluded(); paintTeams(); } }
+      else if (a === 'add') {
+        const n = (prompt('Sales person name:') || '').trim(); if (!n) return;
+        if (isExcluded(n)) setExcluded(n, false);                 // adding a name by hand brings him back
+        TEAMS[+b.dataset.ti].members.push(n); saveTeams(); paintTeams();
+      }
+      return;
+    }
+    closeMenu();
+    if (window.__mtdJustDragged) return;
+    const p = e.target.closest('.mtd-person');
+    if (p) { const cur = { ti: +p.dataset.ti, mi: +p.dataset.mi }; picked = (picked && picked.ti === cur.ti && picked.mi === cur.mi) ? null : cur; paintTeams(); return; }
+    const t = e.target.closest('.mtd-team');
+    if (t && picked) moveMember(picked, +t.dataset.ti);
+  }
+
+  /* ---- drag: mouse = grab and move; touch = press for a moment, then move ---- */
+  function onTeamDown(e) {
+    if (e.button > 0) return;
+    const p = e.target.closest('.mtd-person');
+    if (!p || e.target.closest('button')) return;
+    closeMenu();
+    drag = { ti: +p.dataset.ti, mi: +p.dataset.mi, x: e.clientX, y: e.clientY, cx: e.clientX, cy: e.clientY, el: p, active: false, ghost: null, line: null, hit: null, id: e.pointerId, timer: 0 };
+    if (e.pointerType === 'mouse') { drag.mouse = true; }
+    else { drag.timer = setTimeout(() => { if (drag && !drag.active) startDrag(); }, 220); }   // long-press so the list can still be scrolled
+  }
+  function fixedScale() {
+    const p = document.createElement('div');
+    p.style.cssText = 'position:fixed;left:100px;top:0;width:1px;height:1px;visibility:hidden;pointer-events:none';
+    document.body.appendChild(p);
+    const k = p.getBoundingClientRect().left / 100; p.remove();
+    return (k > 0 && isFinite(k)) ? k : 1;
+  }
+  function startDrag() {
+    if (!drag || drag.active) return;
+    drag.active = true; picked = null; drag.k = fixedScale();
+    const gh = drag.el.cloneNode(true); gh.className = 'mtd-person mtd-ghost'; gh.style.width = Math.min(drag.el.offsetWidth, 300) + 'px';
+    gh.querySelectorAll('button').forEach(x => x.remove());
+    document.body.appendChild(gh); drag.ghost = gh;
+    drag.el.classList.add('lifted');
+    document.body.classList.add('mtd-dragging');
+    try { drag.el.setPointerCapture(drag.id); } catch (err) { /* ignore */ }
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (err) { /* ignore */ } }
+    place(drag.cx, drag.cy); autoScroll();
+  }
+  function place(x, y) {
+    if (!drag || !drag.active) return;
+    drag.ghost.style.left = (x / drag.k) + 'px'; drag.ghost.style.top = (y / drag.k) + 'px';
+    [].forEach.call(document.querySelectorAll('.mtd-team.over'), n => n.classList.remove('over'));
+    const hit = hitTest(x, y);
+    if (drag.line) { drag.line.remove(); drag.line = null; }
+    drag.hit = hit;
+    if (!hit) return;
+    hit.el.classList.add('over');
+    const line = document.createElement('div'); line.className = 'mtd-line';
+    const list = hit.el.querySelector('.mtd-tlist');
+    const ref = hit.beforeEl;
+    if (ref) list.insertBefore(line, ref); else list.appendChild(line);
+    drag.line = line;
+  }
+  /* which team (and position) is under the finger / cursor; a column counts from anywhere inside it, with a little tolerance */
+  function hitTest(x, y) {
+    const els = [].slice.call(document.querySelectorAll('#mtd-tgrid .mtd-team'));
+    let best = null, bd = 1e9;
+    els.forEach(el => {
+      const r = el.getBoundingClientRect();
+      const dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+      const dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+      const d = Math.hypot(dx, dy);
+      if (d < bd) { bd = d; best = el; }
+    });
+    if (!best || bd > 60) return null;
+    const people = [].slice.call(best.querySelectorAll('.mtd-person')).filter(p => !p.classList.contains('lifted'));
+    let beforeEl = null;
+    for (const p of people) { const r = p.getBoundingClientRect(); if (y < r.top + r.height / 2) { beforeEl = p; break; } }
+    return { el: best, ti: +best.dataset.ti, beforeEl, before: beforeEl ? +beforeEl.dataset.mi : null };
+  }
+  function autoScroll() {
+    cancelAnimationFrame(scrollRaf);
+    const step = () => {
+      if (!drag || !drag.active) return;
+      const g = $('mtd-tgrid');
+      if (g) {
+        const r = g.getBoundingClientRect(), y = drag.cy, edge = 56;
+        let v = 0;
+        if (y < r.top + edge) v = -Math.ceil((r.top + edge - y) / 5);
+        else if (y > r.bottom - edge) v = Math.ceil((y - (r.bottom - edge)) / 5);
+        if (v) { g.scrollTop += Math.max(-22, Math.min(22, v)); place(drag.cx, drag.cy); }
+      }
+      scrollRaf = requestAnimationFrame(step);
+    };
+    scrollRaf = requestAnimationFrame(step);
+  }
+  function onTeamMove(e) {
+    if (!drag) return;
+    drag.cx = e.clientX; drag.cy = e.clientY;
+    if (!drag.active) {
+      const moved = Math.hypot(e.clientX - drag.x, e.clientY - drag.y);
+      if (drag.mouse) { if (moved >= 4) startDrag(); }
+      else if (moved > 10) { clearTimeout(drag.timer); drag = null; }              // finger moved first = the user is scrolling the list
+      return;
+    }
+    if (e.cancelable) e.preventDefault();
+    place(e.clientX, e.clientY);
+  }
+  function endDrag(cancel) {
+    if (!drag) return;
+    const d = drag; drag = null;
+    clearTimeout(d.timer); cancelAnimationFrame(scrollRaf);
+    if (!d.active) return;
+    if (d.ghost) d.ghost.remove();
+    if (d.line) d.line.remove();
+    d.el.classList.remove('lifted');
+    document.body.classList.remove('mtd-dragging');
+    [].forEach.call(document.querySelectorAll('.mtd-team.over'), n => n.classList.remove('over'));
+    window.__mtdJustDragged = true; setTimeout(() => { window.__mtdJustDragged = false; }, 60);
+    if (!cancel && d.hit) moveMember({ ti: d.ti, mi: d.mi }, d.hit.ti, d.hit.before);
+  }
+  function onTeamUp(e) { if (drag) { drag.cx = e.clientX; drag.cy = e.clientY; if (drag.active) place(e.clientX, e.clientY); } endDrag(false); }
+
+  window.initMtdTab = () => { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) {} } };
+  /* people who were auto-listed under "Unassigned" but are now left out are tidied away */
+  TEAMS.forEach(t => { if (t.name === UNASSIGNED) t.members = t.members.filter(m => !isExcluded(m)); });
+  TEAMS = TEAMS.filter(t => t.members.length || t.name !== UNASSIGNED);
+  EXCLUDED = EXCLUDED.filter(e => !isAlways(e)); saveExcluded();
+  TEAMS.forEach(t => { t.members = t.members.filter(m => !isAlways(m)); }); saveTeams();
+  render(); reset();
 })();
 </script>
 
