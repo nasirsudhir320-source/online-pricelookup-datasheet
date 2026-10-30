@@ -3706,9 +3706,6 @@ ul.mtd-files li::before { content:"XLSX"; flex:none; font-size:9.5px; font-weigh
 .mtd-status.err { color:var(--m-err); font-weight:800; }
 .mtd-post { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px dashed var(--m-line); }
 .mtd-post .mtd-btn { flex:1 1 120px; }
-.mtd-btn.wa { background:linear-gradient(180deg,#34d16b,#1ea952); color:#fff; box-shadow:0 14px 24px -12px rgba(30,169,82,.7); }
-.mtd-btn.mail { background:linear-gradient(180deg,#4d94ff,#2563eb); color:#fff; box-shadow:0 14px 24px -12px rgba(37,99,235,.7); }
-@media (min-width: 900px) { .mtd-btn.wa { display:none; } }      /* WhatsApp share is for the phone */
 .mtd-scroll tr.tm td { background:#faf8ff; color:#6d28d9; font-weight:800; font-size:11px; letter-spacing:.05em; text-transform:uppercase; height:30px; border-bottom:1px solid var(--m-line); }
 .mtd-modal { position:fixed; inset:0; z-index:9500; display:none; align-items:flex-end; justify-content:center; background:rgba(25,40,80,.38); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
 .mtd-modal.show { display:flex; }
@@ -3760,6 +3757,21 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
 .mtd-excl-none { margin:0 0 6px; font-size:12.5px; color:#a87d7d; }
 .mtd-tgrid { align-content:start; grid-auto-rows:max-content; flex:1 1 auto; min-height:0; }
 .mtd-rev-in { width:100%; min-width:68px; max-width:140px; }
+.mtd-sheet.wide { max-width:1400px; height:92dvh; }
+.mtd-pv-tabs { display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; flex:none; }
+.mtd-pv-tabs button { flex:none; border:0; border-radius:999px; background:#f1ecff; color:#7c3aed; font-weight:800; font-size:12.5px; font-family:inherit; padding:8px 14px; cursor:pointer; white-space:nowrap; }
+.mtd-pv-tabs button.on { background:linear-gradient(180deg,#9b6bff,#6d28d9); color:#fff; }
+.mtd-pv-wrap { flex:1; min-height:0; overflow:auto; border:1px solid var(--m-line); border-radius:14px; background:#fff; }
+.mtd-pv { border-collapse:separate; border-spacing:0; table-layout:fixed; font-family:Calibri,'Segoe UI',Arial,sans-serif; font-size:14.7px; color:#000; background:#fff; }
+.mtd-pv th { position:sticky; top:0; z-index:3; background:#f3f3f3; color:#444; font-weight:400; font-size:12.5px; height:22px; border-bottom:1px solid #c8c8c8; border-right:1px solid #d4d4d4; text-align:center; overflow:hidden; }
+.mtd-pv th.rn { left:0; z-index:5; }
+.mtd-pv td.rn { position:sticky; left:0; z-index:2; background:#f3f3f3; color:#444; font-size:12.5px; text-align:center; padding:0; border-right:1px solid #c8c8c8; border-bottom:1px solid #d4d4d4; }
+.mtd-pv td { padding:0 4px; height:20px; overflow:hidden; text-overflow:clip; vertical-align:bottom; outline:none; box-sizing:border-box; border-right:1px solid #e1e1e1; border-bottom:1px solid #e1e1e1; }
+.mtd-pv.nogrid td:not(.rn) { border-right-color:transparent; border-bottom-color:transparent; }
+.mtd-pv td.sp { overflow:visible; }
+.mtd-pv td[contenteditable="true"]:focus { box-shadow:inset 0 0 0 2px #217346; overflow:visible; }
+.mtd-pv td.chg { outline:2px solid #2fb673; outline-offset:-2px; }
+.mtd-pv-note { flex:none; font-size:12px; color:#7d8fb2; margin:8px 2px 0; line-height:1.4; }
 .mtd-scroll th, .mtd-scroll td { padding:0 8px; }
 .mtd-scroll th:first-child, .mtd-scroll td:first-child { padding-left:12px; }
 .mtd-team { flex:none; }
@@ -4336,9 +4348,10 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                                 <button type="button" class="mtd-btn primary" id="mtd-run" disabled>Run</button>
                             </div>
                             <div class="mtd-post hidden" id="mtd-post">
+                                <button type="button" class="mtd-btn ghost" id="mtd-preview" style="flex:1 1 120px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Preview &amp; edit</button>
                                 <button type="button" class="mtd-btn green" id="mtd-download"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg> Download</button>
-                                <button type="button" class="mtd-btn wa" id="mtd-wa"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.600 15.100L2 22l5-1.300A10 10 0 1012 2zm5.200 14.200c-.2.600-1.300 1.200-1.800 1.200-.5.100-1 .2-3.200-.7-2.700-1.100-4.400-3.800-4.600-4-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.300 0 .5l-.4.600c-.1.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.100 1 2.100 1.300 2.400 1.400.3.100.4.100.6-.1l.8-1c.2-.3.400-.2.700-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg> WhatsApp</button>
-                                <button type="button" class="mtd-btn mail" id="mtd-mail"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.500"/><path d="M3.500 7l8.500 6 8.500-6"/></svg> Email</button>
+                                
+                                
                             </div>
                         </section>
                         <section class="mtd-card hidden" id="mtd-revcard">
@@ -13839,7 +13852,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   const DEFAULT_EXCLUDED = []; const ALWAYS_OUT = ['Faiz Ahmed', 'Sirajuddin'];       // removed completely; add them back from Team allocation if needed
 
   let files = [];            // File objects, in order
-  let outBuffer = null;
+  let outBuffer = null, outWb = null; const pvPending = {};
   let revInfo = [], revTok = 0;
   const overrides = {};     // normalised name -> text typed in the manual box
   const NEW_PEOPLE = new Set();   // names added automatically from files (shown with a NEW badge)
@@ -13901,8 +13914,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   clearBtn.addEventListener('click', () => { files = []; reset(); render(); loadRevenue(); });
   runBtn.addEventListener('click', run);
   dlBtn.addEventListener('click', download);
-  $('mtd-wa').addEventListener('click', () => share('wa'));
-  $('mtd-mail').addEventListener('click', () => share('mail'));
+  $('mtd-preview').addEventListener('click', openPreview);
   $('mtd-teams-btn').addEventListener('click', openTeams);
 
   function addFiles(fl) {
@@ -13913,7 +13925,8 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     reset(); render(); loadRevenue();
   }
   function reset() {
-    outBuffer = null;
+    outBuffer = null; outWb = null; Object.keys(pvPending).forEach(k => delete pvPending[k]);
+    if (pvModal) pvModal.classList.remove('show');
     $('mtd-post').classList.add('hidden');
     $('mtd-logcard').classList.add('hidden'); $('mtd-log').innerHTML = '';
     setStatus(files.length ? 'Ready \u2013 press Run to combine.' : 'Add at least one workbook to start.');
@@ -14117,6 +14130,29 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     return (bs >= 0.86 && bs - second >= 0.05) ? best : -1;
   }
   const isTotalRow = s => /^(grand\s+)?total\b|^sub\s*total\b|^average\b/i.test(String(s || '').trim());
+
+  /* a formula that was typed over with a plain number (or blanked) is rebuilt from the same column of another person row */
+  function repairFormulaCols(ws, rows, cols, label) {
+    const inRef = (ref, r, c) => { const m = /^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(ref || ''); return !!m && r >= +m[2] && r <= +m[4] && c >= colNum(m[1]) && c <= colNum(m[3]); };
+    let fixed = 0;
+    cols.forEach(c => {
+      const isPlainF = v => isFormula(v) && !isArrayF(v) && typeof v.formula === 'string' && v.formula.trim() !== '';
+      const withF = rows.filter(r => isPlainF(ws.getCell(r, c).value));
+      if (!withF.length || withF.length < rows.length / 2) return;                  // not a formula column
+      const ref = withF[0], rf = ws.getCell(ref, c).value.formula;
+      rows.forEach(r => {
+        const cell = ws.getCell(r, c), v = cell.value;
+        if (isFormula(v)) return;
+        const left = c > 1 ? ws.getCell(r, c - 1).value : null;
+        if (left && isArrayF(left) && inRef(left.ref, r, c)) return;                // second half of a two-column lookup
+        if (v !== null && v !== undefined && typeof v !== 'number') return;
+        cell.value = { formula: shiftFormula(rf, r - ref) };
+        fixed++;
+        log(`Fixed ${label} ${colLetter(c)}${r}: a typed value ${v == null ? '(blank)' : v} replaced the formula \u2013 formula restored`, 'ok');
+      });
+    });
+    return fixed;
+  }
 
   /* move every relative row reference by `delta` rows, like copy/paste in Excel */
   function shiftFormula(f, delta) {
@@ -14470,6 +14506,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
           const labels = {}; blocks.forEach(b => { labels[key(b.label)] = b.label; });
           if (outTeams.length > blocks.length) log(`"${TWP}" has room for ${blocks.length} teams \u2013 not shown: ${outTeams.slice(blocks.length).map(t => t.name).join(', ')}`, 'err');
           const clearRow = r => { for (let c = 1; c <= 24; c++) { const cell = mTwp.getCell(r, c); if (cell.isMerged && cell.master && cell.master.address !== cell.address) continue; if (cell.value !== null && cell.value !== undefined) cell.value = null; } };
+          const twpRows = [];
           blocks.forEach((b, bi) => {
             const t = outTeams[bi];
             if (!t) { for (let r = b.hdr; r <= b.tot; r++) { if (r > b.hdr && r <= b.last) clearRow(r); mTwp.getRow(r).hidden = true; } return; }
@@ -14480,10 +14517,11 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
             if (!isFormula(hc.value)) hc.value = labels[key(t.name)] || (t.name.replace(/\s*team\s*$/i, '') + "'s Team");
             for (let i = 0; i < room; i++) {
               const r = b.first + i, row = mTwp.getRow(r);
-              if (i < people.length) { mTwp.getCell(r, 1).value = people[i]; row.hidden = false; }
+              if (i < people.length) { mTwp.getCell(r, 1).value = people[i]; row.hidden = false; twpRows.push(r); }
               else { clearRow(r); row.hidden = true; }
             }
           });
+          repairFormulaCols(mTwp, twpRows, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 22, 24], TWP);
           log(`${TWP}: ${outTeams.slice(0, blocks.length).map(t => t.name).join(' \u2192 ')}`, 'ok');
         }
       }
@@ -14515,7 +14553,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
         }));
       }
 
-      /* /* 2c. Same row height for every person row (stops one row from auto-growing) */
+      /* 2c. Same row height for every person row (stops one row from auto-growing) */
       {
         const dflt = (mTeam.properties && mTeam.properties.defaultRowHeight) || 15;
         for (const first of [FIRST_ROW, FIRST_ROW + T2]) {
@@ -14527,6 +14565,32 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
           rowsUsed.forEach(r => { const h = mTeam.getRow(r).height || dflt; tally[h] = (tally[h] || 0) + 1; });
           const common = +Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
           rowsUsed.forEach(r => { if ((mTeam.getRow(r).height || dflt) !== common) mTeam.getRow(r).height = common; });
+        }
+      }
+
+      /* 2e. Repair problems found in the workbook itself */
+      {
+        // "ORDER VALUE2" header typo
+        for (let c = 1; c <= PIPE_COLS; c++) {
+          const h = mPipe.getCell(FIRST_ROW - 1, c), t = txt(h.value).trim();
+          if (/^order\s*value\s*\d+$/i.test(t)) { h.value = 'ORDER VALUE'; log(`Fixed pipeline header "${t}" \u2192 "ORDER VALUE"`, 'ok'); }
+        }
+        // formulas whose reference was deleted (#REF!)
+        [mPipe, mTeam, mTwp].forEach(ws => ws && ws.eachRow({ includeEmpty: false }, row => row.eachCell({ includeEmpty: false }, cell => {
+          const v = cell.value; if (!isFormula(v) || isArrayF(v) || typeof v.formula !== 'string' || !/#REF!/.test(v.formula)) return;
+          const stage = txt(mPipe.getCell(2, 3).value).trim();
+          if (ws === mPipe && stage && /\$F\$\d+:\$F\$\d+\s*=\s*#REF!/.test(v.formula)) {
+            cell.value = { formula: v.formula.replace(/(\$F\$\d+:\$F\$\d+\s*=\s*)#REF!/, '$1$C$2') };
+            log(`Fixed ${ws.name} ${cell.address}: broken reference (#REF!) now points to the stage cell C2 ("${stage}")`, 'ok');
+          } else log(`${ws.name} ${cell.address} has a broken reference (#REF!) \u2013 please check this formula`, 'warn');
+        })));
+        // person rows of SALES TEAM: ratio / actual columns must all be formulas
+        const used = []; for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) if (txt(mTeam.getCell(r, 2).value).trim()) used.push(r);
+        repairFormulaCols(mTeam, used, [6, 8, 9, 11, 12, 15, 18, 22, 25, 26], TEAM);
+        // second (stacked) table: names must match the first table
+        for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) {
+          const up = txt(mTeam.getCell(r, 2).value).trim(), lc = mTeam.getCell(r + T2, 2);
+          if (!isFormula(lc.value) && norm(lc.value) !== norm(up)) { log(`Fixed ${TEAM} B${r + T2}: "${txt(lc.value).trim()}" did not match "${up}" (row ${r})`, 'ok'); lc.value = up || null; }
         }
       }
 
@@ -14559,7 +14623,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       master.calcProperties = master.calcProperties || {};
       master.calcProperties.fullCalcOnLoad = true;
 
-      outBuffer = await master.xlsx.writeBuffer();
+      outBuffer = await master.xlsx.writeBuffer(); outWb = master;
       $('mtd-post').classList.remove('hidden');           // Download / WhatsApp / Email only appear after a successful merge
       setStatus(`\u2714 Done \u2013 ${loaded.length} file${loaded.length > 1 ? 's' : ''} combined (${newLast - FIRST_ROW + 1} pipeline rows).`, 'ok');
     } catch (err) {
@@ -14581,27 +14645,315 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   }
-  const MAIL_TO = ['arif@sudhirrentals.com', 'wasim@sudhirrentals.com', 'rabin@sudhirrentals.com'];
-  async function share(kind) {
-    if (!outBuffer) return;
-    const name = outName(), title = name.replace(/\.xlsx$/, ''), text = `${title}`;
-    let why = '';
-    /* the browser's share window attaches the file to the app you pick (Outlook, WhatsApp...) \u2013 nothing is downloaded */
+  /* ---------- preview, edit and save the merged workbook (looks like Excel: fills, fonts, borders, merged cells, widths, number formats, calculated formulas) ---------- */
+  let pvModal = null, pvSheet = null, pvHF = null, hfP = null;
+  const pvKey = (n, r, c) => n + '\u0001' + r + '\u0001' + c;
+  const colLetter = n => { let t = ''; while (n > 0) { const m = (n - 1) % 26; t = String.fromCharCode(65 + m) + t; n = Math.floor((n - 1) / 26); } return t; };
+  const colNum = L => L.split('').reduce((a, ch) => a * 26 + ch.charCodeAt(0) - 64, 0);
+  const pvTheme = ['FFFFFF', '000000', 'E7E6E6', '44546A', '4472C4', 'ED7D31', 'A5A5A5', 'FFC000', '5B9BD5', '70AD47'];
+  function pvLoadTheme() {
     try {
-      const f = new File([outBuffer], name, { type: XLSX_MIME });
-      if (!navigator.share) why = 'this browser has no share window';
-      else if (!navigator.canShare || !navigator.canShare({ files: [f] })) why = 'this browser cannot share .xlsx files';
-      else {
-        const pr = navigator.share({ files: [f], title, text });          // called straight from the click
-        if (kind === 'mail') { try { navigator.clipboard.writeText(MAIL_TO.join('; ')); } catch (e) { /* ignore */ } }
-        await pr;
-        if (kind === 'mail') setStatus(`Choose Outlook in the share window. Recipients copied \u2013 paste them in "To": ${MAIL_TO.join('; ')}`, 'ok');
-        return;
+      const th = outWb._themes && (outWb._themes.theme1 || Object.values(outWb._themes)[0]);
+      if (!th) return;
+      const sc = new DOMParser().parseFromString(String(th), 'text/xml').getElementsByTagName('a:clrScheme')[0];
+      if (!sc) return;
+      ['lt1', 'dk1', 'lt2', 'dk2', 'accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6'].forEach((n, i) => {
+        const e = sc.getElementsByTagName('a:' + n)[0], c = e && e.firstElementChild;
+        const v = c && (c.getAttribute('lastClr') || c.getAttribute('val'));
+        if (v && /^[0-9A-Fa-f]{6}$/.test(v)) pvTheme[i] = v;
+      });
+    } catch (e) { /* keep defaults */ }
+  }
+  function pvTint(hex, t) {
+    const r = parseInt(hex.slice(0, 2), 16) / 255, g = parseInt(hex.slice(2, 4), 16) / 255, b = parseInt(hex.slice(4, 6), 16) / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let h = 0, s = 0, l = (mx + mn) / 2;
+    if (mx !== mn) { const d = mx - mn; s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h /= 6; }
+    l = t < 0 ? l * (1 + t) : l * (1 - t) + t;
+    const f = (p, q, x) => { if (x < 0) x += 1; if (x > 1) x -= 1; if (x < 1 / 6) return p + (q - p) * 6 * x; if (x < 1 / 2) return q; if (x < 2 / 3) return p + (q - p) * (2 / 3 - x) * 6; return p; };
+    let R, G, B;
+    if (s === 0) R = G = B = l; else { const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q; R = f(p, q, h + 1 / 3); G = f(p, q, h); B = f(p, q, h - 1 / 3); }
+    return [R, G, B].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
+  function pvColor(c) {
+    if (!c) return null;
+    let hex = null;
+    if (c.argb) hex = String(c.argb).slice(-6);
+    else if (c.theme != null) hex = pvTheme[c.theme] || null;
+    else if (c.indexed != null) hex = ({ 8: '000000', 9: 'FFFFFF', 10: 'FF0000', 11: '00FF00', 12: '0000FF', 13: 'FFFF00', 14: 'FF00FF', 15: '00FFFF', 64: '000000' })[c.indexed] || null;
+    if (!hex || !/^[0-9A-Fa-f]{6}$/.test(hex)) return null;
+    return '#' + (c.tint ? pvTint(hex, c.tint) : hex);
+  }
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  function pvDate(serial, fmt) {
+    const d = new Date(Math.round((serial - 25569) * 86400000)), p2 = n => String(n).padStart(2, '0');
+    const h24 = d.getUTCHours(), ampm = /AM\/PM|A\/P/i.test(fmt);
+    return fmt.replace(/"/g, '').replace(/yyyy|yy|mmmm|mmm|mm|m|dddd|ddd|dd|d|hh|h|ss|s|AM\/PM|A\/P/gi, (t, off) => {
+      const k = t.toLowerCase(), before = fmt.slice(0, off), after = fmt.slice(off + t.length);
+      const isMin = (k === 'm' || k === 'mm') && (/h+[:\s]*$/i.test(before) || /^[:\s]*s/i.test(after));
+      if (isMin) return k === 'mm' ? p2(d.getUTCMinutes()) : String(d.getUTCMinutes());
+      switch (k) {
+        case 'yyyy': return String(d.getUTCFullYear());
+        case 'yy': return p2(d.getUTCFullYear() % 100);
+        case 'mmmm': return MONTHS[d.getUTCMonth()];
+        case 'mmm': return MONTHS[d.getUTCMonth()].slice(0, 3);
+        case 'mm': return p2(d.getUTCMonth() + 1);
+        case 'm': return String(d.getUTCMonth() + 1);
+        case 'dddd': return DAYS[d.getUTCDay()];
+        case 'ddd': return DAYS[d.getUTCDay()].slice(0, 3);
+        case 'dd': return p2(d.getUTCDate());
+        case 'd': return String(d.getUTCDate());
+        case 'hh': return p2(ampm ? (h24 % 12 || 12) : h24);
+        case 'h': return String(ampm ? (h24 % 12 || 12) : h24);
+        case 'ss': return p2(d.getUTCSeconds());
+        case 's': return String(d.getUTCSeconds());
+        default: return h24 >= 12 ? 'PM' : 'AM';
       }
-    } catch (e) { if (e && e.name === 'AbortError') return; why = 'share was blocked (' + ((e && e.name) || 'error') + ')'; }
-    if (kind === 'wa') { window.open('https://wa.me/?text=' + encodeURIComponent(`${title} \u2013 please see the attached file.`), '_blank'); }
-    else { window.location.href = 'mailto:' + MAIL_TO.join(';') + '?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(`Hello,\n\nPlease find attached the ${title}.\n`); }
-    setStatus(`Cannot attach the file automatically \u2013 ${why}. Use Download, then attach the file.`, 'err');
+    });
+  }
+  function pvFmt(v, fmt) {
+    if (v == null || v === '') return '';
+    if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+    if (v instanceof Date) v = v.getTime() / 86400000 + 25569;
+    if (typeof v !== 'number') return String(v);
+    if (!isFinite(v)) return String(v);
+    if (!fmt || /^general$/i.test(fmt)) return String(Number(v.toPrecision(10)));
+    const secs = fmt.split(';'); let f = secs[0], sign = '';
+    if (v < 0) { if (secs.length > 1) { f = secs[1]; v = -v; } else { v = -v; sign = '-'; } }
+    else if (v === 0 && secs.length > 2) f = secs[2];
+    const clean = f.replace(/\[(?:\$([^\]-]*)[^\]]*|[^\]]*)\]/g, (m, cur) => cur ? '"' + cur + '"' : '');
+    const masked = clean.replace(/"[^"]*"/g, q => '\u0002'.repeat(q.length));
+    const lit = t => t.replace(/_(.)/g, ' ').replace(/\*(.)/g, '').replace(/\\(.)/g, '$1').replace(/"/g, '').replace(/@/g, '');
+    if (/[ymdhs]/i.test(masked.replace(/\\./g, '')) && !/[#0]/.test(masked)) return sign + pvDate(v, clean);
+    if (/%/.test(masked)) v = v * 100;
+    const m = /[#0?][#0?,]*(?:\.[0#?]*)?/.exec(masked);
+    if (!m) return sign + lit(clean);
+    const core = clean.slice(m.index, m.index + m[0].length);
+    const pre = lit(clean.slice(0, m.index)), post = lit(clean.slice(m.index + core.length));
+    const ip = core.split('.')[0], dp = core.split('.')[1] || '';
+    const nd = dp.replace(/[^0#?]/g, '').length, minD = (dp.match(/0/g) || []).length, minI = (ip.match(/0/g) || []).length;
+    let [i, d = ''] = Math.abs(v).toFixed(nd).split('.');
+    while (d.length > minD && d.endsWith('0')) d = d.slice(0, -1);
+    i = i.padStart(minI, '0');
+    if (minI === 0 && i === '0') i = '';
+    if (ip.indexOf(',') >= 0) i = /,##,/.test(ip) ? i.replace(/(\d)(?=(\d\d)+\d$)/g, '$1,') : i.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return sign + pre + i + (d ? '.' + d : '') + post;
+  }
+  function pvShow(v) {
+    if (v == null || isFormula(v)) return '';
+    if (v instanceof Date) return v.toISOString().slice(0, 10);
+    if (typeof v === 'object') return v.richText ? v.richText.map(r => r.text).join('') : (v.text != null ? String(v.text) : (v.error || ''));
+    return String(v);
+  }
+  const pvNum = t => { const x = String(t).trim().replace(/,/g, ''); return (x !== '' && /^-?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(x)) ? Number(x) : null; };
+  const pvDisp = (text, nf) => { const n = pvNum(text); return n == null ? text : pvFmt(n, nf); };
+
+  function ensureHF() {
+    if (window.HyperFormula) return Promise.resolve(true);
+    if (hfP) return hfP;
+    const urls = ['https://cdn.jsdelivr.net/npm/hyperformula@2.6.2/dist/hyperformula.full.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/hyperformula/2.6.2/hyperformula.full.min.js'];
+    hfP = (async () => {
+      for (const u of urls) {
+        const ok = await new Promise(res => { const sc = document.createElement('script'); sc.src = u; sc.onload = () => res(true); sc.onerror = () => { sc.remove(); res(false); }; document.head.appendChild(sc); });
+        if (ok && window.HyperFormula) return true;
+      }
+      return false;
+    })();
+    hfP.then(ok => { if (!ok) hfP = null; });
+    return hfP;
+  }
+  /* calculates every formula of the workbook so the preview shows numbers, like Excel does */
+  function pvCalc() {
+    if (pvHF) { try { pvHF.destroy(); } catch (e) { /* ignore */ } }
+    pvHF = null;
+    if (!window.HyperFormula || !outWb) return;
+    try {
+      const sheets = {};
+      outWb.worksheets.forEach(ws => {
+        const R = ws.rowCount, C = ws.columnCount, arr = [];
+        for (let r = 0; r < R; r++) arr.push(new Array(C).fill(null));
+        ws.eachRow({ includeEmpty: false }, (row, rn) => row.eachCell({ includeEmpty: false }, (cell, cn) => {
+          const v = cell.value; let x = null;
+          if (isFormula(v)) { const f = v.formula || cell.formula; x = f ? '=' + String(f).replace(/_xlfn\.(_xlws\.)?/g, '') : null; }
+          else if (v instanceof Date) x = v.getTime() / 86400000 + 25569;
+          else if (v && typeof v === 'object') x = pvShow(v) || null;
+          else x = v;
+          if (rn <= R && cn <= C) arr[rn - 1][cn - 1] = x;
+        }));
+        sheets[ws.name] = arr;
+      });
+      pvHF = window.HyperFormula.buildFromSheets(sheets, { licenseKey: 'gpl-v3' });
+    } catch (e) { console.error('preview calc', e); pvHF = null; }
+  }
+  function pvCalcVal(name, r, c) {
+    if (!pvHF) return undefined;
+    try { return pvHF.getCellValue({ sheet: pvHF.getSheetId(name), row: r - 1, col: c - 1 }); } catch (e) { return undefined; }
+  }
+  const BORDER_W = { thin: '1px solid', hair: '1px dotted', dotted: '1px dotted', dashed: '1px dashed', mediumDashed: '2px dashed', medium: '2px solid', thick: '3px solid', double: '3px double' };
+
+  function pvFoot() {
+    const n = Object.keys(pvPending).length;
+    pvModal.querySelector('[data-p="save"]').disabled = !n;
+    pvModal.querySelector('#mtd-pv-msg').textContent = n ? `${n} unsaved change${n > 1 ? 's' : ''} \u2013 press Save changes.`
+      : (pvHF ? 'Tap a cell to edit it. Formula cells can\u2019t be edited \u2013 they update when you change the cells they use and press Save.' : 'Tap a cell to edit it. Formula results could not be calculated here (\u0192) \u2013 they calculate when the file is opened in Excel.');
+  }
+  function pvRender(name) {
+    pvSheet = name;
+    pvModal.querySelectorAll('.mtd-pv-tabs button').forEach(b => b.classList.toggle('on', b.dataset.s === name));
+    const ws = outWb.getWorksheet(name), maxR = Math.min(ws.rowCount, 600), maxC = Math.min(Math.max(ws.columnCount, 1), 40);
+    const defW = (ws.properties && ws.properties.defaultColWidth) || 8.43;
+    const widths = [], colVis = [];
+    for (let c = 1; c <= maxC; c++) { const col = ws._columns && ws._columns[c - 1]; widths[c] = Math.round(((col && col.width != null) ? col.width : defW) * 7 + 5); colVis[c] = !(col && col.hidden); }
+    const rowVis = [];
+    for (let r = 1; r <= maxR; r++) { const row = ws.findRow(r); rowVis[r] = !(row && row.hidden); }
+    const merges = {}, covered = new Set();
+    (ws.model.merges || []).forEach(ref => {
+      const m = /^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(ref); if (!m) return;
+      const c1 = colNum(m[1]), r1 = +m[2], c2 = colNum(m[3]), r2 = +m[4];
+      merges[r1 + ',' + c1] = { r2, c2 };
+      for (let rr = r1; rr <= r2; rr++) for (let cc = c1; cc <= c2; cc++) if (rr !== r1 || cc !== c1) covered.add(rr + ',' + cc);
+    });
+    let total = 46, cg = '<col style="width:46px">';
+    for (let c = 1; c <= maxC; c++) if (colVis[c]) { total += widths[c]; cg += `<col style="width:${widths[c]}px">`; }
+    let h = '<colgroup>' + cg + '</colgroup><thead><tr><th class="rn"></th>';
+    for (let c = 1; c <= maxC; c++) if (colVis[c]) h += `<th>${colLetter(c)}</th>`;
+    h += '</tr></thead><tbody>';
+    for (let r = 1; r <= maxR; r++) {
+      if (!rowVis[r]) continue;
+      const row = ws.findRow(r), rh = row && row.height ? ` style="height:${Math.round(row.height * 1.3333)}px"` : '';
+      h += `<tr${rh}><td class="rn">${r}</td>`;
+      for (let c = 1; c <= maxC; c++) {
+        if (!colVis[c]) continue;
+        if (covered.has(r + ',' + c)) continue;
+        const cell = ws.findCell(r, c), v = cell ? cell.value : null, mg = merges[r + ',' + c];
+        let span = '';
+        if (mg) {
+          let cs = 0, rs = 0;
+          for (let cc = c; cc <= Math.min(mg.c2, maxC); cc++) if (colVis[cc]) cs++;
+          for (let rr = r; rr <= Math.min(mg.r2, maxR); rr++) if (rowVis[rr]) rs++;
+          if (cs > 1) span += ` colspan="${cs}"`; if (rs > 1) span += ` rowspan="${rs}"`;
+        }
+        const st = [], fl = cell ? cell.fill : null, ft = (cell && cell.font) || {}, al = (cell && cell.alignment) || {}, bd = (cell && cell.border) || {}, nf = cell ? cell.numFmt : '';
+        if (fl && fl.type === 'pattern' && fl.pattern === 'solid') { const bg = pvColor(fl.fgColor); if (bg) st.push('background:' + bg); }
+        const fc = pvColor(ft.color); if (fc) st.push('color:' + fc);
+        if (ft.bold) st.push('font-weight:700'); if (ft.italic) st.push('font-style:italic');
+        const td = [ft.underline ? 'underline' : '', ft.strike ? 'line-through' : ''].filter(Boolean).join(' '); if (td) st.push('text-decoration:' + td);
+        if (ft.size) st.push('font-size:' + (ft.size * 1.3333).toFixed(1) + 'px');
+        if (ft.name && !/^calibri$/i.test(ft.name)) st.push(`font-family:'${String(ft.name).replace(/['"<>]/g, '')}',Calibri,Arial,sans-serif`);
+        let disp, cls = '', editable = false, raw = '';
+        const isF = isFormula(v);
+        if (isF) {
+          const x = pvCalcVal(name, r, c), res = v.result;
+          cls = 'f';
+          if (x === undefined) disp = (res != null && typeof res !== 'object') ? pvFmt(res, nf) : '\u0192';
+          else if (x && typeof x === 'object') disp = x.value || '#ERR';
+          else disp = x == null ? '' : pvFmt(x, nf);
+          st.push('font-style:italic'.replace('italic', ft.italic ? 'italic' : 'normal'));
+          if (typeof x === 'number') st.push('text-align:right'); else if (x && typeof x === 'object') st.push('text-align:center');
+        } else {
+          editable = true; raw = pvShow(v);
+          const k = pvKey(name, r, c), pend = k in pvPending;
+          disp = pend ? pvDisp(pvPending[k], nf) : ((typeof v === 'number' || v instanceof Date) ? pvFmt(v, nf) : raw);
+          if (pend) cls = 'chg';
+          if (typeof v === 'number' || v instanceof Date) st.push('text-align:right');
+        }
+        const H = al.horizontal; if (H && H !== 'general') st.push('text-align:' + (H === 'centerContinuous' ? 'center' : H));
+        st.push('vertical-align:' + (al.vertical === 'top' ? 'top' : al.vertical === 'middle' || al.vertical === 'center' ? 'middle' : 'bottom'));
+        if (al.wrapText) st.push('white-space:pre-wrap;word-break:break-word'); else st.push('white-space:nowrap');
+        if (al.indent) st.push('padding-left:' + (4 + al.indent * 9) + 'px');
+        ['top', 'left', 'bottom', 'right'].forEach(sd => { const b = bd[sd]; if (b && b.style && BORDER_W[b.style]) st.push(`border-${sd}:${BORDER_W[b.style]} ${pvColor(b.color) || '#000'}`); });
+        if (!al.wrapText && !mg && (!H || H === 'general' || H === 'left') && typeof v === 'string' && disp) {
+          const nx = ws.findCell(r, c + 1); if (!nx || nx.value == null || nx.value === '') cls += ' sp';
+        }
+        const attrs = editable ? ` contenteditable="true" data-r="${r}" data-c="${c}" data-raw="${esc(raw)}" data-nf="${esc(nf || '')}"` : (isF ? ` title="=${esc(v.formula || v.sharedFormula || '')}"` : '');
+        h += `<td${span}${cls.trim() ? ` class="${cls.trim()}"` : ''}${attrs} style="${esc(st.join(';'))}">${esc(disp)}</td>`;
+      }
+      h += '</tr>';
+    }
+    const tb = pvModal.querySelector('#mtd-pv');
+    tb.innerHTML = h + '</tbody>';
+    tb.style.width = total + 'px';
+    tb.classList.toggle('nogrid', !!(ws.views && ws.views[0] && ws.views[0].showGridLines === false));
+    pvModal.querySelector('.mtd-pv-wrap').scrollTop = 0;
+    pvFoot();
+  }
+  async function pvSave() {
+    const keys = Object.keys(pvPending);
+    if (!keys.length || !outWb) return;
+    const btn = pvModal.querySelector('[data-p="save"]'); btn.disabled = true;
+    try {
+      keys.forEach(k => {
+        const [sn, r, c] = k.split('\u0001'), cell = outWb.getWorksheet(sn).getCell(+r, +c);
+        const t = String(pvPending[k]).trim(), o = cell.value, n = pvNum(t);
+        if (t === '') cell.value = null;
+        else if (o instanceof Date) { const d = new Date(t); cell.value = isNaN(d) ? t : d; }
+        else if (typeof o !== 'string' && n != null) cell.value = n;
+        else cell.value = t;
+      });
+      outBuffer = await outWb.xlsx.writeBuffer();
+      keys.forEach(k => delete pvPending[k]);
+      pvCalc(); pvRender(pvSheet);
+      pvModal.querySelector('#mtd-pv-msg').textContent = `\u2714 ${keys.length} change${keys.length > 1 ? 's' : ''} saved \u2013 Download now gives the edited file.`;
+      setStatus(`\u2714 ${keys.length} edit${keys.length > 1 ? 's' : ''} saved \u2013 press Download to get the edited file.`, 'ok');
+    } catch (err) {
+      console.error(err);
+      pvModal.querySelector('#mtd-pv-msg').textContent = 'Could not save: ' + (err && err.message ? err.message : err);
+      btn.disabled = false;
+    }
+  }
+  function pvClose() {
+    if (Object.keys(pvPending).length && !confirm('Discard the unsaved changes?')) return;
+    Object.keys(pvPending).forEach(k => delete pvPending[k]);
+    pvModal.classList.remove('show');
+  }
+  async function openPreview() {
+    if (!outWb) return;
+    if (!pvModal) {
+      pvModal = document.createElement('div'); pvModal.className = 'mtd-modal'; pvModal.id = 'mtd-pvmodal';
+      pvModal.innerHTML = '<div class="mtd-sheet wide" role="dialog" aria-modal="true"><div class="mtd-sheet-head"><div><h3>Preview &amp; edit</h3><p>The merged workbook as it will be downloaded.</p></div><button type="button" class="mtd-x" data-p="close" aria-label="Close">\u00d7</button></div>'
+        + '<div class="mtd-pv-tabs" id="mtd-pv-tabs"></div><div class="mtd-pv-wrap"><table class="mtd-pv" id="mtd-pv"></table></div><p class="mtd-pv-note" id="mtd-pv-msg"></p>'
+        + '<div class="mtd-sheet-foot"><button type="button" class="mtd-btn ghost" data-p="close">Close</button><button type="button" class="mtd-btn primary" data-p="save" disabled>Save changes</button><button type="button" class="mtd-btn green" data-p="dl">Download</button></div></div>';
+      document.body.appendChild(pvModal);
+      pvModal.addEventListener('click', e => {
+        const b = e.target.closest('[data-p],[data-s]'); if (!b) { if (e.target === pvModal) pvClose(); return; }
+        if (b.dataset.s) pvRender(b.dataset.s);
+        else if (b.dataset.p === 'close') pvClose();
+        else if (b.dataset.p === 'save') pvSave();
+        else if (b.dataset.p === 'dl') download();
+      });
+      pvModal.addEventListener('focusin', e => {          // show the real value while typing (not "SAR 20,00,000")
+        const td = e.target.closest && e.target.closest('td[data-r]'); if (!td) return;
+        const k = pvKey(pvSheet, td.dataset.r, td.dataset.c);
+        td.textContent = k in pvPending ? pvPending[k] : td.dataset.raw;
+      });
+      pvModal.addEventListener('input', e => {
+        const td = e.target.closest('td[data-r]'); if (!td) return;
+        const k = pvKey(pvSheet, td.dataset.r, td.dataset.c), t = td.textContent;
+        if (t === td.dataset.raw) { delete pvPending[k]; td.classList.remove('chg'); } else { pvPending[k] = t; td.classList.add('chg'); }
+        pvFoot();
+      });
+      pvModal.addEventListener('focusout', e => {          // back to the formatted look
+        const td = e.target.closest && e.target.closest('td[data-r]'); if (!td) return;
+        const k = pvKey(pvSheet, td.dataset.r, td.dataset.c);
+        td.textContent = (k in pvPending) ? pvDisp(pvPending[k], td.dataset.nf) : (td.dataset.raw === '' ? '' : pvDisp(td.dataset.raw, td.dataset.nf));
+      });
+      pvModal.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('td[data-r]')) { e.preventDefault(); e.target.blur(); } });
+      pvModal.addEventListener('paste', e => {
+        if (!e.target.matches('td[data-r]')) return;
+        e.preventDefault();
+        document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text').replace(/\s*[\r\n]+\s*/g, ' '));
+      });
+    }
+    const names = outWb.worksheets.filter(w => !w.state || w.state === 'visible').map(w => w.name);
+    pvModal.querySelector('#mtd-pv-tabs').innerHTML = names.map(n => `<button type="button" data-s="${esc(n)}">${esc(n)}</button>`).join('');
+    pvModal.classList.add('show');
+    pvModal.querySelector('#mtd-pv-msg').textContent = 'Calculating formulas\u2026';
+    pvLoadTheme();
+    pvRender(names.includes(TEAM) ? TEAM : names[0]);     // quick first look
+    await ensureHF();
+    if (!outWb || !pvModal.classList.contains('show')) return;
+    pvCalc();
+    pvRender(pvSheet);
   }
 
   /* ---------- team allocation (view team-wise, drag people between teams) ---------- */
