@@ -14585,20 +14585,23 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   async function share(kind) {
     if (!outBuffer) return;
     const name = outName(), title = name.replace(/\.xlsx$/, ''), text = `${title}`;
-    /* the browser's share sheet attaches the file to the app you pick (Outlook, WhatsApp...) \u2013 nothing is downloaded */
+    let why = '';
+    /* the browser's share window attaches the file to the app you pick (Outlook, WhatsApp...) \u2013 nothing is downloaded */
     try {
       const f = new File([outBuffer], name, { type: XLSX_MIME });
-      if (navigator.canShare && navigator.canShare({ files: [f] })) {
-        if (kind === 'mail') { try { await navigator.clipboard.writeText(MAIL_TO.join('; ')); } catch (e) { /* ignore */ } }
-        await navigator.share({ files: [f], title, text });
+      if (!navigator.share) why = 'this browser has no share window';
+      else if (!navigator.canShare || !navigator.canShare({ files: [f] })) why = 'this browser cannot share .xlsx files';
+      else {
+        const pr = navigator.share({ files: [f], title, text });          // called straight from the click
+        if (kind === 'mail') { try { navigator.clipboard.writeText(MAIL_TO.join('; ')); } catch (e) { /* ignore */ } }
+        await pr;
         if (kind === 'mail') setStatus(`Choose Outlook in the share window. Recipients copied \u2013 paste them in "To": ${MAIL_TO.join('; ')}`, 'ok');
         return;
       }
-    } catch (e) { if (e && e.name === 'AbortError') return; }
-    /* this browser can't share files: open the mail app / WhatsApp without downloading anything */
+    } catch (e) { if (e && e.name === 'AbortError') return; why = 'share was blocked (' + ((e && e.name) || 'error') + ')'; }
     if (kind === 'wa') { window.open('https://wa.me/?text=' + encodeURIComponent(`${title} \u2013 please see the attached file.`), '_blank'); }
     else { window.location.href = 'mailto:' + MAIL_TO.join(';') + '?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(`Hello,\n\nPlease find attached the ${title}.\n`); }
-    setStatus('This browser cannot attach files automatically \u2013 use Download, then attach the file.', 'err');
+    setStatus(`Cannot attach the file automatically \u2013 ${why}. Use Download, then attach the file.`, 'err');
   }
 
   /* ---------- team allocation (view team-wise, drag people between teams) ---------- */
