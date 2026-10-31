@@ -13866,7 +13866,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
         vals.push(cell.value);
         styles.push(clone(cell.style || {}));
       }
-      rows.push({ vals, styles });
+      rows.push({ vals, styles, qref: row.getCell(PIPE_COLS).value });   // column S = quote number (no header in the weekly files)
     });
     return rows;
   }
@@ -14703,7 +14703,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
 
     if (!plans.length) { log('Graphs: no people or pipeline rows to chart \u2013 Graphs sheet not added', 'warn'); return null; }
 
-    const PITCH = 18, FROM = 4, DATA_START = FROM + Math.ceil(plans.length / 2) * PITCH + 1;
+    const PITCH = 13, FROM = 4, DATA_START = FROM + Math.ceil(plans.length / 2) * PITCH + 1;
 
     const ws = wb.addWorksheet(GRAPHS, { views: [{ showGridLines: false }], properties: { tabColor: { argb: 'FF7C3AED' } } });
 
@@ -14861,7 +14861,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
 
     });
 
-    charts.forEach((ch, i) => { ch.col = (i % 2) * 6; ch.row = FROM - 1 + Math.floor(i / 2) * PITCH; });
+    charts.forEach((ch, i) => { ch.col = (i % 2) * 4; ch.row = FROM - 1 + Math.floor(i / 2) * PITCH; });
 
 
 
@@ -15017,7 +15017,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
 
     while (zip.file('xl/charts/chart' + cNum + '.xml')) cNum++;
 
-    const EMU = 9525, W = 660 * EMU, H = 340 * EMU;
+    const EMU = 9525, W = 462 * EMU, H = 238 * EMU;   // charts are 30% smaller than the old 660 x 340
 
     let anchors = '', drels = '', ctOver = '';
 
@@ -15660,6 +15660,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
             and centred alignment, built from the base layout's first data row. */
       const tpl = [];
       for (let c = 1; c <= COPY_COLS; c++) tpl[c] = clone(mPipe.getCell(FIRST_ROW, c).style || {});
+      tpl[PIPE_COLS] = clone(tpl[1]);
       const bf = (tpl[1] && tpl[1].font) || {};
       const UFONT = { name: bf.name || 'Calibri', size: bf.size || 11, family: bf.family || 2, bold: false, italic: false, color: { argb: 'FF000000' } };
       if (bf.scheme) UFONT.scheme = bf.scheme;
@@ -15682,7 +15683,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       for (let r = FIRST_ROW; r <= lastOld; r++) {
         for (let c = 1; c <= PIPE_COLS; c++) mPipe.getCell(r, c).value = null;
       }
-      let out = FIRST_ROW;
+      let out = FIRST_ROW, anyQuoteNo = false;
       for (const L of loaded) {
         if (dropped.has(L)) continue;
         for (const row of L.rows) {
@@ -15692,10 +15693,18 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
             if (val !== null && val !== undefined) cell.value = val;
             cell.style = styleFor(c, val, (row.styles[c - 1] || {}).numFmt);
           }
+          { const q = plain(row.qref), qc = mPipe.getCell(out, PIPE_COLS);
+            if (q !== null && q !== undefined && txt(q).trim() !== '') { qc.value = q; anyQuoteNo = true; }
+            qc.style = styleFor(PIPE_COLS, q, null); }
           out++;
         }
       }
       const newLast = out - 1;
+      if (anyQuoteNo) {   // column S has no header in the weekly files - give it one so the column is identifiable
+        const qh = mPipe.getCell(FIRST_ROW - 1, PIPE_COLS);
+        qh.value = 'QUOTE NO.'; qh.style = clone(mPipe.getCell(FIRST_ROW - 1, COPY_COLS).style || {});
+        mPipe.getColumn(PIPE_COLS).width = 24;
+      }
       {
         const lastCol = Math.max(30, mPipe.columnCount || 0);
         for (let r = FIRST_ROW; r <= newLast; r++) {
@@ -15744,6 +15753,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       plan.forEach((o, i) => {
         const dst = slots[i];
         rowOf[norm(o.name)] = dst;
+        mTeam.getRow(dst).hidden = false; mTeam.getRow(dst + T2).hidden = false;     // a used slot is always visible
         let get = null, srcRow = null;
         if (o.L) {
           const r = teamNames(o.L.team)[norm(o.L.owner)];
@@ -15772,6 +15782,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       });
       for (let k = plan.length; k < slots.length; k++) {                    // rows that are no longer used
         const r = slots[k];
+        mTeam.getRow(r).hidden = true; mTeam.getRow(r + T2).hidden = true;          // empty slots (both tables) are hidden, like in Team Wise Performance
         const nm = mTeam.getCell(r, 2); if (nm.value != null && !isFormula(nm.value)) nm.value = null;
         const n2 = mTeam.getCell(r + T2, 2); if (n2.value != null && !isFormula(n2.value)) n2.value = null;
         for (let c = TEAM_FIRST_COL; c <= TEAM_LAST_COL; c++) { const d = mTeam.getCell(r, c); if (d.value != null && !isFormula(d.value)) d.value = null; }
