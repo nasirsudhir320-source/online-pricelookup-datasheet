@@ -3771,6 +3771,12 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
 .mtd-pv td.sp { overflow:visible; }
 .mtd-pv td[contenteditable="true"]:focus { box-shadow:inset 0 0 0 2px #217346; overflow:visible; }
 .mtd-pv td.chg { outline:2px solid #2fb673; outline-offset:-2px; }
+.mtd-gr { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; padding:12px; background:#faf8ff; border-bottom:1px solid var(--m-line); position:sticky; left:0; }
+.mtd-gr .c { background:#fff; border:1px solid var(--m-line); border-radius:14px; padding:6px; }
+.mtd-gr svg { width:100%; height:auto; display:block; }
+.mtd-kind { display:inline-block; margin-left:8px; padding:1px 8px; border-radius:99px; font-size:10.5px; font-weight:700; background:#ede9fe; color:#5b21b6; vertical-align:middle; }
+.mtd-kind.lost { background:#fff1e6; color:#b45309; }
+.mtd-kind.other { background:#fee2e2; color:#b91c1c; }
 .mtd-pv-note { flex:none; font-size:12px; color:#7d8fb2; margin:8px 2px 0; line-height:1.4; }
 .mtd-scroll th, .mtd-scroll td { padding:0 8px; }
 .mtd-scroll th:first-child, .mtd-scroll td:first-child { padding-left:12px; }
@@ -13854,6 +13860,8 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   let files = [];            // File objects, in order
   let outBuffer = null, outWb = null; const pvPending = {};
   let revInfo = [], revTok = 0;
+  let lostBuffer = null, lostInfo = null, lostWb = null, pvMode = 'mtd', pvLast = 0; const kindOf = new Map();   // order-lost output + what kind of report each file is
+  let graphSpec = null;      // charts of the Graphs sheet (re-added every time the workbook is saved)
   const overrides = {};     // normalised name -> text typed in the manual box
   const NEW_PEOPLE = new Set();   // names added automatically from files (shown with a NEW badge)
   let FILE_PEOPLE = new Set();    // names that have a workbook added right now
@@ -13861,6 +13869,11 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   const $ = id => document.getElementById(id);
   const drop = $('mtd-drop'), picker = $('mtd-input'), list = $('mtd-files');
   const runBtn = $('mtd-run'), clearBtn = $('mtd-clear'), dlBtn = $('mtd-download');
+  const lostBtn = document.createElement('button');
+  lostBtn.type = 'button'; lostBtn.id = 'mtd-dl-lost'; lostBtn.className = 'mtd-btn green hidden'; lostBtn.textContent = 'Download Order Lost';
+  const lostPvBtn = document.createElement('button');
+  lostPvBtn.type = 'button'; lostPvBtn.className = 'mtd-btn ghost hidden'; lostPvBtn.textContent = 'Preview Order Lost';
+  $('mtd-post').appendChild(lostPvBtn); $('mtd-post').appendChild(lostBtn);
   const monthName = () => new Date().toLocaleString('en-US', { month: 'long' });
   const outName = () => `Weekly MTD - Reports - ${monthName()}.xlsx`;
 
@@ -13914,6 +13927,8 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   clearBtn.addEventListener('click', () => { files = []; reset(); render(); loadRevenue(); });
   runBtn.addEventListener('click', run);
   dlBtn.addEventListener('click', download);
+  lostBtn.addEventListener('click', () => downloadLost());
+  lostPvBtn.addEventListener('click', () => openPreview('lost'));
   $('mtd-preview').addEventListener('click', openPreview);
   $('mtd-teams-btn').addEventListener('click', openTeams);
 
@@ -13925,7 +13940,8 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     reset(); render(); loadRevenue();
   }
   function reset() {
-    outBuffer = null; outWb = null; Object.keys(pvPending).forEach(k => delete pvPending[k]);
+    lostBuffer = null; lostInfo = null; lostBtn.classList.add('hidden'); lostPvBtn.classList.add('hidden'); lostWb = null;
+    outBuffer = null; outWb = null; graphSpec = null; Object.keys(pvPending).forEach(k => delete pvPending[k]);
     if (pvModal) pvModal.classList.remove('show');
     $('mtd-post').classList.add('hidden');
     $('mtd-logcard').classList.add('hidden'); $('mtd-log').innerHTML = '';
@@ -13937,7 +13953,9 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     files.forEach((f, i) => {
       const li = document.createElement('li');
       li.innerHTML = `<span class="mtd-fname"></span><span class="mtd-fsize">${(f.size/1024).toFixed(0)} KB</span><div class="mtd-fb"><button type="button" class="up" title="Move up">&#9650;</button><button type="button" class="dn" title="Move down">&#9660;</button><button type="button" class="x" title="Remove">&times;</button></div>`;
-      li.querySelector('.mtd-fname').textContent = (i === 0 ? '\u2605 ' : '') + f.name;
+      const kd = kindOf.get(f);
+      li.querySelector('.mtd-fname').textContent = ((kd ? files.findIndex(x => kindOf.get(x) === kd) === i : i === 0) ? '\u2605 ' : '') + f.name;
+      if (kd) { const bd = document.createElement('span'); bd.className = 'mtd-kind ' + kd; bd.textContent = kd === 'lost' ? 'Order lost' : kd === 'mtd' ? 'MTD report' : 'Not recognised'; li.querySelector('.mtd-fname').after(bd); }
       const move = d => { const j = i + d; if (j < 0 || j >= files.length) return; [files[i], files[j]] = [files[j], files[i]]; reset(); render(); loadRevenue(); };
       li.querySelector('.up').addEventListener('click', () => move(-1));
       li.querySelector('.dn').addEventListener('click', () => move(1));
@@ -14007,8 +14025,9 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   async function loadWb(file) {
     await ensureExcel();
     const wb = new ExcelJS.Workbook();
-    await wb.xlsx.load(await file.arrayBuffer());
+    await wb.xlsx.load(await capHugeRanges(await file.arrayBuffer()));
     [TEAM, PIPE, TWP].forEach(n => unshare(wb.getWorksheet(n)));
+    wb.__det = dropDetails(wb);          // the Details sheet is not part of the merged file
     return wb;
   }
 
@@ -14261,6 +14280,8 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       try {
         const wb = await loadWb(f);
         const team = wb.getWorksheet(TEAM), pipe = wb.getWorksheet(PIPE), twp = wb.getWorksheet(TWP);
+        const kind = (team && pipe) ? 'mtd' : findLostSheet(wb) ? 'lost' : 'other';
+        if (kindOf.get(f) !== kind) { kindOf.set(f, kind); render(); }
         if (team && pipe) infos.push({ team, twp, owner: detectOwner(team, pipe, f.name), file: f.name });
       } catch (e) { console.error(e); if (/ExcelJS/.test(e.message || '')) { log(e.message, 'err'); break; } }
     }
@@ -14326,6 +14347,1462 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     Object.keys(overrides).forEach(k => delete overrides[k]); reset(); renderRev();
   });
 
+  /* ================= AUTO-CORRECT  +  "Details" sheet removal  +  "Graphs" sheet ================= */
+
+  const REMOVE_DETAILS = true;                                   // false = keep the Details sheet
+
+  const DETAILS_RE = /^\s*details?(\s+sheet)?\s*$/i;
+
+  const GRAPHS = 'Graphs';
+
+  const PALETTE = ['7C3AED', '2F7BFF', '16A05D', 'F59B00', 'E91E63', '079BB4', 'F4511E', '7655DB', '5B6F97', 'B45309', '0EA5A4', '9333EA'];
+
+  const reEsc = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  const sheetRefRe = name => new RegExp("(?:^|[^A-Za-z0-9_.'])(?:'" + reEsc(name).replace(/'/g, "''") + "'|" + reEsc(name) + ")!", 'i');
+
+
+
+  /* removes the Details sheet. Anything that still pointed at it is frozen to its last value (formulas) or to a plain list (drop-downs). */
+
+  function dropDetails(wb) {
+
+    if (!REMOVE_DETAILS) return null;
+
+    const targets = wb.worksheets.filter(w => DETAILS_RE.test(w.name));
+
+    if (!targets.length) return null;
+
+    const info = { names: targets.map(t => t.name), pos: wb.worksheets.indexOf(targets[0]), formulas: 0, lists: 0, cf: 0, defs: 0 };
+
+    targets.forEach(T => {
+
+      const re = sheetRefRe(T.name);
+
+      wb.worksheets.forEach(ws => {
+
+        if (targets.includes(ws)) return;
+
+        ws.eachRow({ includeEmpty: false }, row => row.eachCell({ includeEmpty: false }, cell => {
+
+          const v = cell.value;
+
+          if (!isFormula(v)) return;
+
+          let f = ''; try { f = v.formula || cell.formula || ''; } catch (e) { f = ''; }
+
+          if (!re.test(f)) return;
+
+          const res = v.result;
+
+          cell.value = (res !== undefined && res !== null && (typeof res !== 'object' || res instanceof Date)) ? res : null;
+
+          info.formulas++;
+
+        }));
+
+        const dv = ws.dataValidations && ws.dataValidations.model;
+
+        if (dv) Object.keys(dv).forEach(addr => {
+
+          const d = dv[addr], f0 = d && d.formulae && d.formulae[0];
+
+          if (typeof f0 !== 'string' || !re.test(f0)) return;
+
+          let items = null;
+
+          const m = /^=?\s*(?:'[^']*'|[A-Za-z0-9_.]+)!\$?([A-Z]{1,3})\$?(\d+)(?::\$?([A-Z]{1,3})\$?(\d+))?\s*$/.exec(f0.trim());
+
+          if (m && d.type === 'list') {
+
+            const c1 = colNum(m[1]), r1 = +m[2], c2 = m[3] ? colNum(m[3]) : c1, r2 = m[4] ? +m[4] : r1;
+
+            items = [];
+
+            for (let r = r1; r <= r2 && r - r1 < 200; r++) for (let c = c1; c <= c2; c++) {
+
+              const x = T.getCell(r, c).value, t = txt(isFormula(x) ? x.result : x).trim();
+
+              if (t) items.push(t);
+
+            }
+
+          }
+
+          if (items && items.length && items.every(t => !/[,"]/.test(t)) && items.join(',').length <= 250) { d.formulae = ['"' + items.join(',') + '"']; }
+
+          else delete dv[addr];
+
+          info.lists++;
+
+        });
+
+        if (Array.isArray(ws.conditionalFormattings)) {
+
+          ws.conditionalFormattings = ws.conditionalFormattings.map(cf => {
+
+            const keep = (cf.rules || []).filter(r => !(r.formulae || []).some(x => typeof x === 'string' && re.test(x)));
+
+            info.cf += (cf.rules || []).length - keep.length;
+
+            return { ...cf, rules: keep };
+
+          }).filter(cf => cf.rules.length);
+
+        }
+
+      });
+
+      try {
+
+        const dn = wb.definedNames && wb.definedNames.model;
+
+        if (dn && dn.length) {
+
+          const next = dn.map(d => ({ name: d.name, ranges: (d.ranges || []).filter(r => !re.test(String(r))) })).filter(d => d.ranges.length);
+
+          info.defs += dn.length - next.length;
+
+          wb.definedNames.model = next;
+
+        }
+
+      } catch (e) { /* ignore */ }
+
+      wb.removeWorksheet(T.id);
+
+    });
+
+    return info;
+
+  }
+
+  function logDetails(info, fileName) {
+
+    log(`\u2713 Removed the "${info.names.join('", "')}" sheet${fileName ? ' (' + fileName + ')' : ''}`, 'ok');
+
+    if (info.formulas) log(`${info.formulas} formula(s) used the Details sheet \u2013 they now hold their last calculated value`, 'warn');
+
+    if (info.lists) log(`${info.lists} drop-down list(s) used the Details sheet \u2013 now fixed lists`, 'ok');
+
+    if (info.cf) log(`${info.cf} conditional-format rule(s) used the Details sheet \u2013 removed`, 'ok');
+
+  }
+
+
+
+  /* ---------- clean-up of values typed in by hand ---------- */
+
+  const MON3 = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+
+  const mkDate = (y, m, d) => { const dt = new Date(Date.UTC(y, m - 1, d)); return (dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d) ? dt : null; };
+
+  function cleanNum(s) {
+
+    let t = String(s).replace(/[\u00a0\u200b\u200e\u200f]/g, ' ').trim();
+
+    if (!t) return null;
+
+    const pct = /%$/.test(t);
+
+    t = t.replace(/%$/, '').trim();
+
+    t = t.replace(/^(?:sar|sr|aed|usd|\$|\u20ac|\u00a3|rs\.?)\s*/i, '').replace(/\s*(?:sar|sr)$/i, '').trim();
+
+    if (!/^-?\d{1,3}(,\d{2,3})+(\.\d+)?$|^-?\d+(\.\d+)?$|^-?\.\d+$/.test(t)) return null;
+
+    const n = Number(t.replace(/,/g, ''));
+
+    return isFinite(n) ? (pct ? n / 100 : n) : null;
+
+  }
+
+  function cleanDate(s) {
+
+    const t = String(s).replace(/[\u00a0\u200b]/g, ' ').trim();
+
+    let m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2}|\d{4})$/.exec(t);
+
+    if (m) {
+
+      let a = +m[1], b = +m[2], y = +m[3]; if (y < 100) y += 2000;
+
+      let d = a, mo = b; if (b > 12 && a <= 12) { d = b; mo = a; }          // day first (dd/mm/yyyy), month first only when it can't be anything else
+
+      return mkDate(y, mo, d);
+
+    }
+
+    m = /^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/.exec(t);
+
+    if (m) return mkDate(+m[1], +m[2], +m[3]);
+
+    m = /^(\d{1,2})[\s\-\/.,]+([A-Za-z]{3,9})\.?[\s\-\/.,]+(\d{2}|\d{4})$/.exec(t);
+
+    if (m && MON3[m[2].slice(0, 3).toLowerCase()]) { let y = +m[3]; if (y < 100) y += 2000; return mkDate(y, MON3[m[2].slice(0, 3).toLowerCase()], +m[1]); }
+
+    return null;
+
+  }
+
+  function pipeCols(ws) {
+
+    const hdr = [];
+
+    for (let c = 1; c <= COPY_COLS; c++) hdr[c] = norm(ws.getCell(FIRST_ROW - 1, c).value);
+
+    const find = (re, fb) => { for (let c = 1; c <= COPY_COLS; c++) if (re.test(hdr[c])) return c; return fb; };
+
+    return {
+
+      person: find(/sales\s*person|salesman|^name$/, 2), order: find(/order\s*value|^value$/, 3), created: find(/creat/, 4), month: find(/^month/, 5),
+
+      stage: find(/^stage/, 6), win: find(/win/, 7), status: find(/^status/, 8), close: find(/clos/, 9), qty: find(/^qty|quantity/, 12)
+
+    };
+
+  }
+
+  /* every pipeline row of every file: spaces, numbers/dates typed as text, spelling of the name / stage / status, error values */
+
+  function cleanPipeline(loaded, say) {
+
+    const st = { text: 0, num: 0, date: 0, name: 0, errs: 0, cat: 0, pct: 0 };
+
+    const items = loaded.map(L => ({ L, c: pipeCols(L.pipe) })), odd = {};
+
+    const sim = (a, b) => { const x = norm(a), y = norm(b); return 1 - lev(x, y) / Math.max(x.length, y.length, 1); };
+
+    const known = TEAMS.reduce((a, t) => a.concat(t.members), []).concat(items.map(i => i.L.owner).filter(Boolean));
+
+    const tally = { month: {}, stage: {}, status: {} };
+
+    items.forEach(({ L, c }) => L.rows.forEach(row => {
+
+      const v = row.vals, at = k => v[c[k] - 1], set = (k, x) => { v[c[k] - 1] = x; };
+
+      for (let i = 0; i < v.length; i++) {
+
+        let x = v[i];
+
+        if (x && typeof x === 'object' && x.richText) x = v[i] = plain(x);
+
+        if (x && typeof x === 'object' && !(x instanceof Date) && x.error) { v[i] = null; st.errs++; continue; }
+
+        if (typeof x === 'string') {
+
+          const t = x.replace(/[\u00a0\u200b]/g, ' ').replace(/\s+/g, ' ').trim();
+
+          if (t !== x) { v[i] = t === '' ? null : t; st.text++; }
+
+        }
+
+      }
+
+      ['order', 'qty', 'win'].forEach(k => { const x = at(k); if (typeof x === 'string') { const n = cleanNum(x); if (n !== null) { set(k, n); st.num++; } } });
+
+      ['created', 'close'].forEach(k => { const x = at(k); if (typeof x === 'string') { const d = cleanDate(x); if (d) { set(k, d); st.date++; } } });
+
+      if (L.owner) {
+
+        const cur = at('person');
+
+        if (cur === null || cur === undefined || cur === '') { set('person', L.owner); st.name++; }
+
+        else if (typeof cur === 'string' && cur !== L.owner) {
+
+          const so = sim(cur, L.owner), others = known.filter(k => norm(k) !== norm(L.owner)), so2 = Math.max(0, ...others.map(k => sim(cur, k)));
+
+          if (norm(cur) === norm(L.owner) || bestMatch(cur, [L.owner]) >= 0 || (so >= 0.78 && so > so2 + 0.05)) { set('person', L.owner); st.name++; }
+
+          else if (!odd[L.file.name + cur]) { odd[L.file.name + cur] = 1; say(`"${L.file.name}": a pipeline row is under the name "${cur}" (file owner: ${L.owner}) \u2013 left as it is, please check`, 'warn'); }
+
+        }
+
+      }
+
+      ['month', 'stage', 'status'].forEach(k => {
+
+        const x = at(k); if (typeof x !== 'string' || !x) return;
+
+        const key = x.toLowerCase(), t = tally[k][key] || (tally[k][key] = {});
+
+        t[x] = (t[x] || 0) + 1;
+
+      });
+
+    }));
+
+    const canon = {};
+
+    Object.keys(tally).forEach(k => {
+
+      canon[k] = {};
+
+      Object.keys(tally[k]).forEach(key => { const e = Object.entries(tally[k][key]).sort((a, b) => b[1] - a[1]); canon[k][key] = e[0][0]; });
+
+    });
+
+    const wins = [];
+
+    items.forEach(({ c, L }) => L.rows.forEach(row => {
+
+      ['month', 'stage', 'status'].forEach(k => {
+
+        const x = row.vals[c[k] - 1];
+
+        if (typeof x === 'string' && canon[k][x.toLowerCase()] !== x) { row.vals[c[k] - 1] = canon[k][x.toLowerCase()]; st.cat++; }
+
+      });
+
+      const w = row.vals[c.win - 1]; if (typeof w === 'number') wins.push(w);
+
+    }));
+
+    if (wins.length >= 3 && wins.filter(w => w <= 1).length >= wins.length * 0.6) {         // most win % are 0-1 -> a stray "50" means 50 %
+
+      items.forEach(({ c, L }) => L.rows.forEach(row => { const w = row.vals[c.win - 1]; if (typeof w === 'number' && w > 1 && w <= 100) { row.vals[c.win - 1] = w / 100; st.pct++; } }));
+
+    }
+
+    const parts = [];
+
+    if (st.num) parts.push(`${st.num} number(s) typed as text`);
+
+    if (st.date) parts.push(`${st.date} date(s) typed as text`);
+
+    if (st.pct) parts.push(`${st.pct} win % written as 50 instead of 50%`);
+
+    if (st.name) parts.push(`${st.name} sales-person name(s) made the same as the file owner`);
+
+    if (st.cat) parts.push(`${st.cat} month / stage / status spelling(s) unified`);
+
+    if (st.text) parts.push(`${st.text} cell(s) had extra spaces`);
+
+    if (st.errs) parts.push(`${st.errs} error cell(s) emptied`);
+
+    if (parts.length) { say('Pipeline auto-corrected: ' + parts.join(', '), 'warn'); }
+
+    return st;
+
+  }
+
+
+
+  /* ---------- SALES TEAM / Team Wise Performance: wrong formulas, text numbers, odd fonts ---------- */
+
+  function fixTextNumbers(ws, rows, cols, label) {
+
+    let fixed = 0;
+
+    cols.forEach(c => {
+
+      const numeric = rows.some(r => { const v = ws.getCell(r, c).value; return typeof v === 'number' || (isFormula(v) && !isArrayF(v)); });
+
+      if (!numeric) return;
+
+      rows.forEach(r => {
+
+        const cell = ws.getCell(r, c), v = cell.value;
+
+        if (typeof v !== 'string') return;
+
+        const n = cleanNum(v);
+
+        if (n === null) return;
+
+        cell.value = n; fixed++;
+
+        log(`Fixed ${label} ${colLetter(c)}${r}: \"${v}\" was text \u2013 now the number ${n}`, 'ok');
+
+      });
+
+    });
+
+    return fixed;
+
+  }
+
+  const fKey = s => String(s).replace(/\s+/g, '').toUpperCase();
+
+  /* In a column where (nearly) every person row has the same formula, a row with a different formula / a typed value is put back */
+
+  function consensusFormulas(ws, rows, cols, label) {
+
+    if (rows.length < 3) return 0;
+
+    const BASE = 1000, need = Math.max(2, Math.ceil(rows.length * 0.6));
+
+    const isPlain = v => isFormula(v) && !isArrayF(v) && typeof v.formula === 'string' && v.formula.trim() !== '';
+
+    const inArr = (r, c) => {
+
+      const left = c > 1 ? ws.getCell(r, c - 1).value : null;
+
+      const m = left && isArrayF(left) && /^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(left.ref || '');
+
+      return !!m && r >= +m[2] && r <= +m[4] && c >= colNum(m[1]) && c <= colNum(m[3]);
+
+    };
+
+    let fixed = 0;
+
+    cols.forEach(c => {
+
+      const pats = {};
+
+      rows.forEach(r => { const v = ws.getCell(r, c).value; if (isPlain(v)) { const p = shiftFormula(v.formula, BASE - r), k = fKey(p); (pats[k] = pats[k] || { n: 0, p }).n++; } });
+
+      const top = Object.values(pats).sort((a, b) => b.n - a.n)[0];
+
+      if (!top || top.n < need) return;
+
+      rows.forEach(r => {
+
+        const cell = ws.getCell(r, c), v = cell.value;
+
+        if (isArrayF(v) || inArr(r, c)) return;
+
+        const want = shiftFormula(top.p, r - BASE);
+
+        if (isPlain(v) && fKey(v.formula) === fKey(want)) return;
+
+        const was = isPlain(v) ? '=' + v.formula : (v === null || v === undefined || v === '' ? '(blank)' : String(txt(v)));
+
+        cell.value = { formula: want };
+
+        fixed++;
+
+        log(`Fixed ${label} ${colLetter(c)}${r}: ${was} \u2192 =${want}  (the other rows use the same formula)`, 'ok');
+
+      });
+
+    });
+
+    return fixed;
+
+  }
+
+  const fontKey = f => f ? [String(f.name || '').toLowerCase(), f.size || '', f.bold ? 1 : 0, f.italic ? 1 : 0, f.underline ? 1 : 0, f.strike ? 1 : 0, JSON.stringify(f.color || {})].join('|') : '';
+
+  /* font and number format: the majority of the person rows in a column win */
+
+  function consensusStyles(ws, rows, cols, label) {
+
+    if (rows.length < 3) return 0;
+
+    const need = Math.ceil(rows.length * 0.6);
+
+    let fixed = 0;
+
+    cols.forEach(c => {
+
+      const fonts = {}, fmts = {};
+
+      rows.forEach(r => {
+
+        const cell = ws.getCell(r, c), fk = fontKey(cell.font), nk = cell.numFmt || 'General';
+
+        (fonts[fk] = fonts[fk] || { n: 0, f: cell.font }).n++;
+
+        (fmts[nk] = fmts[nk] || { n: 0, f: nk }).n++;
+
+      });
+
+      const tf = Object.entries(fonts).sort((a, b) => b[1].n - a[1].n)[0], tn = Object.entries(fmts).sort((a, b) => b[1].n - a[1].n)[0];
+
+      rows.forEach(r => {
+
+        const cell = ws.getCell(r, c), what = [];
+
+        if (tf && tf[0] && tf[1].n >= need && fontKey(cell.font) !== tf[0]) { cell.font = clone(tf[1].f); what.push('font'); }
+
+        if (tn && tn[1].n >= need && (cell.numFmt || 'General') !== tn[0]) { cell.numFmt = tn[0] === 'General' ? 'General' : tn[0]; what.push('number format'); }
+
+        if (what.length) { fixed++; log(`Fixed ${label} ${colLetter(c)}${r}: ${what.join(' + ')} did not match the other rows`, 'ok'); }
+
+      });
+
+    });
+
+    return fixed;
+
+  }
+
+
+
+  /* ---------- Graphs sheet ---------- */
+
+  function buildGraphs(wb, ctx) {
+
+    const { plan, rowOf, newLast, mTeam, mPipe, pos } = ctx;
+
+    const TQ = `'${TEAM}'!`, PQ = `'${PIPE}'!`, L = colLetter;
+
+    const { tr, tm } = detectCols(mTeam), pc = pipeCols(mPipe);
+
+    let list = plan.filter(o => o.L && rowOf[norm(o.name)]);
+
+    if (!list.length) list = plan.filter(o => rowOf[norm(o.name)]);
+
+    const last = newLast + 100;
+
+    const cats = col => {
+
+      const m = new Map();
+
+      for (let q = FIRST_ROW; q <= newLast; q++) {
+
+        const k = txt(mPipe.getCell(q, col).value).trim(); if (!k) continue;
+
+        const ov = mPipe.getCell(q, pc.order).value, e = m.get(k.toLowerCase()) || { label: k, sum: 0, cnt: 0 };
+
+        if (typeof ov === 'number') e.sum += ov;
+
+        e.cnt++; m.set(k.toLowerCase(), e);
+
+      }
+
+      const arr = [...m.values()].sort((a, b) => b.sum - a.sum || b.cnt - a.cnt);
+
+      if (arr.length > 12) log(`Graphs: only the 12 biggest of ${arr.length} groups are charted`, 'warn');
+
+      return arr.slice(0, 12);
+
+    };
+
+    const stages = cats(pc.stage), statuses = pc.status === pc.stage ? [] : cats(pc.status);
+
+    const teams = [...new Set(list.map(o => o.team))];
+
+    const plans = [];            // charts, in order
+
+    if (list.length) plans.push('rev', 'mtd', 'pct', 'team');
+
+    if (stages.length) plans.push('stage');
+
+    if (list.length && stages.length) plans.push('pperson');
+
+    if (statuses.length) plans.push('status');
+
+    if (!plans.length) { log('Graphs: no people or pipeline rows to chart \u2013 Graphs sheet not added', 'warn'); return null; }
+
+    const PITCH = 18, FROM = 4, DATA_START = FROM + Math.ceil(plans.length / 2) * PITCH + 1;
+
+    const ws = wb.addWorksheet(GRAPHS, { views: [{ showGridLines: false }], properties: { tabColor: { argb: 'FF7C3AED' } } });
+
+    ws.getColumn(1).width = 26; for (let c = 2; c <= 14; c++) ws.getColumn(c).width = 15;
+
+    ws.mergeCells('A1:L1');
+
+    const t1 = ws.getCell('A1'); t1.value = `MTD Graphs \u2013 ${monthName()}`; t1.font = { name: 'Calibri', size: 20, bold: true, color: { argb: 'FF5B21B6' } }; t1.alignment = { vertical: 'middle' };
+
+    ws.getRow(1).height = 30;
+
+    const t2 = ws.getCell('A2'); t2.value = 'Charts follow the SALES TEAM and SALES PIPELINE sheets automatically.'; t2.font = { name: 'Calibri', size: 11, italic: true, color: { argb: 'FF7D8FB2' } };
+
+    const THIN = { style: 'thin', color: { argb: 'FFD9DEE8' } }, BOX = { top: THIN, left: THIN, bottom: THIN, right: THIN };
+
+    const head = (r, labels) => labels.forEach((t, i) => {
+
+      const c = ws.getCell(r, i + 1); c.value = t;
+
+      c.font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF7C3AED' } };
+
+      c.alignment = { horizontal: i ? 'center' : 'left', vertical: 'middle', wrapText: true }; c.border = BOX;
+
+    });
+
+    const put = (r, c, v, fmt, left) => {
+
+      const x = ws.getCell(r, c); x.value = v; x.font = { name: 'Calibri', size: 11 }; x.border = BOX;
+
+      x.alignment = { horizontal: (c === 1 || left) ? 'left' : 'right' }; if (fmt) x.numFmt = fmt; return x;
+
+    };
+
+    let r = DATA_START;
+
+    const note = ws.getCell(r, 1); note.value = 'Chart data \u2013 the charts above read these cells. Don\u2019t delete them.'; note.font = { name: 'Calibri', size: 11, italic: true, color: { argb: 'FF7D8FB2' } };
+
+    r += 2;
+
+    const title = t => { const c = ws.getCell(r, 1); c.value = t; c.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FF5B21B6' } }; r++; };
+
+    const T = {}, charts = [];
+
+    if (list.length) {
+
+      title('Sales person performance');
+
+      head(r, ['Sales person', 'Team', 'Revenue target', 'Revenue (total sales value)', 'Revenue achieved %', 'MTD target', 'MTD (sales this month)', 'MTD achieved %']); const hr = r; r++;
+
+      const a1 = r;
+
+      list.forEach(o => {
+
+        const rr = rowOf[norm(o.name)];
+
+        put(r, 1, o.name); put(r, 2, o.team, null, true);
+
+        put(r, 3, { formula: `${TQ}${L(tr)}${rr}` }, '#,##0');
+
+        put(r, 4, { formula: `${TQ}${L(REV_COL)}${rr}` }, '#,##0');
+
+        put(r, 5, { formula: `IF(N(C${r})>0,N(D${r})/N(C${r}),0)` }, '0%');
+
+        put(r, 6, { formula: `${TQ}${L(tm)}${rr}` }, '#,##0');
+
+        put(r, 7, { formula: `${TQ}${L(tm + 1)}${rr}` }, '#,##0');
+
+        put(r, 8, { formula: `IF(N(F${r})>0,N(G${r})/N(F${r}),0)` }, '0%');
+
+        r++;
+
+      });
+
+      ws.getRow(hr).height = 32;
+
+      T.people = { hr, a1, a2: r - 1 }; r += 2;
+
+      title('Revenue and MTD by team');
+
+      head(r, ['Team', 'Revenue (total sales value)', 'MTD (sales this month)']); const hr2 = r; r++;
+
+      const b1 = r;
+
+      teams.forEach(tn => {
+
+        const rg = c => `$${c}$${T.people.a1}:$${c}$${T.people.a2}`;
+
+        put(r, 1, tn);
+
+        put(r, 2, { formula: `SUMIF(${rg('B')},$A${r},${rg('D')})` }, '#,##0');
+
+        put(r, 3, { formula: `SUMIF(${rg('B')},$A${r},${rg('G')})` }, '#,##0');
+
+        r++;
+
+      });
+
+      ws.getRow(hr2).height = 32;
+
+      T.team = { hr: hr2, b1, b2: r - 1 }; r += 2;
+
+    }
+
+    const pipeTable = (ttl, labels, getLabel, n, critCol, k) => {
+
+      title(ttl); head(r, labels); const hr = r; r++; const a1 = r;
+
+      for (let i = 0; i < n; i++) {
+
+        const rg = c => `${PQ}$${L(c)}$${FIRST_ROW}:$${L(c)}$${last}`;
+
+        put(r, 1, getLabel(i));
+
+        put(r, 2, { formula: `SUMIFS(${rg(pc.order)},${rg(critCol)},$A${r})` }, '#,##0');
+
+        put(r, 3, { formula: `COUNTIFS(${rg(critCol)},$A${r})` }, '0');
+
+        r++;
+
+      }
+
+      T[k] = { hr, a1, a2: r - 1 }; r += 2;
+
+    };
+
+    if (stages.length) pipeTable('Pipeline by stage', ['Stage', 'Order value', 'Deals'], i => stages[i].label, stages.length, pc.stage, 'stage');
+
+    if (list.length && stages.length) pipeTable('Pipeline by sales person', ['Sales person', 'Order value', 'Deals'], i => list[i].name, list.length, pc.person, 'pperson');
+
+    if (statuses.length) pipeTable('Pipeline by status', ['Status', 'Order value', 'Deals'], i => statuses[i].label, statuses.length, pc.status, 'status');
+
+
+
+    const ser = (tb, c, nameCol) => ({ name: { c: nameCol || c, r: tb.hr }, c, r1: tb.a1 !== undefined ? tb.a1 : tb.b1, r2: tb.a2 !== undefined ? tb.a2 : tb.b2 });
+
+    const cat = tb => ({ c: 1, r1: tb.a1 !== undefined ? tb.a1 : tb.b1, r2: tb.a2 !== undefined ? tb.a2 : tb.b2 });
+
+    plans.forEach(k => {
+
+      if (k === 'rev') charts.push({ kind: 'col', title: 'Revenue (total sales value): target vs actual', fmt: '#,##0', cat: cat(T.people), ser: [ser(T.people, 3), ser(T.people, 4)] });
+
+      if (k === 'mtd') charts.push({ kind: 'col', title: 'MTD sales this month: target vs actual', fmt: '#,##0', cat: cat(T.people), ser: [ser(T.people, 6), ser(T.people, 7)] });
+
+      if (k === 'pct') charts.push({ kind: 'bar', title: 'Achievement % \u2013 Revenue and MTD', fmt: '0%', cat: cat(T.people), ser: [ser(T.people, 5), ser(T.people, 8)] });
+
+      if (k === 'team') charts.push({ kind: 'col', title: 'Revenue and MTD by team', fmt: '#,##0', cat: cat(T.team), ser: [ser(T.team, 2), ser(T.team, 3)] });
+
+      if (k === 'stage') charts.push({ kind: 'col', title: 'Pipeline value by stage', fmt: '#,##0', cat: cat(T.stage), ser: [ser(T.stage, 2)] });
+
+      if (k === 'pperson') charts.push({ kind: 'bar', title: 'Pipeline value by sales person', fmt: '#,##0', cat: cat(T.pperson), ser: [ser(T.pperson, 2)] });
+
+      if (k === 'status') charts.push({ kind: 'doughnut', title: 'Pipeline value by status', fmt: '#,##0', cat: cat(T.status), ser: [ser(T.status, 2)] });
+
+    });
+
+    charts.forEach((ch, i) => { ch.col = (i % 2) * 6; ch.row = FROM - 1 + Math.floor(i / 2) * PITCH; });
+
+
+
+    // the sheet takes the place the Details sheet had
+
+    const others = wb.worksheets.filter(w => w !== ws), at = (pos >= 0 && pos <= others.length) ? pos : others.length;
+
+    others.splice(at, 0, ws);
+
+    others.forEach((w, i) => { w.orderNo = i + 1; });
+
+    return { charts, from: 3, to: DATA_START - 1 };
+
+  }
+
+  function fixTabs(wb) {                     // exactly one selected tab, and it exists
+
+    const sheets = wb.worksheets;
+
+    sheets.forEach((w, i) => { (w.views || []).forEach(v => { v.tabSelected = (i === 0); }); });
+
+    if (wb.views && wb.views[0]) wb.views[0].activeTab = 0;
+
+  }
+
+
+
+  /* ---------- native Excel charts (ExcelJS cannot draw charts, so the chart parts are added to the .xlsx afterwards) ---------- */
+
+  let jszipP = null;
+
+  function ensureJSZip() {
+
+    if (window.JSZip) return Promise.resolve();
+
+    if (jszipP) return jszipP;
+
+    jszipP = new Promise((res, rej) => {
+
+      const s = document.createElement('script');
+
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+
+      s.onload = res; s.onerror = () => { jszipP = null; rej(new Error('could not load the JSZip library')); };
+
+      document.head.appendChild(s);
+
+    });
+
+    return jszipP;
+
+  }
+
+  const X = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const cref = (c, r1, r2) => `${GRAPHS}!$${colLetter(c)}$${r1}` + (r2 ? `:$${colLetter(c)}$${r2}` : '');
+
+  const ctx = (sz, b, col) => `<c:txPr><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="${sz}" b="${b ? 1 : 0}"><a:solidFill><a:srgbClr val="${col}"/></a:solidFill></a:defRPr></a:pPr><a:endParaRPr lang="en-US"/></a:p></c:txPr>`;
+
+  function chartXml(sp) {
+
+    const pie = sp.kind === 'pie' || sp.kind === 'doughnut', horiz = sp.kind === 'bar', n = sp.cat.r2 - sp.cat.r1 + 1;
+
+    const noLn = '<c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>';
+
+    const sers = sp.ser.map((s, i) => {
+
+      let x = `<c:ser><c:idx val="${i}"/><c:order val="${i}"/><c:tx><c:strRef><c:f>${cref(s.name.c, s.name.r)}</c:f></c:strRef></c:tx>`;
+
+      if (pie) {
+
+        x += '<c:spPr><a:ln w="12700"><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:ln></c:spPr>';
+
+        for (let k = 0; k < n; k++) x += `<c:dPt><c:idx val="${k}"/><c:bubble3D val="0"/><c:spPr><a:solidFill><a:srgbClr val="${PALETTE[k % PALETTE.length]}"/></a:solidFill><a:ln w="12700"><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:ln></c:spPr></c:dPt>`;
+
+        x += `<c:dLbls><c:numFmt formatCode="0%" sourceLinked="0"/>${noLn}${ctx(900, true, '333333')}<c:showLegendKey val="0"/><c:showVal val="0"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="1"/><c:showBubbleSize val="0"/><c:showLeaderLines val="1"/></c:dLbls>`;
+
+      } else {
+
+        x += `<c:spPr><a:solidFill><a:srgbClr val="${PALETTE[i % PALETTE.length]}"/></a:solidFill></c:spPr><c:invertIfNegative val="0"/>`;
+
+        if (sp.ser.length === 1) x += `<c:dLbls><c:numFmt formatCode="${X(sp.fmt)}" sourceLinked="0"/>${noLn}${ctx(900, false, '333333')}<c:dLblPos val="outEnd"/><c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>`;
+
+      }
+
+      return x + `<c:cat><c:strRef><c:f>${cref(sp.cat.c, sp.cat.r1, sp.cat.r2)}</c:f></c:strRef></c:cat><c:val><c:numRef><c:f>${cref(s.c, s.r1, s.r2)}</c:f></c:numRef></c:val></c:ser>`;
+
+    }).join('');
+
+    let plot;
+
+    if (sp.kind === 'pie') plot = `<c:pieChart><c:varyColors val="1"/>${sers}<c:firstSliceAng val="0"/></c:pieChart>`;
+
+    else if (sp.kind === 'doughnut') plot = `<c:doughnutChart><c:varyColors val="1"/>${sers}<c:firstSliceAng val="0"/><c:holeSize val="55"/></c:doughnutChart>`;
+
+    else {
+
+      const line = '<c:spPr><a:ln w="9525"><a:solidFill><a:srgbClr val="D9DEE8"/></a:solidFill></a:ln></c:spPr>';
+
+      plot = `<c:barChart><c:barDir val="${horiz ? 'bar' : 'col'}"/><c:grouping val="clustered"/><c:varyColors val="0"/>${sers}<c:gapWidth val="${sp.ser.length > 1 ? 60 : 80}"/><c:axId val="5001"/><c:axId val="5002"/></c:barChart>`
+
+        + `<c:catAx><c:axId val="5001"/><c:scaling><c:orientation val="${horiz ? 'maxMin' : 'minMax'}"/></c:scaling><c:delete val="0"/><c:axPos val="${horiz ? 'l' : 'b'}"/><c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/>${line}${ctx(900, false, '444444')}<c:crossAx val="5002"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>`
+
+        + `<c:valAx><c:axId val="5002"/><c:scaling><c:orientation val="minMax"/></c:scaling><c:delete val="0"/><c:axPos val="${horiz ? 'b' : 'l'}"/><c:majorGridlines><c:spPr><a:ln w="6350"><a:solidFill><a:srgbClr val="E6EAF2"/></a:solidFill></a:ln></c:spPr></c:majorGridlines><c:numFmt formatCode="${X(sp.fmt)}" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:spPr><a:ln><a:noFill/></a:ln></c:spPr>${ctx(900, false, '666666')}<c:crossAx val="5001"/><c:crosses val="${horiz ? 'max' : 'autoZero'}"/><c:crossBetween val="between"/></c:valAx>`;
+
+    }
+
+    const legend = (pie || sp.ser.length > 1) ? `<c:legend><c:legendPos val="${pie ? 'r' : 'b'}"/><c:overlay val="0"/>${ctx(900, false, '444444')}</c:legend>` : '';
+
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+
+      + '<c:chartSpace xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+
+      + '<c:roundedCorners val="0"/><c:chart>'
+
+      + `<c:title><c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="1300" b="1"/></a:pPr><a:r><a:rPr lang="en-US" sz="1300" b="1"><a:solidFill><a:srgbClr val="3B1D86"/></a:solidFill></a:rPr><a:t>${X(sp.title)}</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title>`
+
+      + `<c:autoTitleDeleted val="0"/><c:plotArea><c:layout/>${plot}</c:plotArea>${legend}<c:plotVisOnly val="1"/><c:dispBlanksAs val="gap"/></c:chart>`
+
+      + '<c:spPr><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="9525"><a:solidFill><a:srgbClr val="E1E8F4"/></a:solidFill></a:ln></c:spPr>'
+
+      + '</c:chartSpace>';
+
+  }
+
+  async function injectCharts(buf, spec) {
+
+    await ensureJSZip();
+
+    const zip = await window.JSZip.loadAsync(buf);
+
+    const rd = async p => { const f = zip.file(p); return f ? f.async('string') : null; };
+
+    const wbXml = await rd('xl/workbook.xml'), wbRels = await rd('xl/_rels/workbook.xml.rels');
+
+    const sh = (wbXml.match(/<sheet\b[^>]*>/g) || []).find(t => new RegExp('\\bname="' + GRAPHS + '"').test(t));
+
+    if (!sh) throw new Error('Graphs sheet not found in the file');
+
+    const rid = /\br:id="([^"]+)"/.exec(sh)[1];
+
+    const rel = (wbRels.match(/<Relationship\b[^>]*>/g) || []).find(t => new RegExp('\\bId="' + rid + '"').test(t));
+
+    const target = /\bTarget="([^"]+)"/.exec(rel)[1];
+
+    const sheetPath = target.charAt(0) === '/' ? target.slice(1) : 'xl/' + target;
+
+    const sheetName = sheetPath.split('/').pop(), relPath = 'xl/worksheets/_rels/' + sheetName + '.rels';
+
+    let n = 1; while (zip.file('xl/charts/chart' + n + '.xml') || zip.file('xl/drawings/drawing' + n + '.xml')) n++;
+
+    const dNum = n; let cNum = n;
+
+    while (zip.file('xl/charts/chart' + cNum + '.xml')) cNum++;
+
+    const EMU = 9525, W = 660 * EMU, H = 340 * EMU;
+
+    let anchors = '', drels = '', ctOver = '';
+
+    spec.charts.forEach((sp, i) => {
+
+      const id = cNum + i;
+
+      zip.file('xl/charts/chart' + id + '.xml', chartXml(sp));
+
+      ctOver += `<Override PartName="/xl/charts/chart${id}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>`;
+
+      drels += `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart" Target="../charts/chart${id}.xml"/>`;
+
+      anchors += `<xdr:oneCellAnchor><xdr:from><xdr:col>${sp.col}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${sp.row}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from><xdr:ext cx="${W}" cy="${H}"/>`
+
+        + `<xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="${i + 2}" name="Chart ${i + 1}"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm>`
+
+        + `<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart"><c:chart xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:id="rId${i + 1}"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:oneCellAnchor>`;
+
+    });
+
+    zip.file('xl/drawings/drawing' + dNum + '.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">' + anchors + '</xdr:wsDr>');
+
+    zip.file('xl/drawings/_rels/drawing' + dNum + '.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + drels + '</Relationships>');
+
+    ctOver += `<Override PartName="/xl/drawings/drawing${dNum}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>`;
+
+    // sheet -> drawing relationship
+
+    const drel = `<Relationship Id="rIdMtdDrawing" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing${dNum}.xml"/>`;
+
+    let sr = await rd(relPath);
+
+    sr = sr ? sr.replace('</Relationships>', drel + '</Relationships>')
+
+            : '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + drel + '</Relationships>';
+
+    zip.file(relPath, sr);
+
+    let sx = await rd(sheetPath);
+
+    if (!/<worksheet\b[^>]*\bxmlns:r=/.test(sx)) sx = sx.replace(/<worksheet\b/, '<worksheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"');
+
+    sx = sx.replace('</worksheet>', '<drawing r:id="rIdMtdDrawing"/></worksheet>');
+
+    zip.file(sheetPath, sx);
+
+    let ct = await rd('[Content_Types].xml');
+
+    ct = ct.replace('</Types>', ctOver + '</Types>');
+
+    zip.file('[Content_Types].xml', ct);
+
+    return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+
+  }
+
+  async function packBuffer(wb) {
+
+    let buf = await tidyBuffer(await wb.xlsx.writeBuffer());
+
+    if (graphSpec && graphSpec.charts.length) {
+
+      try { buf = await injectCharts(buf, graphSpec); }
+
+      catch (e) { console.error(e); log('The charts could not be added to the file (' + (e && e.message ? e.message : e) + ') \u2013 the Graphs sheet still has the data tables.', 'warn'); }
+
+    }
+
+    return buf;
+
+  }
+
+
+
+  /* ---------- the same charts drawn inside the Preview (the preview grid cannot show Excel charts) ---------- */
+
+  function pvChartsHtml() {
+
+    const ws = outWb && outWb.getWorksheet(GRAPHS); if (!ws || !graphSpec) return '';
+
+    const val = (c, r) => {
+
+      const x = pvCalcVal(GRAPHS, r, c);
+
+      if (x !== undefined && x !== null && typeof x !== 'object') return x;
+
+      const v = ws.getCell(r, c).value; return isFormula(v) ? v.result : v;
+
+    };
+
+    const num = x => (typeof x === 'number' && isFinite(x)) ? x : 0;
+
+    const fv = (v, f) => f === '0%' ? Math.round(v * 100) + '%' : Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : Math.abs(v) >= 1e3 ? (v / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(Math.round(v * 100) / 100);
+
+    return graphSpec.charts.map(sp => {
+
+      const n = sp.cat.r2 - sp.cat.r1 + 1, cats = [], S = sp.ser.map(s => ({ name: String(val(s.name.c, s.name.r) || ''), v: [] }));
+
+      for (let i = 0; i < n; i++) {
+
+        const cv = val(sp.cat.c, sp.cat.r1 + i); cats.push(cv == null ? '' : String(cv));
+
+        sp.ser.forEach((s, k) => S[k].v.push(num(val(s.c, s.r1 + i))));
+
+      }
+
+      return '<div class="c">' + chartSvg(sp, cats, S, fv) + '</div>';
+
+    }).join('');
+
+  }
+
+  function chartSvg(sp, cats, S, fv) {
+
+    const W = 560, H = 300, cut = (t, k) => t.length > k ? t.slice(0, k - 1) + '\u2026' : t;
+
+    let g = `<text x="${W / 2}" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#3b1d86">${esc(sp.title)}</text>`;
+
+    const pie = sp.kind === 'pie' || sp.kind === 'doughnut';
+
+    if (pie) {
+
+      const v = S[0].v, tot = v.reduce((a, b) => a + b, 0), cx = 150, cy = 165, R = 100, r0 = sp.kind === 'doughnut' ? 55 : 0;
+
+      if (tot <= 0) g += `<text x="${W / 2}" y="160" text-anchor="middle" font-size="13" fill="#7d8fb2">No values yet</text>`;
+
+      else {
+
+        let a0 = -Math.PI / 2;
+
+        v.forEach((x, i) => {
+
+          if (x <= 0) return;
+
+          const a1 = a0 + x / tot * Math.PI * 2, big = a1 - a0 > Math.PI ? 1 : 0;
+
+          const p = (r, a) => (cx + r * Math.cos(a)).toFixed(1) + ' ' + (cy + r * Math.sin(a)).toFixed(1);
+
+          const d = x / tot > 0.9999 ? `M${cx - R} ${cy}a${R} ${R} 0 1 0 ${2 * R} 0a${R} ${R} 0 1 0 ${-2 * R} 0` + (r0 ? `M${cx - r0} ${cy}a${r0} ${r0} 0 1 1 ${2 * r0} 0a${r0} ${r0} 0 1 1 ${-2 * r0} 0` : '')
+
+            : `M${p(R, a0)}A${R} ${R} 0 ${big} 1 ${p(R, a1)}` + (r0 ? `L${p(r0, a1)}A${r0} ${r0} 0 ${big} 0 ${p(r0, a0)}Z` : `L${cx} ${cy}Z`);
+
+          g += `<path d="${d}" fill="#${PALETTE[i % PALETTE.length]}" fill-rule="evenodd" stroke="#fff" stroke-width="1.5"/>`;
+
+          a0 = a1;
+
+        });
+
+        cats.forEach((c, i) => {
+
+          const y = 60 + i * 20; if (y > H - 12) return;
+
+          g += `<rect x="290" y="${y - 9}" width="11" height="11" rx="3" fill="#${PALETTE[i % PALETTE.length]}"/><text x="308" y="${y}" font-size="12" fill="#33415f">${esc(cut(c, 22))} \u00b7 ${Math.round(v[i] / tot * 100)}%</text>`;
+
+        });
+
+      }
+
+    } else {
+
+      const horiz = sp.kind === 'bar', n = cats.length, all = S.reduce((a, s) => a.concat(s.v), []), max = Math.max(1e-9, ...all);
+
+      const Lm = horiz ? 112 : 54, Rm = 40, Tm = 34, Bm = (horiz ? 20 : 66) + (S.length > 1 ? 18 : 0), pw = W - Lm - Rm, ph = H - Tm - Bm;
+
+      for (let t = 0; t <= 4; t++) {
+
+        const f = t / 4, lab = fv(max * f, sp.fmt);
+
+        if (horiz) { const x = Lm + pw * f; g += `<line x1="${x}" y1="${Tm}" x2="${x}" y2="${Tm + ph}" stroke="#e6eaf2"/><text x="${x}" y="${Tm + ph + 14}" text-anchor="middle" font-size="10" fill="#7d8fb2">${lab}</text>`; }
+
+        else { const y = Tm + ph - ph * f; g += `<line x1="${Lm}" y1="${y}" x2="${Lm + pw}" y2="${y}" stroke="#e6eaf2"/><text x="${Lm - 6}" y="${y + 3}" text-anchor="end" font-size="10" fill="#7d8fb2">${lab}</text>`; }
+
+      }
+
+      const gs = (horiz ? ph : pw) / Math.max(n, 1), bw = Math.min(26, gs * 0.78 / S.length);
+
+      cats.forEach((c, i) => {
+
+        S.forEach((s, k) => {
+
+          const v = s.v[i], len = (horiz ? pw : ph) * v / max, off = gs * i + (gs - bw * S.length) / 2 + bw * k, col = PALETTE[k % PALETTE.length];
+
+          if (horiz) {
+
+            g += `<rect x="${Lm}" y="${Tm + off}" width="${Math.max(len, 0)}" height="${bw}" rx="3" fill="#${col}"/>`;
+
+            if (S.length === 1) g += `<text x="${Lm + len + 4}" y="${Tm + off + bw / 2 + 3}" font-size="10" fill="#33415f">${fv(v, sp.fmt)}</text>`;
+
+          } else {
+
+            g += `<rect x="${Lm + off}" y="${Tm + ph - len}" width="${bw}" height="${Math.max(len, 0)}" rx="3" fill="#${col}"/>`;
+
+            if (S.length === 1) g += `<text x="${Lm + off + bw / 2}" y="${Tm + ph - len - 4}" text-anchor="middle" font-size="10" fill="#33415f">${fv(v, sp.fmt)}</text>`;
+
+          }
+
+        });
+
+        if (horiz) g += `<text x="${Lm - 6}" y="${Tm + gs * i + gs / 2 + 3}" text-anchor="end" font-size="11" fill="#33415f">${esc(cut(c, 16))}</text>`;
+
+        else { const x = Lm + gs * i + gs / 2, y = Tm + ph + 12; g += `<text x="${x}" y="${y}" text-anchor="end" font-size="10.5" fill="#33415f" transform="rotate(-35 ${x} ${y})">${esc(cut(c, 14))}</text>`; }
+
+      });
+
+      if (S.length > 1) S.forEach((s, k) => { const x = 60 + k * 150; g += `<rect x="${x}" y="${H - 16}" width="11" height="11" rx="3" fill="#${PALETTE[k % PALETTE.length]}"/><text x="${x + 16}" y="${H - 7}" font-size="11" fill="#33415f">${esc(cut(s.name, 16))}</text>`; });
+
+    }
+
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(sp.title)}" font-family="Calibri,Segoe UI,Arial,sans-serif">${g}</svg>`;
+
+  }
+
+
+
+  /* ================= ORDER LOST reports (WEEKLY ORDER LOST SUMMARY) =================
+
+     Recognised by their column headers (Date, Executive, TL, Client, Equipment, Our Price, Client Price, Order Lost Reason),
+
+     whatever the file is called. All of them are merged into ONE separate workbook. */
+
+  const isDate = v => Object.prototype.toString.call(v) === '[object Date]';
+
+  const LOST_HDR = [
+
+    ['cprice', /^(client|customer)\s*price/], ['our', /^our\s*price/], ['client', /^(client|customer)(?!\s*price)/],
+
+    ['sr', /^(sr|s\.?\s*no|serial)\b/], ['date', /^date\b/], ['exec', /^exec/], ['tl', /^(tl|team\s*lead)\b/],
+
+    ['equip', /^equip/], ['qty', /^(qty|quantity)\b/], ['reason', /lost\s*reason|^reason/], ['remarks', /^(remark|note|comment)/]
+
+  ];
+
+  const lostName = () => `Weekly Order Lost Summary - ${monthName()}.xlsx`;
+
+  function findLostSheet(wb) {
+
+    if (wb.getWorksheet(TEAM) && wb.getWorksheet(PIPE)) return null;            // that's an MTD report
+
+    for (const ws of wb.worksheets) {
+
+      for (let hr = 1; hr <= 8; hr++) {
+
+        const map = {};
+
+        for (let c = 1; c <= 16; c++) {
+
+          const h = norm(txt(ws.getCell(hr, c).value));
+
+          if (!h) continue;
+
+          const hit = LOST_HDR.find(([k, re]) => !map[k] && re.test(h));
+
+          if (hit) map[hit[0]] = c;
+
+        }
+
+        if (['date', 'exec', 'client', 'equip', 'our', 'cprice', 'reason'].filter(k => map[k]).length >= 5) return { ws, hr, map };
+
+      }
+
+    }
+
+    return null;
+
+  }
+
+  function readLostRows(sh) {
+
+    const { ws, hr, map } = sh, rc = map.remarks || (map.reason ? map.reason + 1 : 0), out = [];
+
+    const val = (r, c) => {
+
+      if (!c) return null;
+
+      let v = ws.getCell(r, c).value;
+
+      if (isFormula(v)) v = v.result;
+
+      if (v && typeof v === 'object' && !isDate(v)) { if (v.richText) v = plain(v); else if (v.text) v = v.text; else return null; }
+
+      if (typeof v === 'string' && v.trim() === '') return null;
+
+      return v === undefined ? null : v;
+
+    };
+
+    for (let r = hr + 1; r <= ws.rowCount; r++) {
+
+      const o = { date: val(r, map.date), exec: val(r, map.exec), tl: val(r, map.tl), client: val(r, map.client), equip: val(r, map.equip), qty: val(r, map.qty), our: val(r, map.our), cprice: val(r, map.cprice), reason: val(r, map.reason), remarks: val(r, rc) };
+
+      if (Object.keys(o).some(k => o[k] !== null)) out.push(o);               // rows that only hold the pre-printed SR number are ignored
+
+    }
+
+    return out;
+
+  }
+
+  async function mergeLost(items, say) {
+
+    const base = items[0], ws = base.ws, hr = base.hr, map = base.map, first = hr + 1;
+
+    const srC = map.sr || 1, rc = map.remarks || (map.reason ? map.reason + 1 : 11);
+
+    const st = { num: 0, date: 0, text: 0, snap: 0, exec: 0, dup: 0 };
+
+    let all = [];
+
+    items.forEach((it, fi) => it.rows.forEach((o, ri) => all.push({ o: Object.assign({}, o), fi, ri })));
+
+    // ---- clean every value
+
+    all.forEach(({ o }) => {
+
+      Object.keys(o).forEach(k => {
+
+        if (typeof o[k] === 'string') { const t = o[k].replace(/[\u00a0\u200b]/g, ' ').replace(/\s+/g, ' ').trim(); if (t !== o[k]) { o[k] = t || null; st.text++; } }
+
+      });
+
+      ['qty', 'our', 'cprice'].forEach(k => { if (typeof o[k] === 'string') { const n = cleanNum(o[k]); if (n !== null) { o[k] = n; st.num++; } } });
+
+      if (typeof o.date === 'string') { const d = cleanDate(o.date); if (d) { o.date = d; st.date++; } }
+
+    });
+
+    // ---- drop-down values (TL, reason) are snapped to the allowed list of the base report
+
+    const lists = {}, dv = (ws.dataValidations && ws.dataValidations.model) || {};
+
+    for (let c = 1; c <= rc; c++) {                                              // look the cells up directly (the model can hold thousands of cells)
+
+      const d = dv[colLetter(c) + first], f0 = d && d.formulae && d.formulae[0];
+
+      if (d && d.type === 'list' && typeof f0 === 'string' && /^"/.test(f0.trim())) lists[c] = f0.trim().replace(/^"|"$/g, '').split(',').map(x => x.trim()).filter(Boolean);
+
+    }
+
+    const warned = {};
+
+    const snap = (o, key, label) => {
+
+      const list = lists[map[key]], v = o[key];
+
+      if (!list || !list.length || typeof v !== 'string') return;
+
+      const q = norm(v); let best = list.find(x => norm(x) === q), bs = best ? 1 : 0;
+
+      if (!best) list.forEach(x => { const s = 1 - lev(q, norm(x)) / Math.max(q.length, norm(x).length, 1); if (s > bs) { bs = s; best = x; } });
+
+      if (best && bs >= 0.8) { if (best !== v) { o[key] = best; st.snap++; } }
+
+      else if (!warned[key + q]) { warned[key + q] = 1; say(`Order lost: "${v}" is not one of the allowed ${label} values (${list.join(', ')}) \u2013 left as typed`, 'warn'); }
+
+    };
+
+    all.forEach(({ o }) => { snap(o, 'tl', 'TL'); snap(o, 'reason', 'Order Lost Reason'); });
+
+    // ---- same executive written in different capital letters
+
+    const ex = {};
+
+    all.forEach(({ o }) => { if (typeof o.exec === 'string') { const t = ex[o.exec.toLowerCase()] = ex[o.exec.toLowerCase()] || {}; t[o.exec] = (t[o.exec] || 0) + 1; } });
+
+    all.forEach(({ o }) => { if (typeof o.exec === 'string') { const c = Object.entries(ex[o.exec.toLowerCase()]).sort((a, b) => b[1] - a[1])[0][0]; if (c !== o.exec) { o.exec = c; st.exec++; } } });
+
+    // ---- the same line sent in two different weekly files is kept once
+
+    const seen = {}, keep = [];
+
+    all.forEach(x => {
+
+      const o = x.o, k = [isDate(o.date) ? o.date.toISOString().slice(0, 10) : String(o.date), norm(o.exec), norm(o.client), norm(o.equip), o.qty, o.our, o.cprice, norm(o.reason)].join('|');
+
+      if (seen[k] !== undefined && seen[k] !== x.fi) { st.dup++; return; }
+
+      if (seen[k] === undefined) seen[k] = x.fi;
+
+      keep.push(x);
+
+    });
+
+    all = keep;
+
+    all.sort((a, b) => {
+
+      const ta = isDate(a.o.date) ? a.o.date.getTime() : Infinity, tb = isDate(b.o.date) ? b.o.date.getTime() : Infinity;
+
+      return ta - tb || a.fi - b.fi || a.ri - b.ri;
+
+    });
+
+    // ---- write into the first report (its layout, drop-downs, widths and freeze panes stay)
+
+    const last = Math.max(ws.rowCount, first + all.length - 1);
+
+    const pre = new Set();
+
+    for (let r = first; r <= ws.rowCount; r++) if (typeof ws.getCell(r, srC).value === 'number') pre.add(r);
+
+    const tpl = {};
+
+    for (let c = 1; c <= rc; c++) tpl[c] = clone(ws.getCell(first, c).style || {});
+
+    if (!map.remarks) {                                                          // the Remarks column has no heading in the template
+
+      const h = ws.getCell(hr, rc); h.value = 'Remarks'; h.style = clone(ws.getCell(hr, rc - 1).style || {});
+
+      tpl[rc] = clone(tpl[rc - 1]); tpl[rc].alignment = Object.assign({}, tpl[rc].alignment || {}, { horizontal: 'left' });
+
+      try { ws.unMergeCells('A1:' + colLetter(rc - 1) + '1'); ws.mergeCells('A1:' + colLetter(rc) + '1'); } catch (e) { /* title was not merged */ }
+
+    }
+
+    for (let r = first; r <= last; r++) {
+
+      for (let c = 1; c <= rc; c++) ws.getCell(r, c).value = null;
+
+      const k = ws.getCell(r, rc); k.style = clone(tpl[rc]);
+
+    }
+
+    const put = (r, c, v, fmt) => { if (!c) return; const cell = ws.getCell(r, c); cell.value = v; cell.style = clone(tpl[c] || {}); if (fmt) cell.numFmt = fmt; };
+
+    all.forEach(({ o }, i) => {
+
+      const r = first + i;
+
+      put(r, srC, i + 1);
+
+      put(r, map.date, o.date, 'd-mmm-yy'); put(r, map.exec, o.exec); put(r, map.tl, o.tl); put(r, map.client, o.client); put(r, map.equip, o.equip);
+
+      put(r, map.qty, o.qty, '#,##0'); put(r, map.our, o.our, '#,##0'); put(r, map.cprice, o.cprice, '#,##0');
+
+      put(r, map.reason, o.reason); put(r, rc, o.remarks);
+
+      ws.getCell(r, rc).style = clone(tpl[rc]);
+
+    });
+
+    for (let r = first + all.length; r <= last; r++) if (pre.has(r)) ws.getCell(r, srC).value = r - hr;   // keep the pre-printed numbering below the data
+
+    // empty extra sheets (the templates carry an empty "Sheet2") are not kept
+
+    const wbk = ws.workbook, emptyOnes = wbk.worksheets.filter(w => w !== ws && w.actualRowCount === 0);
+
+    emptyOnes.forEach(w => wbk.removeWorksheet(w.id));
+
+    if (emptyOnes.length) say(`\u2713 Order lost: removed the empty sheet${emptyOnes.length > 1 ? 's' : ''} "${emptyOnes.map(w => w.name).join('", "')}"`, 'ok');
+
+    fixTabs(wbk);
+
+    lostWb = wbk; pvLast = first + all.length + 19;
+
+    const minW = (c, w) => { if (c) { const col = ws.getColumn(c); if (!col.width || col.width < w) col.width = w; } };
+
+    minW(map.date, 11.5); minW(map.qty, 6); minW(map.our, 11); minW(map.cprice, 11.5);
+
+    lostBuffer = await tidyBuffer(await ws.workbook.xlsx.writeBuffer());
+
+    const parts = [];
+
+    if (st.num) parts.push(`${st.num} number(s) typed as text`);
+
+    if (st.date) parts.push(`${st.date} date(s) typed as text`);
+
+    if (st.snap) parts.push(`${st.snap} TL / reason value(s) matched to the drop-down list`);
+
+    if (st.exec) parts.push(`${st.exec} executive name(s) unified`);
+
+    if (st.text) parts.push(`${st.text} cell(s) had extra spaces`);
+
+    say(`\u2713 Order lost: ${items.length} report(s) \u2192 ${all.length} row(s), sorted by date, numbered 1\u2013${all.length}` + (map.remarks ? '' : ' \u00b7 Remarks column given its heading'), 'ok');
+
+    if (st.dup) say(`Order lost: ${st.dup} row(s) skipped \u2013 the same order appears in more than one weekly file`, 'warn');
+
+    if (parts.length) say('Order lost auto-corrected: ' + parts.join(', '), 'warn');
+
+    return { rows: all.length, files: items.length, dups: st.dup };
+
+  }
+
+  /* Excel templates often put a drop-down on a whole column (J3:J1048576). ExcelJS would turn that into 2 million cells (slow, memory hungry,
+
+     and written back as overlapping ranges), so such ranges are cut at row 5000 before the file is opened. */
+
+  async function capHugeRanges(buf) {
+
+    try {
+
+      await ensureJSZip();
+
+      const zip = await window.JSZip.loadAsync(buf);
+
+      let changed = false;
+
+      for (const n of Object.keys(zip.files).filter(k => /^xl\/worksheets\/sheet\d+\.xml$/.test(k))) {
+
+        const x = await zip.file(n).async('string');
+
+        if (x.indexOf('1048576') < 0) continue;
+
+        const y = x.replace(/(<dataValidation\b[^>]*\bsqref=")([^"]*)(")/g, (m, a, ref, z) =>
+
+          a + ref.replace(/([A-Z]{1,3})(\d+):([A-Z]{1,3})(\d+)/g, (mm, c1, r1, c2, r2) => (+r2 > 5000 && +r1 <= 5000) ? c1 + r1 + ':' + c2 + 5000 : mm) + z);
+
+        if (y !== x) { zip.file(n, y); changed = true; }
+
+      }
+
+      return changed ? await zip.generateAsync({ type: 'uint8array' }) : buf;
+
+    } catch (e) { console.error(e); return buf; }
+
+  }
+
+  /* ExcelJS writes overlapping drop-down ranges (it sorts D10 before D3), which Excel may "repair". Ranges that sit inside an identical one are removed. */
+
+  function dedupeDvXml(x) {
+
+    const items = (x.match(/<dataValidation\b[^>]*?(?:\/>|>[\s\S]*?<\/dataValidation>)/g) || []).map(t => { const m = /\bsqref="([^"]*)"/.exec(t); return { t, sq: m ? m[1] : '', body: t.replace(/\bsqref="[^"]*"/, '') }; });
+
+    const box = r => { const m = /^([A-Z]+)(\d+)(?::([A-Z]+)(\d+))?$/.exec(r); return m ? [colNum(m[1]), +m[2], colNum(m[3] || m[1]), +(m[4] || m[2])] : null; };
+
+    const drop = new Set();
+
+    items.forEach((a, i) => {
+
+      const A = box(a.sq); if (!A) return;
+
+      items.forEach((b, j) => {
+
+        if (i === j || drop.has(j) || a.body !== b.body) return;
+
+        const B = box(b.sq); if (!B) return;
+
+        const inside = A[0] >= B[0] && A[1] >= B[1] && A[2] <= B[2] && A[3] <= B[3], same = A.every((v, k) => v === B[k]);
+
+        if (same ? i > j : inside) drop.add(i);
+
+      });
+
+    });
+
+    if (!drop.size) return x;
+
+    drop.forEach(i => { x = x.replace(items[i].t, ''); });
+
+    return x.replace(/(<dataValidations\b[^>]*\bcount=")\d+(")/, (m, a, z) => a + (items.length - drop.size) + z);
+
+  }
+
+  async function tidyBuffer(buf) {
+
+    try {
+
+      await ensureJSZip();
+
+      const zip = await window.JSZip.loadAsync(buf);
+
+      let changed = false;
+
+      for (const n of Object.keys(zip.files).filter(k => /^xl\/worksheets\/sheet\d+\.xml$/.test(k))) {
+
+        const x = await zip.file(n).async('string');
+
+        if (x.indexOf('<dataValidations') < 0) continue;
+
+        const y = dedupeDvXml(x);
+
+        if (y !== x) { zip.file(n, y); changed = true; }
+
+      }
+
+      return changed ? await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' }) : buf;
+
+    } catch (e) { console.error(e); return buf; }
+
+  }
+
+  function pvWb() { return pvMode === 'lost' ? lostWb : outWb; }
+
+  function downloadLost() {
+
+    if (!lostBuffer) return;
+
+    const a = document.createElement('a');
+
+    a.href = URL.createObjectURL(new Blob([lostBuffer], { type: XLSX_MIME }));
+
+    a.download = lostName();
+
+    document.body.appendChild(a); a.click(); a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+
+  }
+
+
+
   /* ---------- main ---------- */
   async function run() {
     try { await ensureExcel(); } catch (e) { log(e.message, 'err'); setStatus('Could not start \u2013 see the details below.', 'err'); return; }
@@ -14333,9 +15810,12 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     $('mtd-log').innerHTML = ''; setStatus('Working\u2026');
     try {
       log(`Reading ${files.length} file(s)\u2026`);
-      const loaded = [];
+      const loaded = [], lostLoaded = []; let detInfo = null;
       for (const f of files) {
         const wb = await loadWb(f);
+        if (wb.__det) { detInfo = detInfo || { names: wb.__det.names, formulas: 0, lists: 0, cf: 0 }; detInfo.formulas += wb.__det.formulas; detInfo.lists += wb.__det.lists; detInfo.cf += wb.__det.cf; }
+        const lostSheet = findLostSheet(wb);
+        if (lostSheet) { const lr = readLostRows(lostSheet); lostLoaded.push(Object.assign({ file: f, wb, rows: lr }, lostSheet)); kindOf.set(f, 'lost'); log(`\u2713 ${f.name} \u2192 Order lost report \u00b7 ${lr.length} row(s)`, 'ok'); continue; }
         const team = wb.getWorksheet(TEAM), pipe = wb.getWorksheet(PIPE), twp = wb.getWorksheet(TWP);
         if (!team || !pipe) { log(`"${f.name}": missing sheet "${TEAM}" or "${PIPE}" \u2013 skipped`, 'err'); continue; }
         const owner = detectOwner(team, pipe, f.name);
@@ -14344,8 +15824,16 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
         loaded.push({ file: f, wb, team, pipe, twp, owner, rows });
         log(`\u2713 ${f.name} \u2192 ${owner || '(unknown)'} \u00b7 ${rows.length} pipeline rows`, 'ok');
       }
-      if (!loaded.length) throw new Error('No usable files.');
+      if (!loaded.length && !lostLoaded.length) throw new Error('No usable files.');
+      if (lostLoaded.length) lostInfo = await mergeLost(lostLoaded, log);
+      if (!loaded.length) {                                  // only order-lost reports were added
+        $('mtd-preview').classList.add('hidden'); dlBtn.classList.add('hidden'); lostBtn.classList.remove('hidden'); lostPvBtn.classList.remove('hidden'); $('mtd-post').classList.remove('hidden');
+        setStatus(`\u2714 Done \u2013 ${lostInfo.files} order lost report${lostInfo.files > 1 ? 's' : ''} combined (${lostInfo.rows} rows).`, 'ok');
+        return;
+      }
       reconcile(loaded.map(L => ({ team: L.team, twp: L.twp, owner: L.owner, file: L.file.name })), log);
+      if (detInfo) logDetails(detInfo); else if (REMOVE_DETAILS) log('No "Details" sheet in the files \u2013 nothing to remove');
+      cleanPipeline(loaded, log);
 
       const dropped = new Set(loaded.filter(L => L.owner && isExcluded(L.owner)));
       dropped.forEach(L => log(`"${L.owner}" is removed from the merged file \u2013 his workbook's pipeline rows were not included`, 'warn'));
@@ -14506,7 +15994,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
           const labels = {}; blocks.forEach(b => { labels[key(b.label)] = b.label; });
           if (outTeams.length > blocks.length) log(`"${TWP}" has room for ${blocks.length} teams \u2013 not shown: ${outTeams.slice(blocks.length).map(t => t.name).join(', ')}`, 'err');
           const clearRow = r => { for (let c = 1; c <= 24; c++) { const cell = mTwp.getCell(r, c); if (cell.isMerged && cell.master && cell.master.address !== cell.address) continue; if (cell.value !== null && cell.value !== undefined) cell.value = null; } };
-          const twpRows = [];
+          const twpRows = [], twpBlocks = [];
           blocks.forEach((b, bi) => {
             const t = outTeams[bi];
             if (!t) { for (let r = b.hdr; r <= b.tot; r++) { if (r > b.hdr && r <= b.last) clearRow(r); mTwp.getRow(r).hidden = true; } return; }
@@ -14515,13 +16003,20 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
             if (people.length > room) { log(`${t.name}: only ${room} rows in "${TWP}" \u2013 not shown: ${people.slice(room).join(', ')}`, 'err'); people = people.slice(0, room); }
             const hc = mTwp.getCell(b.hdr, 1);
             if (!isFormula(hc.value)) hc.value = labels[key(t.name)] || (t.name.replace(/\s*team\s*$/i, '') + "'s Team");
+            twpBlocks.push([]);
             for (let i = 0; i < room; i++) {
               const r = b.first + i, row = mTwp.getRow(r);
-              if (i < people.length) { mTwp.getCell(r, 1).value = people[i]; row.hidden = false; twpRows.push(r); }
+              if (i < people.length) { mTwp.getCell(r, 1).value = people[i]; row.hidden = false; twpRows.push(r); twpBlocks[twpBlocks.length - 1].push(r); }
               else { clearRow(r); row.hidden = true; }
             }
           });
           repairFormulaCols(mTwp, twpRows, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 22, 24], TWP);
+          {
+            const cols = []; for (let c = 2; c <= 24; c++) cols.push(c);
+            let n = 0;
+            twpBlocks.forEach(rows => { n += fixTextNumbers(mTwp, rows, cols, TWP) + consensusFormulas(mTwp, rows, cols, TWP) + consensusStyles(mTwp, rows, [1].concat(cols), TWP); });
+            if (n) log(`${TWP}: ${n} cell(s) auto-corrected (formula / number / font)`, 'warn');
+          }
           log(`${TWP}: ${outTeams.slice(0, blocks.length).map(t => t.name).join(' \u2192 ')}`, 'ok');
         }
       }
@@ -14587,6 +16082,16 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
         // person rows of SALES TEAM: ratio / actual columns must all be formulas
         const used = []; for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) if (txt(mTeam.getCell(r, 2).value).trim()) used.push(r);
         repairFormulaCols(mTeam, used, [6, 8, 9, 11, 12, 15, 18, 22, 25, 26], TEAM);
+        {
+          const pr = used.filter(r => !reserved.has(r) && !isTotalRow(txt(mTeam.getCell(r, 2).value))), cols = [];
+          for (let c = TEAM_FIRST_COL; c <= TEAM_LAST_COL; c++) cols.push(c);
+          let n = 0;
+          [pr, pr.map(r => r + T2)].forEach((rows, t) => {
+            const lab = t ? TEAM + ' (2nd table)' : TEAM;
+            n += fixTextNumbers(mTeam, rows, cols, lab) + consensusFormulas(mTeam, rows, cols, lab) + consensusStyles(mTeam, rows, [2].concat(cols), lab);
+          });
+          if (n) log(`${TEAM}: ${n} cell(s) auto-corrected (formula / number / font)`, 'warn');
+        }
         // second (stacked) table: names must match the first table
         for (let r = FIRST_ROW; r <= LAST_TEAM_ROW; r++) {
           const up = txt(mTeam.getCell(r, 2).value).trim(), lc = mTeam.getCell(r + T2, 2);
@@ -14598,6 +16103,11 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       const c1 = fixFormulaRanges(mPipe, newLast, false);
       const c2 = fixFormulaRanges(mTeam, newLast, true) + fixFormulaRanges(mTwp, newLast, true);
       if (c1 + c2) log(`Extended ${c1 + c2} formula range(s) to cover ${newLast - FIRST_ROW + 1} pipeline rows`);
+      try {
+        graphSpec = buildGraphs(master, { plan, rowOf, newLast, mTeam, mPipe, pos: master.__det ? master.__det.pos : -1 });
+        if (graphSpec) log(`${GRAPHS} sheet added \u2013 ${graphSpec.charts.length} charts`, 'ok');
+      } catch (e) { console.error(e); graphSpec = null; log('The Graphs sheet could not be built: ' + (e && e.message ? e.message : e), 'warn'); }
+      fixTabs(master);
 
       /* 4. Clean-up so Excel opens the file without a repair prompt */
       master.eachSheet(ws => {
@@ -14623,9 +16133,10 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
       master.calcProperties = master.calcProperties || {};
       master.calcProperties.fullCalcOnLoad = true;
 
-      outBuffer = await master.xlsx.writeBuffer(); outWb = master;
+      outWb = master; outBuffer = await packBuffer(master);
+      $('mtd-preview').classList.remove('hidden'); dlBtn.classList.remove('hidden'); lostBtn.classList.toggle('hidden', !lostBuffer); lostPvBtn.classList.toggle('hidden', !lostBuffer);
       $('mtd-post').classList.remove('hidden');           // Download / WhatsApp / Email only appear after a successful merge
-      setStatus(`\u2714 Done \u2013 ${loaded.length} file${loaded.length > 1 ? 's' : ''} combined (${newLast - FIRST_ROW + 1} pipeline rows).`, 'ok');
+      setStatus(`\u2714 Done \u2013 ${loaded.length} file${loaded.length > 1 ? 's' : ''} combined (${newLast - FIRST_ROW + 1} pipeline rows)${lostInfo ? ' + ' + lostInfo.rows + ' order-lost rows' : ''}.`, 'ok');
     } catch (err) {
       console.error(err);
       log('Error: ' + (err && err.message ? err.message : err), 'err');
@@ -14653,7 +16164,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   const pvTheme = ['FFFFFF', '000000', 'E7E6E6', '44546A', '4472C4', 'ED7D31', 'A5A5A5', 'FFC000', '5B9BD5', '70AD47'];
   function pvLoadTheme() {
     try {
-      const th = outWb._themes && (outWb._themes.theme1 || Object.values(outWb._themes)[0]);
+      const W0 = pvWb(), th = W0._themes && (W0._themes.theme1 || Object.values(W0._themes)[0]);
       if (!th) return;
       const sc = new DOMParser().parseFromString(String(th), 'text/xml').getElementsByTagName('a:clrScheme')[0];
       if (!sc) return;
@@ -14766,10 +16277,10 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   function pvCalc() {
     if (pvHF) { try { pvHF.destroy(); } catch (e) { /* ignore */ } }
     pvHF = null;
-    if (!window.HyperFormula || !outWb) return;
+    if (!window.HyperFormula || !pvWb()) return;
     try {
       const sheets = {};
-      outWb.worksheets.forEach(ws => {
+      pvWb().worksheets.forEach(ws => {
         const R = ws.rowCount, C = ws.columnCount, arr = [];
         for (let r = 0; r < R; r++) arr.push(new Array(C).fill(null));
         ws.eachRow({ includeEmpty: false }, (row, rn) => row.eachCell({ includeEmpty: false }, (cell, cn) => {
@@ -14800,7 +16311,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   function pvRender(name) {
     pvSheet = name;
     pvModal.querySelectorAll('.mtd-pv-tabs button').forEach(b => b.classList.toggle('on', b.dataset.s === name));
-    const ws = outWb.getWorksheet(name), maxR = Math.min(ws.rowCount, 600), maxC = Math.min(Math.max(ws.columnCount, 1), 40);
+    const ws = pvWb().getWorksheet(name), maxR = Math.min((pvMode === 'lost' && pvLast) ? pvLast : ws.rowCount, 600), maxC = Math.min(Math.max(ws.columnCount, 1), 40);
     const defW = (ws.properties && ws.properties.defaultColWidth) || 8.43;
     const widths = [], colVis = [];
     for (let c = 1; c <= maxC; c++) { const col = ws._columns && ws._columns[c - 1]; widths[c] = Math.round(((col && col.width != null) ? col.width : defW) * 7 + 5); colVis[c] = !(col && col.hidden); }
@@ -14820,6 +16331,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     h += '</tr></thead><tbody>';
     for (let r = 1; r <= maxR; r++) {
       if (!rowVis[r]) continue;
+      if (name === GRAPHS && graphSpec && r >= graphSpec.from && r <= graphSpec.to) continue;
       const row = ws.findRow(r), rh = row && row.height ? ` style="height:${Math.round(row.height * 1.3333)}px"` : '';
       h += `<tr${rh}><td class="rn">${r}</td>`;
       for (let c = 1; c <= maxC; c++) {
@@ -14872,6 +16384,8 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     }
     const tb = pvModal.querySelector('#mtd-pv');
     tb.innerHTML = h + '</tbody>';
+    { const wrap0 = pvModal.querySelector('.mtd-pv-wrap'), old = wrap0.querySelector('.mtd-gr'); if (old) old.remove();
+      if (name === GRAPHS && graphSpec) { const gd = document.createElement('div'); gd.className = 'mtd-gr'; gd.innerHTML = pvChartsHtml(); wrap0.insertBefore(gd, tb); } }
     tb.style.width = total + 'px';
     tb.classList.toggle('nogrid', !!(ws.views && ws.views[0] && ws.views[0].showGridLines === false));
     pvModal.querySelector('.mtd-pv-wrap').scrollTop = 0;
@@ -14879,18 +16393,18 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
   }
   async function pvSave() {
     const keys = Object.keys(pvPending);
-    if (!keys.length || !outWb) return;
+    if (!keys.length || !pvWb()) return;
     const btn = pvModal.querySelector('[data-p="save"]'); btn.disabled = true;
     try {
       keys.forEach(k => {
-        const [sn, r, c] = k.split('\u0001'), cell = outWb.getWorksheet(sn).getCell(+r, +c);
+        const [sn, r, c] = k.split('\u0001'), cell = pvWb().getWorksheet(sn).getCell(+r, +c);
         const t = String(pvPending[k]).trim(), o = cell.value, n = pvNum(t);
         if (t === '') cell.value = null;
         else if (o instanceof Date) { const d = new Date(t); cell.value = isNaN(d) ? t : d; }
         else if (typeof o !== 'string' && n != null) cell.value = n;
         else cell.value = t;
       });
-      outBuffer = await outWb.xlsx.writeBuffer();
+      if (pvMode === 'lost') lostBuffer = await tidyBuffer(await lostWb.xlsx.writeBuffer()); else outBuffer = await packBuffer(outWb);
       keys.forEach(k => delete pvPending[k]);
       pvCalc(); pvRender(pvSheet);
       pvModal.querySelector('#mtd-pv-msg').textContent = `\u2714 ${keys.length} change${keys.length > 1 ? 's' : ''} saved \u2013 Download now gives the edited file.`;
@@ -14906,8 +16420,9 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     Object.keys(pvPending).forEach(k => delete pvPending[k]);
     pvModal.classList.remove('show');
   }
-  async function openPreview() {
-    if (!outWb) return;
+  async function openPreview(mode) {
+    pvMode = mode === 'lost' ? 'lost' : 'mtd';
+    if (!pvWb()) return;
     if (!pvModal) {
       pvModal = document.createElement('div'); pvModal.className = 'mtd-modal'; pvModal.id = 'mtd-pvmodal';
       pvModal.innerHTML = '<div class="mtd-sheet wide" role="dialog" aria-modal="true"><div class="mtd-sheet-head"><div><h3>Preview &amp; edit</h3><p>The merged workbook as it will be downloaded.</p></div><button type="button" class="mtd-x" data-p="close" aria-label="Close">\u00d7</button></div>'
@@ -14919,7 +16434,7 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
         if (b.dataset.s) pvRender(b.dataset.s);
         else if (b.dataset.p === 'close') pvClose();
         else if (b.dataset.p === 'save') pvSave();
-        else if (b.dataset.p === 'dl') download();
+        else if (b.dataset.p === 'dl') { if (pvMode === 'lost') downloadLost(); else download(); }
       });
       pvModal.addEventListener('focusin', e => {          // show the real value while typing (not "SAR 20,00,000")
         const td = e.target.closest && e.target.closest('td[data-r]'); if (!td) return;
@@ -14944,14 +16459,14 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
         document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text').replace(/\s*[\r\n]+\s*/g, ' '));
       });
     }
-    const names = outWb.worksheets.filter(w => !w.state || w.state === 'visible').map(w => w.name);
+    const names = pvWb().worksheets.filter(w => !w.state || w.state === 'visible').map(w => w.name);
     pvModal.querySelector('#mtd-pv-tabs').innerHTML = names.map(n => `<button type="button" data-s="${esc(n)}">${esc(n)}</button>`).join('');
     pvModal.classList.add('show');
     pvModal.querySelector('#mtd-pv-msg').textContent = 'Calculating formulas\u2026';
     pvLoadTheme();
     pvRender(names.includes(TEAM) ? TEAM : names[0]);     // quick first look
-    await ensureHF();
-    if (!outWb || !pvModal.classList.contains('show')) return;
+    if (pvMode === 'mtd') await ensureHF();                 // the order-lost file has no formulas
+    if (!pvWb() || !pvModal.classList.contains('show')) return;
     pvCalc();
     pvRender(pvSheet);
   }
