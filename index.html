@@ -4578,7 +4578,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                 <div class="rv-filters" id="reservation-stats"></div>
                 <div class="rv-sort"><label for="reservation-sort">Sort by:</label>
                     <select id="reservation-sort" onchange="setReservationSort(this.value)">
-                        <option value="due">Due date</option>
+                        <option value="due">Expiring first</option>
                         <option value="added">Recently added</option>
                         <option value="client">Client (A–Z)</option>
                         <option value="sales">Salesperson (A–Z)</option>
@@ -6999,7 +6999,12 @@ document.addEventListener('visibilitychange', () => {
     function rvCopyAll(id) { const r = RESERVATIONS.find(x => x.id === id); if (!r) return; const a = assetsOf(r); rvCopy(a.join('\n'), 'Copied ' + a.length + ' asset number' + (a.length === 1 ? '' : 's')); if (rvExpanded.has(id)) rvArmClose(id); }
     function toggleReservationCard(id) {
         if (rvExpanded.has(id)) { rvExpanded.delete(id); clearTimeout(rvExpTimers[id]); delete rvExpTimers[id]; }
-        else { rvExpanded.add(id); rvArmClose(id); }
+        else {
+            // only one card open at a time: fold every other card back first
+            rvExpanded.forEach(o => { clearTimeout(rvExpTimers[o]); delete rvExpTimers[o]; });
+            rvExpanded.clear();
+            rvExpanded.add(id); rvArmClose(id);
+        }
         filterReservations();
     }
 
@@ -7023,10 +7028,10 @@ document.addEventListener('visibilitychange', () => {
             if (by === 'sales') return cmp(x.r.sales, y.r.sales);
             if (by === 'asset') return cmp(assetsOf(x.r)[0], assetsOf(y.r)[0]);
             if (by === 'added') return added(y.r) - added(x.r);
-            const ex = x.c.key === 'expired' ? 1 : 0, ey = y.c.key === 'expired' ? 1 : 0;
-            if (ex !== ey) return ex - ey;                                   // active ones first
+            // Expiring first: oldest reservation date on top (expired, then due soon),
+            // the freshest, not-expiring reservations last. Same date -> older entry first.
             const d = cmp(x.r.date || '9999', y.r.date || '9999');
-            return ex ? -d : d;                                              // soonest due first; expired: most recent first
+            return d || (added(x.r) - added(y.r));
         });
     }
 
