@@ -7892,6 +7892,13 @@ document.addEventListener('visibilitychange', () => {
       if (!m) return null;
       return { runs: +m[1], core: +m[2], size: +m[3], key: m[3] + '-' + m[2] + 'C' };
     }
+    // "4 Runs 1C x 240 sqmm" -> "Cable 240 Sqmm × 1 Core × 4 Runs" (display only)
+    function gtCableLabel(txt) {
+      const c = parseGensetCable(txt);
+      if (!c) return txt;
+      const nb = t => '<span style="white-space:nowrap">' + t + '</span>';
+      return nb('Cable ' + c.size + ' Sqmm') + ' \u00d7 ' + nb(c.core + ' Core') + ' \u00d7 ' + nb(c.runs + (c.runs > 1 ? ' Runs' : ' Run'));
+    }
     function gtFmt(n) { return (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
 
     function renderGensetPanel() {
@@ -7907,7 +7914,7 @@ document.addEventListener('visibilitychange', () => {
       box.innerHTML = `
         <div class="cc-card gt-panel">
           <div class="cc-badge" id="gt-badge"></div>
-          <div class="gt-ttl">${GENSET_VOLTAGE_LABELS[gt.v] || (gt.v + ' V')} &middot; ${txt}</div>
+          <div class="gt-ttl">${GENSET_VOLTAGE_LABELS[gt.v] || (gt.v + ' V')} &middot; ${gtCableLabel(txt)}</div>
           <div class="cc-grid">
             <label class="cc-field"><span>Cable length (per run)</span><div class="cc-inp"><input type="number" id="gt-len" inputmode="decimal" min="0" step="any" value="${gt.len}" placeholder="e.g. 50" onfocus="this.select()" oninput="gtCalc()" /><em>m</em></div></label>
             <label class="cc-field"><span>Monthly price per meter</span><div class="cc-inp"><input type="number" id="gt-ppm" inputmode="decimal" min="0" step="any" value="${pr == null ? '' : pr}" placeholder="set price" onfocus="this.select()" oninput="gtPrice()" /><em>SAR</em></div></label>
@@ -7988,7 +7995,7 @@ document.addEventListener('visibilitychange', () => {
       const rows = GENSET_VOLTAGES.map(v => {
         const amps = row.amps[v];
         const mts = (amps * 1.3).toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1});
-        return `<tr class="gt-row${gt.v === v ? ' gt-sel' : ''}" data-v="${v}" onclick="gtSelect(${v})"><td>${GENSET_VOLTAGE_LABELS[v] || (v + ' V')}</td><td class="gt-cable-cell">${row.cable[v]}</td><td class="gt-mts-cell">${mts} A</td></tr>`;
+        return `<tr class="gt-row${gt.v === v ? ' gt-sel' : ''}" data-v="${v}" onclick="gtSelect(${v})"><td>${GENSET_VOLTAGE_LABELS[v] || (v + ' V')}</td><td class="gt-cable-cell">${gtCableLabel(row.cable[v])}</td><td class="gt-mts-cell">${mts} A</td></tr>`;
       }).join('');
 
       box.innerHTML = `
