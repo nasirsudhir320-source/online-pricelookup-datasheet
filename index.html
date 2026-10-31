@@ -3646,6 +3646,175 @@ main[data-tab="notes"] .app-footer { display: none; }
     main[data-tab="mtd"] > #tab-mtd.hidden { display: none; }
 }
 main[data-tab="mtd"] .app-footer { display: none; }
+/* =====================================================================
+   TRANSLATOR tab  (English <-> Arabic, image text, QR scanner)
+   ===================================================================== */
+@media (max-width: 899px) { main[data-tab="translator"] { padding: 0; } }
+@media (min-width: 900px) {
+    main[data-tab="translator"] { display: flex; flex-direction: column; padding: 0; margin-top: -18px; }
+    main[data-tab="translator"] > #tab-translator { flex: 1 0 auto; display: flex; flex-direction: column; }
+    main[data-tab="translator"] > #tab-translator.hidden { display: none; }
+}
+main[data-tab="translator"] .app-footer { display: none; }
+.tr-main{display:flex;flex-direction:column;gap:14px}
+#tab-translator svg.lucide{width:1em;height:1em}
+/* ---- translator ---- */
+.pi-translator{color:#7c3aed;}
+#mobile-more-sheet .mm-grid button[data-tab="translator"]:not(.active) .mm-ico{background:color-mix(in srgb,#7c3aed 11%,#fff) !important;}
+@media (max-width: 899px) {  }
+@media (min-width: 900px) {
+    
+    
+    
+}
+
+.tr-wrap { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+.tr-dirbar { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 10px 12px; }
+.tr-lang { flex: 1; text-align: center; font-weight: 800; font-size: 14px; color: var(--ink); padding: 10px 8px; border-radius: 11px; background: var(--accent-dim); letter-spacing: .2px; }
+.tr-swap { flex: none; width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 8px 16px -8px rgba(109,40,217,.7); transition: transform .25s; }
+.tr-swap:active { transform: rotate(180deg) scale(.94); }
+.tr-swap svg { width: 20px; height: 20px; }
+.tr-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 900px) { .tr-grid { grid-template-columns: 1fr 1fr; } }
+.tr-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.tr-box-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #6d28d9; border-bottom: 1px solid var(--border); background: #f7f4ff; }
+.tr-box-head .tr-count { font-family: var(--mono); font-size: 10.5px; color: var(--text-dim); text-transform: none; letter-spacing: 0; }
+.tr-text { width: 100%; min-height: 170px; border: none; outline: none; resize: vertical; padding: 14px; font-size: 16px; line-height: 1.6; color: var(--ink); background: transparent; font-family: 'Manrope','Segoe UI',Tahoma,'Noto Naskh Arabic',sans-serif; }
+.tr-text[dir="rtl"], .tr-out[dir="rtl"] { font-family: 'Segoe UI',Tahoma,'Noto Naskh Arabic','Noto Sans Arabic',Arial,sans-serif; font-size: 19px; line-height: 1.85; text-align: right; }
+.tr-out { min-height: 170px; padding: 14px; font-size: 16px; line-height: 1.6; color: var(--ink); white-space: pre-wrap; word-break: break-word; flex: 1; font-family: 'Manrope','Segoe UI',Tahoma,sans-serif; }
+.tr-out.tr-placeholder { color: var(--text-faint, #94a3b8); }
+.tr-out.tr-error { color: #dc2626; font-size: 13px; font-weight: 700; }
+.tr-actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
+.tr-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 13px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--ink); font-size: 12.5px; font-weight: 800; cursor: pointer; }
+.tr-btn svg { width: 15px; height: 15px; }
+.tr-btn:active { background: var(--accent-dim); }
+.tr-btn.primary { color: #fff; border-color: transparent; background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.tr-btn.wa { color: #fff; border-color: transparent; background: linear-gradient(135deg, #22c55e, #15803d); }
+.tr-btn:disabled { opacity: .45; pointer-events: none; }
+.tr-sec { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; }
+.tr-sec-title { font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #6d28d9; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.tr-sec-title button { background: none; border: none; color: #dc2626; font-size: 11px; font-weight: 800; cursor: pointer; }
+.tr-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.tr-chip { border: 1px solid #ddd2fb; background: #f7f4ff; color: #4c1d95; border-radius: 999px; padding: 8px 13px; font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: left; }
+.tr-chip:active { background: #ebe3ff; }
+.tr-hist-item { padding: 10px 2px; border-bottom: 1px solid #eef2f7; cursor: pointer; }
+.tr-hist-item:last-child { border-bottom: none; }
+.tr-hist-src { font-size: 12.5px; color: var(--text-dim); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tr-hist-dst { font-size: 15px; font-weight: 700; color: var(--ink); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Segoe UI',Tahoma,'Noto Naskh Arabic',Arial,sans-serif; }
+.tr-spin { display: inline-block; width: 14px; height: 14px; border: 2px solid #ddd2fb; border-top-color: #6d28d9; border-radius: 50%; animation: trspin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
+@keyframes trspin { to { transform: rotate(360deg); } }
+
+
+.tr-modebar { display: flex; gap: 6px; padding: 5px; margin-top: 14px; background: #ede9fe; border-radius: 14px; }
+.tr-mode { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; border: none; border-radius: 10px; background: transparent; color: #5b21b6; font-size: 13.5px; font-weight: 800; cursor: pointer; }
+.tr-mode svg { width: 16px; height: 16px; }
+.tr-mode.on { background: #fff; box-shadow: 0 4px 10px -4px rgba(109,40,217,.45); color: #6d28d9; }
+#tr-shot-wrap { margin-top: 14px; }
+#tr-text-wrap { margin-top: 14px; }
+
+
+
+/* Integrated image-to-text workspace */
+.ocr-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--sh-sm)}
+.ocr-card h3{margin:0 0 8px;color:var(--ink);font:800 15px 'Space Grotesk',sans-serif}
+.ocr-drop{display:block;border:2px dashed #b8c9e8;background:linear-gradient(135deg,#f8fbff,#f6f2ff);border-radius:14px;padding:24px 14px;text-align:center;cursor:pointer}
+.ocr-drop strong{display:block;color:#254b80;margin-bottom:6px}.ocr-drop span{font-size:12px;color:var(--text-dim)}.ocr-drop input{display:none}
+.ocr-preview{display:none;max-width:100%;max-height:340px;object-fit:contain;margin:14px auto 0;border-radius:10px;border:1px solid var(--border)}
+.ocr-textarea{width:100%;min-height:300px;padding:14px;border:1px solid var(--border);border-radius:12px;background:#fbfcff;color:var(--ink);font:14px/1.6 'JetBrains Mono',monospace;resize:vertical;white-space:pre-wrap}
+.ocr-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ocr-action{border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:#fff;color:var(--ink);font-size:12px;font-weight:800;cursor:pointer}
+.ocr-action.primary{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;border:0}
+.ocr-action:disabled{opacity:.45;cursor:not-allowed}
+.ocr-status{font-size:12px;color:#5b21b6;margin-top:10px;min-height:18px}
+.ocr-progress{height:7px;background:#ede9fe;border-radius:10px;overflow:hidden;margin-top:8px;display:none}
+.ocr-progress>div{height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#3b82f6);transition:width .2s}
+.ocr-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.ocr-tools label{font-size:12px;font-weight:800;color:var(--text-dim)}
+.ocr-tools select{border:1px solid var(--border);border-radius:9px;padding:8px;background:white;color:var(--ink)}
+@media(max-width:600px){.ocr-card{padding:13px}.ocr-action{flex:1}}
+
+
+/* Unified single-screen translator + image OCR workspace */
+.tr-modebar{display:none!important}
+#tr-shot-wrap,#tr-ocr-wrap{display:none!important}
+#tr-text-wrap{display:flex!important;gap:14px}
+.tr-sec{display:none!important}
+.unified-workspace{width:100%}
+.unified-image-card{position:relative;background:linear-gradient(135deg,#fff,#f7f5ff);border:1px solid #e4e7f2;border-radius:20px;padding:14px;box-shadow:var(--sh-md)}
+.unified-label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 10px;color:#5b21b6;font-weight:900;font-size:11px;letter-spacing:.09em}
+.unified-label small{font-weight:600;letter-spacing:0;color:#71809b;text-align:right;font-size:11px}
+.unified-image-content .ocr-card{padding:0;border:0;box-shadow:none;background:transparent}
+.unified-image-content .ocr-card h3{display:none}
+.unified-image-content .ocr-drop{padding:18px 12px;border-radius:14px;background:linear-gradient(135deg,#f4f8ff,#f6f0ff);border:2px dashed #aebfe5;transition:.2s}
+.unified-image-content .ocr-drop:hover{border-color:#7c3aed;background:#f4f0ff}
+.unified-image-content .ocr-drop strong{font-size:14px}
+.unified-image-content .ocr-preview{max-height:210px}
+.unified-image-content .ocr-tools{margin:10px 0 0}
+.unified-image-content .ocr-actions{margin-top:10px}
+.unified-image-content .ocr-action{padding:9px 13px}
+.unified-image-content #ocrOutput,.unified-image-content #ocrCopyBtn,.unified-image-content #ocrShareBtn,.unified-image-content #ocrDownloadBtn,.unified-image-content #ocrTranslateBtn{display:none!important}
+.unified-drop-hint{display:none;position:fixed;inset:14px;z-index:99999;border:3px dashed #7c3aed;border-radius:24px;background:rgba(245,241,255,.88);color:#5522a3;font-size:22px;font-weight:900;align-items:center;justify-content:center;pointer-events:none;backdrop-filter:blur(5px)}
+.unified-drop-hint.show{display:flex}
+body.image-dragging .unified-image-card{border-color:#7c3aed;box-shadow:0 0 0 3px #7c3aed22,var(--sh-lg)}
+@media(max-width:650px){.unified-label{align-items:flex-start;flex-direction:column}.unified-label small{text-align:left}.tr-grid{grid-template-columns:1fr}}
+
+
+/* Clear all button */
+.tr-toolbar{display:flex;justify-content:flex-end}
+.tr-clearall{flex:none;height:38px;color:#b91c1c;border-color:#fecaca;background:#fff5f5}
+.tr-clearall:active{background:#fee2e2}
+
+/* Image choice popup */
+.img-choice{display:none;position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
+.img-choice.show{display:flex}
+.ic-card{position:relative;width:100%;max-width:440px;max-height:92vh;overflow:auto;background:#fff;border-radius:22px;padding:20px;box-shadow:var(--sh-xl)}
+.ic-x{position:absolute;top:10px;right:12px;width:34px;height:34px;border:0;border-radius:50%;background:#f1f5f9;color:#475569;font-size:22px;line-height:1;cursor:pointer}
+.ic-title{margin:0 40px 12px 0;font:800 18px 'Space Grotesk',sans-serif;color:var(--ink-blue)}
+.ic-thumb{display:block;max-width:100%;max-height:170px;margin:0 auto 14px;border-radius:12px;border:1px solid var(--border);object-fit:contain}
+.ic-lang{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:800;color:var(--text-dim);margin-bottom:12px}
+.ic-lang select{border:1px solid var(--border);border-radius:9px;padding:8px;background:#fff;color:var(--ink);font-size:13px}
+.ic-opt{display:block;width:100%;text-align:left;margin-bottom:10px;padding:13px 15px;border:1px solid #ddd2fb;border-radius:14px;background:#f7f4ff;cursor:pointer;color:#4c1d95}
+.ic-opt:hover,.ic-opt:active{background:#ebe3ff;border-color:#8b5cf6}
+.ic-opt b{display:block;font-size:15px}
+.ic-opt span{display:block;margin-top:3px;font-size:12px;color:#64748b}
+.ic-qr-head{font-weight:800;font-size:14px;color:var(--ink);margin-bottom:10px}
+.ic-qr-item{border:1px solid var(--border);background:#f8fbff;border-radius:12px;padding:12px;margin-bottom:10px}
+.ic-qr-item pre{margin:0 0 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.5 'Manrope',sans-serif}
+.ic-qr-actions{display:flex;flex-wrap:wrap;gap:8px}
+#imgChoiceQR>.tr-btn{margin-top:4px}
+
+/* Clear, guided single-workspace layout */
+.input-step-label{display:flex;align-items:center;gap:12px;margin:2px 2px 10px;padding:13px 15px;border:1px solid #d9d1ff;border-radius:15px;background:linear-gradient(110deg,#f4f0ff,#f5f8ff);color:#4c1d95}
+.input-step-label .step-number{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#8b5cf6,#5b4be7);color:#fff;font-size:17px;font-weight:900;box-shadow:0 5px 12px #7655db35}
+.input-step-label strong{display:block;font-size:13px;font-weight:900;letter-spacing:.045em}
+.input-step-label small{display:block;margin-top:3px;color:#64748b;font-size:11.5px;line-height:1.45}
+.unified-label{font-size:12px}
+.unified-label>span{display:inline-flex;align-items:center;gap:7px}
+.unified-image-card{border-color:#cbdcf5;background:linear-gradient(135deg,#fff,#f5f9ff)}
+.unified-image-content .ocr-drop{min-height:112px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px}
+.unified-image-content .ocr-drop strong{font-size:15px;color:#1d4ed8}
+.unified-image-content .ocr-drop span{max-width:560px;line-height:1.55}
+.unified-image-content .ocr-action.primary{background:linear-gradient(135deg,#3b82f6,#6547e8)}
+.tr-box.input-text-box{border:2px solid #b8a5ff;box-shadow:0 8px 24px #6d28d911}
+.tr-box.input-text-box .tr-box-head{background:#f4f0ff;color:#5b21b6}
+.tr-box.input-text-box textarea{min-height:260px;background:#fff}
+.tr-box.input-text-box textarea:focus{outline:3px solid #8b5cf633;border-color:#8b5cf6}
+.tr-box.output-text-box .tr-box-head{background:#eff6ff}
+.tr-box.output-text-box .tr-out{min-height:120px}
+.tr-results{display:flex;flex-direction:column;gap:14px}
+.tr-qr-body{padding:14px}
+.tr-grid{align-items:start}
+.tr-dirbar{margin-top:4px}
+.tr-actions .tr-btn.primary{background:linear-gradient(135deg,#8b5cf6,#5b4be7)}
+@media(max-width:650px){
+ .input-step-label{align-items:flex-start}
+ .input-step-label .step-number{width:30px;height:30px}
+ .unified-image-content .ocr-drop{min-height:125px;padding:18px 12px}
+ .tr-box.input-text-box textarea{min-height:220px}
+}
+
+
+
 .mtd-app { --m-ink:#14213d; --m-line:#e1e8f4; --m-soft:#f1ecff; --m-vio:#7c3aed; --m-mut:#7d8fb2; --m-ok:#1b7a3e; --m-warn:#946200; --m-err:#b42318; display:flex; flex-direction:column; gap:14px; padding-bottom:10px; }
 .mtd-cols { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; align-items:start; }
 @media (min-width: 900px) { .mtd-cols.two { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } }
@@ -3894,6 +4063,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
             <button class="nav-tab" id="btn-airquality" onclick="navigateToTab('airquality')"><div class="nav-icon-badge"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></div><span>Air</span></button>
             <button class="nav-tab" id="btn-notes" onclick="navigateToTab('notes')"><div class="nav-icon-badge"><svg class="pi pi-notes" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 8h28v22l-9 10H10z"/><path d="M29 40v-8a2 2 0 012-2h7"/><path d="M17 17h14M17 24h9"/></svg></div><span>Notes</span></button>
             <button class="nav-tab" id="btn-mtd" onclick="navigateToTab('mtd')"><div class="nav-icon-badge"><svg class="pi pi-mtd" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 7l16 8-16 8-16-8z"/><path d="M8 24l16 8 16-8"/><path d="M8 33l16 8 16-8"/></svg></div><span>MTD</span></button>
+            <button class="nav-tab" id="btn-translator" onclick="navigateToTab('translator')"><div class="nav-icon-badge"><svg class="pi pi-translator" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h22M17 6v5M10 11c1.500 8 6 13 12 16M24 11c-1.500 8-6.500 14-15 17"/><path d="M26 42l8.500-20L43 42M29 36h11"/></svg></div><span>Translate</span></button>
         </nav>
         <div class="hdr-right">
             <div class="sync-pill online-pill">
@@ -3917,6 +4087,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
             <button type="button" data-tab="airquality" onclick="mobileGo('airquality')"><span class="mm-ico"><svg class="pi pi-airquality" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h22a5.500 5.500 0 1 0-5.500-5.500" /><path d="M6 25h31a5.500 5.500 0 1 1-5.500 5.500"/><path d="M6 33h15a4.500 4.500 0 1 1-4.500 4.500"/></svg></span><b>Air Quality</b></button>
             <button type="button" data-tab="notes" onclick="mobileGo('notes')"><span class="mm-ico"><svg class="pi pi-notes" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 8h28v22l-9 10H10z"/><path d="M29 40v-8a2 2 0 012-2h7"/><path d="M17 17h14M17 24h9"/></svg></span><b>Notes</b></button>
             <button type="button" data-tab="mtd" onclick="mobileGo('mtd')"><span class="mm-ico"><svg class="pi pi-mtd" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 7l16 8-16 8-16-8z"/><path d="M8 24l16 8 16-8"/><path d="M8 33l16 8 16-8"/></svg></span><b>MTD Merger</b></button>
+            <button type="button" data-tab="translator" onclick="mobileGo('translator')"><span class="mm-ico"><svg class="pi pi-translator" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h22M17 6v5M10 11c1.500 8 6 13 12 16M24 11c-1.500 8-6.500 14-15 17"/><path d="M26 42l8.500-20L43 42M29 36h11"/></svg></span><b>Translator</b></button>
         </div>
     </div>
     <nav id="mobile-dock" aria-label="Main navigation">
@@ -3946,6 +4117,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4136,6 +4308,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4219,6 +4392,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item active" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4260,6 +4434,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4318,6 +4493,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item active" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4379,6 +4555,113 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
             </div>
         </div>
 
+        <div id="tab-translator" class="view-section hidden">
+            <div class="home-layout">
+                <aside class="home-sidebar">
+                    <div class="side-nav">
+                        <button class="side-item" onclick="navigateToTab('hiredesk')"><span class="side-ico" style="--c1:#4d9bff;--c2:#1f63e8"><i data-lucide="users"></i></span><span class="side-txt"><b>Teams Connect</b><small>Contacts &amp; support</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('home')"><span class="side-ico" style="--c1:#5aa8ff;--c2:#2a6ff0"><i data-lucide="home"></i></span><span class="side-txt"><b>Home</b><small>Dashboard overview</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('rates')"><span class="side-ico" style="--c1:#3aa0ff;--c2:#1a5fe0"><i data-lucide="tag"></i></span><span class="side-txt"><b>Rental Rates</b><small>View latest rental rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('dmm-transport')"><span class="side-ico" style="--c1:#6d8cff;--c2:#3347d9"><i data-lucide="truck"></i></span><span class="side-txt"><b>Transport Rates</b><small>Dammam route rates</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('photos')"><span class="side-ico" style="--c1:#ff5c9a;--c2:#e0175f"><i data-lucide="image"></i></span><span class="side-txt"><b>Machine Photos</b><small>Browse machine photos</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('docs')"><span class="side-ico" style="--c1:#2ddbd0;--c2:#0a94b3"><i data-lucide="file-text"></i></span><span class="side-txt"><b>Machine Datasheets</b><small>Technical specifications</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('machine-docs')"><span class="side-ico" style="--c1:#ffbe3d;--c2:#f08300"><i data-lucide="folder"></i></span><span class="side-txt"><b>Machine Documents</b><small>Certificates &amp; documents</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('offhire')"><span class="side-ico" style="--c1:#9b7bff;--c2:#6a2fe0"><i data-lucide="file-minus-2"></i></span><span class="side-txt"><b>Offhire Note</b><small>Create &amp; view offhire notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('yards')"><span class="side-ico" style="--c1:#5eead4;--c2:#0d9488"><i data-lucide="map"></i></span><span class="side-txt"><b>Yards</b><small>Operational yards &amp; locations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('reservation')"><span class="side-ico" style="--c1:#ff6a86;--c2:#e0264f"><i data-lucide="calendar-check"></i></span><span class="side-txt"><b>Reservation Tracker</b><small>View &amp; manage reservations</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item active" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                    </div>
+                    <div class="side-art" aria-hidden="true">
+                        <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
+                        <span class="side-lift" aria-hidden="true"></span>
+                        <span class="side-build">Build v14 · 20 Sep 2026</span>
+                    </div>
+                </aside>
+                <div class="home-main">
+                    <div class="tr-main">
+                    <div class="hd-banner hd-tint-violet">
+                        <div class="hd-badge"><i data-lucide="languages"></i></div>
+                        <div class="hd-titles">
+                            <div class="hd-kicker">Arabic Translator</div>
+                            <h2 class="hd-title">English &#8596; Arabic</h2>
+                            <p class="hd-sub">Type text or add an image. Choose Translate, Text from image or QR scanner.</p>
+                        </div>
+                    </div>
+<div class="tr-wrap" id="tr-text-wrap">
+                        <div class="tr-toolbar"><button class="tr-btn tr-clearall" type="button" onclick="trClearAll()" title="Clear the typed text, image and results. Also clears automatically after 3 minutes without activity."><i data-lucide="eraser"></i> <span class="tr-ca-t">Clear all</span></button></div>
+
+                        <div class="tr-grid">
+                            <div class="tr-box input-text-box">
+                                <div class="tr-box-head"><span id="tr-in-head">English</span><span class="tr-count" id="tr-count">0 / 5000</span></div>
+                                <textarea id="tr-in" class="tr-text" maxlength="5000" placeholder="Start typing here, or paste text using Ctrl + V…\n\nIf you add an image above and click Read Text from Image, the extracted text will appear here.\n\nClick Translate when you are ready." oninput="trInput()" dir="ltr"></textarea>
+                                <div class="tr-actions">
+                                    <button class="tr-btn primary" type="button" onclick="trRun()"><i data-lucide="languages"></i> Translate</button>
+                                    <button class="tr-btn" type="button" onclick="trPaste()"><i data-lucide="clipboard-paste"></i> Paste</button>
+                                    <button class="tr-btn" type="button" onclick="trClear()"><i data-lucide="x"></i> Clear</button>
+                                </div>
+                            </div>
+                            <div class="unified-workspace">
+                          <div class="unified-image-card">
+                            <div class="unified-label"><span>ADD AN IMAGE</span><small>Upload / take a photo / paste a screenshot / drag an image anywhere on this page</small></div>
+                            <div class="unified-image-content"><div class="ocr-card">
+                            <h3>1. Choose an image</h3>
+                            <label class="ocr-drop" for="ocrImageInput">
+                                <strong>Click to upload or take a photo</strong>
+                                <span>Or drag an image anywhere on this page, or paste a screenshot with Ctrl + V. Supports JPG and PNG.</span>
+                                <input id="ocrImageInput" type="file" accept="image/*">
+                            </label>
+                            <img id="ocrPreview" class="ocr-preview" alt="Selected image preview">
+                            <div class="ocr-tools"><label for="ocrLanguage">Text language</label>
+                                <select id="ocrLanguage"><option value="eng" selected>English</option><option value="ara">Arabic</option><option value="eng+ara">English + Arabic</option></select>
+                            </div>
+                            <div class="ocr-actions"><button id="ocrReadBtn" class="ocr-action primary" disabled>Read Text from Image</button><button id="ocrClearBtn" class="ocr-action">Clear</button></div>
+                            <div class="ocr-progress" id="ocrProgress"><div id="ocrBar"></div></div>
+                            <div class="ocr-status" id="ocrStatus">Select an image to get started.</div>
+                        </div></div>
+                            <div class="img-choice" id="imgChoice" role="dialog" aria-modal="true" aria-label="What would you like to do with this image?">
+  <div class="ic-card">
+    <button class="ic-x" id="imgChoiceClose" type="button" aria-label="Close">&times;</button>
+    <h3 class="ic-title">What would you like to do?</h3>
+    <img id="imgChoiceThumb" class="ic-thumb" alt="Selected image">
+    <div id="imgChoiceBtns">
+      <label class="ic-lang">Text language in image
+        <select id="imgChoiceLang"><option value="eng">English</option><option value="ara">Arabic</option><option value="eng+ara">English + Arabic</option></select>
+      </label>
+      <button class="ic-opt" id="imgChoiceTranslate" type="button"><b>🌐 Translate</b><span>Read the text and translate it right away</span></button>
+      <button class="ic-opt" id="imgChoiceText" type="button"><b>📝 Text from image</b><span>Only extract the text into the box so you can edit it</span></button>
+      <button class="ic-opt" id="imgChoiceQRBtn" type="button"><b>▦ QR scanner</b><span>Decode the QR code in this image</span></button>
+    </div>
+    <div id="imgChoiceQR" style="display:none"></div>
+  </div>
+</div>
+<div class="unified-drop-hint" id="globalDropHint">Drop an image anywhere on this page</div>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="tr-results" id="tr-result-area" style="display:none">
+                            <div class="tr-box output-text-box" id="tr-result-box" style="display:none">
+                                <div class="tr-box-head"><span id="tr-out-head">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; (Arabic)</span><span class="tr-count" id="tr-status"></span></div>
+                                <div id="tr-out" class="tr-out tr-placeholder" dir="rtl">Translation will appear here</div>
+                                <div class="tr-actions">
+                                    <button class="tr-btn" type="button" id="tr-copy" onclick="trCopy()" disabled><i data-lucide="copy"></i> Copy</button>
+                                    <button class="tr-btn" type="button" id="tr-speak" onclick="trSpeak()" disabled><i data-lucide="volume-2"></i> Listen</button>
+                                    <button class="tr-btn wa" type="button" id="tr-wa" onclick="trWhatsApp()" disabled><i data-lucide="send"></i> WhatsApp</button>
+                                </div>
+                            </div>
+                            <div class="tr-box tr-qr-box" id="tr-qr-box" style="display:none">
+                                <div class="tr-box-head"><span>&#9638; QR code result</span><span class="tr-count" id="tr-qr-status"></span></div>
+                                <div class="tr-qr-body" id="tr-qr-body"></div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <div id="tab-hiredesk" class="view-section hidden">
             <div class="home-layout">
                 <aside class="home-sidebar">
@@ -4396,6 +4679,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4440,6 +4724,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4482,6 +4767,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4520,6 +4806,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4690,6 +4977,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4747,6 +5035,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -4812,6 +5101,7 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                         <button class="side-item" onclick="navigateToTab('airquality')"><span class="side-ico" style="--c1:#38d0e8;--c2:#0891b2"><i data-lucide="wind"></i></span><span class="side-txt"><b>Air Quality</b><small>Live air quality monitor</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('notes')"><span class="side-ico" style="--c1:#ffd24a;--c2:#f59e0b"><i data-lucide="sticky-note"></i></span><span class="side-txt"><b>Notes</b><small>Your saved notes</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                         <button class="side-item" onclick="navigateToTab('mtd')"><span class="side-ico" style="--c1:#a78bfa;--c2:#6d28d9"><i data-lucide="layers"></i></span><span class="side-txt"><b>MTD Merger</b><small>Combine MTD files</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
+                        <button class="side-item" onclick="navigateToTab('translator')"><span class="side-ico" style="--c1:#c4b5fd;--c2:#7c3aed"><i data-lucide="languages"></i></span><span class="side-txt"><b>Translator</b><small>English &amp; Arabic, image text</small></span><i data-lucide="chevron-right" class="side-chev"></i></button>
                     </div>
                     <div class="side-art" aria-hidden="true">
                         <svg class="side-waves" viewBox="0 0 262 230" preserveAspectRatio="none"><path d="M0 92C60 62 112 122 172 98S240 72 262 86V230H0Z" fill="#fff" opacity=".05"/><path d="M0 132C70 102 122 152 192 128S250 112 262 120V230H0Z" fill="#001a66" opacity=".2"/><path d="M0 172C80 152 150 192 262 162V230H0Z" fill="#000d4a" opacity=".24"/></svg>
@@ -8830,6 +9120,7 @@ document.addEventListener('visibilitychange', () => {
         if (tab === 'reservation') initReservationsTab();
         if (tab === 'notes' && typeof initNotesTab === 'function') initNotesTab();
         if (tab === 'mtd' && typeof initMtdTab === 'function') initMtdTab();
+        if (tab === 'translator' && typeof initTranslatorTab === 'function') initTranslatorTab();
         if (tab === 'airquality') {
             const _f = document.getElementById('aq-frame');
             if (_f && !_f.getAttribute('src')) {
@@ -9538,7 +9829,7 @@ document.addEventListener('visibilitychange', () => {
     function goBack() { window.history.back(); }
 
     /* ---- Mobile bottom dock ---- */
-    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'airquality', 'notes', 'mtd'];
+    const MOBILE_MORE_TABS = ['dmm-transport', 'yards', 'reservation', 'hiredesk', 'airquality', 'notes', 'mtd', 'translator'];
     function mobileMoreClose() {
         document.getElementById('mobile-more-sheet').classList.remove('open');
         document.getElementById('mobile-more-backdrop').classList.remove('open');
@@ -16717,6 +17008,409 @@ sxPhotoInit('photo-search', 'photo-suggest', 'photo-results', 'photo-go', true);
     document.addEventListener('pointerup', release, { passive: true });
     document.addEventListener('pointercancel', release, { passive: true });
     document.addEventListener('scroll', function () { if (held.length) release(); }, { passive: true, capture: true });
+})();
+</script>
+<script>
+/* ===================== ARABIC TRANSLATOR ===================== */
+(function () {
+    var dir = 'en|ar', timer = null, reqId = 0, lastOut = '', loading = false;
+    var HKEY = 'trHistory_v1';
+    var PHRASES = [
+        'Please send a copy of the operator\u2019s Iqama.',
+        'The machine will be delivered tomorrow morning.',
+        'Please confirm the site location.',
+        'Please share the PO / work order.',
+        'Please sign the delivery note.',
+        'The equipment is off-hire from today.',
+        'Fuel is not included in the rental rate.',
+        'Please keep the machine in a safe place.',
+        'The operator will arrive at the site shortly.',
+        'We need a gate pass for the machine.'
+    ];
+    function $(id) { return document.getElementById(id); }
+    function hasArabic(s) { return /[\u0600-\u06FF]/.test(s); }
+    function hasLatin(s) { return /[A-Za-z]/.test(s); }
+    function detectDir(t) {
+        var ar = (t.match(/[\u0600-\u06FF]/g) || []).length, la = (t.match(/[A-Za-z]/g) || []).length;
+        return ar > la ? 'ar|en' : 'en|ar';
+    }
+    function setLabels() {
+        var en = dir === 'en|ar', v = $('tr-in').value.trim();
+        $('tr-in-head').textContent = v ? (en ? 'English' : '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (Arabic)') : 'English or Arabic (detected automatically)';
+        $('tr-out-head').textContent = en ? '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 (Arabic)' : 'English';
+        $('tr-in').setAttribute('dir', 'auto');
+        $('tr-in').placeholder = 'Type or paste English or Arabic text here\u2026  /  \u0627\u0643\u062A\u0628 \u0623\u0648 \u0627\u0644\u0635\u0642 \u0627\u0644\u0646\u0635 \u0647\u0646\u0627';
+        $('tr-out').setAttribute('dir', en ? 'rtl' : 'ltr');
+    }
+    function setOut(text, kind) {
+        var o = $('tr-out');
+        o.textContent = text;
+        o.className = 'tr-out' + (kind ? ' tr-' + kind : '');
+        var ok = !kind;
+        ['tr-copy', 'tr-speak', 'tr-wa'].forEach(function (id) { $(id).disabled = !ok; });
+        if (ok) lastOut = text;
+        syncResult();
+    }
+    function syncResult() {
+        var textOn = loading || !$('tr-out').classList.contains('tr-placeholder');
+        var qrOn = $('tr-qr-box').getAttribute('data-on') === '1';
+        $('tr-result-box').style.display = textOn ? '' : 'none';
+        $('tr-qr-box').style.display = qrOn ? '' : 'none';
+        $('tr-result-area').style.display = (textOn || qrOn) ? '' : 'none';
+    }
+    window.trSyncResult = syncResult;
+    // Show any text result (e.g. text read from an image) in the result area below
+    window.trShowText = function (text, label) {
+        loading = false;
+        $('tr-status').textContent = '';
+        $('tr-out-head').textContent = label || '';
+        $('tr-out').setAttribute('dir', hasArabic(text) ? 'rtl' : 'ltr');
+        setOut(text);
+        $('tr-result-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    function resetOut() {
+        loading = false;
+        lastOut = '';
+        $('tr-status').textContent = '';
+        setOut(dir === 'en|ar' ? 'Translation will appear here' : 'Translation will appear here', 'placeholder');
+        $('tr-out').setAttribute('dir', 'ltr');
+        if (dir === 'en|ar') $('tr-out').setAttribute('dir', 'ltr');
+    }
+    async function viaGoogle(q, sl, tl) {
+        var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sl + '&tl=' + tl + '&dt=t&q=' + encodeURIComponent(q);
+        var r = await fetch(url);
+        if (!r.ok) throw new Error('G' + r.status);
+        var j = await r.json();
+        return j[0].map(function (x) { return x[0] || ''; }).join('');
+    }
+    async function viaMyMemory(q, sl, tl) {
+        var chunks = q.match(/[\s\S]{1,450}(?:\s|$)/g) || [q], out = [];
+        for (var k = 0; k < chunks.length; k++) {
+            var r = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(chunks[k]) + '&langpair=' + sl + '|' + tl);
+            if (!r.ok) throw new Error('M' + r.status);
+            var j = await r.json();
+            if (!j.responseData || !j.responseData.translatedText) throw new Error('M-empty');
+            out.push(j.responseData.translatedText);
+        }
+        return out.join(' ');
+    }
+    window.trRun = async function (override) {
+        clearTimeout(timer);
+        var fromOverride = typeof override === 'string';
+        var q = (fromOverride ? override : $('tr-in').value).trim();
+        if (!q) { resetOut(); if (typeof gToast === 'function') gToast('Type some text or add an image first'); return; }
+        dir = detectDir(q);
+        var parts = dir.split('|'), my = ++reqId;
+        if (window.qrClear) window.qrClear();
+        setLabels();
+        loading = true;
+        $('tr-out').className = 'tr-out tr-placeholder';
+        $('tr-out').textContent = 'Translating\u2026';
+        $('tr-out').setAttribute('dir', 'ltr');
+        syncResult();
+        $('tr-result-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        $('tr-status').innerHTML = '<span class="tr-spin"></span>Translating';
+        var res = '';
+        try { res = await viaGoogle(q, parts[0], parts[1]); }
+        catch (e1) {
+            try { res = await viaMyMemory(q, parts[0], parts[1]); }
+            catch (e2) { res = ''; }
+        }
+        if (my !== reqId) return;
+        $('tr-status').textContent = '';
+        if (!res) {
+            setOut(navigator.onLine === false ? 'You are offline. Connect to the internet to translate.' : 'Could not translate right now. Please try again.', 'error');
+            $('tr-out').setAttribute('dir', 'ltr');
+            return;
+        }
+        loading = false;
+        $('tr-out').setAttribute('dir', parts[1] === 'ar' ? 'rtl' : 'ltr');
+        setOut(res);
+        histAdd(q, res);
+        $('tr-result-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    window.trInput = function () {
+        var v = $('tr-in').value;
+        $('tr-count').textContent = v.length + ' / 5000';
+        if (v.trim()) dir = detectDir(v);
+        setLabels();
+        clearTimeout(timer);
+        reqId++;
+        resetOut();
+        // Deliberate translation: user presses the Translate button.
+        if (v.trim()) $('tr-status').textContent = 'Ready to translate';
+    };
+    window.trSwap = function () {
+        var prev = lastOut;
+        dir = dir === 'en|ar' ? 'ar|en' : 'en|ar';
+        setLabels();
+        if (prev) { $('tr-in').value = prev; $('tr-count').textContent = prev.length + ' / 5000'; window.trRun(); }
+        else { window.trInput(); }
+    };
+    window.trResetOut = function () { reqId++; resetOut(); };
+    window.trSetDefaultDir = function () { dir = 'en|ar'; setLabels(); };
+    window.trClear = function (noFocus) {
+        reqId++; $('tr-in').value = ''; $('tr-count').textContent = '0 / 5000'; resetOut(); if (window.qrClear) window.qrClear(); if (noFocus !== true) $('tr-in').focus();
+    };
+    window.trPaste = async function () {
+        try {
+            var t = await navigator.clipboard.readText();
+            if (t) { $('tr-in').value = t; window.trInput(); window.trRun(); }
+        } catch (e) { if (typeof gToast === 'function') gToast('Long-press the box to paste'); $('tr-in').focus(); }
+    };
+    window.trCopy = function () {
+        if (!lastOut) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(lastOut).then(function () { if (typeof gToast === 'function') gToast('Copied!'); });
+    };
+    window.trSpeak = function () {
+        if (!lastOut || !('speechSynthesis' in window)) { if (typeof gToast === 'function') gToast('Speech not supported'); return; }
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(lastOut);
+        u.lang = dir === 'en|ar' ? 'ar-SA' : 'en-US';
+        window.speechSynthesis.speak(u);
+    };
+    window.trWhatsApp = function () {
+        if (!lastOut) return;
+        window.open('https://wa.me/?text=' + encodeURIComponent(lastOut), '_blank');
+    };
+    window.trUsePhrase = function (i) {
+        dir = 'en|ar'; setLabels();
+        $('tr-in').value = PHRASES[i];
+        $('tr-count').textContent = PHRASES[i].length + ' / 5000';
+        window.trRun();
+        $('main-content').scrollTop = 0;
+    };
+    /* history */
+    function histGet() { try { return JSON.parse(localStorage.getItem(HKEY) || '[]'); } catch (e) { return []; } }
+    function histSet(a) { try { localStorage.setItem(HKEY, JSON.stringify(a)); } catch (e) {} }
+    function histAdd(src, dst) {
+        var a = histGet().filter(function (x) { return x.s !== src; });
+        a.unshift({ s: src, d: dst, dir: dir });
+        histSet(a.slice(0, 10)); histRender();
+    }
+    function histRender() {
+        var a = histGet(), box = $('tr-hist'), sec = $('tr-hist-sec');
+        if (!box || !sec) return;
+        sec.style.display = a.length ? '' : 'none';
+        box.innerHTML = '';
+        a.forEach(function (x, i) {
+            var d = document.createElement('div'); d.className = 'tr-hist-item';
+            var s = document.createElement('div'); s.className = 'tr-hist-src'; s.textContent = x.s;
+            var t = document.createElement('div'); t.className = 'tr-hist-dst'; t.textContent = x.d;
+            t.setAttribute('dir', x.dir === 'en|ar' ? 'rtl' : 'ltr');
+            d.appendChild(s); d.appendChild(t);
+            d.onclick = function () {
+                dir = x.dir || 'en|ar'; setLabels();
+                $('tr-in').value = x.s; $('tr-count').textContent = x.s.length + ' / 5000';
+                $('tr-out').setAttribute('dir', dir === 'en|ar' ? 'rtl' : 'ltr'); setOut(x.d);
+                $('main-content').scrollTop = 0;
+            };
+            box.appendChild(d);
+        });
+    }
+    window.trHistClear = function () { histSet([]); histRender(); };
+    function init() {
+        var c = $('tr-chips');
+        if (c) PHRASES.forEach(function (p, i) {
+            var b = document.createElement('button'); b.type = 'button'; b.className = 'tr-chip'; b.textContent = p;
+            b.onclick = function () { window.trUsePhrase(i); }; c.appendChild(b);
+        });
+        setLabels(); resetOut(); histRender();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+/* Image to text (OCR): runs only when the user picks an option in the popup or presses the button */
+(function(){
+ const el=id=>document.getElementById(id);
+ const input=el('ocrImageInput'),preview=el('ocrPreview'),read=el('ocrReadBtn');
+ const status=el('ocrStatus'),progress=el('ocrProgress'),bar=el('ocrBar');
+ if(!input)return;
+ let file=null,objectUrl=null,tessPromise=null;
+ function loadTesseract(){
+   if(window.Tesseract)return Promise.resolve();
+   if(!tessPromise)tessPromise=new Promise((res,rej)=>{
+     const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+     s.onload=res;s.onerror=()=>{tessPromise=null;rej(new Error('load'));};document.head.appendChild(s);
+   });
+   return tessPromise;
+ }
+ input.addEventListener('change',()=>{
+   file=input.files&&input.files[0]||null;if(!file)return;
+   if(!file.type.startsWith('image/')){status.textContent='Please choose a valid image.';return;}
+   if(objectUrl)URL.revokeObjectURL(objectUrl);
+   objectUrl=URL.createObjectURL(file);preview.src=objectUrl;preview.style.display='block';
+   read.disabled=false;status.textContent='Image ready.';
+ });
+ async function runOcr(autoTranslate){
+   if(!file)return;
+   window.ocrBusy=true;read.disabled=true;progress.style.display='block';bar.style.width='2%';status.textContent='Loading text reader…';
+   if(window.qrClear)window.qrClear();
+   try{
+     try{await loadTesseract();}catch(e){status.textContent='Text reader could not load. Check your internet connection and try again.';return;}
+     status.textContent='Starting text recognition…';
+     const result=await Tesseract.recognize(file,el('ocrLanguage').value,{logger:m=>{
+       if(m.status){const pct=Math.round((m.progress||0)*100);status.textContent=m.status+' · '+pct+'%';bar.style.width=Math.max(2,pct)+'%';}
+     }});
+     const text=(result.data.text||'').trim();
+     window.trResetOut();
+     bar.style.width='100%';
+     if(!text){const m='No readable text found. Try a clearer image or another text language.';status.textContent=m;window.trShowText(m,'Text from image');return;}
+     if(autoTranslate){status.textContent='Text extracted. Translating…';window.trRun(text);}
+     else{status.textContent='Text extracted. It is shown in the result below.';window.trShowText(text,'Text from image');}
+   }catch(err){console.error(err);status.textContent='Could not read image. Check internet and try again.';}
+   finally{read.disabled=false;window.ocrBusy=false;}
+ }
+ window.ocrRunFromPopup=runOcr;
+ read.addEventListener('click',()=>runOcr(false));
+ function clearImage(msg){
+   file=null;input.value='';if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=null;
+   preview.removeAttribute('src');preview.style.display='none';bar.style.width='0';progress.style.display='none';
+   read.disabled=true;status.textContent=msg||'Select an image to get started.';
+ }
+ window.imgClearAll=function(){clearImage();};
+ el('ocrClearBtn').addEventListener('click',()=>{clearImage('Cleared. Select another image.');if(window.qrClear)window.qrClear();});
+})();
+/* Choice popup: appears whenever an image is pasted, dropped or chosen */
+(function(){
+ const el=id=>document.getElementById(id);
+ const input=el('ocrImageInput');
+ if(!input)return;
+ const modal=el('imgChoice'),thumb=el('imgChoiceThumb'),lang=el('imgChoiceLang'),qrBox=el('imgChoiceQR'),choices=el('imgChoiceBtns');
+ let url=null,jsqrPromise=null;
+ function open(file){
+   if(url)URL.revokeObjectURL(url);
+   url=URL.createObjectURL(file);thumb.src=url;
+   lang.value=el('ocrLanguage').value;
+   qrBox.style.display='none';qrBox.innerHTML='';choices.style.display='';
+   if(window.qrClear)window.qrClear();
+   modal.classList.add('show');
+ }
+ function close(){modal.classList.remove('show');}
+ input.addEventListener('change',()=>{
+   const f=input.files&&input.files[0];
+   if(f&&f.type.startsWith('image/')){open(f);input.value='';} // reset so choosing the same image again still fires
+ });
+ el('imgChoiceClose').addEventListener('click',close);
+ modal.addEventListener('click',e=>{if(e.target===modal)close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+ function setLang(){el('ocrLanguage').value=lang.value;}
+ el('imgChoiceTranslate').addEventListener('click',()=>{setLang();close();window.ocrRunFromPopup(true);});
+ el('imgChoiceText').addEventListener('click',()=>{setLang();close();window.ocrRunFromPopup(false);});
+ function loadJsQR(){
+   if(window.jsQR)return Promise.resolve();
+   if(!jsqrPromise)jsqrPromise=new Promise((res,rej)=>{
+     const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+     s.onload=res;s.onerror=()=>{jsqrPromise=null;rej(new Error('QR library did not load. Check your internet connection.'));};
+     document.head.appendChild(s);
+   });
+   return jsqrPromise;
+ }
+ function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Could not read the image.'));i.src=src;});}
+ async function scanQR(){
+   const found=[];
+   const img=await loadImg(url);
+   for(const scale of [1,2,0.6,3]){
+     const w=Math.round(img.width*scale),h=Math.round(img.height*scale);
+     if(w<40||h<40||w*h>14e6||(scale!==1&&w*h>5e6))continue;
+     const c=document.createElement('canvas');c.width=w;c.height=h;
+     const ctx=c.getContext('2d',{willReadFrequently:true});
+     ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
+     for(let n=0;n<6;n++){
+       const d=ctx.getImageData(0,0,w,h);
+       const code=jsQR(d.data,w,h,{inversionAttempts:'attemptBoth'});
+       if(!code)break;
+       if(code.data&&!found.includes(code.data))found.push(code.data);
+       const L=code.location,pts=[L.topLeftCorner,L.topRightCorner,L.bottomLeftCorner,L.bottomRightCorner];
+       const x0=Math.min(...pts.map(p=>p.x)),x1=Math.max(...pts.map(p=>p.x)),y0=Math.min(...pts.map(p=>p.y)),y1=Math.max(...pts.map(p=>p.y));
+       ctx.fillStyle='#fff';ctx.fillRect(x0-6,y0-6,x1-x0+12,y1-y0+12);
+     }
+     if(found.length)break;
+   }
+   return found;
+ }
+ const qrWrap=el('tr-qr-box'),qrBody=el('tr-qr-body');
+ window.qrClear=function(){qrWrap.setAttribute('data-on','0');qrBody.innerHTML='';window.trSyncResult();};
+ function openQR(){qrWrap.setAttribute('data-on','1');window.trSyncResult();el('tr-result-area').scrollIntoView({behavior:'smooth',block:'nearest'});}
+ function showQR(list,msg){
+   qrBody.innerHTML='';
+   const h=document.createElement('div');h.className='ic-qr-head';
+   h.textContent=msg||(list.length?list.length+' QR code'+(list.length>1?'s':'')+' found':'No QR code found in this image.');
+   qrBody.appendChild(h);
+   list.forEach(text=>{
+     const item=document.createElement('div');item.className='ic-qr-item';
+     const pre=document.createElement('pre');pre.textContent=text;pre.dir='auto';item.appendChild(pre);
+     const row=document.createElement('div');row.className='ic-qr-actions';
+     const copy=document.createElement('button');copy.className='tr-btn';copy.textContent='Copy';
+     copy.onclick=async()=>{try{await navigator.clipboard.writeText(text);copy.textContent='Copied ✓';setTimeout(()=>copy.textContent='Copy',1500);}catch(e){}};
+     row.appendChild(copy);
+     if(/^https?:\/\//i.test(text.trim())){
+       const a=document.createElement('a');a.className='tr-btn';a.href=text.trim();a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open link ↗';a.style.textDecoration='none';row.appendChild(a);
+     }
+     const useBtn=document.createElement('button');useBtn.className='tr-btn primary';useBtn.textContent='Translate this text';
+     useBtn.onclick=()=>{window.trRun(text);};
+     row.appendChild(useBtn);
+     item.appendChild(row);qrBody.appendChild(item);
+   });
+   openQR();
+ }
+ el('imgChoiceQRBtn').addEventListener('click',async()=>{
+   close();window.trResetOut();
+   qrBody.innerHTML='<div class="ic-qr-head"><span class="tr-spin"></span>Scanning for QR codes…</div>';openQR();
+   try{await loadJsQR();showQR(await scanQR());}
+   catch(e){showQR([],e.message||'QR scan failed.');}
+ });
+})();
+
+
+
+/* Whole-page image drag & drop and paste: only while the Translator tab is open */
+(function(){
+ const input=document.getElementById('ocrImageInput');
+ const hint=document.getElementById('globalDropHint');
+ if(!input)return;
+ const active=()=>{const t=document.getElementById('tab-translator');return !!t&&!t.classList.contains('hidden');};
+ const hasFiles=e=>Array.from(e.dataTransfer&&e.dataTransfer.types||[]).includes('Files');
+ const stopHint=()=>{document.body.classList.remove('image-dragging');if(hint)hint.classList.remove('show');};
+ function feed(f){const dt=new DataTransfer();dt.items.add(f);input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}));}
+ document.addEventListener('dragenter',e=>{if(!active()||!hasFiles(e))return;e.preventDefault();document.body.classList.add('image-dragging');if(hint)hint.classList.add('show');});
+ document.addEventListener('dragover',e=>{if(active()&&hasFiles(e))e.preventDefault();});
+ document.addEventListener('dragleave',e=>{if(!e.relatedTarget)stopHint();});
+ document.addEventListener('drop',e=>{
+   stopHint();if(!active())return;
+   const img=Array.from(e.dataTransfer&&e.dataTransfer.files||[]).find(f=>f.type.startsWith('image/'));
+   if(!img)return;e.preventDefault();feed(img);
+ });
+ document.addEventListener('paste',e=>{
+   if(!active())return;
+   const item=Array.from(e.clipboardData&&e.clipboardData.items||[]).find(x=>x.type.startsWith('image/'));
+   if(!item)return;const f=item.getAsFile();if(!f)return;
+   e.preventDefault();feed(f);
+ });
+})();
+window.initTranslatorTab=function(){if(window.lucide&&lucide.createIcons)lucide.createIcons();};
+/* Clear all + automatic clear after 3 minutes without activity */
+(function(){
+ var IDLE_MS=180000,timer=null;
+ function el(id){return document.getElementById(id);}
+ function hasData(){
+   var p=el('ocrPreview'),r=el('tr-result-area');
+   return !!(el('tr-in').value||(p&&p.style.display==='block')||(r&&r.style.display!=='none'));
+ }
+ window.trClearAll=function(auto){
+   var isAuto=auto===true;
+   if(isAuto&&window.ocrBusy){arm();return;}
+   window.trClear(true);
+   if(window.trSetDefaultDir)window.trSetDefaultDir();
+   var m=el('imgChoice');if(m)m.classList.remove('show');
+   try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}
+   if(window.imgClearAll)window.imgClearAll();else{var b=el('ocrClearBtn');if(b)b.click();}
+   if(typeof gToast==='function')gToast(isAuto?'Cleared after 3 minutes of inactivity':'Everything cleared');
+ };
+ function arm(){clearTimeout(timer);timer=setTimeout(fire,IDLE_MS);}
+ function fire(){if(window.ocrBusy){arm();return;}if(hasData())window.trClearAll(true);}
+ ['pointerdown','keydown','input','touchstart','wheel','paste','drop','change','scroll'].forEach(function(ev){document.addEventListener(ev,arm,{passive:true,capture:true});});
+ arm();
 })();
 </script>
 </body>
