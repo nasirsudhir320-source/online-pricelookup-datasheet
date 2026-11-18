@@ -8688,20 +8688,46 @@ document.addEventListener('visibilitychange', () => {
             mdQrShow(null, 'No QR code found. Try “Select area & scan” and drag a box around it.');
         } catch (e) { mdQrShow(null, e.message || 'QR scan failed.'); }
     }
+    // Turns select mode off (button un-highlights). keepSel=true leaves the chosen box + popup on screen.
+    function mdQrEndSelect(keepSel) {
+        mdQrSelecting = false;
+        const box = document.getElementById('md-preview-box'); if (box) box.classList.remove('qr-selecting');
+        const btn = document.getElementById('md-qr-select-btn'); if (btn) btn.classList.remove('active');
+        const tq = document.getElementById('md-tool-qr'); if (tq) tq.classList.remove('active');
+        if (!keepSel) mdQrDismissPop();
+    }
     function mdQrToggleSelect(force) {
-        mdQrSelecting = typeof force === 'boolean' ? force : !mdQrSelecting;
-        const box = document.getElementById('md-preview-box');
-        const btn = document.getElementById('md-qr-select-btn');
-        box.classList.toggle('qr-selecting', mdQrSelecting);
-        btn.classList.toggle('active', mdQrSelecting);
-        const tq = document.getElementById('md-tool-qr'); if (tq) tq.classList.toggle('active', mdQrSelecting);
-        if (mdQrSelecting) mdQrShow(null, 'Drag a box around the QR code to scan it.');
-        else mdQrDismissPop();
+        const on = typeof force === 'boolean' ? force : !mdQrSelecting;
+        if (!on) { mdQrEndSelect(false); return; }
+        mdQrDismissPop();
+        mdQrSelecting = true;
+        const box = document.getElementById('md-preview-box'); if (box) box.classList.add('qr-selecting');
+        const btn = document.getElementById('md-qr-select-btn'); if (btn) btn.classList.add('active');
+        const tq = document.getElementById('md-tool-qr'); if (tq) tq.classList.add('active');
+        mdQrShow(null, 'Drag a box around the QR code to scan it.');
     }
     function mdQrDismissPop() {
         const r = document.getElementById('md-qr-rect'); if (r) r.style.display = 'none';
         const p = document.getElementById('md-qr-pop'); if (p) p.remove();
     }
+    // Clicking anywhere else (or pressing Esc) clears the selected QR area and its popup.
+    document.addEventListener('pointerdown', e => {
+        const pop = document.getElementById('md-qr-pop');
+        const rect = document.getElementById('md-qr-rect');
+        const t = e.target;
+        if (t.closest && (t.closest('#md-qr-pop') || t.closest('#md-tool-qr'))) return;
+        const hasSel = pop || (rect && rect.style.display === 'block');
+        if (!hasSel && !mdQrSelecting) return;
+        mdQrDismissPop();
+        if (mdQrSelecting) {
+            // the page can sit under overlay layers, so look at everything under the pointer
+            const overPage = document.elementsFromPoint(e.clientX, e.clientY).some(n => n.matches && n.matches('#md-preview-box img, #md-preview-box canvas'));
+            if (!overPage) mdQrEndSelect(false);
+        }
+    }, true);
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && (document.getElementById('md-qr-pop') || mdQrSelecting)) { mdQrDismissPop(); mdQrToggleSelect(false); }
+    });
     (function mdQrInitSelect() {
         let start = null, target = null, rectEl = null, K = null;
         // The page runs with CSS zoom on <html>, so fixed-position pixels are not
@@ -8795,12 +8821,13 @@ document.addEventListener('visibilitychange', () => {
                 const tr = t.getBoundingClientRect();
                 const x0 = Math.max(tr.left, Math.min(s0.x, e.clientX)), x1 = Math.min(tr.right, Math.max(s0.x, e.clientX));
                 const y0 = Math.max(tr.top, Math.min(s0.y, e.clientY)), y1 = Math.min(tr.bottom, Math.max(s0.y, e.clientY));
-                if (x1 - x0 < 12 || y1 - y0 < 12) { mdQrDismissPop(); mdQrShow(null, 'Selection too small — drag a larger box.'); return; }
+                if (x1 - x0 < 12 || y1 - y0 < 12) { mdQrEndSelect(false); mdQrShow(null, 'Selection too small — drag a larger box.'); return; }
                 const nw = t.naturalWidth || t.width, nh = t.naturalHeight || t.height;
                 const kx = nw / tr.width, ky = nh / tr.height;
                 const crop = mdQrCanvasFrom(t, { x: (x0 - tr.left) * kx, y: (y0 - tr.top) * ky, w: (x1 - x0) * kx, h: (y1 - y0) * ky });
                 place(ensureRect(), x0, y0, x1 - x0, y1 - y0);
                 showPop({ left: x0, top: y0, right: x1, bottom: y1 }, crop);
+                mdQrEndSelect(true);   // button works one time only
             });
             box.addEventListener('pointercancel', () => { start = null; target = null; mdQrDismissPop(); });
             box.addEventListener('scroll', mdQrDismissPop, { passive: true });
