@@ -581,6 +581,50 @@ transform-origin: 0% 0%;
 .textLayer ::selection { background: rgba(20,86,217,0.35); }
 .textLayer ::-moz-selection { background: rgba(20,86,217,0.35); }
 .md-preview-title { font-size: 13px; font-weight: 800; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+#pg-ed { position: fixed; inset: 0; z-index: 100001; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; padding: 14px; }
+#pg-ed .pg-box { background: var(--card,#fff); color: var(--ink,#111); border-radius: 16px; width: min(1100px, 100%); height: min(92vh, 100%); display: flex; flex-direction: column; padding: 14px; gap: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+#pg-ed .pg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
+#pg-ed .pg-head b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pg-ed button { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border,#ccd); background: var(--accent-dim,#e6eeff); color: var(--accent,#2f7bff); font-weight: 800; font-size: 11.5px; cursor: pointer; }
+#pg-ed button:disabled { opacity: .5; cursor: default; }
+#pg-ed button.pg-primary { background: var(--accent,#2f7bff); color: #fff; }
+#pg-ed button.pg-danger { color: #dc2626; }
+#pg-ed .pg-tools, #pg-ed .pg-foot, #pg-ed .pg-split { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+#pg-ed .pg-split { padding: 8px; border: 1px dashed var(--border,#ccd); border-radius: 10px; font-size: 12px; }
+#pg-ed .pg-split label { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+#pg-ed .pg-split input, #pg-ed .pg-split select { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border,#ccd); background: var(--card,#fff); color: inherit; }
+#pg-ed .hidden { display: none !important; }
+#pg-ed .pg-hint { font-size: 11px; opacity: .7; }
+#pg-ed .pg-grid { flex: 1; overflow: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; align-content: start; padding: 4px; }
+#pg-ed .pg-card { position: relative; border: 2px solid var(--border,#ccd); border-radius: 10px; padding: 6px; background: var(--card,#fff); cursor: grab; user-select: none; -webkit-user-select: none; }
+#pg-ed .pg-card.sel { border-color: var(--accent,#2f7bff); box-shadow: 0 0 0 2px var(--accent,#2f7bff) inset; }
+#pg-ed .pg-card.pg-over { outline: 3px dashed #22c55e; }
+#pg-ed .pg-card.pg-drag { opacity: .45; }
+#pg-ed .pg-img { aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+#pg-ed .pg-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+#pg-ed .pg-num { text-align: center; font-size: 11px; font-weight: 800; margin-top: 4px; }
+#pg-ed .pg-ctl { display: flex; gap: 4px; justify-content: center; margin-top: 4px; }
+#pg-ed .pg-ctl button { padding: 3px 7px; font-size: 11px; }
+#pg-ed .pg-tick { position: absolute; top: 8px; left: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent,#2f7bff); color: #fff; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+#pg-ed .pg-tick:empty { background: rgba(255,255,255,.85); border: 2px solid var(--border,#99a); }
+#pg-ed .pg-spacer { flex: 1; }
+#pg-ed #pg-count { font-size: 12px; font-weight: 800; }
+.md-preview-actions, #md-qr-bar, #md-pages-bar, #md-qr-result { display: none !important; }
+.md-preview-tools { display: flex; gap: 5px; flex: none; align-items: center; }
+.md-preview-tools.hidden { display: none; }
+.md-preview-tools button { width: 28px; height: 28px; padding: 0; border-radius: 9px; background: var(--accent-dim, #e6eeff); color: var(--accent, #2f7bff); border: 1px solid var(--border, #ccd); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .12s ease, background .12s ease; }
+.md-preview-tools button:hover { transform: translateY(-1px); background: var(--accent, #2f7bff); color: #fff; }
+.md-preview-tools button.active { background: var(--accent, #2f7bff); color: #fff; }
+.md-qr-bar { display: flex; gap: 8px; margin-top: 8px; }
+.md-qr-bar.hidden, .md-qr-result.hidden { display: none; }
+.md-qr-bar button { flex: 1; padding: 10px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 11.5px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+.md-qr-bar button.active { background: var(--accent); color: #fff; }
+.md-qr-result { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 11px; font-size: 12px; color: var(--ink); }
+.md-qr-result pre { white-space: pre-wrap; word-break: break-all; margin: 6px 0; font-family: inherit; font-size: 12.5px; font-weight: 700; }
+.md-qr-result .md-qr-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.md-qr-result .md-qr-row button, .md-qr-result .md-qr-row a { padding: 6px 10px; border-radius: 9px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 11px; text-decoration: none; cursor: pointer; }
+#md-preview-box.qr-selecting { cursor: crosshair; touch-action: none !important; user-select: none; -webkit-user-select: none; }
+#md-qr-rect { position: fixed; z-index: 99999; border: 2px dashed #22c55e; background: rgba(34,197,94,.18); pointer-events: none; display: none; }
 .md-preview-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 .md-preview-actions button { flex: 1; padding: 10px; border-radius: 11px; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--border); font-weight: 800; font-size: 11.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .md-merge-strip-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -592,6 +636,9 @@ transform-origin: 0% 0%;
 .doc-drag-handle { position: absolute; top: 6px; left: 6px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); background: rgba(255,255,255,0.92); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; z-index: 3; }
 .doc-drag-handle:active { cursor: grabbing; color: var(--accent); }
 .doc-index-pill { position: absolute; bottom: 6px; left: 6px; font-size: 10px; font-weight: 800; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 6px; z-index: 3; }
+.doc-split-row { display: flex; gap: 4px; margin-top: 6px; align-items: stretch; }
+.doc-split-n { width: 38px; flex: none; text-align: center; border-radius: 8px; border: 1px solid var(--border, #ccd); background: var(--card, #fff); color: inherit; font-size: 10px; font-weight: 800; padding: 0 2px; }
+.doc-split-btn { display: flex; align-items: center; justify-content: center; gap: 4px; flex: 1; margin-top: 0; padding: 5px 6px; border-radius: 8px; background: var(--accent-dim, #e6eeff); border: 1px solid var(--border, #ccd); color: var(--accent, #2f7bff); font-size: 10px; font-weight: 800; cursor: pointer; }
 .doc-remove { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 9px; background: #fef2f2; border: 1px solid rgba(220,38,38,0.2); color: #dc2626; display: flex; align-items: center; justify-content: center; z-index: 3; }
 .doc-preview-trigger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; padding-top: 26px; }
 .doc-thumb-wrap { position: relative; }
@@ -4366,6 +4413,12 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                             <div>
                                 <h4 class="md-preview-title" id="md-preview-title">Preview</h4>
                             </div>
+                            <div id="md-preview-tools" class="md-preview-tools hidden">
+                                <button id="md-tool-share" type="button" title="Share" onclick="mdPreviewShare()"><i data-lucide="share-2" size="13"></i></button>
+                                <button type="button" title="Save" onclick="mdPreviewDownload()"><i data-lucide="download" size="13"></i></button>
+                                <button type="button" title="Open full view" onclick="mdPreviewOpenNewTab()"><i data-lucide="external-link" size="13"></i></button>
+                                <button id="md-tool-qr" type="button" title="Scan QR — drag a box around the code" onclick="mdQrToggleSelect()"><i data-lucide="qr-code" size="13"></i></button>
+                            </div>
                         </div>
                         <div id="md-preview-empty" class="md-preview-empty">
                             <i data-lucide="file-search" size="34"></i>
@@ -4377,6 +4430,12 @@ body.mtd-dragging, body.mtd-dragging * { cursor:grabbing !important; user-select
                             <button onclick="mdPreviewDownload()"><i data-lucide="download" size="14"></i> Save</button>
                             <button onclick="mdPreviewOpenNewTab()"><i data-lucide="external-link" size="14"></i> Open Full View</button>
                         </div>
+                        <div id="md-qr-bar" class="md-qr-bar hidden">
+                            <button onclick="mdQrScanAll()"><i data-lucide="qr-code" size="14"></i> Scan QR</button>
+                            <button id="md-qr-select-btn" onclick="mdQrToggleSelect()"><i data-lucide="scan" size="14"></i> Select area &amp; scan</button>
+                        </div>
+                        
+                        <div id="md-qr-result" class="md-qr-result hidden"></div>
                     </div>
                 </div>
 
@@ -8420,8 +8479,8 @@ document.addEventListener('visibilitychange', () => {
         const item = mergeItems.find(i => i.id === id);
         if (!item) return;
         const payload = item.type === 'pdf'
-            ? { name: item.name, ext: 'pdf', blob: item.file || null, url: item.file ? null : item.url }
-            : { name: item.name, ext: 'img', blob: item.file || null, url: item.file ? null : (item.thumbUrl || item.url) };
+            ? { name: item.name, ext: 'pdf', blob: item.file || null, url: item.file ? null : item.url, itemId: item.id }
+            : { name: item.name, ext: 'img', blob: item.file || null, url: item.file ? null : (item.thumbUrl || item.url), itemId: item.id };
         if (mdIsMobile()) mdOpenFullscreenPreview(payload, mdFsNavFor(item));
         else mdRenderPreview(payload);
     }
@@ -8476,18 +8535,19 @@ document.addEventListener('visibilitychange', () => {
        result) directly into the middle preview panel instead of opening a
        full-screen overlay, so people can browse without losing their place. */
     let mdPreviewCurrent = null; // { name, ext, blob, url }
-    async function mdRenderPreview({ name, ext, blob, url }) {
+    async function mdRenderPreview({ name, ext, blob, url, itemId }) {
         const empty = document.getElementById('md-preview-empty');
         const box = document.getElementById('md-preview-box');
         const actions = document.getElementById('md-preview-actions');
         const titleEl = document.getElementById('md-preview-title');
         if (!box) return; // panel not present (shouldn't happen)
 
-        mdPreviewCurrent = { name, ext, blob, url };
+        mdPreviewCurrent = { name, ext, blob, url, itemId: itemId || null };
         if (box._pzReset) box._pzReset();
         empty.classList.add('hidden');
         actions.classList.remove('hidden');
         box.classList.remove('hidden');
+        { { const tb = document.getElementById('md-preview-tools'); if (tb) tb.classList.remove('hidden'); const sh = document.getElementById('md-tool-share'); if (sh) sh.style.display = mdIsMobile() ? '' : 'none'; } const qb = document.getElementById('md-qr-bar'); if (qb) qb.classList.remove('hidden'); const qr = document.getElementById('md-qr-result'); if (qr) { qr.classList.add('hidden'); qr.innerHTML = ''; } try { mdQrToggleSelect(false); } catch (_) {} }
         titleEl.textContent = name || 'Preview';
 
         if (ext === 'pdf') {
@@ -8531,12 +8591,676 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 
+    /* ---- QR scan inside the Merger preview panel ---- */
+    let mdQrSelecting = false;
+    function mdQrLoadLib() {
+        if (typeof jsQR !== 'undefined') return Promise.resolve();
+        return new Promise((res, rej) => {
+            const t0 = Date.now();
+            const iv = setInterval(() => {
+                if (typeof jsQR !== 'undefined') { clearInterval(iv); res(); }
+                else if (Date.now() - t0 > 4000) {
+                    clearInterval(iv);
+                    const sc = document.createElement('script');
+                    sc.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+                    sc.onload = () => res();
+                    sc.onerror = () => rej(new Error('QR library did not load. Check your internet connection.'));
+                    document.head.appendChild(sc);
+                }
+            }, 100);
+        });
+    }
+    function mdQrCanvasFrom(el, rect) {
+        // rect = {x,y,w,h} in the element's natural pixel space (or null for whole)
+        const nw = el.naturalWidth || el.width, nh = el.naturalHeight || el.height;
+        const r = rect || { x: 0, y: 0, w: nw, h: nh };
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(r.w)); c.height = Math.max(1, Math.round(r.h));
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(el, r.x, r.y, r.w, r.h, 0, 0, c.width, c.height);
+        return c;
+    }
+    function mdQrDecodeCanvas(src) {
+        const longest = Math.max(src.width, src.height);
+        const scales = [1, 2, 3, 0.6].filter(k => {
+            const w = src.width * k, h = src.height * k;
+            return w >= 40 && h >= 40 && w * h <= 14e6 && !(k > 1 && longest * k > 3000);
+        });
+        for (const k of scales) {
+            const w = Math.round(src.width * k), h = Math.round(src.height * k);
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            const ctx = c.getContext('2d', { willReadFrequently: true });
+            ctx.imageSmoothingEnabled = k < 1;
+            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(src, 0, 0, w, h);
+            const d = ctx.getImageData(0, 0, w, h);
+            const code = jsQR(d.data, w, h, { inversionAttempts: 'attemptBoth' });
+            if (code && code.data) return code.data;
+        }
+        return null;
+    }
+    async function mdQrDecode(src) {
+        if ('BarcodeDetector' in window) {
+            try {
+                const det = new BarcodeDetector({ formats: ['qr_code'] });
+                const r = await det.detect(src);
+                if (r && r[0] && r[0].rawValue) return r[0].rawValue;
+            } catch (e) { /* fall through to jsQR */ }
+        }
+        await mdQrLoadLib();
+        return mdQrDecodeCanvas(src);
+    }
+    function mdQrShow(text, msg) {
+        if (!text) { if (typeof gToast === 'function') gToast(msg || 'No QR code found', 3000); return; }
+        const box = document.getElementById('md-qr-result');
+        box.classList.remove('hidden'); box.innerHTML = '';
+        const head = document.createElement('div');
+        head.style.fontWeight = '800';
+        head.textContent = msg || (text ? 'QR code found' : 'No QR code found');
+        box.appendChild(head);
+        if (!text) return;
+        const pre = document.createElement('pre'); pre.textContent = text; pre.dir = 'auto'; box.appendChild(pre);
+        const row = document.createElement('div'); row.className = 'md-qr-row';
+        const copy = document.createElement('button'); copy.textContent = 'Copy';
+        copy.onclick = async () => { try { await navigator.clipboard.writeText(text); copy.textContent = 'Copied ✓'; setTimeout(() => copy.textContent = 'Copy', 1500); } catch (e) {} };
+        row.appendChild(copy);
+        if (typeof mergeIsUrl === 'function' ? mergeIsUrl(text) : /^https?:\/\//i.test(text.trim())) {
+            const a = document.createElement('a');
+            a.href = typeof mergeToHttps === 'function' ? mergeToHttps(text) : text.trim();
+            a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Open link ↗';
+            row.appendChild(a);
+        }
+        box.appendChild(row);
+    }
+    function mdQrTargets() {
+        return Array.from(document.querySelectorAll('#md-preview-box img, #md-preview-box canvas'));
+    }
+    async function mdQrScanAll() {
+        const targets = mdQrTargets();
+        if (!targets.length) { mdQrShow(null, 'Nothing to scan yet — wait for the preview to load.'); return; }
+        mdQrShow(null, 'Scanning for QR code…');
+        try {
+            for (const el of targets) {
+                const text = await mdQrDecode(mdQrCanvasFrom(el, null));
+                if (text) { mdQrShow(text); return; }
+            }
+            mdQrShow(null, 'No QR code found. Try “Select area & scan” and drag a box around it.');
+        } catch (e) { mdQrShow(null, e.message || 'QR scan failed.'); }
+    }
+    function mdQrToggleSelect(force) {
+        mdQrSelecting = typeof force === 'boolean' ? force : !mdQrSelecting;
+        const box = document.getElementById('md-preview-box');
+        const btn = document.getElementById('md-qr-select-btn');
+        box.classList.toggle('qr-selecting', mdQrSelecting);
+        btn.classList.toggle('active', mdQrSelecting);
+        const tq = document.getElementById('md-tool-qr'); if (tq) tq.classList.toggle('active', mdQrSelecting);
+        if (mdQrSelecting) mdQrShow(null, 'Drag a box around the QR code to scan it.');
+        else mdQrDismissPop();
+    }
+    function mdQrDismissPop() {
+        const r = document.getElementById('md-qr-rect'); if (r) r.style.display = 'none';
+        const p = document.getElementById('md-qr-pop'); if (p) p.remove();
+    }
+    (function mdQrInitSelect() {
+        let start = null, target = null, rectEl = null, K = null;
+        // The page runs with CSS zoom on <html>, so fixed-position pixels are not
+        // screen pixels. Measure the real factor once so the box lands under the cursor.
+        function zoomK() {
+            if (K) return K;
+            const t = document.createElement('div');
+            t.style.cssText = 'position:fixed;left:0;top:0;width:100px;height:10px;visibility:hidden;pointer-events:none';
+            document.body.appendChild(t);
+            const w = t.getBoundingClientRect().width; t.remove();
+            K = (w > 0 ? w / 100 : 1); return K;
+        }
+        function place(el, x, y, w, h) {
+            const k = zoomK();
+            el.style.left = (x / k) + 'px'; el.style.top = (y / k) + 'px';
+            if (w != null) { el.style.width = (w / k) + 'px'; el.style.height = (h / k) + 'px'; }
+        }
+        function ensureRect() {
+            if (!rectEl || !rectEl.isConnected) { rectEl = document.createElement('div'); rectEl.id = 'md-qr-rect'; document.body.appendChild(rectEl); }
+            return rectEl;
+        }
+        function showPop(rect, crop) {
+            const old = document.getElementById('md-qr-pop'); if (old) old.remove();
+            const pop = document.createElement('div'); pop.id = 'md-qr-pop';
+            pop.style.cssText = 'position:fixed;z-index:100000;background:var(--card,#fff);color:var(--ink,#111);border:1px solid var(--border,#ccc);border-radius:12px;padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:12px;max-width:min(320px,90vw);display:flex;flex-direction:column;gap:6px;';
+            const mk = (txt, primary) => { const b = document.createElement('button'); b.textContent = txt; b.style.cssText = 'padding:7px 12px;border-radius:9px;border:1px solid var(--border,#ccc);font-weight:800;font-size:11.5px;cursor:pointer;background:' + (primary ? 'var(--accent,#2f7bff)' : 'var(--accent-dim,#e6eeff)') + ';color:' + (primary ? '#fff' : 'var(--accent,#2f7bff)') + ';'; return b; };
+            const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+            const scan = mk('Scan QR', true), cancel = mk('Cancel', false);
+            row.appendChild(scan); row.appendChild(cancel); pop.appendChild(row);
+            const out = document.createElement('div'); pop.appendChild(out);
+            cancel.onclick = () => { mdQrDismissPop(); };
+            scan.onclick = async () => {
+                scan.disabled = true; out.textContent = 'Scanning…';
+                try {
+                    const pad = Math.round(Math.max(crop.width, crop.height) * 0.12) + 8;
+                    const padded = document.createElement('canvas');
+                    padded.width = crop.width + pad * 2; padded.height = crop.height + pad * 2;
+                    const pc = padded.getContext('2d'); pc.fillStyle = '#fff'; pc.fillRect(0, 0, padded.width, padded.height);
+                    pc.drawImage(crop, pad, pad);
+                    const text = await mdQrDecode(padded);
+                    scan.disabled = false;
+                    out.innerHTML = '';
+                    if (!text) { out.textContent = 'No QR code found in this area. Cancel and select a tighter or larger box.'; return; }
+                    scan.style.display = 'none';
+                    const pre = document.createElement('div'); pre.textContent = text; pre.dir = 'auto';
+                    pre.style.cssText = 'font-weight:700;word-break:break-all;white-space:pre-wrap;margin-bottom:6px;';
+                    out.appendChild(pre);
+                    const r2 = document.createElement('div'); r2.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+                    const isUrl = typeof mergeIsUrl === 'function' ? mergeIsUrl(text) : /^https?:\/\//i.test(text.trim());
+                    if (isUrl) {
+                        const a = document.createElement('a');
+                        a.href = typeof mergeToHttps === 'function' ? mergeToHttps(text) : text.trim();
+                        a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Open link ↗';
+                        a.style.cssText = 'padding:7px 12px;border-radius:9px;background:var(--accent,#2f7bff);color:#fff;font-weight:800;font-size:11.5px;text-decoration:none;';
+                        r2.appendChild(a);
+                    }
+                    const cp = mk('Copy', false);
+                    cp.onclick = async () => { try { await navigator.clipboard.writeText(text); cp.textContent = 'Copied ✓'; } catch (e) {} };
+                    r2.appendChild(cp); out.appendChild(r2);
+                } catch (err) { scan.disabled = false; out.textContent = err.message || 'QR scan failed.'; }
+            };
+            document.body.appendChild(pop);
+            const pr = pop.getBoundingClientRect();
+            let px = rect.left, py = rect.bottom + 8;
+            const vw = window.innerWidth, vh = window.innerHeight;
+            if (py + pr.height > vh) py = Math.max(4, rect.top - pr.height - 8);
+            if (px + pr.width > vw) px = Math.max(4, vw - pr.width - 4);
+            place(pop, px, py);
+        }
+        function bind() {
+            const box = document.getElementById('md-preview-box');
+            if (!box) return;
+            box.addEventListener('pointerdown', e => {
+                if (!mdQrSelecting || e.button > 0) return;
+                const hit = document.elementsFromPoint(e.clientX, e.clientY).find(n => n.matches && n.matches('#md-preview-box img, #md-preview-box canvas'));
+                if (!hit) return;
+                mdQrDismissPop();
+                target = hit; start = { x: e.clientX, y: e.clientY };
+                try { box.setPointerCapture(e.pointerId); } catch (_) {}
+                e.preventDefault();
+            });
+            box.addEventListener('pointermove', e => {
+                if (!start) return;
+                const r = ensureRect();
+                r.style.display = 'block';
+                place(r, Math.min(start.x, e.clientX), Math.min(start.y, e.clientY), Math.abs(e.clientX - start.x), Math.abs(e.clientY - start.y));
+            });
+            box.addEventListener('pointerup', e => {
+                if (!start) return;
+                const s0 = start, t = target; start = null; target = null;
+                const tr = t.getBoundingClientRect();
+                const x0 = Math.max(tr.left, Math.min(s0.x, e.clientX)), x1 = Math.min(tr.right, Math.max(s0.x, e.clientX));
+                const y0 = Math.max(tr.top, Math.min(s0.y, e.clientY)), y1 = Math.min(tr.bottom, Math.max(s0.y, e.clientY));
+                if (x1 - x0 < 12 || y1 - y0 < 12) { mdQrDismissPop(); mdQrShow(null, 'Selection too small — drag a larger box.'); return; }
+                const nw = t.naturalWidth || t.width, nh = t.naturalHeight || t.height;
+                const kx = nw / tr.width, ky = nh / tr.height;
+                const crop = mdQrCanvasFrom(t, { x: (x0 - tr.left) * kx, y: (y0 - tr.top) * ky, w: (x1 - x0) * kx, h: (y1 - y0) * ky });
+                place(ensureRect(), x0, y0, x1 - x0, y1 - y0);
+                showPop({ left: x0, top: y0, right: x1, bottom: y1 }, crop);
+            });
+            box.addEventListener('pointercancel', () => { start = null; target = null; mdQrDismissPop(); });
+            box.addEventListener('scroll', mdQrDismissPop, { passive: true });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
+    })();
+
+    /* ===================== PDF PAGE EDITOR (split / remove / add / sort) ===================== */
+    let pgEd = null;
+    function pgToast(m) { if (typeof gToast === 'function') gToast(m, 3500); else alert(m); }
+    function pgBase(n) { return String(n || 'document').replace(/\.pdf$/i, ''); }
+    function pgUid() { return 'p' + Math.random().toString(36).slice(2, 9); }
+    function pgSnap() { pgEd.history.push(pgEd.pages.slice()); if (pgEd.history.length > 40) pgEd.history.shift(); }
+
+    async function mdOpenPageEditor() {
+        const cur = mdPreviewCurrent;
+        if (!cur || cur.ext !== 'pdf') { pgToast('Open a PDF first.'); return; }
+        let blob = cur.blob;
+        try { if (!blob && cur.url) blob = await (await fetchWithTimeout(cur.url)).blob(); } catch (e) {}
+        pgOpenFor({ name: cur.name, blob, itemId: cur.itemId || null, openSplit: false });
+    }
+    // "Split" on a merge-list card: splits right there, no dialog. The number box
+    // next to the button is pages-per-file (default 1 = one file per page).
+    function mergeSetSplitN(id, v) {
+        const item = mergeItems.find(i => i.id === id); if (!item) return;
+        item.splitN = Math.max(1, parseInt(v, 10) || 1);
+    }
+    async function mergeSplitItem(id) {
+        const item = mergeItems.find(i => i.id === id);
+        if (!item || item.type !== 'pdf' || item.splitting) return;
+        if (typeof PDFLib === 'undefined') { pgToast('PDF engine not loaded. Refresh the page and try again.'); return; }
+        const label = () => document.querySelector('.doc-item[data-id="' + id + '"] .doc-split-btn span');
+        const setLabel = t => { const l = label(); if (l) l.textContent = t; };
+        item.splitting = true; setLabel('Splitting…');
+        try {
+            const blob = await mergeFetchItemBlob(item);
+            if (!blob) throw new Error('Could not load the file.');
+            const bytes = new Uint8Array(await blob.arrayBuffer());
+            const { PDFDocument } = PDFLib;
+            let srcDoc = null, pdfjsDoc = null, count = 0;
+            try { srcDoc = await PDFDocument.load(bytes, { ignoreEncryption: true }); count = srcDoc.getPageCount(); }
+            catch (e) { await ensurePdfJsLoaded(); pdfjsDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise; count = pdfjsDoc.numPages; }
+            const k = Math.max(1, item.splitN || 1);
+            if (count <= k) { pgToast(count + ' page' + (count === 1 ? '' : 's') + ' — nothing to split at ' + k + ' per file.'); return; }
+            const base = pgBase(item.name), files = [];
+            for (let start = 0, part = 1; start < count; start += k, part++) {
+                const end = Math.min(count, start + k);
+                const out = await PDFDocument.create();
+                if (srcDoc) {
+                    const idxs = []; for (let i = start; i < end; i++) idxs.push(i);
+                    (await out.copyPages(srcDoc, idxs)).forEach(pg => out.addPage(pg));
+                } else {
+                    for (let i = start; i < end; i++) {
+                        const page = await pdfjsDoc.getPage(i + 1);
+                        const vp = page.getViewport({ scale: 2 });
+                        const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+                        await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+                        const pb = await new Promise(r => c.toBlob(r, 'image/png'));
+                        const img = await out.embedPng(new Uint8Array(await pb.arrayBuffer()));
+                        const pg = out.addPage([vp.width / 2, vp.height / 2]);
+                        pg.drawImage(img, { x: 0, y: 0, width: vp.width / 2, height: vp.height / 2 });
+                    }
+                }
+                const nm = k === 1 ? base + ' (page ' + (start + 1) + ').pdf' : base + ' (part ' + part + ').pdf';
+                files.push(new File([await out.save()], nm, { type: 'application/pdf' }));
+            }
+            const before = mergeItems.length;
+            mergeAddFiles(files);
+            const added = mergeItems.splice(before);
+            // parts of a split are final: no Split option on them
+            added.forEach(it => { it.noSplit = true; });
+            const at = mergeItems.findIndex(x => x.id === id);
+            if (at < 0) mergeItems.push(...added); else mergeItems.splice(at, 1, ...added);
+            mergeRenderList();
+            pgToast('Split into ' + files.length + ' files');
+        } catch (err) {
+            pgToast('Could not split: ' + (err && err.message || err));
+        } finally {
+            item.splitting = false; setLabel('Split');
+        }
+    }
+    async function pgOpenFor({ name, blob, itemId, openSplit }) {
+        if (typeof PDFLib === 'undefined') { pgToast('PDF engine not loaded. Refresh the page and try again.'); return; }
+        if (!blob) { pgToast('The PDF is still loading — try again in a moment.'); return; }
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        pgEd = { name: name || 'document.pdf', itemId: itemId || null, fromCard: !!openSplit, sources: [{ type: 'pdf', bytes, name }], pages: [], history: [], dragIds: null };
+        pgBuildModal();
+        if (openSplit) {
+            document.getElementById('pg-split').classList.remove('hidden');
+            document.getElementById('pg-title').textContent = 'Split — ' + pgEd.name;
+        }
+        const first = await pgLoadPdfSource(0);
+        if (first && first.length) { await pgAttachAndRender(first, 0); if (pgEd) pgEd.history = []; }
+    }
+
+    function pgBuildModal() {
+        const old = document.getElementById('pg-ed'); if (old) old.remove();
+        const m = document.createElement('div'); m.id = 'pg-ed';
+        m.innerHTML = `
+          <div class="pg-box">
+            <div class="pg-head"><b id="pg-title"></b><button class="pg-x" data-act="close" title="Close">✕</button></div>
+            <div class="pg-tools">
+              <button data-act="selall">Select all</button>
+              <button data-act="selnone">Clear selection</button>
+              <button data-act="del" class="pg-danger">Remove selected</button>
+              <button data-act="add">Add pages…</button>
+              <button data-act="reverse">Reverse order</button>
+              <button data-act="extract">Extract selected</button>
+              <button data-act="splitpanel">Split…</button>
+              <button data-act="undo">Undo</button>
+            </div>
+            <div class="pg-split hidden" id="pg-split">
+              <label>Split mode
+                <select id="pg-split-mode">
+                  <option value="every">Every N pages</option>
+                  <option value="single">Every page (single pages)</option>
+                  <option value="ranges">Custom ranges</option>
+                </select>
+              </label>
+              <label id="pg-split-n-wrap">N <input id="pg-split-n" type="number" min="1" value="2"></label>
+              <label id="pg-split-r-wrap" class="hidden">Ranges <input id="pg-split-r" type="text" placeholder="1-3, 4-6, 7"></label>
+              <label id="pg-keep-wrap"><input id="pg-keep" type="checkbox"> Keep original file</label>
+              <button data-act="split-list">Split &amp; add to merge list</button>
+              <button data-act="split-dl">Split &amp; download</button>
+            </div>
+            <div class="pg-hint">Drag pages to sort (tap ◀ ▶ on touch screens). Tap a page to select it. Selected pages move together.</div>
+            <div class="pg-grid" id="pg-grid"></div>
+            <div class="pg-foot">
+              <span id="pg-count"></span>
+              <span class="pg-spacer"></span>
+              <button data-act="close">Cancel</button>
+              <button data-act="download">Download</button>
+              <button data-act="saveas">Save as new item</button>
+              <button data-act="save" class="pg-primary">Save changes</button>
+            </div>
+            <input type="file" id="pg-file" accept="application/pdf,image/*,.pdf" multiple style="display:none">
+          </div>`;
+        document.body.appendChild(m);
+        document.getElementById('pg-title').textContent = 'Edit pages — ' + pgEd.name;
+        m.addEventListener('click', pgOnClick);
+        m.addEventListener('dragstart', pgOnDragStart);
+        m.addEventListener('dragover', e => { const c = e.target.closest && e.target.closest('.pg-card'); if (c && pgEd && pgEd.dragIds) { e.preventDefault(); document.querySelectorAll('.pg-over').forEach(x => x.classList.remove('pg-over')); c.classList.add('pg-over'); } });
+        m.addEventListener('drop', pgOnDrop);
+        m.addEventListener('dragend', () => { if (pgEd) pgEd.dragIds = null; document.querySelectorAll('.pg-over,.pg-drag').forEach(x => x.classList.remove('pg-over', 'pg-drag')); });
+        document.getElementById('pg-split-mode').addEventListener('change', e => {
+            document.getElementById('pg-split-n-wrap').classList.toggle('hidden', e.target.value !== 'every');
+            document.getElementById('pg-split-r-wrap').classList.toggle('hidden', e.target.value !== 'ranges');
+        });
+        document.getElementById('pg-file').addEventListener('change', async e => {
+            const files = Array.from(e.target.files || []); e.target.value = '';
+            await pgAddFiles(files);
+        });
+        pgRender();
+    }
+
+    function pgRender() {
+        const grid = document.getElementById('pg-grid'); if (!grid || !pgEd) return;
+        grid.innerHTML = pgEd.pages.map((p, i) => `
+          <div class="pg-card ${p.sel ? 'sel' : ''}" draggable="true" data-id="${p.id}">
+            <div class="pg-img">${p.thumb ? `<img src="${p.thumb}" draggable="false" alt="">` : '<span class="pg-ph">…</span>'}</div>
+            <div class="pg-num">${i + 1}</div>
+            <div class="pg-ctl">
+              <button data-act="left" title="Move earlier">◀</button>
+              <button data-act="rm" title="Remove this page" class="pg-danger">✕</button>
+              <button data-act="right" title="Move later">▶</button>
+            </div>
+            <div class="pg-tick">${p.sel ? '✓' : ''}</div>
+          </div>`).join('');
+        pgCount();
+    }
+    function pgCount() {
+        const el = document.getElementById('pg-count'); if (!el || !pgEd) return;
+        const sel = pgEd.pages.filter(p => p.sel).length;
+        el.textContent = pgEd.pages.length + ' page' + (pgEd.pages.length === 1 ? '' : 's') + (sel ? ' · ' + sel + ' selected' : '');
+    }
+    function pgSetThumb(p) {
+        const card = document.querySelector('#pg-grid .pg-card[data-id="' + p.id + '"] .pg-img');
+        if (card && p.thumb) card.innerHTML = '<img src="' + p.thumb + '" draggable="false" alt="">';
+    }
+
+    async function pgLoadPdfSource(si) {
+        const src = pgEd.sources[si];
+        let count = 0, pdf = null;
+        try { await ensurePdfJsLoaded(); pdf = await pdfjsLib.getDocument({ data: src.bytes.slice() }).promise; count = pdf.numPages; src.pdfjs = pdf; }
+        catch (e) {
+            try { const d = await PDFLib.PDFDocument.load(src.bytes, { ignoreEncryption: true }); count = d.getPageCount(); }
+            catch (e2) { pgToast('Could not read "' + (src.name || 'this PDF') + '".'); return; }
+        }
+        const added = [];
+        for (let i = 0; i < count; i++) added.push({ id: pgUid(), src: si, idx: i, sel: false, thumb: null });
+        pgEd.newPages = added;
+        return added;
+    }
+
+    async function pgAttachAndRender(added, insertAt) {
+        pgSnap();
+        if (insertAt == null || insertAt > pgEd.pages.length) insertAt = pgEd.pages.length;
+        pgEd.pages.splice(insertAt, 0, ...added);
+        pgRender();
+        for (const p of added) {
+            const src = pgEd.sources[p.src];
+            try {
+                if (src.type === 'image') { p.thumb = src.thumbUrl; }
+                else if (src.pdfjs) {
+                    const page = await src.pdfjs.getPage(p.idx + 1);
+                    const vp0 = page.getViewport({ scale: 1 });
+                    const vp = page.getViewport({ scale: 200 / vp0.width });
+                    const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+                    await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+                    p.thumb = c.toDataURL('image/jpeg', 0.75);
+                }
+            } catch (e) { /* leave placeholder */ }
+            if (!document.getElementById('pg-ed')) return;
+            pgSetThumb(p);
+        }
+    }
+
+    async function pgAddFiles(files) {
+        if (!pgEd || !files.length) return;
+        const sel = pgEd.pages.map((p, i) => p.sel ? i : -1).filter(i => i >= 0);
+        let at = sel.length ? sel[sel.length - 1] + 1 : pgEd.pages.length;
+        for (const f of files) {
+            const isPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+            const isImg = (f.type || '').startsWith('image/');
+            if (!isPdf && !isImg) { pgToast('Skipped "' + f.name + '" — only PDFs and photos can be added.'); continue; }
+            let added = null;
+            if (isPdf) {
+                const bytes = new Uint8Array(await f.arrayBuffer());
+                pgEd.sources.push({ type: 'pdf', bytes, name: f.name });
+                added = await pgLoadPdfSource(pgEd.sources.length - 1);
+            } else {
+                pgEd.sources.push({ type: 'image', blob: f, name: f.name, thumbUrl: URL.createObjectURL(f) });
+                added = [{ id: pgUid(), src: pgEd.sources.length - 1, idx: 0, sel: false, thumb: null }];
+            }
+            if (added && added.length) { await pgAttachAndRender(added, at); at += added.length; }
+        }
+    }
+
+    function pgOnClick(e) {
+        if (!pgEd) return;
+        const btn = e.target.closest('button[data-act]');
+        const card = e.target.closest('.pg-card');
+        if (btn) {
+            const act = btn.getAttribute('data-act');
+            const id = card ? card.getAttribute('data-id') : null;
+            e.stopPropagation();
+            return pgAct(act, id);
+        }
+        if (card) {
+            const p = pgEd.pages.find(x => x.id === card.getAttribute('data-id'));
+            if (p) { p.sel = !p.sel; card.classList.toggle('sel', p.sel); card.querySelector('.pg-tick').textContent = p.sel ? '✓' : ''; pgCount(); }
+        } else if (e.target.id === 'pg-ed') { /* click on backdrop: ignore to avoid losing edits */ }
+    }
+
+    function pgMove(ids, toIndexOriginal) {
+        // move the given pages (kept in current order) so they sit at the slot of page index toIndexOriginal
+        const moving = pgEd.pages.filter(p => ids.includes(p.id));
+        const target = pgEd.pages[toIndexOriginal];
+        if (!target || ids.includes(target.id)) return;
+        const firstOld = pgEd.pages.indexOf(moving[0]);
+        const rest = pgEd.pages.filter(p => !ids.includes(p.id));
+        let ti = rest.indexOf(target);
+        if (firstOld < toIndexOriginal) ti += 1;   // dragging forward lands after the target
+        pgSnap();
+        rest.splice(ti, 0, ...moving);
+        pgEd.pages = rest;
+        pgRender();
+    }
+    function pgOnDragStart(e) {
+        const card = e.target.closest && e.target.closest('.pg-card'); if (!card || !pgEd) return;
+        const id = card.getAttribute('data-id');
+        const p = pgEd.pages.find(x => x.id === id);
+        pgEd.dragIds = (p && p.sel) ? pgEd.pages.filter(x => x.sel).map(x => x.id) : [id];
+        try { e.dataTransfer.setData('text/plain', id); e.dataTransfer.effectAllowed = 'move'; } catch (_) {}
+        card.classList.add('pg-drag');
+    }
+    function pgOnDrop(e) {
+        const card = e.target.closest && e.target.closest('.pg-card');
+        if (!card || !pgEd || !pgEd.dragIds) return;
+        e.preventDefault();
+        const idx = pgEd.pages.findIndex(p => p.id === card.getAttribute('data-id'));
+        const ids = pgEd.dragIds; pgEd.dragIds = null;
+        pgMove(ids, idx);
+    }
+
+    function pgParseRanges(str, n) {
+        const parts = [];
+        for (const chunk of String(str).split(/[,;]+/)) {
+            const t = chunk.trim(); if (!t) continue;
+            const m = t.match(/^(\d+)\s*(?:-|–|to)\s*(\d+)$/i) || t.match(/^(\d+)$/);
+            if (!m) throw new Error('Could not understand "' + t + '". Use something like 1-3, 4-6, 7.');
+            let a = parseInt(m[1], 10), b = m[2] ? parseInt(m[2], 10) : a;
+            if (a > b) { const x = a; a = b; b = x; }
+            if (a < 1 || b > n) throw new Error('Range "' + t + '" is outside 1–' + n + '.');
+            const list = []; for (let i = a; i <= b; i++) list.push(i - 1);
+            parts.push(list);
+        }
+        if (!parts.length) throw new Error('Enter at least one range.');
+        return parts;
+    }
+
+    async function pgRasterPage(out, src, idx) {
+        if (!src.pdfjs) { await ensurePdfJsLoaded(); src.pdfjs = await pdfjsLib.getDocument({ data: src.bytes.slice() }).promise; }
+        const page = await src.pdfjs.getPage(idx + 1);
+        const vp = page.getViewport({ scale: 2 });
+        const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+        await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+        const b = await new Promise(r => c.toBlob(r, 'image/png'));
+        const img = await out.embedPng(new Uint8Array(await b.arrayBuffer()));
+        const pg = out.addPage([vp.width / 2, vp.height / 2]);
+        pg.drawImage(img, { x: 0, y: 0, width: vp.width / 2, height: vp.height / 2 });
+    }
+    async function pgBuild(list) {
+        const { PDFDocument } = PDFLib;
+        const out = await PDFDocument.create(); const cache = {};
+        for (const p of list) {
+            const src = pgEd.sources[p.src];
+            if (src.type === 'image') {
+                const { bytes, width, height } = await mergeImageToPngBytes(src.blob);
+                const img = await out.embedPng(bytes);
+                const pg = out.addPage([width, height]);
+                pg.drawImage(img, { x: 0, y: 0, width, height });
+                continue;
+            }
+            if (cache[p.src] === undefined) {
+                try { cache[p.src] = await PDFDocument.load(src.bytes, { ignoreEncryption: true }); } catch (e) { cache[p.src] = null; }
+            }
+            if (cache[p.src]) { const [cp] = await out.copyPages(cache[p.src], [p.idx]); out.addPage(cp); }
+            else await pgRasterPage(out, src, p.idx);
+        }
+        return await out.save();
+    }
+    function pgDownload(bytes, name) {
+        const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+        const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
+    function pgBusy(on, msg) {
+        const el = document.getElementById('pg-count'); if (!el) return;
+        document.querySelectorAll('#pg-ed button').forEach(b => b.disabled = !!on);
+        if (on) el.textContent = msg || 'Working…'; else pgCount();
+    }
+
+    async function pgAct(act, id) {
+        if (!pgEd) return;
+        const pages = pgEd.pages;
+        const idx = id ? pages.findIndex(p => p.id === id) : -1;
+        switch (act) {
+            case 'close': pgClose(); return;
+            case 'selall': pages.forEach(p => p.sel = true); pgRender(); return;
+            case 'selnone': pages.forEach(p => p.sel = false); pgRender(); return;
+            case 'undo': if (pgEd.history.length) { pgEd.pages = pgEd.history.pop(); pgRender(); } else pgToast('Nothing to undo.'); return;
+            case 'reverse': {
+                pgSnap();
+                const selected = pages.filter(p => p.sel);
+                if (selected.length > 1) {
+                    const slots = pages.map((p, i) => p.sel ? i : -1).filter(i => i >= 0);
+                    const rev = selected.slice().reverse();
+                    slots.forEach((s, k) => { pages[s] = rev[k]; });
+                } else pgEd.pages = pages.slice().reverse();
+                pgRender(); return;
+            }
+            case 'left': if (idx > 0) { pgSnap(); [pages[idx - 1], pages[idx]] = [pages[idx], pages[idx - 1]]; pgRender(); } return;
+            case 'right': if (idx >= 0 && idx < pages.length - 1) { pgSnap(); [pages[idx + 1], pages[idx]] = [pages[idx], pages[idx + 1]]; pgRender(); } return;
+            case 'rm': if (idx >= 0) { if (pages.length === 1) { pgToast('A PDF needs at least one page.'); return; } pgSnap(); pages.splice(idx, 1); pgRender(); } return;
+            case 'del': {
+                const keep = pages.filter(p => !p.sel);
+                if (keep.length === pages.length) { pgToast('Select the pages you want to remove first.'); return; }
+                if (!keep.length) { pgToast('You can\'t remove every page.'); return; }
+                pgSnap(); pgEd.pages = keep; pgRender(); return;
+            }
+            case 'add': document.getElementById('pg-file').click(); return;
+            case 'splitpanel': document.getElementById('pg-split').classList.toggle('hidden'); return;
+            case 'extract': {
+                const sel = pages.filter(p => p.sel);
+                if (!sel.length) { pgToast('Select the pages to extract first.'); return; }
+                await pgOutput([sel], 'list', ' (extract)'); return;
+            }
+            case 'split-list': case 'split-dl': {
+                try {
+                    const mode = document.getElementById('pg-split-mode').value, n = pages.length; let groups = [];
+                    if (mode === 'single') groups = pages.map(p => [p]);
+                    else if (mode === 'every') {
+                        const k = Math.max(1, parseInt(document.getElementById('pg-split-n').value, 10) || 1);
+                        for (let i = 0; i < n; i += k) groups.push(pages.slice(i, i + k));
+                    } else groups = pgParseRanges(document.getElementById('pg-split-r').value, n).map(l => l.map(i => pages[i]));
+                    if (groups.length < 2 && mode !== 'ranges') { pgToast('That would give just one file — nothing to split.'); return; }
+                    await pgOutput(groups, act === 'split-dl' ? 'dl' : 'list', ' (part ');
+                } catch (e) { pgToast(e.message || 'Split failed.'); }
+                return;
+            }
+            case 'download': case 'saveas': case 'save': {
+                if (!pages.length) { pgToast('No pages left.'); return; }
+                pgBusy(true, 'Building PDF…');
+                try {
+                    const bytes = await pgBuild(pages);
+                    const base = pgBase(pgEd.name);
+                    if (act === 'download') { pgDownload(bytes, base + ' edited.pdf'); pgBusy(false); return; }
+                    if (act === 'saveas') {
+                        mergeAddFiles([new File([bytes], base + ' edited.pdf', { type: 'application/pdf' })]);
+                        pgToast('Added "' + base + ' edited.pdf" to the merge list'); pgClose(); return;
+                    }
+                    const file = new File([bytes], /\.pdf$/i.test(pgEd.name) ? pgEd.name : base + '.pdf', { type: 'application/pdf' });
+                    const it = pgEd.itemId ? mergeItems.find(i => i.id === pgEd.itemId) : null;
+                    if (it) {
+                        it.file = file; it.url = null; it.type = 'pdf'; it.sizeLabel = mergeFormatSize(file.size);
+                        if (it.thumbUrl && String(it.thumbUrl).startsWith('blob:')) { try { URL.revokeObjectURL(it.thumbUrl); } catch (_) {} }
+                        it.thumbUrl = null; mergeGeneratePdfThumb(it); mergeRenderList();
+                        pgClose(); mergePreviewItem(it.id); pgToast('Pages updated');
+                    } else {
+                        mergeAddFiles([new File([bytes], base + ' edited.pdf', { type: 'application/pdf' })]);
+                        pgToast('Added "' + base + ' edited.pdf" to the merge list'); pgClose();
+                    }
+                } catch (err) { pgBusy(false); pgToast('Could not build the PDF: ' + (err && err.message || err)); }
+                return;
+            }
+        }
+    }
+    async function pgOutput(groups, dest, suffix) {
+        pgBusy(true, 'Building ' + groups.length + ' file' + (groups.length > 1 ? 's' : '') + '…');
+        try {
+            const base = pgBase(pgEd.name);
+            const before = mergeItems.length;
+            for (let i = 0; i < groups.length; i++) {
+                const bytes = await pgBuild(groups[i]);
+                const name = suffix === ' (extract)' ? base + ' (extract).pdf' : base + ' (part ' + (i + 1) + ').pdf';
+                if (dest === 'dl') { pgDownload(bytes, name); await new Promise(r => setTimeout(r, 400)); }
+                else mergeAddFiles([new File([bytes], name, { type: 'application/pdf' })]);
+            }
+            if (dest === 'list' && pgEd.itemId) {
+                const added = mergeItems.splice(before);
+                let at = mergeItems.findIndex(x => x.id === pgEd.itemId);
+                if (at < 0) mergeItems.push(...added);
+                else {
+                    const isSplit = suffix !== ' (extract)';
+                    const keepEl = document.getElementById('pg-keep');
+                    const keep = !isSplit || (keepEl && keepEl.checked);
+                    if (keep) mergeItems.splice(at + 1, 0, ...added);
+                    else mergeItems.splice(at, 1, ...added);
+                }
+                mergeRenderList();
+            }
+            pgToast(dest === 'dl' ? 'Downloaded ' + groups.length + ' file(s)' : 'Added ' + groups.length + ' file(s) to the merge list');
+            if (dest === 'list' && pgEd && pgEd.fromCard && suffix !== ' (extract)') { pgClose(); return; }
+        } catch (err) { pgToast('Could not build the PDF: ' + (err && err.message || err)); }
+        pgBusy(false);
+    }
+    function pgClose() {
+        const m = document.getElementById('pg-ed'); if (m) m.remove();
+        if (pgEd) pgEd.sources.forEach(s => { if (s.thumbUrl) { try { URL.revokeObjectURL(s.thumbUrl); } catch (_) {} } });
+        pgEd = null;
+    }
+
     function mdClearPreview() {
         mdPreviewCurrent = null;
         document.getElementById('md-preview-empty').classList.remove('hidden');
         document.getElementById('md-preview-box').classList.add('hidden');
         document.getElementById('md-preview-box').innerHTML = '';
         document.getElementById('md-preview-actions').classList.add('hidden');
+        { { const tb = document.getElementById('md-preview-tools'); if (tb) tb.classList.add('hidden'); } const qb = document.getElementById('md-qr-bar'); if (qb) qb.classList.add('hidden'); const qr = document.getElementById('md-qr-result'); if (qr) qr.classList.add('hidden'); try { mdQrToggleSelect(false); } catch (_) {} }
     }
 
     async function mdPreviewDownload() {
@@ -9414,6 +10138,7 @@ document.addEventListener('visibilitychange', () => {
             await ensurePdfJsLoaded();
             const blob = await mergeFetchItemBlob(item);
             const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+            item.pageCount = pdf.numPages;   // used to decide whether the Split option is offered
             const page = await pdf.getPage(1);
             const baseViewport = page.getViewport({ scale: 1 });
             const scale = 240 / baseViewport.width;
@@ -9908,7 +10633,7 @@ document.addEventListener('visibilitychange', () => {
         if (mergeDragCandidate) { mergeDragCandidate = null; cleanupMergeCandidateListeners(); }
         const row = e.currentTarget;
         // buttons / links on the card (remove, QR link) keep their own taps
-        if (e.target.closest('.doc-remove, .doc-qr-line, a, button')) return;
+        if (e.target.closest('.doc-remove, .doc-qr-line, .doc-split-row, a, button, input')) return;
 
         if (e.pointerType === 'touch' || e.pointerType === 'pen') {
             // Touch: press and HOLD the card for a moment, then move. A quick swipe still scrolls the strip.
@@ -10172,6 +10897,7 @@ document.addEventListener('visibilitychange', () => {
                     </div>
                 </div>
                 ${badge}
+                ${(item.type === 'pdf' && item.pageCount > 1 && !item.noSplit) ? `<div class="doc-split-row"><input class="doc-split-n" type="number" min="1" value="${item.splitN || 1}" title="Pages per file" onchange="mergeSetSplitN('${item.id}', this.value)" onclick="event.stopPropagation()"><button class="doc-split-btn" onclick="mergeSplitItem('${item.id}')"><i data-lucide="scissors" size="11"></i><span>Split</span></button></div>` : ''}
             </div>`;
     }
 
