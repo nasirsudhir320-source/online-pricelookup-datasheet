@@ -8409,11 +8409,29 @@ document.addEventListener('visibilitychange', () => {
         if (!currentPdfObjectUrl) { if (currentPdf.blob) currentPdfObjectUrl = URL.createObjectURL(currentPdf.blob); }
         if (currentPdfObjectUrl) window.open(currentPdfObjectUrl, '_blank');
     }
+
+    // Share: the File object is built once per PDF (not on every click) and the button
+    // gives instant feedback while the system share sheet opens.
+    function pdfShareFile() {
+        if (!currentPdf.blob) return null;
+        if (currentPdf._fileSrc !== currentPdf.blob) {
+            currentPdf._file = new File([currentPdf.blob], `${currentPdf.name}.pdf`, { type: 'application/pdf' });
+            currentPdf._fileSrc = currentPdf.blob;
+        }
+        return currentPdf._file;
+    }
+    let pdfSharing = false;
     async function sharePdf() {
-        if(!currentPdf.blob) return;
-        const file = new File([currentPdf.blob], `${currentPdf.name}.pdf`, { type: 'application/pdf' });
-        try { await navigator.share({ files: [file] }); }
-        catch(e) { if (currentPdf.url) navigator.share({ url: currentPdf.url }); }
+        const file = pdfShareFile();
+        if (!file || pdfSharing) return;
+        pdfSharing = true;
+        const btn = document.querySelector('#pdf-overlay .overlay-header button[onclick="sharePdf()"]');
+        if (btn) btn.style.opacity = '.5';
+        try {
+            await navigator.share({ files: [file] });
+        } catch (e) {
+            if (!(e && e.name === 'AbortError') && currentPdf.url) { try { await navigator.share({ url: currentPdf.url }); } catch (_) {} }
+        } finally { pdfSharing = false; if (btn) btn.style.opacity = ''; }
     }
 
     // Below this width the inline machine-docs preview column isn't on
@@ -9280,6 +9298,7 @@ document.addEventListener('visibilitychange', () => {
         if (pgEd) pgEd.sources.forEach(s => { if (s.thumbUrl) { try { URL.revokeObjectURL(s.thumbUrl); } catch (_) {} } });
         pgEd = null;
     }
+
 
     function mdClearPreview() {
         mdPreviewCurrent = null;
